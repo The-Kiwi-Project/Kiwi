@@ -8,14 +8,13 @@ target("kiwi")
     add_packages("xlnt")
     add_includedirs("source", "source/global")
     add_files("source/**.cc")
-    remove_files("source/bin/cobmap.cc")
 
 target("cobmap")
     set_kind("binary")
     set_targetdir("./output")
     set_default(false)
     add_includedirs("source", "source/global")
-    add_files("source/bin/cobmap.cc")
+    add_files("tools/cobmap.cc")
     add_files("source/hardware/**.cc")
     add_files("source/global/**.cc")
 
@@ -26,8 +25,14 @@ target("test")
     add_packages("xlnt")
     add_includedirs("source", "source/global", "test")
     add_files("test/**.cc")
-    add_files("source/**.cc")
-    remove_files("source/bin/**.cc")
+    add_files(
+        "source/algo/**.cc",
+        "source/circuit/**.cc",
+        "source/global/**.cc",
+        "source/hardware/**.cc",
+        "source/parse/**.cc",
+        "source/serde/**.cc"
+    )
 
 
 -- xmake project -k compile_commands
