@@ -2,6 +2,6 @@
 
 namespace kiwi {
 
-    auto gui_main() -> void;
+    auto gui_main(int argc, char** argv) -> int;
 
 }

@@ -81,7 +81,7 @@ namespace kiwi {
             if (arguments[0] != "-g" && arguments[0] != "--gui") {
                 debug::warning_fmt("Use gui model but indicate input config '{}', it will be ignored", arguments[0]);
             }
-            gui_main();
+            return gui_main(argc, argv);
         } 
         else if (arguments[0] == "-h" || arguments[0] == "--help") {
             print_help();
@@ -101,7 +101,7 @@ namespace kiwi {
                 }
             }
 
-            cli_main(arguments[0], std::move(output_path));
+            return cli_main(arguments[0], std::move(output_path));
         }
 
         return 0;

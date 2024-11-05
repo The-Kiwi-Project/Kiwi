@@ -17,7 +17,7 @@
 
 namespace kiwi {
 
-    auto cli_main(std::StringView config_path, std::Option<std::StringView> output_path) -> void {
+    auto cli_main(std::StringView config_path, std::Option<std::StringView> output_path) -> int {
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);
 
         algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
@@ -28,6 +28,8 @@ namespace kiwi {
             interposer.get(),
             output_path.has_value() ? *output_path : "./controlbit.ctb"    
         );
+
+        return 0;
     }
 
 }

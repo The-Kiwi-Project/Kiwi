@@ -8,6 +8,8 @@ target("kiwi")
     add_packages("xlnt")
     add_includedirs("source", "source/global")
     add_files("source/**.cc")
+    add_files("source/widget/**.h")
+    add_rules("qt.widgetapp")
 
 target("cobmap")
     set_kind("binary")

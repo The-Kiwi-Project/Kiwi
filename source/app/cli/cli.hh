@@ -5,6 +5,6 @@
 
 namespace kiwi {
 
-    auto cli_main(std::StringView config_path, std::Option<std::StringView> output_path) -> void;
+    auto cli_main(std::StringView config_path, std::Option<std::StringView> output_path) -> int;
 
 }
