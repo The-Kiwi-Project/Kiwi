@@ -46,14 +46,8 @@ namespace kiwi {
     auto print_verion() -> void {
         using console::Color;
 
-        std::tm tm = {};
-        strptime(std::format("{} {}", __DATE__, __TIME__).c_str(), "%b %d %Y %H:%M:%S", &tm);
-        std::StringStream ss;
-        ss << std::put_time(&tm, "%F %T");
-        console::println_fmt("kiwi v0.1.0 ({})\n", ss.str());
-
+        console::println_fmt("kiwi v0.1.0 ({} {})\n", __DATE__, __TIME__);
         console::println_with_color(kiwilogo, Color::Blue);
-
         console::println("👉 Source: https://github.com/The-Kiwi-Project/Kiwi.git");
     }
 

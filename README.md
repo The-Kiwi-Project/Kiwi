@@ -12,7 +12,6 @@
 - [source](./source/)：项目源码
 - [test](./test/)：项目模块测试
 - [algorithm](./algorithm/)：算法实现
-- [script](./script/)：辅助脚本
 - [tools](./tools/)：工具程序
 
 

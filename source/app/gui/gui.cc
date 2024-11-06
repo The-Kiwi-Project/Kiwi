@@ -1,12 +1,13 @@
 #include "./gui.hh"
-#include <widget/mainwindow.h>
+#include <widget/widget.h>
 #include <QApplication>
 
 namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
         QApplication a(argc, argv);
-        xtaro::MainWindow w;
+        // kiwi::MainWindow w;
+        auto w = widget::Widget{};
         w.show();
         return a.exec();
     }
