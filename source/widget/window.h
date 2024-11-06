@@ -8,12 +8,12 @@
 
 namespace kiwi::widget {
 
-    class Widget : public FramelessWindow {
+    class Window : public FramelessWindow {
         Q_OBJECT
 
     public:
-        Widget(QWidget *parent = nullptr);
-        ~Widget();
+        Window(QWidget *parent = nullptr);
+        ~Window();
 
     private:
         void resizePages(QResizeEvent* event);

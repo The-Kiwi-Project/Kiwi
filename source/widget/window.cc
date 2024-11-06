@@ -1,13 +1,16 @@
-#include "widget.h"
-#include "widget/page/aboutpage.h"
+#include "window.h"
+#include "./page/aboutpage.h"
 #include <QDebug>
 #include <QResizeEvent>
 
 namespace kiwi::widget {
 
-    Widget::Widget(QWidget *parent)
+    Window::Window(QWidget *parent)
         : FramelessWindow(15, parent)
     {
+        // Deafult all font as black(In Windows, some fonts become white...)
+        this->setStyleSheet("QLabel { color : black; }");
+        
         // Create main layout for page and sidebar
         this->_mainLayout = new QHBoxLayout(this->_windowWidget);
         this->_mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -49,10 +52,10 @@ namespace kiwi::widget {
         this->resize(900, 650);
     }
 
-    Widget::~Widget() {
+    Window::~Window() {
     }
 
-    void Widget::resizePages(QResizeEvent *event) {
+    void Window::resizePages(QResizeEvent *event) {
         // Check for input validity
         if (event == nullptr)
             return;
@@ -65,7 +68,7 @@ namespace kiwi::widget {
         this->_aboutPage->resize(size);
     }
 
-    void Widget::showEvent(QShowEvent *event) {
+    void Window::showEvent(QShowEvent *event) {
         // Call parent show event
         FramelessWindow::showEvent(event);
 
@@ -74,7 +77,7 @@ namespace kiwi::widget {
         this->_aboutPage->resize(this->_placeHolderWidget->size());
     }
 
-    bool Widget::eventFilter(QObject *object, QEvent *event) {
+    bool Window::eventFilter(QObject *object, QEvent *event) {
         // Check for input validity
         if (object == nullptr || event == nullptr)
             return false;

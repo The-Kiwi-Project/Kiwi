@@ -1,5 +1,5 @@
 #include "./gui.hh"
-#include <widget/widget.h>
+#include <widget/window.h>
 #include <QApplication>
 
 namespace kiwi {
@@ -7,7 +7,7 @@ namespace kiwi {
     auto gui_main(int argc, char** argv) -> int {
         QApplication a(argc, argv);
         // kiwi::MainWindow w;
-        auto w = widget::Widget{};
+        auto w = widget::Window{};
         w.show();
         return a.exec();
     }
