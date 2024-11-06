@@ -81,8 +81,13 @@ namespace kiwi::widget {
         _selectedColor.setAlpha(35);
         _indicatorColor = colorScheme;
     }
-
-    void PushButton::enterEvent(QEvent* event) {
+    
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    void PushButton::enterEvent(QEnterEvent* event) 
+#else
+    void PushButton::enterEvent(QEvent* event) 
+#endif
+    {
         Q_UNUSED(event);
 
         if (!_enabled) {
