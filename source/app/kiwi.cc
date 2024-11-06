@@ -11,6 +11,10 @@
 #include <debug/debug.hh>
 #include <std/algorithm.hh>
 
+#ifdef _WIN32
+#include "Windows.h"
+#endif
+
 namespace kiwi {
 
     auto kiwilogo = "\
@@ -52,6 +56,14 @@ namespace kiwi {
     }
 
     int main(int argc, char** argv) {
+    #ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+        if (AttachConsole(ATTACH_PARENT_PROCESS)) {
+            freopen("CONOUT$", "w", stdout);
+            freopen("CONOUT$", "w", stderr);
+        }
+    #endif
+
         if (argc == 1) {
             print_help();
             return 0;

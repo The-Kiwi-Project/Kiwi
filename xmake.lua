@@ -11,7 +11,6 @@ target("kiwi")
     add_files("source/widget/**.h")
     add_files("resource/resource.qrc")
     add_rules("qt.widgetapp")
-    add_links("GL")
 
 target("cobmap")
     set_kind("binary")
