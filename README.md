@@ -11,7 +11,7 @@
 - [document](./document/)：项目文档
 - [source](./source/)：项目源码
 - [test](./test/)：项目模块测试
-- [resource](./resource/)：GUI 资源
+- [resource](./resource/): GUI 资源
 - [tools](./tools/)：工具程序
 
 

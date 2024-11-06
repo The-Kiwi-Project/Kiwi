@@ -1,5 +1,6 @@
 #include "window.h"
 #include "./page/aboutpage.h"
+#include "widget/page/workpage.h"
 #include <QDebug>
 #include <QResizeEvent>
 
@@ -44,6 +45,10 @@ namespace kiwi::widget {
         this->_welcomePage->setMouseTracking(true);
         this->_sideBar->addPage(this->_welcomePage);
 
+        this->_workPage = new WorkPage(this->_placeHolderWidget);
+        this->_workPage->setMouseTracking(true);
+        this->_sideBar->addPage(this->_workPage);
+
         this->_aboutPage = new AboutPage(this->_placeHolderWidget);
         this->_aboutPage->setMouseTracking(true);
         this->_sideBar->addPage(this->_aboutPage);
@@ -65,6 +70,7 @@ namespace kiwi::widget {
 
         // Resize the editor page
         this->_welcomePage->resize(size);
+        this->_workPage->resize(size);
         this->_aboutPage->resize(size);
     }
 
@@ -74,6 +80,7 @@ namespace kiwi::widget {
 
         // Resize all the pages based on the placeholder widget
         this->_welcomePage->resize(this->_placeHolderWidget->size());
+        this->_workPage->resize(this->_placeHolderWidget->size());
         this->_aboutPage->resize(this->_placeHolderWidget->size());
     }
 

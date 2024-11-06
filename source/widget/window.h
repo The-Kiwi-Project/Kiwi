@@ -4,6 +4,7 @@
 #include "./base/framelesswindow.h"
 #include "./base/sidebar.h"
 #include "./page/welcomepage.h"
+#include "./page/workpage.h"
 #include "./page/aboutpage.h"
 
 namespace kiwi::widget {
@@ -28,6 +29,7 @@ namespace kiwi::widget {
         SideBar* _sideBar = nullptr;
 
         WelcomePage* _welcomePage = nullptr;
+        WorkPage* _workPage = nullptr;
         AboutPage* _aboutPage = nullptr;
     };
 

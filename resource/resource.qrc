@@ -1,4 +1,8 @@
 <RCC>
+    <qresource prefix="/shaders">
+        <file>shaders/axis.frag</file>
+        <file>shaders/axis.vert</file>
+    </qresource>
     <qresource prefix="/images">
         <file>images/buttons/Back.png</file>
         <file>images/buttons/Close.png</file>
@@ -17,6 +21,7 @@
         <file>images/labels/setting.png</file>
         <file>images/labels/slicing.png</file>
         <file>images/labels/welcome.png</file>
+        <file>images/labels/work.png</file>
         <file>images/labels/device.png</file>
         <file>images/labels/control.png</file>
         <file>images/labels/load.png</file>

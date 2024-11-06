@@ -26,7 +26,7 @@ namespace kiwi::widget {
         // Construct main layout
         this->_mainWidget = new QWidget(this);
         this->_mainWidget->setObjectName("mainWidget");
-        this->_mainWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+        this->_mainWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         this->_mainWidget->setStyleSheet("QWidget#mainWidget { background-color: #efefef; border-radius: 8px; }");
         this->_mainLayout = new QVBoxLayout(this->_mainWidget);
         this->_mainLayout->setAlignment(Qt::AlignTop);
