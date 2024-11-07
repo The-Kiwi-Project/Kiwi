@@ -13,14 +13,14 @@ namespace kiwi::console {
     void print_with_color(std::StringView message, Color color) {
         const char* colorInfo = nullptr;
         switch (color) {
-            case Color::Black:  colorInfo = "\033[30m"; break;
-            case Color::Red:    colorInfo = "\033[31m"; break;
-            case Color::Green:  colorInfo = "\033[32m"; break;
-            case Color::Yellow: colorInfo = "\033[33m"; break;
-            case Color::Blue:   colorInfo = "\033[34m"; break;
-            case Color::Purple: colorInfo = "\033[35m"; break;
-            case Color::Cyan:   colorInfo = "\033[36m"; break;
-            case Color::White:  colorInfo = "\033[37m"; break;
+            case Color::Black:  colorInfo = "\033[1;30m"; break;
+            case Color::Red:    colorInfo = "\033[1;31m"; break;
+            case Color::Green:  colorInfo = "\033[1;32m"; break;
+            case Color::Yellow: colorInfo = "\033[1;33m"; break;
+            case Color::Blue:   colorInfo = "\033[1;34m"; break;
+            case Color::Purple: colorInfo = "\033[1;35m"; break;
+            case Color::Cyan:   colorInfo = "\033[1;36m"; break;
+            case Color::White:  colorInfo = "\033[1;37m"; break;
         }
         std::cout << colorInfo << message << "\033[0m" << std::ends;
     }

@@ -1,0 +1,19 @@
+QWidget{
+	font-size: 12pt;
+    font-family: "Calibri Light";
+    color: #2f3640;
+}
+QPushButton{
+	font-size: 12pt;
+    font-family: "Calibri Light";
+    color: #2f3640;
+    background-color: #f2f5f7;
+    border-radius: 4px;
+    border-width: 0px;
+    padding: 5px;
+    width: 80px;
+    height: 40px;
+}
+QPushButton:hover{background-color: #eaeef4;}
+QPushButton:pressed,QPushButton:checked{background-color: #dde4f6;}
+QPushButton:disabled{background-color: #f3f4f7;}

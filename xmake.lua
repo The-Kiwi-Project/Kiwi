@@ -2,20 +2,33 @@ add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++20")
 add_requires("xlnt")
 
+rule("qt.opengl")
+    on_config(function (target) 
+        import("detect.sdks.find_qt")
+        local qt = assert(find_qt(), "Qt SDK not found!")
+        local major_version = tonumber(string.match(qt.sdkver, "^(%d+)"))
+        if major_version >= 6 then
+            target:add("frameworks", "QtOpenGL", "QtOpenGLWidgets")
+        else
+            target:add("frameworks", "QtOpenGL")
+        end
+    end)
+
 target("kiwi")
     set_kind("binary")
     set_targetdir("./output")
     add_packages("xlnt")
     add_includedirs("source", "source/global")
-    add_files("source/**.cc")
-    remove_files("source/bin/cobmap.cc")
+    add_files("source/**.cc", "source/widget/**.h", "resource/resource.qrc")
+    add_rules("qt.widgetapp", "qt.opengl")
+    add_frameworks("QtOpenGL")
 
 target("cobmap")
     set_kind("binary")
     set_targetdir("./output")
     set_default(false)
     add_includedirs("source", "source/global")
-    add_files("source/bin/cobmap.cc")
+    add_files("tools/cobmap.cc")
     add_files("source/hardware/**.cc")
     add_files("source/global/**.cc")
 
@@ -26,8 +39,14 @@ target("test")
     add_packages("xlnt")
     add_includedirs("source", "source/global", "test")
     add_files("test/**.cc")
-    add_files("source/**.cc")
-    remove_files("source/bin/**.cc")
+    add_files(
+        "source/algo/**.cc",
+        "source/circuit/**.cc",
+        "source/global/**.cc",
+        "source/hardware/**.cc",
+        "source/parse/**.cc",
+        "source/serde/**.cc"
+    )
 
 
 -- xmake project -k compile_commands
@@ -100,4 +119,3 @@ target("test")
 --
 -- @endcode
 --
-

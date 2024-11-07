@@ -1,0 +1,41 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>shaders/axis.frag</file>
+        <file>shaders/axis.vert</file>
+        <file>shaders/model.frag</file>
+        <file>shaders/model.vert</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file>images/buttons/Back.png</file>
+        <file>images/buttons/Close.png</file>
+        <file>images/buttons/Dispense.png</file>
+        <file>images/buttons/Down.png</file>
+        <file>images/buttons/DownList.png</file>
+        <file>images/buttons/Front.png</file>
+        <file>images/buttons/Left.png</file>
+        <file>images/buttons/mini.png</file>
+        <file>images/buttons/Right.png</file>
+        <file>images/buttons/Stop.png</file>
+        <file>images/buttons/Up.png</file>
+        <file>images/labels/list.png</file>
+        <file>images/labels/about.png</file>
+        <file>images/labels/print.png</file>
+        <file>images/labels/setting.png</file>
+        <file>images/labels/slicing.png</file>
+        <file>images/labels/welcome.png</file>
+        <file>images/labels/work.png</file>
+        <file>images/labels/device.png</file>
+        <file>images/labels/control.png</file>
+        <file>images/labels/load.png</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file>qss/printwidget.qss</file>
+        <file>qss/connectbutton.qss</file>
+        <file>qss/closebutton.qss</file>
+        <file>qss/searchbutton.qss</file>
+        <file>qss/settingwidget.qss</file>
+        <file>qss/slider.qss</file>
+        <file>qss/combobox.qss</file>
+        <file>qss/switch.qss</file>
+    </qresource>
+</RCC>
