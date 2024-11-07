@@ -1,10 +1,5 @@
 #pragma once
 
-#include <QOpenGLFunctions_3_3_Core>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QElapsedTimer>
 #include <QVector>
 #include <QMouseEvent>
 #include <QtMath>
@@ -13,8 +8,16 @@
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QtOpenGLWidgets/QOpenGLWidget>
+#include <QtOpenGL/QOpenGLFunctions_3_3_Core>
+#include <QtOpenGL/QOpenGLShaderProgram>
+#include <QtOpenGL/QOpenGLBuffer>
+#include <QtOpenGL/QOpenGLVertexArrayObject>
 #else
 #include <QOpenGLWidget>
+#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
 #endif
 
 namespace kiwi::widget {
@@ -115,9 +118,6 @@ namespace kiwi::widget {
         //! \brief coordinate position
         QVector3D _coordbias;
         Qt::MouseButton _mouseButton;
-
-        //! \brief _timer
-        QElapsedTimer _timer;
     };
 
 }

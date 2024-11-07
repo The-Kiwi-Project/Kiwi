@@ -2,10 +2,6 @@
 
 #include <debug/debug.hh>
 
-#include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QElapsedTimer>
 #include <QVector>
 #include <QMouseEvent>
 #include <QtMath>
@@ -53,8 +49,7 @@ namespace kiwi::widget {
         _posRadius{RenderWidget::DEFAULT_RADIUS_VALUE},
         _lastMousePos{100, 100},
         _coordbias{RenderWidget::DEFAULT_MODEL_BIAS},
-        _mouseButton{Qt::NoButton},
-        _timer{}
+        _mouseButton{Qt::NoButton}
     {
         this->setMouseTracking(true);
         this->setFocusPolicy(Qt::StrongFocus);
