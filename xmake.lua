@@ -2,16 +2,26 @@ add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++20")
 add_requires("xlnt")
 
+rule("qt.opengl")
+    on_config(function (target) 
+        import("detect.sdks.find_qt")
+        local qt = assert(find_qt(), "Qt SDK not found!")
+        local major_version = tonumber(string.match(qt.sdkver, "^(%d+)"))
+        if major_version >= 6 then
+            target:add("frameworks", "QtOpenGL", "QtOpenGLWidgets")
+        else
+            target:add("frameworks", "QtOpenGL")
+        end
+    end)
+
 target("kiwi")
     set_kind("binary")
     set_targetdir("./output")
     add_packages("xlnt")
     add_includedirs("source", "source/global")
     add_files("source/**.cc", "source/widget/**.h", "resource/resource.qrc")
-    add_rules("qt.widgetapp")
+    add_rules("qt.widgetapp", "qt.opengl")
     add_frameworks("QtOpenGL")
-    -- If you use Qt 6, use this command...
-    -- add_frameworks("QtOpenGLWidgets")
 
 target("cobmap")
     set_kind("binary")
@@ -109,4 +119,3 @@ target("test")
 --
 -- @endcode
 --
-
