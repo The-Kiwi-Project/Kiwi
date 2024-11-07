@@ -21,6 +21,10 @@ namespace kiwi::widget {
         return angle * 3.14159f / 180.0f;
     }
 
+    // Coord (a, b, c)
+    // a => y, b => z, c => x
+    // Coord (y, z, x)
+
     //! \brief verices date
     float RenderWidget::axisVertices[] = {
         // y axis
@@ -37,19 +41,47 @@ namespace kiwi::widget {
         -ARROWHEAD_SIZE, AXIS_LENGTH - ARROWHEAD_SIZE, 0.0f, 0.0f, AXIS_LENGTH, 0.0f,
     };
 
+    float RenderWidget::cobVertices[] = {
+        0.0f, 0.0f, 0.0f, 
+        0.0f, 0.0f, COB_WIDTH,
+        COB_WIDTH, 0.0f, 0.0f, 
+        COB_WIDTH, 0.0f, COB_WIDTH,
+
+        0.0f, COB_HEIGHT, 0.0f, 
+        0.0f, COB_HEIGHT, COB_WIDTH,
+        COB_WIDTH, COB_HEIGHT, 0.0f, 
+        COB_WIDTH, COB_HEIGHT, COB_WIDTH,        
+    };
+
+    int RenderWidget::cobIndices[] = {
+        // Bottom
+        0, 1, 3,
+        0, 2, 3,
+
+        // Top
+        4, 5, 7, 
+        4, 6, 7,
+
+        // Left
+        0, 4, 5, 
+        0, 1, 5,
+
+        // Right
+        2, 6, 6,
+        2, 3, 6, 
+
+        // Front
+        0, 2, 6, 
+        0, 4, 6, 
+
+        // Back
+        1, 3, 7, 
+        1, 5, 7,
+    };
+
     //! \brief construct function
     RenderWidget::RenderWidget(QWidget *parent) :
-        QOpenGLWidget(parent),
-        _axisVao{},
-        _axisVbo{QOpenGLBuffer::VertexBuffer},
-        _axisShader{},
-        _currentPointPosition{0.0f, 0.0f, 0.0f},
-        _posTheta{RenderWidget::DEFAULT_THETA_VALUE},
-        _posPitch{RenderWidget::DEFAULT_PITCH_VALUE},
-        _posRadius{RenderWidget::DEFAULT_RADIUS_VALUE},
-        _lastMousePos{100, 100},
-        _coordbias{RenderWidget::DEFAULT_MODEL_BIAS},
-        _mouseButton{Qt::NoButton}
+        QOpenGLWidget(parent)
     {
         this->setMouseTracking(true);
         this->setFocusPolicy(Qt::StrongFocus);
@@ -82,7 +114,7 @@ namespace kiwi::widget {
         this->_axisVao.bind();
         this->_axisVbo.bind();
 
-        this->_axisVbo.allocate(axisVertices, sizeof(axisVertices));
+        this->_axisVbo.allocate(RenderWidget::axisVertices, sizeof(RenderWidget::axisVertices));
 
         this->_axisShader.bind();
         this->_axisShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
@@ -99,6 +131,37 @@ namespace kiwi::widget {
         this->_axisVao.release();
     }
 
+    void RenderWidget::initCOB(const QMatrix4x4& view, const QMatrix4x4& projection) {
+        this->_cobVao.create();
+        this->_cobVbo.create();
+        this->_cobIndicesVbo.create();
+
+        this->_modelShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/shaders/model.vert");
+        this->_modelShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/shaders/model.frag");
+    
+        this->_cobVao.bind();
+
+        this->_cobVbo.bind();
+        this->_cobVbo.allocate(RenderWidget::cobVertices, sizeof(RenderWidget::cobVertices));
+        
+        this->_cobIndicesVbo.bind();
+        this->_cobIndicesVbo.allocate(RenderWidget::cobIndices, sizeof(RenderWidget::cobIndices));
+
+        this->_modelShader.bind();
+        this->_modelShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
+        this->_modelShader.enableAttributeArray(0);
+
+        QMatrix4x4 bias;
+        bias.translate({0.0f, 0.0f, 0.0f});
+        this->_modelShader.setUniformValue("view", view);
+        this->_modelShader.setUniformValue("projection", projection);
+        this->_modelShader.setUniformValue("bias", bias);
+        
+        this->_cobVao.release();
+        this->_cobVao.release();
+        this->_modelShader.release();
+    }
+
     //! \brief reset uniform view matrix in shaders
     void RenderWidget::updateViewMatrix() {
         this->makeCurrent();
@@ -109,8 +172,11 @@ namespace kiwi::widget {
         this->_axisShader.setUniformValue("view", view);
         this->_axisShader.release();
 
-        this->update();
+        this->_modelShader.bind();
+        this->_modelShader.setUniformValue("view", view);
+        this->_modelShader.release();
 
+        this->update();
         this->doneCurrent();
     }
 
@@ -120,13 +186,14 @@ namespace kiwi::widget {
 
         QMatrix4x4 bias;
         bias.translate(this->_coordbias);
-        this->_axisShader.bind();
-        this->_axisShader.setUniformValue("bias", bias);
-        this->_axisShader.release();
+
+        this->_modelShader.bind();
+        this->_modelShader.setUniformValue("bias", bias);
+        this->_modelShader.release();
 
         this->update();
         this->doneCurrent();
-        this->parentWidget()->update();
+        // this->parentWidget()->update();
     }
 
     //! \brief reset the view matrix
@@ -144,7 +211,7 @@ namespace kiwi::widget {
     void RenderWidget::wheelEvent(QWheelEvent *event) {
         this->_posRadius += (event->angleDelta().y() / 100.0);
         this->updateViewMatrix();
-        parentWidget()->update();
+        this->parentWidget()->update();
     }
 
     void RenderWidget::mousePressEvent(QMouseEvent *event) {
@@ -184,7 +251,7 @@ namespace kiwi::widget {
                                         0.0f,
                                         deltaX / 30.0);
             // No move axis
-            // this->updateCoordBias();
+            this->updateCoordBias();
         }
 
         this->_lastMousePos = event->pos();
@@ -221,6 +288,7 @@ namespace kiwi::widget {
 
         // create axis opengl object
         this->initAxis(view, projection);
+        this->initCOB(view, projection);
     }
 
     void RenderWidget::resizeGL(int w, int h) {
@@ -229,8 +297,8 @@ namespace kiwi::widget {
 
     void RenderWidget::paintGL() {
         // clear screen and buffer
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        this->glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        this->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // render axis
         this->_axisVao.bind();
@@ -238,16 +306,25 @@ namespace kiwi::widget {
 
         // y axis
         this->_axisShader.setUniformValue("color", QVector3D(1.0f, 0.0f, 0.0f));
-        glDrawArrays(GL_LINES, 0, 6);
+        this->glDrawArrays(GL_LINES, 0, 6);
         // x axis
         this->_axisShader.setUniformValue("color", QVector3D(0.0f, 1.0f, 0.0f));
-        glDrawArrays(GL_LINES, 6, 6);
+        this->glDrawArrays(GL_LINES, 6, 6);
         // z axis
         this->_axisShader.setUniformValue("color", QVector3D(0.0f, 0.0f, 1.0f));
-        glDrawArrays(GL_LINES, 12, 6);
+        this->glDrawArrays(GL_LINES, 12, 6);
 
         this->_axisVao.release();
         this->_axisShader.release();
+    
+        // render model
+        this->_modelShader.bind();
+        this->_cobVao.bind();
+
+        this->glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        this->_modelShader.release();
+        this->_cobVao.release();
     }
 
 }

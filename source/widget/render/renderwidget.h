@@ -1,5 +1,8 @@
 #pragma once
 
+#include "qopenglbuffer.h"
+#include "qopenglshaderprogram.h"
+#include "qopenglvertexarrayobject.h"
 #include <QVector>
 #include <QMouseEvent>
 #include <QtMath>
@@ -32,14 +35,20 @@ namespace kiwi::widget {
         static constexpr float DEFAULT_RADIUS_VALUE = 22.0f;
         static constexpr QVector3D DEFAULT_MODEL_BIAS = QVector3D{0.0f, 0.0f, 0.0f};
         static constexpr float ARROWHEAD_SIZE = 0.3f;
-        static constexpr float AXIS_LENGTH = 10.0f;
         static constexpr float Z_BIAS = -2.5f;
         static constexpr float MAX_PITCH = M_PI / 2.0 - 0.0001;
         static constexpr float MIN_PITCH = -1 * M_PI / 2.0 + 0.0001;
 
+        static constexpr float AXIS_LENGTH = 10.0f;
+
+        static constexpr float COB_WIDTH = 1.0f;
+        static constexpr float COB_HEIGHT = 0.2f;
+
     //! \group verices date
     private:
         static float axisVertices[];
+        static float cobVertices[];
+        static int cobIndices[];
 
     //! \group constructor and desstructor
     public:
@@ -49,6 +58,7 @@ namespace kiwi::widget {
     //! \group iniatil axis object and model object
     private:
         void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection);
+        void initCOB(const QMatrix4x4& view, const QMatrix4x4& projection);
 
     //! \group calculate current status data
     private:
@@ -100,24 +110,31 @@ namespace kiwi::widget {
     //! \group data members
     private:
         //! \brief axis
-        QOpenGLVertexArrayObject _axisVao;
-        QOpenGLBuffer _axisVbo;
-        QOpenGLShaderProgram _axisShader;
+        QOpenGLVertexArrayObject _axisVao {};
+        QOpenGLBuffer _axisVbo {QOpenGLBuffer::VertexBuffer};
+        QOpenGLShaderProgram _axisShader {};
+
+        //! \brief cob
+        QOpenGLVertexArrayObject _cobVao {};
+        QOpenGLBuffer _cobVbo {QOpenGLBuffer::VertexBuffer};
+        QOpenGLBuffer _cobIndicesVbo {QOpenGLBuffer::IndexBuffer};  
+        
+        QOpenGLShaderProgram _modelShader {};
 
         //! \brief current point position
-        QVector3D _currentPointPosition;
+        QVector3D _currentPointPosition {0.0f, 0.0f, 0.0f};
 
         //! \brief camera message
-        float _posTheta;
-        float _posPitch;
-        float _posRadius;
+        float _posTheta  {RenderWidget::DEFAULT_THETA_VALUE};
+        float _posPitch  {RenderWidget::DEFAULT_PITCH_VALUE};
+        float _posRadius {RenderWidget::DEFAULT_RADIUS_VALUE};
 
         //! \brief last mouse pos
-        QPoint _lastMousePos;
+        QPoint _lastMousePos {100, 100};
 
         //! \brief coordinate position
-        QVector3D _coordbias;
-        Qt::MouseButton _mouseButton;
+        QVector3D _coordbias {RenderWidget::DEFAULT_MODEL_BIAS};
+        Qt::MouseButton _mouseButton {Qt::NoButton};
     };
 
 }

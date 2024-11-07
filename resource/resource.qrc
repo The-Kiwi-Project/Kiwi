@@ -2,6 +2,8 @@
     <qresource prefix="/shaders">
         <file>shaders/axis.frag</file>
         <file>shaders/axis.vert</file>
+        <file>shaders/model.frag</file>
+        <file>shaders/model.vert</file>
     </qresource>
     <qresource prefix="/images">
         <file>images/buttons/Back.png</file>
