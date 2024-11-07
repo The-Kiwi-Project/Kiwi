@@ -3,6 +3,7 @@
 #include "qopenglbuffer.h"
 #include "qopenglshaderprogram.h"
 #include "qopenglvertexarrayobject.h"
+#include "qvector3d.h"
 #include <QVector>
 #include <QMouseEvent>
 #include <QtMath>
@@ -33,7 +34,6 @@ namespace kiwi::widget {
         static constexpr float DEFAULT_THETA_VALUE = M_PI / 3.0f;
         static constexpr float DEFAULT_PITCH_VALUE = M_PI / 7.0f;
         static constexpr float DEFAULT_RADIUS_VALUE = 22.0f;
-        static constexpr QVector3D DEFAULT_MODEL_BIAS = QVector3D{0.0f, 0.0f, 0.0f};
         static constexpr float ARROWHEAD_SIZE = 0.3f;
         static constexpr float Z_BIAS = -2.5f;
         static constexpr float MAX_PITCH = M_PI / 2.0 - 0.0001;
@@ -43,6 +43,7 @@ namespace kiwi::widget {
 
         static constexpr float COB_WIDTH = 1.0f;
         static constexpr float COB_HEIGHT = 0.2f;
+        static constexpr float COB_INTERAL = 3.0f;
 
     //! \group verices date
     private:
@@ -62,22 +63,8 @@ namespace kiwi::widget {
 
     //! \group calculate current status data
     private:
-        QVector3D getViewPos() const
-        {
-            float horizontalRadius = this->_posRadius * qCos(this->_posPitch);
-            return QVector3D(horizontalRadius * qSin(this->_posTheta),
-                            this->_posRadius * qSin(this->_posPitch),
-                            horizontalRadius * qCos(this->_posTheta));
-        }
-
-        QMatrix4x4 getViewMatrix() const
-        {
-            QMatrix4x4 view;
-            view.lookAt(this->getViewPos(),
-                        QVector3D(0.0f, 0.0f, 0.0f),
-                        QVector3D(0.0f, 1.0f, 0.0f));
-            return view;
-        }
+        QVector3D getViewPos() const;
+        QMatrix4x4 getViewMatrix() const;
 
     //! \group update the current status
     public:
@@ -117,7 +104,9 @@ namespace kiwi::widget {
         //! \brief cob
         QOpenGLVertexArrayObject _cobVao {};
         QOpenGLBuffer _cobVbo {QOpenGLBuffer::VertexBuffer};
-        QOpenGLBuffer _cobIndicesVbo {QOpenGLBuffer::IndexBuffer};  
+        QOpenGLBuffer _cobIndicesVbo {QOpenGLBuffer::IndexBuffer};
+        QOpenGLBuffer _cobPositionsVbo {};
+        QVector<QVector3D> _cobPositions {QVector3D{0, 0, 0}};
         
         QOpenGLShaderProgram _modelShader {};
 
@@ -133,7 +122,7 @@ namespace kiwi::widget {
         QPoint _lastMousePos {100, 100};
 
         //! \brief coordinate position
-        QVector3D _coordbias {RenderWidget::DEFAULT_MODEL_BIAS};
+        QVector3D _coordbias {};
         Qt::MouseButton _mouseButton {Qt::NoButton};
     };
 

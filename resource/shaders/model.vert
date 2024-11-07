@@ -1,8 +1,7 @@
 #version 330 core
 
 layout (location = 0) in vec3 inPos;
-
-out vec4 pos;
+layout (location = 1) in vec3 biasPos;
 
 uniform mat4 bias;
 uniform mat4 view;
@@ -10,7 +9,6 @@ uniform mat4 projection;
 
 void main()
 {
-    vec4 glbal_Pos = bias  * vec4(inPos, 1.0);
-    gl_Position = projection * view * glbal_Pos;
-    pos = glbal_Pos;
+    vec3 pos = inPos.xyz + biasPos.xyz;
+    gl_Position = projection * view * bias * vec4(pos, 1.0);
 }
