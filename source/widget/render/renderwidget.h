@@ -1,9 +1,6 @@
 #pragma once
 
-#include "qopenglbuffer.h"
-#include "qopenglshaderprogram.h"
-#include "qopenglvertexarrayobject.h"
-#include "qvector3d.h"
+#include "qscopedpointer.h"
 #include <QVector>
 #include <QMouseEvent>
 #include <QtMath>
@@ -15,12 +12,14 @@
 #include <QtOpenGL/QOpenGLFunctions_3_3_Core>
 #include <QtOpenGL/QOpenGLShaderProgram>
 #include <QtOpenGL/QOpenGLBuffer>
+#include <QtOpenGL/QOpenGLTexture>
 #include <QtOpenGL/QOpenGLVertexArrayObject>
 #else
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
+#include <QOpenGLTexture>
 #include <QOpenGLVertexArrayObject>
 #endif
 
@@ -31,9 +30,9 @@ namespace kiwi::widget {
 
     //! \brief window's constant variable
     private:
-        static constexpr float DEFAULT_THETA_VALUE = M_PI / 3.0f;
+        static constexpr float DEFAULT_THETA_VALUE = M_PI / 3.0f + M_PI;
         static constexpr float DEFAULT_PITCH_VALUE = M_PI / 7.0f;
-        static constexpr float DEFAULT_RADIUS_VALUE = 22.0f;
+        static constexpr float DEFAULT_RADIUS_VALUE = 30.0f;
         static constexpr float ARROWHEAD_SIZE = 0.3f;
         static constexpr float Z_BIAS = -2.5f;
         static constexpr float MAX_PITCH = M_PI / 2.0 - 0.0001;
@@ -43,7 +42,10 @@ namespace kiwi::widget {
 
         static constexpr float COB_WIDTH = 1.0f;
         static constexpr float COB_HEIGHT = 0.2f;
-        static constexpr float COB_INTERAL = 3.0f;
+        static constexpr float COB_INTERAL = 2.0f;
+
+        static constexpr float TRACK_HEIGHT = COB_INTERAL;
+        static constexpr float TRACK_WIDTH  = 0.8f;
 
     //! \group verices date
     private:
@@ -107,6 +109,7 @@ namespace kiwi::widget {
         QOpenGLBuffer _cobIndicesVbo {QOpenGLBuffer::IndexBuffer};
         QOpenGLBuffer _cobPositionsVbo {};
         QVector<QVector3D> _cobPositions {QVector3D{0, 0, 0}};
+        QScopedPointer<QOpenGLTexture> _cobTexture {nullptr};
         
         QOpenGLShaderProgram _modelShader {};
 

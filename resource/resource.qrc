@@ -5,6 +5,10 @@
         <file>shaders/model.frag</file>
         <file>shaders/model.vert</file>
     </qresource>
+    <qresource prefix="/textures">
+        <file>textures/cob.jpg</file>
+        <file>textures/channel.jpg</file>
+    </qresource>
     <qresource prefix="/images">
         <file>images/buttons/Back.png</file>
         <file>images/buttons/Close.png</file>

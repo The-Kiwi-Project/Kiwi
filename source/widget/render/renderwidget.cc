@@ -1,5 +1,7 @@
 #include "./renderwidget.h"
+#include "qopengltexture.h"
 
+#include <GL/gl.h>
 #include <hardware/interposer.hh>
 
 #include <debug/debug.hh>
@@ -44,15 +46,15 @@ namespace kiwi::widget {
     };
 
     float RenderWidget::cobVertices[] = {
-        0.0f, 0.0f, 0.0f, 
-        0.0f, 0.0f, COB_WIDTH,
-        COB_WIDTH, 0.0f, 0.0f, 
-        COB_WIDTH, 0.0f, COB_WIDTH,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, COB_WIDTH, 0.0f, 1.0f,
+        COB_WIDTH, 0.0f, 0.0f, 1.0f, 0.0f,
+        COB_WIDTH, 0.0f, COB_WIDTH, 1.0f, 1.0f,
 
-        0.0f, COB_HEIGHT, 0.0f, 
-        0.0f, COB_HEIGHT, COB_WIDTH,
-        COB_WIDTH, COB_HEIGHT, 0.0f, 
-        COB_WIDTH, COB_HEIGHT, COB_WIDTH,        
+        0.0f, COB_HEIGHT, 0.0f, 0.0f, 0.0f,
+        0.0f, COB_HEIGHT, COB_WIDTH, 0.0f, 1.0f,
+        COB_WIDTH, COB_HEIGHT, 0.0f, 1.0f, 0.0, 
+        COB_WIDTH, COB_HEIGHT, COB_WIDTH, 1.0f, 1.0f,        
     };
 
     int RenderWidget::cobIndices[] = {
@@ -85,10 +87,12 @@ namespace kiwi::widget {
     RenderWidget::RenderWidget(QWidget *parent) :
         QOpenGLWidget(parent)
     {
+        auto cob_array_height = static_cast<float>(hardware::Interposer::COB_ARRAY_HEIGHT);
+        auto cob_array_width  = static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH);
         this->_coordbias = QVector3D{
-            -1.f * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL) * static_cast<float>(hardware::Interposer::COB_ARRAY_HEIGHT) / 2.f,
+            -1.f * (COB_WIDTH * cob_array_height + COB_INTERAL * (cob_array_height - 1.f)) / 2.f,
             0.0f, 
-            -1.f * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL) * static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH) / 2.f,
+            -1.f * (COB_WIDTH * cob_array_width + COB_INTERAL * (cob_array_width - 1.f)) / 2.f,
         };
 
         // Build cob    !!Coord (y, z, x)!!
@@ -113,6 +117,12 @@ namespace kiwi::widget {
 
         this->_axisVao.destroy();
         this->_axisVbo.destroy();
+
+        this->_cobVao.destroy();
+        this->_cobVbo.destroy();
+        this->_cobIndicesVbo.destroy();
+        this->_cobPositionsVbo.destroy();
+        this->_cobTexture->destroy();
 
         this->doneCurrent();
     }
@@ -162,16 +172,25 @@ namespace kiwi::widget {
         this->_cobIndicesVbo.bind();
         this->_cobIndicesVbo.allocate(RenderWidget::cobIndices, sizeof(RenderWidget::cobIndices));
         this->_modelShader.bind();
-        this->_modelShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
+        this->_modelShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 5 * sizeof(float));
+        this->_modelShader.setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
         this->_modelShader.enableAttributeArray(0);
+        this->_modelShader.enableAttributeArray(1);
+
+        // textures
+        this->_cobTexture.reset(new QOpenGLTexture {QImage(":/textures/textures/cob.jpg")});
+        this->_cobTexture->setWrapMode(QOpenGLTexture::Repeat);
+        this->_cobTexture->setMinificationFilter(QOpenGLTexture::Linear);
+        this->_cobTexture->setMagnificationFilter(QOpenGLTexture::Linear);
+        this->_cobTexture->bind(0);
 
         // inst
         this->_cobPositionsVbo.bind();
         this->_cobPositionsVbo.allocate(this->_cobPositions.data(), sizeof(QVector3D) * this->_cobPositions.size());
         this->_modelShader.bind();
-        this->_modelShader.setAttributeBuffer(1, GL_FLOAT, 0, 3, sizeof(QVector3D));
-        this->_modelShader.enableAttributeArray(1);
-        this->glVertexAttribDivisor(1, 1);
+        this->_modelShader.setAttributeBuffer(2, GL_FLOAT, 0, 3, sizeof(QVector3D));
+        this->_modelShader.enableAttributeArray(2);
+        this->glVertexAttribDivisor(2, 1);
 
         QMatrix4x4 bias;
         bias.translate({0.0f, 0.0f, 0.0f});
@@ -346,10 +365,12 @@ namespace kiwi::widget {
         // render model
         this->_modelShader.bind();
         this->_cobVao.bind();
+        this->_cobTexture->bind();
 
         // this->glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
         this->glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, this->_cobPositions.size());
 
+        this->_cobTexture->release();
         this->_modelShader.release();
         this->_cobVao.release();
     }
