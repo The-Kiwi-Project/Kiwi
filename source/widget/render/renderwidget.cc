@@ -21,21 +21,18 @@ namespace kiwi::widget {
         return angle * 3.14159f / 180.0f;
     }
 
-    // Coord (a, b, c)
-    // a => y, b => z, c => x
     // Coord (y, z, x)
-
     static auto generateCubVertices(float length, float width, float height) -> QVector<float> {
         return QVector<float>{
             0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, length, 0.0f, 1.0f,
-            width, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, length, 1.0f, 0.0f,
+            width, 0.0f, 0.0f, 0.0f, 1.0f,
             width, 0.0f, length, 1.0f, 1.0f,
 
-            0.0f, height, 0.0f, 0.0f, 0.0f,
+            0.0f, height, 0.0f, 1.0f, 0.0f,
             0.0f, height, length, 0.0f, 1.0f,
-            width, height, 0.0f, 1.0f, 0.0, 
-            width, height, length, 1.0f, 1.0f,        
+            width, height, 0.0f, 1.0f, 1.0f, 
+            width, height, length, 0.0f, 0.0f,        
         };
     } 
 
@@ -69,8 +66,8 @@ namespace kiwi::widget {
         0, 1, 5,
 
         // Right
-        2, 6, 6,
-        2, 3, 6, 
+        2, 6, 7,
+        2, 3, 7, 
 
         // Front
         0, 2, 6, 
@@ -133,8 +130,8 @@ namespace kiwi::widget {
         this->_axisVbo.allocate(RenderWidget::axisVertices, sizeof(RenderWidget::axisVertices));
 
         // Set shader program 
-        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/shaders/axis.vert");
-        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/shaders/axis.frag");
+        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/shader/axis.vert");
+        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader/shader/axis.frag");
         this->_axisShader.bind();
         this->_axisShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
         this->_axisShader.enableAttributeArray(0);
@@ -155,8 +152,8 @@ namespace kiwi::widget {
         this->_cubeVAO.bind();
 
         // Shader program
-        this->_cubeShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/shaders/cube.vert");
-        this->_cubeShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/shaders/cube.frag");
+        this->_cubeShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/shader/cube.vert");
+        this->_cubeShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader/shader/cube.frag");
         this->_cubeShader.bind();
         QMatrix4x4 bias;
         bias.translate({0.0f, 0.0f, 0.0f});
@@ -170,7 +167,7 @@ namespace kiwi::widget {
         this->_cubeIndicesVBO.allocate(RenderWidget::cubeIndices, sizeof(RenderWidget::cubeIndices));
         this->_cubeIndicesVBO.release();
 
-        //////////////////// Build cob /////////////////////////////////
+        ///////////////////////// Build cob /////////////////////////
         auto positions = QVector<QVector3D>{};
         for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
             for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
@@ -179,10 +176,10 @@ namespace kiwi::widget {
                 positions.push_back(QVector3D{rowPos, 0.f, colPos});
             }
         }
-        auto cobCube = this->makeCube(COB_WIDTH, COB_WIDTH, COB_HEIGHT, qMove(positions), ":/textures/textures/cob.jpg", 0);
+        auto cobCube = this->makeCube(COB_WIDTH, COB_WIDTH, COB_HEIGHT, qMove(positions), ":/texture/texture/cob.jpg", 0);
         this->_cubes.push_back(cobCube);
 
-        /////////////////////// H Channel ///////////////////////////
+        ///////////////////////// H Channel /////////////////////////
         auto channelPos = QVector<QVector3D>{};
         
         for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
@@ -192,10 +189,10 @@ namespace kiwi::widget {
                 channelPos.push_back(QVector3D{ rowPos, 0.f, colPos });
             }
         }
-        auto channelCube = this->makeCube(CHANNEL_LENGTH, CHANNEL_WIDTH, CHANNEL_HEIGHT, qMove(channelPos), ":/textures/textures/channel.jpg", 1);
+        auto channelCube = this->makeCube(CHANNEL_LENGTH, CHANNEL_WIDTH, CHANNEL_HEIGHT, qMove(channelPos), ":/texture/texture/channel.jpg", 1);
         this->_cubes.push_back(channelCube);
 
-        ///////////////////// V Channel //////////////////////////
+        ///////////////////////// Channel /////////////////////////
         auto vchannelPos = QVector<QVector3D>{};
         for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT - 1; ++row) {
             for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
@@ -204,10 +201,10 @@ namespace kiwi::widget {
                 channelPos.push_back(QVector3D{ rowPos, 0.f, colPos });
             }
         }
-        auto vchannelCube = this->makeCube(CHANNEL_WIDTH, CHANNEL_LENGTH, CHANNEL_HEIGHT, qMove(channelPos), ":/textures/textures/channel.jpg", 2);
+        auto vchannelCube = this->makeCube(CHANNEL_WIDTH, CHANNEL_LENGTH, CHANNEL_HEIGHT, qMove(channelPos), ":/texture/texture/channel.jpg", 2);
         this->_cubes.push_back(vchannelCube);
 
-        //////////////////// TOB /////////////////////////
+        ///////////////////////// TOB /////////////////////////
         auto tobPos = QVector<QVector3D>{};
         for (auto& [_, coord] : hardware::Interposer::TOB_COORD_MAP) {
             auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOB_WIDTH) / 2.f;
@@ -215,7 +212,7 @@ namespace kiwi::widget {
             tobPos.push_back(QVector3D{rowPos, 0.f, colPos});
         }
 
-        auto tobCube = this->makeCube(TOB_WIDTH, TOB_WIDTH, TOB_HEIGHT, qMove(tobPos), ":/textures/textures/tob.jpg", 3);
+        auto tobCube = this->makeCube(TOB_WIDTH, TOB_WIDTH, TOB_HEIGHT, qMove(tobPos), ":/texture/texture/tob.jpg", 3);
         this->_cubes.push_back(tobCube);
 
         this->_cubeVAO.release();

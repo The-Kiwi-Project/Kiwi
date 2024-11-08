@@ -21,7 +21,6 @@ target("kiwi")
     add_includedirs("source", "source/global")
     add_files("source/**.cc", "source/widget/**.h", "resource/resource.qrc")
     add_rules("qt.widgetapp", "qt.opengl")
-    add_frameworks("QtOpenGL")
 
 target("cobmap")
     set_kind("binary")

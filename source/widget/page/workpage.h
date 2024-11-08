@@ -30,7 +30,7 @@ namespace kiwi::widget {
     //! \group override the pure virtual function for PageWidget
     private:
         virtual QString pageIcon() const override
-        { return ":/images/images/labels/work.png"; }
+        { return ":/image/image/icon/work.png"; }
         virtual QString pageText() const override
         { return "Work"; }
     };
