@@ -1,9 +1,5 @@
 #include "./renderwidget.h"
-#include "qopengltexture.h"
-
-#include <GL/gl.h>
 #include <hardware/interposer.hh>
-
 #include <debug/debug.hh>
 
 #include <QVector>
@@ -29,6 +25,20 @@ namespace kiwi::widget {
     // a => y, b => z, c => x
     // Coord (y, z, x)
 
+    static auto generateCubVertices(float length, float width, float height) -> QVector<float> {
+        return QVector<float>{
+            0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, length, 0.0f, 1.0f,
+            width, 0.0f, 0.0f, 1.0f, 0.0f,
+            width, 0.0f, length, 1.0f, 1.0f,
+
+            0.0f, height, 0.0f, 0.0f, 0.0f,
+            0.0f, height, length, 0.0f, 1.0f,
+            width, height, 0.0f, 1.0f, 0.0, 
+            width, height, length, 1.0f, 1.0f,        
+        };
+    } 
+
     //! \brief verices date
     float RenderWidget::axisVertices[] = {
         // y axis
@@ -45,19 +55,7 @@ namespace kiwi::widget {
         -ARROWHEAD_SIZE, AXIS_LENGTH - ARROWHEAD_SIZE, 0.0f, 0.0f, AXIS_LENGTH, 0.0f,
     };
 
-    float RenderWidget::cobVertices[] = {
-        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, COB_WIDTH, 0.0f, 1.0f,
-        COB_WIDTH, 0.0f, 0.0f, 1.0f, 0.0f,
-        COB_WIDTH, 0.0f, COB_WIDTH, 1.0f, 1.0f,
-
-        0.0f, COB_HEIGHT, 0.0f, 0.0f, 0.0f,
-        0.0f, COB_HEIGHT, COB_WIDTH, 0.0f, 1.0f,
-        COB_WIDTH, COB_HEIGHT, 0.0f, 1.0f, 0.0, 
-        COB_WIDTH, COB_HEIGHT, COB_WIDTH, 1.0f, 1.0f,        
-    };
-
-    int RenderWidget::cobIndices[] = {
+    int RenderWidget::cubeIndices[] = {
         // Bottom
         0, 1, 3,
         0, 2, 3,
@@ -95,17 +93,6 @@ namespace kiwi::widget {
             -1.f * (COB_WIDTH * cob_array_width + COB_INTERAL * (cob_array_width - 1.f)) / 2.f,
         };
 
-        // Build cob    !!Coord (y, z, x)!!
-        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
-            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
-                auto rowPos = row * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
-                auto colPos = col * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
-                this->_cobPositions.push_back(QVector3D{
-                    rowPos, 0.f, colPos
-                });
-            }
-        }
-
         this->setMouseTracking(true);
         this->setFocusPolicy(Qt::StrongFocus);
         this->setFocus();
@@ -117,12 +104,20 @@ namespace kiwi::widget {
 
         this->_axisVao.destroy();
         this->_axisVbo.destroy();
+        
+        for (auto cube : this->_cubes) {
+            cube->positionsVBO.destroy();
+            cube->verticesVBO.destroy();
+            cube->texture->destroy();
+        }
 
-        this->_cobVao.destroy();
-        this->_cobVbo.destroy();
-        this->_cobIndicesVbo.destroy();
-        this->_cobPositionsVbo.destroy();
-        this->_cobTexture->destroy();
+        this->_cubeIndicesVBO.destroy();
+        this->_cubeVAO.destroy();
+
+        // ... QScopePointer can't move..... shit!
+        for (auto cube : this->_cubes) {
+            delete cube;
+        }
 
         this->doneCurrent();
     }
@@ -130,79 +125,129 @@ namespace kiwi::widget {
     //! \brief iniatil axis object
     void RenderWidget::initAxis(const QMatrix4x4& view, const QMatrix4x4& projection) {
         this->_axisVao.create();
-        this->_axisVbo.create();
-
-        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/shaders/axis.vert");
-        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/shaders/axis.frag");
-
         this->_axisVao.bind();
-
+        
+        // Set axis vertices buffer
+        this->_axisVbo.create();
         this->_axisVbo.bind();
         this->_axisVbo.allocate(RenderWidget::axisVertices, sizeof(RenderWidget::axisVertices));
 
+        // Set shader program 
+        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/shaders/axis.vert");
+        this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/shaders/axis.frag");
         this->_axisShader.bind();
         this->_axisShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
         this->_axisShader.enableAttributeArray(0);
+        this->_axisVbo.release();
 
         QMatrix4x4 bias;
         bias.translate({0.0f, Z_BIAS, 0.0f});
         this->_axisShader.setUniformValue("bias", bias);
         this->_axisShader.setUniformValue("view", view);
         this->_axisShader.setUniformValue("projection", projection);
-
         this->_axisShader.release();
-        this->_axisVbo.release();
+
         this->_axisVao.release();
     }
 
-    void RenderWidget::initCOB(const QMatrix4x4& view, const QMatrix4x4& projection) {
-        this->_cobVao.create();
-        this->_cobVbo.create();
-        this->_cobIndicesVbo.create();
-        this->_cobPositionsVbo.create();
+    void RenderWidget::initCube(const QMatrix4x4& view, const QMatrix4x4& projection) {
+        this->_cubeVAO.create();
+        this->_cubeVAO.bind();
 
-        this->_modelShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/shaders/model.vert");
-        this->_modelShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/shaders/model.frag");
-
-        this->_cobVao.bind();
-
-        // ver
-        this->_cobVbo.bind();
-        this->_cobVbo.allocate(RenderWidget::cobVertices, sizeof(RenderWidget::cobVertices));
-        this->_cobIndicesVbo.bind();
-        this->_cobIndicesVbo.allocate(RenderWidget::cobIndices, sizeof(RenderWidget::cobIndices));
-        this->_modelShader.bind();
-        this->_modelShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 5 * sizeof(float));
-        this->_modelShader.setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
-        this->_modelShader.enableAttributeArray(0);
-        this->_modelShader.enableAttributeArray(1);
-
-        // textures
-        this->_cobTexture.reset(new QOpenGLTexture {QImage(":/textures/textures/cob.jpg")});
-        this->_cobTexture->setWrapMode(QOpenGLTexture::Repeat);
-        this->_cobTexture->setMinificationFilter(QOpenGLTexture::Linear);
-        this->_cobTexture->setMagnificationFilter(QOpenGLTexture::Linear);
-        this->_cobTexture->bind(0);
-
-        // inst
-        this->_cobPositionsVbo.bind();
-        this->_cobPositionsVbo.allocate(this->_cobPositions.data(), sizeof(QVector3D) * this->_cobPositions.size());
-        this->_modelShader.bind();
-        this->_modelShader.setAttributeBuffer(2, GL_FLOAT, 0, 3, sizeof(QVector3D));
-        this->_modelShader.enableAttributeArray(2);
-        this->glVertexAttribDivisor(2, 1);
-
+        // Shader program
+        this->_cubeShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/shaders/cube.vert");
+        this->_cubeShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/shaders/cube.frag");
+        this->_cubeShader.bind();
         QMatrix4x4 bias;
         bias.translate({0.0f, 0.0f, 0.0f});
-        this->_modelShader.setUniformValue("view", view);
-        this->_modelShader.setUniformValue("bias", bias);
-        this->_modelShader.setUniformValue("projection", projection);
+        this->_cubeShader.setUniformValue("view", view);
+        this->_cubeShader.setUniformValue("bias", bias);
+        this->_cubeShader.setUniformValue("projection", projection);
         
-        this->_cobVao.release();
-        this->_cobIndicesVbo.release();
-        this->_cobPositionsVbo.release();
-        this->_cobVao.release();
-        this->_modelShader.release();
+        // Indices VBO
+        this->_cubeIndicesVBO.create();
+        this->_cubeIndicesVBO.bind();
+        this->_cubeIndicesVBO.allocate(RenderWidget::cubeIndices, sizeof(RenderWidget::cubeIndices));
+        this->_cubeIndicesVBO.release();
+
+        //////////////////// Build cob /////////////////////////////////
+        auto positions = QVector<QVector3D>{};
+        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
+            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
+                auto rowPos = row * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
+                auto colPos = col * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
+                positions.push_back(QVector3D{rowPos, 0.f, colPos});
+            }
+        }
+        auto cobCube = this->makeCube(COB_WIDTH, COB_WIDTH, COB_HEIGHT, qMove(positions), ":/textures/textures/cob.jpg", 0);
+        this->_cubes.push_back(cobCube);
+
+        /////////////////////// H Channel ///////////////////////////
+        auto channelPos = QVector<QVector3D>{};
+        
+        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
+            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH - 1; ++col) {
+                auto rowPos = row * (COB_WIDTH + COB_INTERAL) + (COB_WIDTH - CHANNEL_WIDTH) / 2.f;
+                auto colPos = col * (COB_WIDTH + COB_INTERAL) + COB_WIDTH;
+                channelPos.push_back(QVector3D{ rowPos, 0.f, colPos });
+            }
+        }
+        auto channelCube = this->makeCube(CHANNEL_LENGTH, CHANNEL_WIDTH, CHANNEL_HEIGHT, qMove(channelPos), ":/textures/textures/channel.jpg", 1);
+        this->_cubes.push_back(channelCube);
+
+        ///////////////////// V Channel //////////////////////////
+        auto vchannelPos = QVector<QVector3D>{};
+        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT - 1; ++row) {
+            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
+                auto rowPos = row * (COB_WIDTH + COB_INTERAL) + COB_WIDTH;
+                auto colPos = col * (COB_WIDTH + COB_INTERAL) + (COB_WIDTH - CHANNEL_WIDTH) / 2.f;
+                channelPos.push_back(QVector3D{ rowPos, 0.f, colPos });
+            }
+        }
+        auto vchannelCube = this->makeCube(CHANNEL_WIDTH, CHANNEL_LENGTH, CHANNEL_HEIGHT, qMove(channelPos), ":/textures/textures/channel.jpg", 2);
+        this->_cubes.push_back(vchannelCube);
+
+        //////////////////// TOB /////////////////////////
+        auto tobPos = QVector<QVector3D>{};
+        for (auto& [_, coord] : hardware::Interposer::TOB_COORD_MAP) {
+            auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOB_WIDTH) / 2.f;
+            auto colPos = coord.col * (COB_WIDTH + COB_INTERAL) - (TOB_WIDTH - COB_WIDTH) / 2.f;
+            tobPos.push_back(QVector3D{rowPos, 0.f, colPos});
+        }
+
+        auto tobCube = this->makeCube(TOB_WIDTH, TOB_WIDTH, TOB_HEIGHT, qMove(tobPos), ":/textures/textures/tob.jpg", 3);
+        this->_cubes.push_back(tobCube);
+
+        this->_cubeVAO.release();
+    }
+
+    auto RenderWidget::makeCube(
+        float length, float width, float height,
+        QVector<QVector3D> positions,
+        const QString& texturePath, unsigned int textureid
+    ) -> Cube* {
+        this->_cubeVAO.bind();
+
+        auto cube = new Cube {};
+        cube->vertices = generateCubVertices(length, width, height);
+
+        cube->position = qMove(positions);
+        cube->texture.reset(new QOpenGLTexture {QImage(texturePath)});
+        cube->texture->setWrapMode(QOpenGLTexture::Repeat);
+        cube->texture->setMinificationFilter(QOpenGLTexture::Linear);
+        cube->texture->setMagnificationFilter(QOpenGLTexture::Linear);
+        cube->texture->generateMipMaps();
+        cube->texture->bind(textureid);
+        cube->textureid = textureid;
+
+        cube->verticesVBO.create();
+        cube->verticesVBO.bind();
+        cube->verticesVBO.allocate(cube->vertices.data(), cube->vertices.size() * sizeof(float));
+        cube->positionsVBO.create();
+        cube->positionsVBO.bind();
+        cube->positionsVBO.allocate(cube->position.data(), cube->position.size() * sizeof(QVector3D));
+
+        return cube;
     }
 
     //! \brief reset uniform view matrix in shaders
@@ -215,11 +260,10 @@ namespace kiwi::widget {
         this->_axisShader.setUniformValue("view", view);
         this->_axisShader.release();
 
-        this->_modelShader.bind();
-        this->_modelShader.setUniformValue("view", view);
-        this->_modelShader.release();
+        this->_cubeShader.bind();
+        this->_cubeShader.setUniformValue("view", view);
+        this->_cubeShader.release();
 
-        this->update();
         this->doneCurrent();
     }
 
@@ -230,11 +274,10 @@ namespace kiwi::widget {
         QMatrix4x4 bias;
         bias.translate(this->_coordbias);
 
-        this->_modelShader.bind();
-        this->_modelShader.setUniformValue("bias", bias);
-        this->_modelShader.release();
+        this->_cubeShader.bind();
+        this->_cubeShader.setUniformValue("bias", bias);
+        this->_cubeShader.release();
 
-        this->update();
         this->doneCurrent();
     }
 
@@ -244,16 +287,16 @@ namespace kiwi::widget {
         this->_posPitch = RenderWidget::DEFAULT_PITCH_VALUE;
         this->_posRadius = RenderWidget::DEFAULT_RADIUS_VALUE;
 
-        // this->_coordbias = RenderWidget::DEFAULT_MODEL_BIAS;
-
         this->updateViewMatrix();
         this->updateCoordBias();
+
+        this->reRender();
     }
 
     void RenderWidget::wheelEvent(QWheelEvent *event) {
         this->_posRadius += (event->angleDelta().y() / 100.0);
         this->updateViewMatrix();
-        this->parentWidget()->update();
+        this->reRender();
     }
 
     void RenderWidget::mousePressEvent(QMouseEvent *event) {
@@ -292,13 +335,13 @@ namespace kiwi::widget {
             this->_coordbias += QVector3D(deltaY / 30.0,
                                         0.0f,
                                         deltaX / 30.0);
-            // No move axis
+
             this->updateCoordBias();
         }
 
         this->_lastMousePos = event->pos();
 
-        parentWidget()->update();
+        this->reRender();
     }
 
     void RenderWidget::dragEnterEvent(QDragEnterEvent *event) {
@@ -317,11 +360,9 @@ namespace kiwi::widget {
     }
 
     void RenderWidget::initializeGL() {
-        // initial OpenGL function pointer
-        initializeOpenGLFunctions();
+        this->initializeOpenGLFunctions();
 
-        // enbale depth test
-        glEnable(GL_DEPTH_TEST);
+        this->glEnable(GL_DEPTH_TEST);
 
         // calculate uniform matrix
         QMatrix4x4 view = this->getViewMatrix();
@@ -330,14 +371,14 @@ namespace kiwi::widget {
 
         // create axis opengl object
         this->initAxis(view, projection);
-        this->initCOB(view, projection);
+        this->initCube(view, projection);
 
         this->updateViewMatrix();
         this->updateCoordBias();
     }
 
     void RenderWidget::resizeGL(int w, int h) {
-        glViewport(0, 0, w, h);
+        this->glViewport(0, 0, w, h);
     }
 
     void RenderWidget::paintGL() {
@@ -345,10 +386,14 @@ namespace kiwi::widget {
         this->glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         this->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // render axis
-        this->_axisVao.bind();
-        this->_axisShader.bind();
+        this->renderAxis();
+        this->renderCubes();
+    }
 
+    void RenderWidget::renderAxis() {
+        this->_axisVao.bind();
+
+        this->_axisShader.bind();
         // y axis
         this->_axisShader.setUniformValue("color", QVector3D(1.0f, 0.0f, 0.0f));
         this->glDrawArrays(GL_LINES, 0, 6);
@@ -358,21 +403,52 @@ namespace kiwi::widget {
         // z axis
         this->_axisShader.setUniformValue("color", QVector3D(0.0f, 0.0f, 1.0f));
         this->glDrawArrays(GL_LINES, 12, 6);
+        this->_axisShader.release();
 
         this->_axisVao.release();
-        this->_axisShader.release();
-    
-        // render model
-        this->_modelShader.bind();
-        this->_cobVao.bind();
-        this->_cobTexture->bind();
+    }
 
-        // this->glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        this->glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, this->_cobPositions.size());
+    void RenderWidget::renderCubes() {
+        for (auto& cube : this->_cubes) {
+            this->renderCube(cube);
+        }
+    }
 
-        this->_cobTexture->release();
-        this->_modelShader.release();
-        this->_cobVao.release();
+    void RenderWidget::renderCube(Cube* cube) {
+        this->_cubeVAO.bind();
+        this->_cubeShader.bind();
+
+        cube->verticesVBO.bind();
+        this->_cubeShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 5 * sizeof(float));
+        this->_cubeShader.setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
+        cube->verticesVBO.release();
+        
+        cube->positionsVBO.bind();
+        this->_cubeShader.setAttributeBuffer(2, GL_FLOAT, 0, 3, sizeof(QVector3D));
+        cube->positionsVBO.release();
+
+        this->_cubeShader.enableAttributeArray(0);
+        this->_cubeShader.enableAttributeArray(1);
+        this->_cubeShader.enableAttributeArray(2);
+        this->glVertexAttribDivisor(2, 1);
+
+        this->_cubeIndicesVBO.bind();
+        cube->texture->bind();
+        this->_cubeShader.setUniformValue("tex", cube->textureid);
+        this->glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, cube->position.size());        
+
+        this->_cubeShader.disableAttributeArray(0);
+        this->_cubeShader.disableAttributeArray(1);
+        this->_cubeShader.disableAttributeArray(2);
+
+        cube->verticesVBO.release();
+        cube->positionsVBO.release();
+        this->_cubeShader.release();
+        this->_cubeVAO.release();
+    }
+
+    void RenderWidget::reRender() {
+        this->parentWidget()->update();
     }
 
     QVector3D RenderWidget::getViewPos() const {

@@ -8,6 +8,7 @@
 
 #include "./node/track.hh"
 #include "./node/bump.hh"
+#include "hardware/coord.hh"
 #include <std/integer.hh>
 
 #include <std/utility.hh>
@@ -25,6 +26,8 @@ namespace kiwi::hardware {
             TOB_ARRAY_WIDTH   = 4,
             TOB_ARRAY_HEIGHT  = 4,
         };
+
+        static const std::HashMap<Coord, Coord> TOB_COORD_MAP;
 
     public:
         Interposer();
@@ -65,13 +68,8 @@ namespace kiwi::hardware {
     private:
         // Maybe, just array...
         std::HashMap<COBCoord, COB> _cobs;
-        
         std::HashMap<TOBCoord, TOB> _tobs;
-
         std::HashMap<TrackCoord, Track> _tracks;
-
-        // Channel coord
-        std::HashMap<TOBCoord, std::Tuple<std::i64, std::i64, TrackDirection>> _tob_postion_map;
     };
 
 }
