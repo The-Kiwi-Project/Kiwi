@@ -1,37 +1,40 @@
-from bus_routing_by_xl import *
+from FPGA.bus_routing_FPGA import *
+from FPGA.FPGA import FPGA, Coordinate, Direction
 import random
 import logging
 import os
+import time
 
 
-def test_bus_routing(outputdir):
+def test_bus_routing_fpga(outputdir):
     try:
-        # initialize
-        experiment = "Experiment_2"
+        experiment = "Experiment_1"
         experiment_dir = f"{outputdir}/{experiment}"
-        maze_size = 50
-        nets = [[(1, 5), (10, 9)], [(2, 7), (40, 25)], [(3, 8), (20, 30)], [(4, 6), (30, 40)]]
-        maze = np.zeros((maze_size, maze_size))
+        rows = 9
+        cols = 9
+        nets = [(Coordinate(0, 0, Direction.LEFT, 0), Coordinate(4, 4, Direction.LEFT, 0)),
+                (Coordinate(2, 2, Direction.LEFT, 0), Coordinate(5, 5, Direction.LEFT, 0)),]
+        fpga = FPGA(rows, cols)
 
         os.makedirs(experiment_dir, exist_ok=True)
         logger = setup_logger(f"{experiment_dir}/bus_routing.log")
+        fpga.init_logger(logger)
         logger.info(f"start bus routing experiment {experiment}")
         logger.info("initializing done")
-        visualize(maze, "initial maze", nets, experiment_dir)
 
         # route
         logger.info("start bus routing")
-        paths, maze = bus_routing(maze, nets, logger, experiment_dir)
-        logger.info(f"bus nets {nets} routing done successfully, on {maze_size}*{maze_size} maze")
+        start_time = time.time()
+        paths, fpga = bus_routing(fpga, nets, logger, experiment_dir)
+        end_time = time.time()
+        logger.info(f"bus nets {[(net[0].coord, net[1].coord) for net in nets]} routing done successfully, on {rows}*{cols} fpga")
+        logger.info(f"routing time: {end_time - start_time} seconds")
 
         # visualize result
-        visualize(maze, "final maze", nets, experiment_dir)
-        collect_result(maze, nets, logger)
+        fpga.collect_results(nets, paths)
     
     except (ValueError) as e:
-        logger.error(f"Error occurred in function bus_routing: {e}")
-    
-    
+        logger.error(f"Error occurred in function test_bus_routing_fpga: {e}")
 
 
 def setup_logger(logfile):
@@ -55,10 +58,10 @@ def setup_logger(logfile):
 
 
 if __name__ == '__main__':
-    outputdir = "./algorithm/bus_routing_by_xl/expe_results"
+    outputdir = "./algorithm/bus_routing/fpga/expe_results"
 
     try:
-        test_bus_routing(outputdir)
+        test_bus_routing_fpga(outputdir)
 
     except (FileNotFoundError, PermissionError) as e:
         print(f"Failed to open file in dir {outputdir}: {e}")

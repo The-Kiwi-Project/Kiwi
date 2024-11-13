@@ -8,6 +8,9 @@ class Node:
         self.parent = parent
         self.cost = cost
         self.children = []
+    
+    def __lt__(self, other):
+        return self.cost < other.cost
 
     def add_child(self, child):
         '''child is a Node'''
@@ -33,7 +36,7 @@ class Tree:
         self.root = root
         self.leaves = [self.root]
     
-    def update_leaves(self):
+    def update_leaves(self) -> list:
         queue = [self.root]
         leaves = []
         while queue:
@@ -43,8 +46,7 @@ class Tree:
             else:
                 queue.extend(node.children)
         self.leaves = leaves
-                
-
+        return leaves
     
     def is_a_predecessor(self, current_node, to_be_checked) -> bool:
         '''check if to_be_checked is one of the predecessors of current_node'''
