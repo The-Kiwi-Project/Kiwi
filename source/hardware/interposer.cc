@@ -9,17 +9,32 @@
 #include <std/integer.hh>
 #include "hardware/cob/cobcoord.hh"
 #include "hardware/coord.hh"
+#include "hardware/node/trackcoord.hh"
 #include "hardware/tob/tobcoord.hh"
 
 #include <debug/debug.hh>
 
 namespace kiwi::hardware {
 
+
+    static auto build_tob_coord_map() -> std::HashMap<Coord, Coord> {
+        auto map = std::HashMap<Coord, Coord>{};
+        for (std::i64 row = 0; row < Interposer::TOB_ARRAY_HEIGHT; ++row) {
+            for (std::i64 col = 0; col < Interposer::TOB_ARRAY_WIDTH; ++col) {
+                auto coord = TOBCoord{row, col};
+                auto coord_in_interposer = Coord{1 + 2 * row, 3 * col};
+                map.emplace(coord, coord_in_interposer);
+            }
+        }
+        return map;
+    }
+
+    const std::HashMap<Coord, Coord> Interposer::TOB_COORD_MAP = build_tob_coord_map();
+
     Interposer::Interposer() :
         _cobs{},
         _tobs{},
-        _tracks{},
-        _tob_postion_map{}
+        _tracks{}
     {
         for (std::i64 row = 0; row < Interposer::COB_ARRAY_HEIGHT; ++row) {
             for (std::i64 col = 0; col < Interposer::COB_ARRAY_WIDTH; ++col) {
@@ -30,20 +45,9 @@ namespace kiwi::hardware {
 
         for (std::i64 row = 0; row < Interposer::TOB_ARRAY_HEIGHT; ++row) {
             for (std::i64 col = 0; col < Interposer::TOB_ARRAY_WIDTH; ++col) {
-                
                 auto coord = TOBCoord{row, col};
-                auto coord_in_interposer = Coord{1 + 2 * row, 3 * col};
-
+                auto coord_in_interposer = Interposer::TOB_COORD_MAP.at(coord);
                 this->_tobs.emplace(coord, TOB{coord, coord_in_interposer});
-
-                this->_tob_postion_map.emplace(
-                    coord, 
-                    std::Tuple<std::i64, std::i64, TrackDirection> {
-                        coord_in_interposer.row,
-                        coord_in_interposer.col,
-                        TrackDirection::Vertical
-                    }
-                );
             }
         }
     }
@@ -53,8 +57,8 @@ namespace kiwi::hardware {
 
         auto result = std::HashMap<Track*, TOBConnector>{};
         for (auto& connector : tob->available_connectors(bump->index(), dir)) {
-            auto [r, c, d] = this->_tob_postion_map.at(tob->coord());
-            result.emplace(this->get_track(r, c, d, connector.track_index()).value(), connector);
+            auto& coord = Interposer::TOB_COORD_MAP.at(tob->coord());
+            result.emplace(this->get_track(coord.row, coord.col, TrackDirection::Vertical, connector.track_index()).value(), connector);
         }
         return result;
     }  

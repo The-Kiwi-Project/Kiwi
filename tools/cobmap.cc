@@ -1,4 +1,4 @@
-#include "debug/debug.hh"
+#include <debug/debug.hh>
 #include <hardware/cob/cobdirection.hh>
 #include <hardware/cob/cob.hh>
 #include <std/integer.hh>
