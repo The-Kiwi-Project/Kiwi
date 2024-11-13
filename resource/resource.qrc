@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/shader">
+        <file>shader/axis.frag</file>
+        <file>shader/axis.vert</file>
+        <file>shader/cube.frag</file>
+        <file>shader/cube.vert</file>
+    </qresource>
+    <qresource prefix="/texture">
+        <file>texture/cob.jpg</file>
+        <file>texture/channel.jpg</file>
+        <file>texture/tob.jpg</file>
+    </qresource>
+    <qresource prefix="/image">
+        <file>image/icon/list.png</file>
+        <file>image/icon/about.png</file>
+        <file>image/icon/print.png</file>
+        <file>image/icon/setting.png</file>
+        <file>image/icon/slicing.png</file>
+        <file>image/icon/welcome.png</file>
+        <file>image/icon/work.png</file>
+        <file>image/icon/device.png</file>
+        <file>image/icon/control.png</file>
+        <file>image/icon/load.png</file>
+    </qresource>
+    <qresource prefix="/qss">
+        <file>qss/button.qss</file>
+        <file>qss/switch.qss</file>
+    </qresource>
+</RCC>

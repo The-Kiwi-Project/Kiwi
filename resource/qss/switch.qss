@@ -1,0 +1,37 @@
+QSlider
+{
+    height: 40px;
+    width: 80px;
+    border-radius: 15px;
+}
+QSlider::groove:horizontal
+{
+    height: 30px;
+    width: 60px;
+    border-radius: 15px;
+}
+QSlider::handle:horizontal
+{
+    height:32px; 
+    width:32px;
+    margin-bottom:-1px; 
+    margin-top:-1px; 
+    background:#bdbbbb; 
+    border-radius:16px;
+}
+QSlider::sub-page:horizontal
+{
+    background:#4ada4a;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+QSlider::add-page:horizontal
+{
+    background:#504f4f;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 00px;
+}
