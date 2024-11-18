@@ -17,6 +17,7 @@ rule("qt.opengl")
 target("kiwi")
     set_kind("binary")
     set_targetdir("./output")
+    set_default(true)
     add_packages("xlnt")
     add_includedirs("source", "source/global")
     add_files("source/**.cc", "source/widget/**.h", "resource/resource.qrc")
@@ -38,6 +39,22 @@ target("test")
     add_packages("xlnt")
     add_includedirs("source", "source/global", "test")
     add_files("test/**.cc")
+    add_files(
+        "source/algo/**.cc",
+        "source/circuit/**.cc",
+        "source/global/**.cc",
+        "source/hardware/**.cc",
+        "source/parse/**.cc",
+        "source/serde/**.cc"
+    )
+
+target("test_sync")
+    set_kind("binary")
+    set_targetdir("./output")
+    set_default(false)
+    add_packages("xlnt")
+    add_includedirs("source", "source/global", "test_sync")
+    add_files("test_sync/**.cc")
     add_files(
         "source/algo/**.cc",
         "source/circuit/**.cc",

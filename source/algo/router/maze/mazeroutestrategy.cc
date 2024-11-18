@@ -12,6 +12,7 @@
 #include <std/collection.hh>
 #include <std/utility.hh>
 #include <debug/debug.hh>
+#include <algorithm>
 
 #include <cassert>
 
@@ -232,20 +233,216 @@ namespace kiwi::algo {
 
     auto MazeRouteStrategy::route_sync_net(hardware::Interposer* ptr_interposer, circuit::SyncNet* ptr_sync_net) const -> void
     {
-        debug::debug("Maze routing for sync net");
+        try{
+            if (ptr_sync_net->btbnets().size() > 0){
+                route_bump_to_bump_sync_net(ptr_interposer, ptr_sync_net->btbnets());
+            }
+            if (ptr_sync_net->ttbnets().size() > 0){
+                route_track_to_bump_sync_net(ptr_interposer, ptr_sync_net->ttbnets());
+            }
+            if (ptr_sync_net->bttnets().size() > 0){
+                route_bump_to_track_sync_net(ptr_interposer, ptr_sync_net->bttnets());
+            }
+        }
+        catch (const std::exception& e){
+            throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
+        }
     }
 
-    // auto MazeRouteStrategy::route_bump_to_bump_sync_net(hardware::Interposer* interposer, circuit::BumpToBumpSyncNet* sync_net)  const -> void {
+    auto MazeRouteStrategy::route_bump_to_bump_sync_net(hardware::Interposer* interposer, std::Vector<std::Box<circuit::BumpToBumpNet>>& sync_net) const -> void {
+        try{
+            debug::debug("Maze routing for bump to bump synchronized net");
 
-    // }
+            // global variables for this function
+            std::Vector<algo::RerouteStrategy::routed_path> paths {};
+            std::Vector<std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>> all_possible_end_tracks {};
+            std::Vector<std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>> all_possible_begin_tracks {};
+            std::Vector<hardware::Bump*> begin_bumps;
+            std::Vector<hardware::Bump*> end_bumps;
+            
+            // temprary variables for the for loop below
+            std::HashSet<hardware::Track*> visited_begins_tracks {};
+            std::HashSet<hardware::Track*> visited_ends_tracks {};
+            for (auto& uptr_net: sync_net){
+                auto net = uptr_net.get();
 
-    // auto MazeRouteStrategy::route_track_to_bump_sync_net(hardware::Interposer* interposer, circuit::TrackToBumpSyncNet* net) const -> void {
+                // collect bumps
+                auto begin_bump = net->begin_bump();
+                auto end_bump = net->end_bump();
+                debug::check(begin_bump->tob() != end_bump->tob(), "Route bump in the same tob");
+                begin_bumps.emplace_back(begin_bump);
+                end_bumps.emplace_back(end_bump);
+                
+                // collect possible tracks
+                //* Notice: possible begin_tracks & end_tracks may repeat among nets
+                auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
+                auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
+                for (auto t = begin_tracks.begin(); t != begin_tracks.end(); ++t){
+                    if (visited_begins_tracks.contains((*t).first)){
+                        begin_tracks.erase(t);
+                    }
+                }
+                for (auto t = end_tracks.begin(); t != end_tracks.end(); ++t){
+                    if (visited_ends_tracks.contains((*t).first)){
+                        end_tracks.erase(t);
+                    }
+                }
+                all_possible_begin_tracks.emplace_back(begin_tracks);
+                all_possible_end_tracks.emplace_back(end_tracks);
 
-    // }
+                // first round of routing
+                auto re_path = this->search_path(interposer, track_map_to_track_set(begin_tracks), track_map_to_track_set(end_tracks));
+                RerouteStrategy::routed_path path {};
+                for (auto re_it = re_path.rbegin(); re_it != re_path.rend(); ++re_it){
+                    path.emplace_back(*re_it);
+                }
+                paths.emplace_back(path);
 
-    // auto MazeRouteStrategy::route_bump_to_track_sync_net(hardware::Interposer* interposer, circuit::BumpToTrackSyncNet* net) const -> void {
+                // collect tracks already been visited
+                visited_begins_tracks.insert(std::get<0>(path.front()));
+                visited_ends_tracks.insert(std::get<0>(path.back()));
+            }
+            assert(paths.size() == begin_bumps.size() &&\
+                   paths.size() == all_possible_end_tracks.size() &&\
+                   paths.size() == end_bumps.size());
+            
+            // reroute
+            std::Vector<std::HashSet<hardware::Track*>> end_track_sets {};
+            for (auto& end_tracks: all_possible_end_tracks)
+            {
+                end_track_sets.emplace_back(track_map_to_track_set(end_tracks));
+            }
+            sync_reroute(interposer, end_track_sets, paths);
 
-    // }
+            // connect
+            for (std::usize path_index = 0; path_index < paths.size(); ++path_index){
+                auto& path {paths[path_index]};
+                sync_connect_path(path);
+                sync_connect_tail(end_bumps[path_index], all_possible_end_tracks[path_index], path);
+                sync_connect_head(begin_bumps[path_index], all_possible_begin_tracks[path_index], path);
+            }
+        }
+        catch(std::exception& e)
+        {
+            throw std::runtime_error(std::format("MazeRouteStrategy::route_bump_to_bump_sync_net: {}", std::String(e.what())));
+        }
+    }
+
+    auto MazeRouteStrategy::route_track_to_bump_sync_net(hardware::Interposer* interposer, std::Vector<std::Box<circuit::TrackToBumpNet>>& sync_net) const -> void {
+        try{
+            debug::debug("Maze routing for bump to bump synchronized net");
+
+            // global variables for this function
+            std::Vector<algo::RerouteStrategy::routed_path> paths {};
+            std::Vector<std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>> all_possible_end_tracks {};
+            std::Vector<hardware::Bump*> end_bumps {};
+            
+            // temprary variables for the for loop below
+            std::HashSet<hardware::Track*> visited_ends_tracks {};
+            for (auto& uptr_net: sync_net){
+                auto net = uptr_net.get();
+
+                auto end_bump = net->end_bump();
+                end_bumps.emplace_back(end_bump);
+
+                //* end_tracks may repeat between lines
+                auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
+                for (auto t = end_tracks.begin(); t != end_tracks.end(); ++t){
+                    if (visited_ends_tracks.contains((*t).first)){
+                        end_tracks.erase(t);
+                    }
+                }
+                all_possible_end_tracks.emplace_back(end_tracks);
+
+                auto begin_track = net->begin_track();
+                auto re_path = this->search_path(interposer, std::HashSet<hardware::Track*>{begin_track}, track_map_to_track_set(end_tracks));
+                RerouteStrategy::routed_path path {};
+                for (auto re_it = re_path.rbegin(); re_it != re_path.rend(); ++re_it){
+                    path.emplace_back(*re_it);
+                }
+                paths.emplace_back(path);
+
+                visited_ends_tracks.insert(std::get<0>(path.back()));
+            }
+            assert(paths.size() == end_bumps.size() &&\
+                   paths.size() == all_possible_end_tracks.size());
+            
+            // reroute
+            std::Vector<std::HashSet<kiwi::hardware::Track *>> end_track_sets {};
+            for (auto &end_track: all_possible_end_tracks){
+                end_track_sets.emplace_back(track_map_to_track_set(end_track));
+            }
+            sync_reroute(interposer, end_track_sets, paths);
+
+            // connect
+            for (std::usize path_index = 0; path_index < paths.size(); ++path_index){
+                auto& path {paths[path_index]};
+                sync_connect_path(path);
+                sync_connect_tail(end_bumps[path_index], all_possible_end_tracks[path_index], path);
+            }
+        }
+        catch(std::exception& e)
+        {
+            throw std::runtime_error(std::format("MazeRouteStrategy::route_bump_to_bump_sync_net: {}", std::String(e.what())));
+        }
+    }
+
+    auto MazeRouteStrategy::route_bump_to_track_sync_net(hardware::Interposer* interposer, std::Vector<std::Box<circuit::BumpToTrackNet>>& sync_net) const -> void {
+        try{
+            debug::debug("Maze routing for bump to bump synchronized net");
+
+            // global variables for this function
+            std::Vector<algo::RerouteStrategy::routed_path> paths {};
+            std::Vector<std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>> all_begin_tracks {};
+            std::Vector<std::HashSet<kiwi::hardware::Track *>> end_track_sets {};
+            std::Vector<hardware::Bump*> begin_bumps {};
+            
+            // temprary variables for the for loop below
+            std::HashSet<hardware::Track*> visited_begin_tracks {};
+            for (auto& uptr_net: sync_net){
+                auto net = uptr_net.get();
+                
+                auto begin_bump = net->begin_bump();
+                begin_bumps.emplace_back(begin_bump);
+
+                //* end_tracks may repeat between lines
+                auto begin_tracks = interposer->available_tracks_track_to_bump(begin_bump);
+                for (auto t = begin_tracks.begin(); t != begin_tracks.end(); ++t){
+                    if (visited_begin_tracks.contains((*t).first)){
+                        begin_tracks.erase(t);
+                    }
+                }
+                all_begin_tracks.emplace_back(begin_tracks);
+
+                auto end_track = net->end_track();
+                end_track_sets.emplace_back(std::HashSet<hardware::Track*>{end_track});
+                auto re_path = this->search_path(interposer, track_map_to_track_set(begin_tracks), std::HashSet<hardware::Track*>{end_track});
+                RerouteStrategy::routed_path path {};
+                for (auto re_it = re_path.rbegin(); re_it != re_path.rend(); ++re_it){
+                    path.emplace_back(*re_it);
+                }
+                paths.emplace_back(path);
+                
+                visited_begin_tracks.insert(std::get<0>(path.front()));
+            }
+            assert(paths.size() == begin_bumps.size() && paths.size() == all_begin_tracks.size());
+            
+            
+            // reroute
+            sync_reroute(interposer, end_track_sets, paths);
+
+            // connect
+            for (std::usize path_index = 0; path_index < paths.size(); ++path_index){
+                auto& path {paths[path_index]};
+                sync_connect_path(path);
+                sync_connect_head(begin_bumps[path_index], all_begin_tracks[path_index], path);
+            }
+        }
+        catch(std::exception& e)
+        {
+            throw std::runtime_error(std::format("MazeRouteStrategy::route_bump_to_bump_sync_net: {}", std::String(e.what())));
+        }
+    }
 
     // Return : Vector<(Track*, COBConnector)>
     auto MazeRouteStrategy::search_path(
@@ -314,9 +511,9 @@ namespace kiwi::algo {
 
         auto path = std::Vector<hardware::Track*>{};
 
-        hardware::Track* prev_track = nullptr;
+        hardware::Track* prev_track = nullptr;      //jh: prev_track is a track in path after current track
         for (auto iter = path_info.rbegin(); iter != path_info.rend(); ++iter) {               
-            auto [track, connector] = *iter;        // BUG: search_path returns with "throw RouteError
+            auto [track, connector] = *iter;       
             path.emplace_back(track);
 
             if (connector.has_value()) {
@@ -327,7 +524,7 @@ namespace kiwi::algo {
                 track->set_connected_track(prev_track);
             }
 
-            prev_track = track;
+            prev_track = track;     
         }
 
         return path;
@@ -357,4 +554,84 @@ namespace kiwi::algo {
         return set;
     }
 
+    auto MazeRouteStrategy::sync_reroute(
+        hardware::Interposer* interposer, 
+        std::Vector<std::HashSet<kiwi::hardware::Track *>> all_end_tracks,
+        std::Vector<RerouteStrategy::routed_path>& paths
+    ) const -> void{
+        std::usize max_length {0};
+        for (auto& path: paths) {
+            if (path.size() > max_length) {
+                max_length = path.size();
+            }
+        }
+            
+        while (true){
+            // collect nets to be rerouted
+            std::Vector<algo::RerouteStrategy::routed_path*> nets_to_be_rerouted {};
+            std::Vector<std::HashSet<hardware::Track*>> end_tracks_set {};
+            // std::Vector<std::HashSet<hardware::Track*>> end_tracks_set {};
+            for (std::usize i = 0; i < paths.size(); ++i) {
+                auto& path = paths[i];
+                auto& end_tracks = all_end_tracks[i];
+                if (path.size() < max_length) {
+                    nets_to_be_rerouted.emplace_back((&path));
+                    end_tracks_set.emplace_back(end_tracks);
+                }
+            }
+            if (nets_to_be_rerouted.size() > 0) {
+                auto [success, ml] = _rerouter->reroute(interposer, nets_to_be_rerouted, max_length, end_tracks_set);
+                max_length = ml;
+                
+                if (success){
+                    break;
+                }
+            }
+            else{
+                break;
+            }
+        }
+    }
+
+    auto MazeRouteStrategy::sync_connect_head(
+            kiwi::hardware::Bump* begin_bump, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>& begin_tracks,
+            RerouteStrategy::routed_path& path
+        ) const -> void{
+        auto [begin_track, __] = path.front();
+                
+        assert(begin_tracks.contains(begin_track));
+
+        begin_tracks.find(begin_track)->second.connect();
+        begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
+    }
+
+    auto MazeRouteStrategy::sync_connect_tail(
+            kiwi::hardware::Bump* end_bump, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>& end_tracks,
+            RerouteStrategy::routed_path& path
+        ) const -> void{
+        auto [end_track, __] = path.back();
+                
+        assert(end_tracks.contains(end_track));
+
+        end_tracks.find(end_track)->second.connect();
+        end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
+    }
+
+    auto MazeRouteStrategy::sync_connect_path(
+        RerouteStrategy::routed_path& path
+    ) const -> void{
+        for (auto it = path.begin(); it != path.end(); ++it){
+            auto next_it {++it};
+            auto [track, connector] = *it;
+            if (next_it != path.end()){
+                auto [next_track, _] = *next_it;
+                if (next_track){
+                    track->set_connected_track(next_track);
+                }
+            }
+            if (connector.has_value()){
+                connector->connect();
+            }
+        }
+    }
 }
