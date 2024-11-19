@@ -59,8 +59,8 @@ namespace kiwi::hardware {
     }
 
     auto TOBConnector::disconnect() -> void {
-        this->_bump_to_hori.disconnect();
-        this->_hori_to_vert.disconnect();
+        this->_bump_to_hori.disconnect();   
+        this->_hori_to_vert.disconnect();   
         this->_vert_to_track.disconnect();
 
         this->_bump_dir_register.reset();

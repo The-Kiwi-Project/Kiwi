@@ -185,6 +185,18 @@ struct kiwi::serde::Deserialize<kiwi::serde::Json, std::HashMap<std::String, Val
 };
 
 template <typename Value>
+struct kiwi::serde::Deserialize<kiwi::serde::Json, std::Vector<std::Vector<Value>>> {
+    static void from(const kiwi::serde::Json& json, std::Vector<std::Vector<Value>>& value) {
+        auto arr = json.as_array();
+        for (auto& j : arr) {
+            auto v = std::Vector<Value>{};
+            kiwi::serde::Deserialize<kiwi::serde::Json, std::Vector<Value>>::from(j, v);
+            value.emplace_back(std::move(v));
+        }
+    }
+};
+
+template <typename Value>
 struct kiwi::serde::Deserialize<kiwi::serde::Json, std::map<std::String, Value>> {
     static void from(const Json& json, std::map<std::String, Value>& value) {
         auto& map = json.as_object();

@@ -35,6 +35,25 @@ DESERIALIZE_STRUCT(kiwi::parse::ConfigFilepaths,
 
 namespace kiwi::parse {
 
+template <class ConnectionConfig>
+struct kiwi::serde::Deserialize<kiwi::serde::Json, std::HashMap<int, std::Vector<ConnectionConfig>>>{
+    static void from(const Json& json, std::HashMap<int, std::Vector<ConnectionConfig>>& value){
+        auto& map = json.as_object();
+        for (auto& [key, j]: map){
+            std::Vector<std::Vector<std::String>> vec {};
+            kiwi::serde::Deserialize<kiwi::serde::Json, std::Vector<std::Vector<std::String>>>::from(j, vec);
+
+            std::Vector<ConnectionConfig> nets {};
+            for (auto& net: vec)
+            {
+                assert (net.size() == 2);
+                nets.emplace_back(ConnectionConfig{net[0], net[1]});
+            }
+            value.emplace(std::stoi(key), nets);
+        }
+    }
+};
+
     static auto load_interposer_config(const std::FilePath& path, InterposerConfig& config) -> void;
     static auto load_topdies_config(const std::FilePath& path, std::HashMap<std::String, TopDieConfig>& topdies) -> void;
     static auto load_topdie_insts_config(const std::FilePath& path, std::HashMap<std::String, TopdieInstConfig>& topdie_insts) -> void;
@@ -118,7 +137,7 @@ namespace kiwi::parse {
 
         auto extension = path.filename().extension().string();
         if (extension == ".json") {
-            debug::unimplement("Load connection config by json");
+            serde::deserialize(serde::Json::load_from(path), connections);
         } 
         else if (extension == ".xlsx") {
             auto workbook = xlnt::workbook();
