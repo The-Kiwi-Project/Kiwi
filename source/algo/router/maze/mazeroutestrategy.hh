@@ -40,10 +40,6 @@ namespace kiwi::algo {
         virtual auto route_tracks_to_bumps_net(hardware::Interposer*, circuit::TracksToBumpsNet*) const -> void override;
 
         virtual auto route_sync_net(hardware::Interposer*, circuit::SyncNet*) const -> void override;
-
-        virtual auto route_bump_to_bump_sync_net(hardware::Interposer*, std::Vector<std::Box<circuit::BumpToBumpNet>>&) const -> void override;
-        virtual auto route_track_to_bump_sync_net(hardware::Interposer*, std::Vector<std::Box<circuit::TrackToBumpNet>>&) const -> void override;
-        virtual auto route_bump_to_track_sync_net(hardware::Interposer*, std::Vector<std::Box<circuit::BumpToTrackNet>>&) const -> void override;
     
     private:
         auto search_path(
@@ -70,26 +66,24 @@ namespace kiwi::algo {
             hardware::TOBConnector>& map
         ) const -> std::HashSet<hardware::Track*>;
 
+        // first round of routing & collecting paths 
+        template <class Net>
+        auto sync_preroute(
+            hardware::Interposer* interposer,
+            std::Vector<std::Box<Net>>& sync_net,
+            std::Vector<algo::RerouteStrategy::routed_path>& paths,
+            std::Vector<std::Option<hardware::Bump*>>& end_bumps,
+            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps
+        ) const -> std::usize;
+
         // the path is already stored in ascending order with vector index when return 
         auto sync_reroute(
-            hardware::Interposer* interposer, 
-            std::Vector<std::HashSet<kiwi::hardware::Track *>> all_end_tracks,
-            std::Vector<RerouteStrategy::routed_path>& paths
-        ) const -> void;
-
-        auto sync_connect_head(
-            kiwi::hardware::Bump* begin_bump, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>& begin_tracks,
-            RerouteStrategy::routed_path& path
-        ) const -> void;
-
-        auto sync_connect_tail(
-            kiwi::hardware::Bump* end_bump, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>& end_tracks,
-            RerouteStrategy::routed_path& path
-        ) const -> void;
-
-        auto sync_connect_path(
-            RerouteStrategy::routed_path& path
-        ) const -> void;
+            hardware::Interposer* interposer,
+            std::Vector<RerouteStrategy::routed_path>& paths,
+            const std::Vector<std::Option<hardware::Bump*>>& end_bumps,
+            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
+            std::usize bump_length, std::usize max_length
+        ) const -> std::tuple<bool, std::usize>;
     
     private:
         std::Box<RerouteStrategy> _rerouter;

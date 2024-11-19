@@ -31,4 +31,13 @@ namespace kiwi::hardware {
         }
     }
 
+    auto Bump::disconnect_track(Track* track) -> void {
+        assert(this->_signal_dir != TOBSignalDirection::DisConnected);
+
+        this->_connected_track = nullptr;
+        this->_signal_dir = TOBSignalDirection::DisConnected;
+
+        track->disconnect_bump(this);
+    }
+
 }

@@ -29,9 +29,20 @@ namespace kiwi::hardware {
         auto set_connected_track(Track* pre_track) -> void;
         auto set_connected_bump(Bump* bump, TOBSignalDirection signal_dir) -> void;
 
+        auto disconnect_bump(Bump* bump) -> void;
+        auto disconnect_track(Track* pre_track) -> void;
+
         auto coord() const -> const TrackCoord& { return this->_coord; } 
         auto prev_track() const -> Track* { return this->_prev_track; }
         auto next_track() const -> Track* { return this->_next_track; }
+        auto connected_bump() const -> std::Option<Bump*> {
+            if (this->_connected_bump == nullptr) {
+                return std::nullopt;
+            }
+            else{
+                return this->_connected_bump;
+            }
+        }
 
     private:
         TrackCoord _coord;

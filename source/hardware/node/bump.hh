@@ -18,6 +18,7 @@ namespace kiwi::hardware {
     public:
         static auto update_bump(Bump* bump, TOB* prev_tob, TOB* next_tob) -> Bump*;
         auto set_connected_track(Track* track, TOBSignalDirection signal_dir) -> void;
+        auto disconnect_track(Track* track) -> void;
 
     public:
         auto coord() const -> Coord const& { return this->_coord; } 

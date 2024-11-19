@@ -80,17 +80,21 @@ namespace kiwi::algo{
     public:
         auto reroute(       // reroute through pointer path_ptrs
             hardware::Interposer* interposer, std::Vector<routed_path*>& path_ptrs,
-            std::usize max_length, const std::Vector<std::HashSet<hardware::Track*>>& end_tracks
+            std::usize max_length, const std::Vector<std::Option<hardware::Bump*>>& end_bumps,
+            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
+            std::usize bump_length
         ) const -> std::tuple<bool, std::usize> override;
     
     private:
-        auto remove_tracks(routed_path* path_ptr, int rate = 0.2) const -> void;
+        auto remove_tracks(
+            routed_path* path_ptr, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>* end_tracks, int cut_rate = 0.2
+        ) const -> void;
         auto reroute_single_net(
             hardware::Interposer* interposer, Tree& tree, routed_path* path_ptr,\
-            std::usize max_length, const std::HashSet<hardware::Track*>& end_tracks, 
-            std::HashSet<hardware::Track*>& visited_end_tracks
+            std::usize max_length, const std::HashSet<hardware::Track*>& end_tracks, std::usize bump_length
         ) const -> std::tuple<bool, std::usize>;
-        auto Manhattan_distance(const std::Rc<Node> node, const std::HashSet<hardware::Track*>& end_tracks) const -> std::usize;
+        auto Manhattan_distance(const std::Rc<Node> node, const std::HashSet<hardware::Track*>& end_tracks) const -> std::usize;\
+        auto check_found(const std::HashSet<hardware::Track*>& end_tracks, hardware::Track* track) const -> bool;
     
     private:
         const NodeTrackInterface _node_track_interface;

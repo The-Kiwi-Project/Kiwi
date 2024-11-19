@@ -40,9 +40,6 @@ namespace kiwi::algo {
         virtual auto route_tracks_to_bumps_net(hardware::Interposer*, circuit::TracksToBumpsNet*) const -> void = 0;
         
         virtual auto route_sync_net(hardware::Interposer*, circuit::SyncNet*) const -> void = 0;
-        virtual auto route_bump_to_bump_sync_net(hardware::Interposer*, std::Vector<std::Box<circuit::BumpToBumpNet>>&) const -> void = 0;
-        virtual auto route_track_to_bump_sync_net(hardware::Interposer*, std::Vector<std::Box<circuit::TrackToBumpNet>>&) const -> void = 0;
-        virtual auto route_bump_to_track_sync_net(hardware::Interposer*, std::Vector<std::Box<circuit::BumpToTrackNet>>&) const -> void = 0;
     };
 
 }
