@@ -45,7 +45,8 @@ namespace kiwi::algo {
         auto search_path(
             hardware::Interposer* interposer, 
             const std::HashSet<hardware::Track*>& begin_tracks,
-            const std::HashSet<hardware::Track*>& end_tracks
+            const std::HashSet<hardware::Track*>& end_tracks,
+            const std::HashSet<hardware::Track*>& occupied_tracks
         ) const -> std::Vector<std::Tuple<hardware::Track*, std::Option<hardware::COBConnector>>>;
     
         auto route_path(
@@ -66,6 +67,11 @@ namespace kiwi::algo {
             hardware::TOBConnector>& map
         ) const -> std::HashSet<hardware::Track*>;
 
+        auto check_found(
+            const std::HashSet<hardware::Track*>& end_tracks, 
+            hardware::Track* track
+        ) const -> bool;
+
         // first round of routing & collecting paths 
         template <class Net>
         auto sync_preroute(
@@ -73,7 +79,8 @@ namespace kiwi::algo {
             std::Vector<std::Box<Net>>& sync_net,
             std::Vector<algo::RerouteStrategy::routed_path>& paths,
             std::Vector<std::Option<hardware::Bump*>>& end_bumps,
-            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps
+            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
+            std::HashSet<hardware::Track*>& occupied_tracks_vec
         ) const -> std::usize;
 
         // the path is already stored in ascending order with vector index when return 
