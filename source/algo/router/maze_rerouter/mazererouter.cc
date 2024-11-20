@@ -90,6 +90,7 @@ namespace kiwi::algo{
                 assert(end_bump.has_value());
 
                 possible_end_tracks_map = interposer->available_tracks_track_to_bump(end_bump.value());
+                // There was an amazing piece of code here
                 for (auto& [track, _]: possible_end_tracks_map){
                     if (track && !end_tracks_set.contains(track)){
                         end_tracks_set.emplace(track);
