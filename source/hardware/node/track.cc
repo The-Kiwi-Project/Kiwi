@@ -56,7 +56,7 @@ namespace kiwi::hardware {
     }
 
     auto Track::set_connected_track(Track* pre_track) -> void {
-        this->_prev_track = pre_track;          //jh: pre_track is the track after this
+        this->_prev_track = pre_track;          
         if (pre_track != nullptr) {
             pre_track->_next_track = this;
         }

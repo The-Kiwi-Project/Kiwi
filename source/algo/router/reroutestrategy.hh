@@ -25,7 +25,7 @@ namespace kiwi::algo{
         virtual auto reroute(              
             hardware::Interposer* interposer, std::Vector<routed_path*>& path_ptrs,
             std::usize max_length, const std::Vector<std::Option<hardware::Bump*>>& end_bumps,
-            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
+            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*>& end_track_to_tob_maps,
             std::usize bump_length
         ) const -> std::tuple<bool, std::usize> = 0;
     };

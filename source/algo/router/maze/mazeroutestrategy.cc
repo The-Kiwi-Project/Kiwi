@@ -240,25 +240,41 @@ namespace kiwi::algo {
             std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};
             std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};
             std::Array<std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};
+            std::HashSet<hardware::Track*> occupied_tracks_vec {}; // 某些线的头尾track已经被占用了
             std::usize max_length {0};
+
+            if (ptr_sync_net->bttnets().size() > 0){
+                for (auto& net: ptr_sync_net->bttnets()){
+                    occupied_tracks_vec.emplace(net->end_track());
+                }
+            }
+            if (ptr_sync_net->ttbnets().size() > 0){
+                for (auto& net: ptr_sync_net->ttbnets()){
+                    occupied_tracks_vec.emplace(net->begin_track());
+                }
+            }
+
             if (ptr_sync_net->btbnets().size() > 0){
                 auto current_len = sync_preroute<circuit::BumpToBumpNet>(
                     ptr_interposer, ptr_sync_net->btbnets(),
-                    three_paths[0], three_end_bumps[0], three_end_track_to_tob_maps[0]
+                    three_paths[0], three_end_bumps[0], three_end_track_to_tob_maps[0],
+                    occupied_tracks_vec
                 );
                 max_length = current_len > max_length ? current_len : max_length;
             }
             if (ptr_sync_net->ttbnets().size() > 0){
                 auto current_len = sync_preroute<circuit::TrackToBumpNet>(
                     ptr_interposer, ptr_sync_net->ttbnets(),
-                    three_paths[1], three_end_bumps[1], three_end_track_to_tob_maps[1]
+                    three_paths[1], three_end_bumps[1], three_end_track_to_tob_maps[1],
+                    occupied_tracks_vec
                 );
                 max_length = current_len > max_length ? current_len : max_length;
             }
             if (ptr_sync_net->bttnets().size() > 0){
                 auto current_len = sync_preroute<circuit::BumpToTrackNet>(
                     ptr_interposer, ptr_sync_net->bttnets(),
-                    three_paths[2], three_end_bumps[2], three_end_track_to_tob_maps[2]
+                    three_paths[2], three_end_bumps[2], three_end_track_to_tob_maps[2],
+                    occupied_tracks_vec
                 );
                 max_length = current_len > max_length ? current_len : max_length;
             }
@@ -305,11 +321,26 @@ namespace kiwi::algo {
         }
     }
 
+    auto MazeRouteStrategy::check_found(
+        const std::HashSet<hardware::Track*>& end_tracks,
+        hardware::Track* track
+    ) const -> bool{
+        bool found = false;
+        for (auto& t: end_tracks){
+            if (t->coord() == track->coord()){
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
     // Return : Vector<(Track*, COBConnector)>
     auto MazeRouteStrategy::search_path(
         hardware::Interposer* interposer, 
         const std::HashSet<hardware::Track*>& begin_tracks,
-        const std::HashSet<hardware::Track*>& end_tracks
+        const std::HashSet<hardware::Track*>& end_tracks,
+        const std::HashSet<hardware::Track*>& occupied_tracks
     ) const -> std::Vector<std::Tuple<hardware::Track*, std::Option<hardware::COBConnector>>> {
         using namespace hardware;
 
@@ -327,7 +358,8 @@ namespace kiwi::algo {
             auto track = queue.front();
             queue.pop();
 
-            if (end_tracks.find(track) != end_tracks.end()) {
+            // if (end_tracks.find(track) != end_tracks.end()) {    
+            if (check_found(end_tracks, track)) {
                 auto path = std::Vector<std::Tuple<Track*, std::Option<COBConnector>>>{};
                 auto cur_track = track;
                 while (true) {
@@ -347,7 +379,7 @@ namespace kiwi::algo {
             }
 
             for (auto& [next_track, connector] : interposer->adjacent_idle_tracks(track)) {
-                if (prev_track_infos.find(next_track) != prev_track_infos.end()) {
+                if (prev_track_infos.find(next_track) != prev_track_infos.end() || occupied_tracks.contains(next_track)) {
                     continue;
                 }
 
@@ -359,7 +391,7 @@ namespace kiwi::algo {
             }
         }
 
-        throw std::runtime_error("MazeRouteStrategy::search_path() >> No path found");
+        throw std::runtime_error("MazeRouteStrategy::search_path() >> path not found");
     }
 
     auto MazeRouteStrategy::route_path(
@@ -368,11 +400,12 @@ namespace kiwi::algo {
         const std::HashSet<hardware::Track*>& end_tracks
     ) const -> std::Vector<hardware::Track*> 
     try {
-        auto path_info = search_path(interposer, begin_tracks, end_tracks);
+        std::HashSet<hardware::Track*> empty {};
+        auto path_info = search_path(interposer, begin_tracks, end_tracks, empty);
 
         auto path = std::Vector<hardware::Track*>{};
 
-        hardware::Track* prev_track = nullptr;      //jh: prev_track is a track in path after current track
+        hardware::Track* prev_track = nullptr;      // the track after this
         for (auto iter = path_info.rbegin(); iter != path_info.rend(); ++iter) {               
             auto [track, connector] = *iter;       
             path.emplace_back(track);
@@ -421,7 +454,8 @@ namespace kiwi::algo {
             std::Vector<std::Box<Net>>& sync_net,
             std::Vector<algo::RerouteStrategy::routed_path>& paths,
             std::Vector<std::Option<hardware::Bump*>>& end_bumps,
-            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps
+            std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
+            std::HashSet<hardware::Track*>& occupied_tracks_vec 
         ) const -> std::usize{
         static_assert(
             std::is_same<Net, circuit::BumpToBumpNet>::value ||\
@@ -462,10 +496,28 @@ namespace kiwi::algo {
                 assert(begin_bump->tob() != end_bump->tob());
             }
 
-            auto path_info = search_path(interposer, begin_tracks_set, end_tracks_set);
-
-            auto path = std::Vector<hardware::Track*>{};
-            hardware::Track* prev_track = nullptr;      
+            if constexpr(std::is_same<Net, circuit::BumpToTrackNet>::value){
+                auto track = net->end_track();
+                for (auto& ot: occupied_tracks_vec){
+                    if (ot->coord() == track->coord()){
+                        occupied_tracks_vec.erase(track);
+                        break;
+                    }
+                }
+            }
+            if constexpr(std::is_same<Net, circuit::TrackToBumpNet>::value){
+                auto track = net->begin_track();
+                for (auto& ot: occupied_tracks_vec){
+                    if (ot->coord() == track->coord()){
+                        occupied_tracks_vec.erase(track);
+                        break;
+                    }
+                }
+            }
+            auto path_info = search_path(interposer, begin_tracks_set, end_tracks_set, occupied_tracks_vec); // notice: negative sequence
+                                                                                        //  |
+            auto path = std::Vector<hardware::Track*>{};                                //  V
+            hardware::Track* prev_track = nullptr;                                      // prev_track is the track before this
             for (auto iter = path_info.rbegin(); iter != path_info.rend(); ++iter) {               
                 auto [track, connector] = *iter;       
                 path.emplace_back(track);
@@ -528,16 +580,16 @@ namespace kiwi::algo {
     ) const -> std::tuple<bool, std::usize>{
         std::Vector<algo::RerouteStrategy::routed_path*> nets_to_be_rerouted {};
         std::Vector<std::Option<hardware::Bump*>> related_end_bumps {};
-        std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>> related_maps {};
+        std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*> related_maps {};
         for (std::usize i = 0; i < paths.size(); ++i) {
             auto& path = paths[i];
-            if (path.size() < max_length) {
+            if (path.size() + bump_extra_length < max_length) {
                 nets_to_be_rerouted.emplace_back((&path));
                 if (end_bumps.size() > 0){
                     related_end_bumps.emplace_back(end_bumps[i]);
                 }
                 if (end_track_to_tob_maps.size() > 0){
-                    related_maps.emplace_back(end_track_to_tob_maps[i]);
+                    related_maps.push_back(&end_track_to_tob_maps[i]);
                 }
             }
         }
