@@ -17,11 +17,11 @@ rule("qt.opengl")
 target("kiwi")
     set_kind("binary")
     set_targetdir("./output")
+    set_default(true)
     add_packages("xlnt")
     add_includedirs("source", "source/global")
     add_files("source/**.cc", "source/widget/**.h", "resource/resource.qrc")
     add_rules("qt.widgetapp", "qt.opengl")
-    add_frameworks("QtOpenGL")
 
 target("cobmap")
     set_kind("binary")
@@ -47,7 +47,6 @@ target("test")
         "source/parse/**.cc",
         "source/serde/**.cc"
     )
-
 
 -- xmake project -k compile_commands
 

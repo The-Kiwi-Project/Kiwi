@@ -37,7 +37,7 @@ namespace kiwi::widget {
         this->_expandButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum);
         this->_expandButtonIcon = new QLabel(this->_expandButton);
         this->_expandButtonIcon->setFont(QFont("Font Awesome 6 Free Solid", 14));
-        this->_expandButtonIcon->setStyleSheet("border-image:url(':/images/images/labels/list.png');");
+        this->_expandButtonIcon->setStyleSheet("border-image:url(':/image/image/icon/list.png');");
         this->_expandButtonIcon->setFixedSize(QSize(20, 20));
         this->_expandButton->setChildWidget(this->_expandButtonIcon);
 

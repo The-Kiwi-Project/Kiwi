@@ -5,9 +5,11 @@
 #include "circuit/net/types/bbnet.hh"
 #include "circuit/net/types/btnet.hh"
 #include "circuit/net/types/tbnet.hh"
-#include <std/collection.hh>
 #include <algo/router/maze/mazeroutestrategy.hh>
 #include <algo/router/route.hh>
+
+#include <std/collection.hh>
+#include <std/memory.hh>
 
 
 namespace kiwi::hardware
@@ -19,9 +21,14 @@ namespace kiwi::hardware
 namespace kiwi::algo
 {
     class RouteStrategy;
+    struct RerouteStrategy;
 }
 
 namespace kiwi::circuit {
+
+    class BumpToBumpNet;
+    class BumpToTrackNet;
+    class TrackToBumpNet;
 
     class SyncNet : public Net {   
     public:
@@ -37,6 +44,11 @@ namespace kiwi::circuit {
         virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void override;
         virtual auto priority() const -> Priority override;
         virtual auto coords() const -> std::Vector<hardware::Coord> override;
+    
+    public:
+        auto btbnets() -> std::Vector<std::Box<BumpToBumpNet>>& {return this->_btbnets;}
+        auto bttnets() -> std::Vector<std::Box<BumpToTrackNet>>& {return this->_bttnets;}
+        auto ttbnets() -> std::Vector<std::Box<TrackToBumpNet>>& {return this->_ttbnets;}
 
     private:
         std::Vector<std::Box<BumpToBumpNet>>  _btbnets;

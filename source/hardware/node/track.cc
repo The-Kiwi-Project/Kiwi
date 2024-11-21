@@ -56,7 +56,7 @@ namespace kiwi::hardware {
     }
 
     auto Track::set_connected_track(Track* pre_track) -> void {
-        this->_prev_track = pre_track;
+        this->_prev_track = pre_track;          
         if (pre_track != nullptr) {
             pre_track->_next_track = this;
         }
@@ -67,6 +67,20 @@ namespace kiwi::hardware {
         
         this->_connected_bump = bump;
         this->_signal_dir = signal_dir;
+    }
+
+    auto Track::disconnect_bump(Bump* bump) -> void{
+        assert(_signal_dir != TOBSignalDirection::DisConnected);
+
+        this->_connected_bump = nullptr;
+        this->_signal_dir = TOBSignalDirection::DisConnected;
+    }
+
+    auto Track::disconnect_track(Track* pre_track) -> void{
+        this->_prev_track = nullptr;
+        if (pre_track != nullptr) {
+            pre_track->_next_track = nullptr;
+        }
     }
 
 }
