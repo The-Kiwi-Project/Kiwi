@@ -1,8 +1,7 @@
 # TODO
 
-
-- Maze Routing 同步布线
-- Pathfinder / 增量布线
-- 是否要把 Connector 对象放入 Track 和 Bump 内部？？？
 - 布线失败的处理
-- 在 xmake 根据 Qt5 / Qt6，导入 OpenGLWidget（搞不来。。。）
+- 总线布线剩余 BUG 的修复
+- 测试布局
+- GUI 在 linux 下无法移动的 BUG
+- 补充文档

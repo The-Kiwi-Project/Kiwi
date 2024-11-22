@@ -33,8 +33,6 @@ DESERIALIZE_STRUCT(kiwi::parse::ConfigFilepaths,
     DE_FILED(connections)
 )
 
-namespace kiwi::parse {
-
 template <class ConnectionConfig>
 struct kiwi::serde::Deserialize<kiwi::serde::Json, std::HashMap<int, std::Vector<ConnectionConfig>>>{
     static void from(const Json& json, std::HashMap<int, std::Vector<ConnectionConfig>>& value){
@@ -53,6 +51,8 @@ struct kiwi::serde::Deserialize<kiwi::serde::Json, std::HashMap<int, std::Vector
         }
     }
 };
+
+namespace kiwi::parse {
 
     static auto load_interposer_config(const std::FilePath& path, InterposerConfig& config) -> void;
     static auto load_topdies_config(const std::FilePath& path, std::HashMap<std::String, TopDieConfig>& topdies) -> void;
