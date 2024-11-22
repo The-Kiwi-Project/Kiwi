@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../routestrategy.hh"
-#include "../maze_rerouter/mazererouter.hh"
+#include "./mazererouter.hh"
 
 #include <hardware/cob/cob.hh>
 #include <hardware/tob/tob.hh>

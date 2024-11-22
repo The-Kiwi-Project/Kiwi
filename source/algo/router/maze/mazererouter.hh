@@ -97,7 +97,7 @@ namespace kiwi::algo{
         auto check_found(const std::HashSet<hardware::Track*>& end_tracks, hardware::Track* track) const -> bool;
     
     private:
-        const NodeTrackInterface _node_track_interface;
+        const NodeTrackInterface _node_track_interface {};
     };
 
     

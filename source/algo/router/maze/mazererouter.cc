@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <format>
 
-
 namespace kiwi::algo{
 
     auto Node::remove_child(const std::Rc<Node> child) -> void{
