@@ -1,5 +1,7 @@
 #include "./renderwidget.h"
+#include "qglobal.h"
 #include "qpoint.h"
+#include "qvector3d.h"
 #include "std/collection.hh"
 #include <hardware/interposer.hh>
 #include <debug/debug.hh>
@@ -12,7 +14,6 @@
 #include <QMimeData>
 #include <QFileInfo>
 #include <QtDebug>
-#include <optional>
 
 namespace kiwi::widget {
 
@@ -168,7 +169,6 @@ namespace kiwi::widget {
 
         QMatrix4x4 bias;
         bias.translate({0.0f, Z_BIAS, 0.0f});
-        this->_axisShader.setUniformValue("bias", bias);
         this->_axisShader.setUniformValue("view", view);
         this->_axisShader.setUniformValue("projection", projection);
         this->_axisShader.release();
@@ -185,7 +185,7 @@ namespace kiwi::widget {
         this->_cubeShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader/shader/cube.frag");
         this->_cubeShader.bind();
         QMatrix4x4 bias;
-        bias.translate({0.0f, 0.0f, 0.0f});
+        bias.translate(this->_coordbias);
         this->_cubeShader.setUniformValue("view", view);
         this->_cubeShader.setUniformValue("bias", bias);
         this->_cubeShader.setUniformValue("projection", projection);
@@ -247,6 +247,32 @@ namespace kiwi::widget {
         this->_cubeVAO.release();
     }
 
+    void RenderWidget::initFrame(const QMatrix4x4& view, const QMatrix4x4& projection) {
+        this->_frameVAO.create();
+        this->_frameVAO.bind();
+        
+        // Set axis vertices buffer
+        this->_frameVBO.create();
+        // this->_frameVBO.bind();
+        // this->_frameVBO.allocate(points, sizeof(points));
+
+        // Set shader program 
+        this->_frameShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/shader/frame.vert");
+        this->_frameShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader/shader/frame.frag");
+        this->_frameShader.bind();
+        // this->_frameShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
+        // this->_frameShader.enableAttributeArray(0);
+
+        QMatrix4x4 bias;
+        bias.translate(this->_coordbias);
+        this->_frameShader.setUniformValue("bias", bias);
+        this->_frameShader.setUniformValue("view", view);
+        this->_frameShader.setUniformValue("projection", projection);
+        this->_frameShader.release();
+
+        this->_frameVAO.release();
+    }
+
     auto RenderWidget::makeCube(
         float length, float width, float height,
         QVector<QVector3D> positions,
@@ -294,6 +320,10 @@ namespace kiwi::widget {
         this->_cubeShader.setUniformValue("view", view);
         this->_cubeShader.release();
 
+        this->_frameShader.bind();
+        this->_frameShader.setUniformValue("view", view);
+        this->_frameShader.release();
+
         this->doneCurrent();
     }
 
@@ -307,6 +337,10 @@ namespace kiwi::widget {
         this->_cubeShader.bind();
         this->_cubeShader.setUniformValue("bias", bias);
         this->_cubeShader.release();
+
+        this->_frameShader.bind();
+        this->_frameShader.setUniformValue("bias", bias);
+        this->_frameShader.release();
 
         this->doneCurrent();
     }
@@ -409,6 +443,7 @@ namespace kiwi::widget {
         // create axis opengl object
         this->initAxis(view, projection);
         this->initCube(view, projection);
+        this->initFrame(view, projection);
 
         this->updateViewMatrix();
         this->updateCoordBias();
@@ -425,6 +460,7 @@ namespace kiwi::widget {
 
         this->renderAxis();
         this->renderCubes();
+        this->renderFrame();
     }
 
     void RenderWidget::renderAxis() {
@@ -448,6 +484,59 @@ namespace kiwi::widget {
     void RenderWidget::renderCubes() {
         for (auto& cube : this->_cubes) {
             this->renderCube(cube);
+        }
+    }
+
+    void RenderWidget::renderFrame() {
+        if (this->_pointedCube.has_value()) {
+            this->_frameVAO.bind();
+            this->_frameShader.bind();
+    
+            this->_frameVBO.bind();
+            auto [cube, i] = *(this->_pointedCube);
+            auto& pos = cube->positions[i];
+
+            float points[] = {
+                pos.x(), pos.y(), pos.z(), 
+                pos.x() + cube->width, pos.y(), pos.z(), 
+
+                pos.x(), pos.y(), pos.z(), 
+                pos.x(), pos.y(), pos.z() + cube->length, 
+                
+                pos.x() + cube->width, pos.y(), pos.z(), 
+                pos.x() + cube->width, pos.y(), pos.z() + cube->length, 
+
+                pos.x(), pos.y(), pos.z() + cube->length, 
+                pos.x() + cube->width, pos.y(), pos.z() + cube->length, 
+
+                pos.x(), pos.y(), pos.z(), pos.x(), pos.y() + cube->height, pos.z(), 
+                pos.x() + cube->width, pos.y(), pos.z(), pos.x() + cube->width, pos.y() + cube->height, pos.z(), 
+                pos.x(), pos.y(), pos.z() + cube->length, pos.x(), pos.y() + cube->height, pos.z() + cube->length, 
+                pos.x() + cube->width, pos.y(), pos.z() + cube->length, pos.x() + cube->width, pos.y() + cube->height, pos.z() + cube->length, 
+
+                pos.x(), pos.y() + cube->height, pos.z(), 
+                pos.x() + cube->width, pos.y() + cube->height, pos.z(), 
+
+                pos.x(), pos.y() + cube->height, pos.z(), 
+                pos.x(), pos.y() + cube->height, pos.z() + cube->length, 
+                
+                pos.x() + cube->width, pos.y() + cube->height, pos.z(), 
+                pos.x() + cube->width, pos.y() + cube->height, pos.z() + cube->length, 
+
+                pos.x(), pos.y() + cube->height, pos.z() + cube->length, 
+                pos.x() + cube->width, pos.y() + cube->height, pos.z() + cube->length, 
+
+            };
+            this->_frameVBO.allocate(points, sizeof(points));
+
+            this->_frameShader.bind();
+            this->_frameShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
+            this->_frameShader.enableAttributeArray(0);
+
+            this->glDrawArrays(GL_LINES, 0, 24);
+    
+            this->_frameShader.release();
+            this->_frameVAO.release();
         }
     }
 
@@ -543,6 +632,7 @@ namespace kiwi::widget {
         return rayWorld; // 返回光线的方向
     }
 
+    static int cc = 0;
     auto RenderWidget::resetPointedCube(const QPoint& pos) -> void {
         auto ray = this->screenPosToWorldRay(pos);
         auto viewPos = getViewPos();
@@ -555,9 +645,11 @@ namespace kiwi::widget {
                 auto boxMax = baseBoxMax + pos;
                 if (doesRayIntersectBox(viewPos, ray, boxMin, boxMax)) {
                     this->_pointedCube.emplace(OneCube{cube, i});
+                    return;
                 }
             }
         }
+        this->_pointedCube.reset();
     }
 
 }

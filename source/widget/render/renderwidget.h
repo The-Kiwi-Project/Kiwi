@@ -70,6 +70,7 @@ namespace kiwi::widget {
     private:
         void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection);
         void initCube(const QMatrix4x4& view, const QMatrix4x4& projection);
+        void initFrame(const QMatrix4x4& view, const QMatrix4x4& projection);
 
         struct Cube {
             float length; float width; float height;
@@ -90,6 +91,7 @@ namespace kiwi::widget {
         void renderCube(Cube* cube);
         void renderCubes();
         void renderAxis();
+        void renderFrame();
 
         void reRender();
 
@@ -140,6 +142,11 @@ namespace kiwi::widget {
         QOpenGLShaderProgram _cubeShader {};
 
         std::Option<OneCube> _pointedCube {};
+
+        //! \brief pointed
+        QOpenGLVertexArrayObject _frameVAO {};
+        QOpenGLBuffer _frameVBO {QOpenGLBuffer::VertexBuffer};
+        QOpenGLShaderProgram _frameShader {};
 
         //! \brief camera message
         float _posTheta  {RenderWidget::DEFAULT_THETA_VALUE};

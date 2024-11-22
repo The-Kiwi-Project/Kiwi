@@ -4,6 +4,8 @@
         <file>shader/axis.vert</file>
         <file>shader/cube.frag</file>
         <file>shader/cube.vert</file>
+        <file>shader/frame.frag</file>
+        <file>shader/frame.vert</file>
     </qresource>
     <qresource prefix="/texture">
         <file>texture/cob.jpg</file>
