@@ -19,7 +19,7 @@ namespace kiwi::widget
         this->setMouseTracking(true);
         this->buildTitle();
 
-        this->_renderWidget = new RenderWidget(this->_mainWidget);
+        this->_renderWidget = new RenderWidget(nullptr, this->_mainWidget);
         this->_renderWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         // this->_renderWidget->setMinimumSize(10, 10);
         this->_mainLayout->addWidget(this->_renderWidget);

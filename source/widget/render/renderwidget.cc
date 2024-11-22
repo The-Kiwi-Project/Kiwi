@@ -1,4 +1,6 @@
 #include "./renderwidget.h"
+#include "qpoint.h"
+#include "std/collection.hh"
 #include <hardware/interposer.hh>
 #include <debug/debug.hh>
 
@@ -10,8 +12,34 @@
 #include <QMimeData>
 #include <QFileInfo>
 #include <QtDebug>
+#include <optional>
 
 namespace kiwi::widget {
+
+    static bool doesRayIntersectBox(const QVector3D& lightSource, 
+                            const QVector3D& lightDirection, 
+                            const QVector3D& boxMin, 
+                            const QVector3D& boxMax) {
+        // 光线方向的倒数
+        QVector3D invDir(1.0f / lightDirection.x(), 
+                        1.0f / lightDirection.y(), 
+                        1.0f / lightDirection.z());
+
+        // 计算每个面与光线的交点参数 t
+        float t1 = (boxMin.x() - lightSource.x()) * invDir.x();
+        float t2 = (boxMax.x() - lightSource.x()) * invDir.x();
+        float t3 = (boxMin.y() - lightSource.y()) * invDir.y();
+        float t4 = (boxMax.y() - lightSource.y()) * invDir.y();
+        float t5 = (boxMin.z() - lightSource.z()) * invDir.z();
+        float t6 = (boxMax.z() - lightSource.z()) * invDir.z();
+
+        // 获取进入和离开长方体的 t 值
+        float tMin = std::max({std::min(t1, t2), std::min(t3, t4), std::min(t5, t6)});
+        float tMax = std::min({std::max(t1, t2), std::max(t3, t4), std::max(t5, t6)});
+
+        // 判断是否相交
+        return tMax >= std::max(0.0f, tMin); // 光线与长方体相交（t >= 0 确保相交点在光线前方）
+    }
 
     float radian2Angle(float radian) {
         return radian / 3.14159f * 180.0f;
@@ -79,8 +107,9 @@ namespace kiwi::widget {
     };
 
     //! \brief construct function
-    RenderWidget::RenderWidget(QWidget *parent) :
-        QOpenGLWidget(parent)
+    RenderWidget::RenderWidget(hardware::Interposer* interposer, QWidget *parent) :
+        QOpenGLWidget(parent),
+        _interposer{interposer}
     {
         auto cob_array_height = static_cast<float>(hardware::Interposer::COB_ARRAY_HEIGHT);
         auto cob_array_width  = static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH);
@@ -226,9 +255,13 @@ namespace kiwi::widget {
         this->_cubeVAO.bind();
 
         auto cube = new Cube {};
+        cube->length = length;
+        cube->width = width;
+        cube->height = height;
+
         cube->vertices = generateCubVertices(length, width, height);
 
-        cube->position = qMove(positions);
+        cube->positions = qMove(positions);
         cube->texture.reset(new QOpenGLTexture {QImage(texturePath)});
         cube->texture->setWrapMode(QOpenGLTexture::Repeat);
         cube->texture->setMinificationFilter(QOpenGLTexture::Linear);
@@ -242,7 +275,7 @@ namespace kiwi::widget {
         cube->verticesVBO.allocate(cube->vertices.data(), cube->vertices.size() * sizeof(float));
         cube->positionsVBO.create();
         cube->positionsVBO.bind();
-        cube->positionsVBO.allocate(cube->position.data(), cube->position.size() * sizeof(QVector3D));
+        cube->positionsVBO.allocate(cube->positions.data(), cube->positions.size() * sizeof(QVector3D));
 
         return cube;
     }
@@ -293,6 +326,7 @@ namespace kiwi::widget {
     void RenderWidget::wheelEvent(QWheelEvent *event) {
         this->_posRadius += (event->angleDelta().y() / 100.0);
         this->updateViewMatrix();
+        // this->resetPointedCube(event->pos());
         this->reRender();
     }
 
@@ -308,6 +342,7 @@ namespace kiwi::widget {
 
     void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
         QPoint delta = event->pos() - this->_lastMousePos;
+        this->resetPointedCube(event->pos());
 
         // rotate model
         if (this->_mouseButton == Qt::LeftButton) {
@@ -342,18 +377,24 @@ namespace kiwi::widget {
     }
 
     void RenderWidget::dragEnterEvent(QDragEnterEvent *event) {
-        if (event->mimeData()->hasUrls()) {
-            QString filename = event->mimeData()->urls()[0].fileName();
-            QFileInfo info(filename);
-            QString ex = info.suffix().toUpper();
-            if (ex == "GCODE" || ex == "LC")
-                event->acceptProposedAction();
-            else
-                event->ignore();
-        }
-        else {
-            event->ignore();
-        }
+        // if (event->mimeData()->hasUrls()) {
+        //     QString filename = event->mimeData()->urls()[0].fileName();
+        //     QFileInfo info(filename);
+        //     QString ex = info.suffix().toUpper();
+        //     if (ex == "GCODE" || ex == "LC")
+        //         event->acceptProposedAction();
+        //     else
+        //         event->ignore();
+        // }
+        // else {
+        //     event->ignore();
+        // }
+    }
+
+    void RenderWidget::resizeEvent(QResizeEvent *event) {
+        QOpenGLWidget::resizeEvent(event);
+        this->updateProjection();
+        this->reRender();
     }
 
     void RenderWidget::initializeGL() {
@@ -362,9 +403,8 @@ namespace kiwi::widget {
         this->glEnable(GL_DEPTH_TEST);
 
         // calculate uniform matrix
-        QMatrix4x4 view = this->getViewMatrix();
-        QMatrix4x4 projection;
-        projection.perspective(45.0f, 1.0f * this->width() / this->height(), 0.1f, 100.0f);
+        auto view = this->getViewMatrix();
+        auto projection = this->getProjection();
 
         // create axis opengl object
         this->initAxis(view, projection);
@@ -432,7 +472,7 @@ namespace kiwi::widget {
         this->_cubeIndicesVBO.bind();
         cube->texture->bind();
         this->_cubeShader.setUniformValue("tex", cube->textureid);
-        this->glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, cube->position.size());        
+        this->glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, cube->positions.size());        
 
         this->_cubeShader.disableAttributeArray(0);
         this->_cubeShader.disableAttributeArray(1);
@@ -445,7 +485,7 @@ namespace kiwi::widget {
     }
 
     void RenderWidget::reRender() {
-        this->parentWidget()->update();
+        this->update();
     }
 
     QVector3D RenderWidget::getViewPos() const {
@@ -461,6 +501,63 @@ namespace kiwi::widget {
                     QVector3D(0.0f, 0.0f, 0.0f),
                     QVector3D(0.0f, 1.0f, 0.0f));
         return view;
+    }
+
+    QMatrix4x4 RenderWidget::getProjection() const {
+        QMatrix4x4 projection;
+        projection.perspective(45.0f, 1.0f * this->width() / this->height(), 0.1f, 100.0f);
+        return projection;
+    }
+
+    void RenderWidget::updateProjection() {
+        auto projection = this->getProjection();
+        this->_axisShader.setUniformValue("projection", projection);
+        this->_cubeShader.setUniformValue("projection", projection);
+    }
+
+    QVector3D RenderWidget::screenPosToWorldRay(const QPoint& mousePos) {
+        int width = this->width();
+        int height = this->height();
+
+        // 获取 OpenGL 的投影矩阵和视图矩阵
+        QMatrix4x4 projection = this->getProjection();
+        QMatrix4x4 view = this->getViewMatrix();
+
+        // 归一化屏幕坐标 (从 [0, width] 转为 [-1, 1])
+        float x = (2.0f * mousePos.x()) / width - 1.0f;
+        float y = 1.0f - (2.0f * mousePos.y()) / height; // OpenGL 的 Y 轴是反的
+        float z = 1.0f; // 鼠标在远裁剪面
+
+        // 将屏幕坐标转换为 4D 点 (Clip Space)
+        QVector4D rayClip(x, y, -1.0f, 1.0f);
+
+        // 转换为 4D 眼空间坐标 (Eye Space)
+        QVector4D rayEye = projection.inverted() * rayClip;
+        rayEye.setZ(-1.0f);
+        rayEye.setW(0.0f);
+
+        // 转换为 3D 世界空间 (World Space)
+        QVector3D rayWorld = (view.inverted() * rayEye).toVector3D();
+        rayWorld.normalize();
+
+        return rayWorld; // 返回光线的方向
+    }
+
+    auto RenderWidget::resetPointedCube(const QPoint& pos) -> void {
+        auto ray = this->screenPosToWorldRay(pos);
+        auto viewPos = getViewPos();
+        for (auto cube : this->_cubes) {
+            auto baseBoxMin = QVector3D{0.f, 0.f, 0.f} + this->_coordbias;
+            auto baseBoxMax = QVector3D{cube->width, cube->height, cube->length} + this->_coordbias;
+            for (int i = 0; i < cube->positions.size(); ++i) {
+                auto& pos = cube->positions[i];
+                auto boxMin = baseBoxMin + pos;
+                auto boxMax = baseBoxMax + pos;
+                if (doesRayIntersectBox(viewPos, ray, boxMin, boxMax)) {
+                    this->_pointedCube.emplace(OneCube{cube, i});
+                }
+            }
+        }
     }
 
 }
