@@ -1,5 +1,9 @@
 #pragma once
 
+#include "qmatrix4x4.h"
+#include "qpoint.h"
+#include "qvector3d.h"
+#include "std/utility.hh"
 #include <QScopedPointer>
 #include <QVector>
 #include <QMouseEvent>
@@ -22,6 +26,11 @@
 #include <QOpenGLTexture>
 #include <QOpenGLVertexArrayObject>
 #endif
+
+
+namespace kiwi::hardware {
+    class Interposer;
+};
 
 namespace kiwi::widget {
 
@@ -55,7 +64,7 @@ namespace kiwi::widget {
         static int cubeIndices[];
 
     public:
-        explicit RenderWidget(QWidget *parent = nullptr);
+        explicit RenderWidget(hardware::Interposer* interposer, QWidget *parent = nullptr);
         ~RenderWidget() noexcept;
 
     private:
@@ -63,9 +72,10 @@ namespace kiwi::widget {
         void initCube(const QMatrix4x4& view, const QMatrix4x4& projection);
 
         struct Cube {
+            float length; float width; float height;
             QVector<float> vertices {};
             QOpenGLBuffer verticesVBO {QOpenGLBuffer::VertexBuffer};
-            QVector<QVector3D> position {};
+            QVector<QVector3D> positions {};
             QOpenGLBuffer positionsVBO {QOpenGLBuffer::VertexBuffer};
             QScopedPointer<QOpenGLTexture> texture {nullptr};
             int textureid;
@@ -85,14 +95,19 @@ namespace kiwi::widget {
 
     private:
         QVector3D getViewPos() const;
+        QVector3D getScreenViewPos(const QPoint& pos) const;
+
         QMatrix4x4 getViewMatrix() const;
+        QMatrix4x4 getProjection() const;
 
     public:
         void updateViewMatrix();
         void updateCoordBias();
         void updateInstantiateMatrices();
+        void updateProjection();
 
         void resetView();
+
 
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;
@@ -100,11 +115,17 @@ namespace kiwi::widget {
         virtual void mouseReleaseEvent(QMouseEvent *event) override;
         virtual void mouseMoveEvent(QMouseEvent *event) override;
         virtual void dragEnterEvent(QDragEnterEvent *event) override;
+        virtual void resizeEvent(QResizeEvent *event) override;
 
     protected:
         virtual void initializeGL() override;
         virtual void resizeGL(int w, int h) override;
         virtual void paintGL() override;
+
+    protected:
+        auto screenPosToWorldRay(const QPoint& mousePos) -> QVector3D;
+        using OneCube = std::Tuple<Cube*, int>;
+        auto resetPointedCube(const QPoint& pos) -> void;
 
     private:
         //! \brief axis
@@ -118,6 +139,8 @@ namespace kiwi::widget {
         QOpenGLBuffer _cubeIndicesVBO {QOpenGLBuffer::IndexBuffer};
         QOpenGLShaderProgram _cubeShader {};
 
+        std::Option<OneCube> _pointedCube {};
+
         //! \brief camera message
         float _posTheta  {RenderWidget::DEFAULT_THETA_VALUE};
         float _posPitch  {RenderWidget::DEFAULT_PITCH_VALUE};
@@ -129,6 +152,9 @@ namespace kiwi::widget {
         //! \brief coordinate position
         QVector3D _coordbias {};
         Qt::MouseButton _mouseButton {Qt::NoButton};
+
+        // Hardware
+        hardware::Interposer* _interposer {nullptr};
     };
 
 }
