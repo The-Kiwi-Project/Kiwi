@@ -2,6 +2,7 @@
 
 #include "qmatrix4x4.h"
 #include "qpoint.h"
+#include "qvector.h"
 #include "qvector3d.h"
 #include "std/utility.hh"
 #include <QScopedPointer>
@@ -147,6 +148,7 @@ namespace kiwi::widget {
         QOpenGLVertexArrayObject _frameVAO {};
         QOpenGLBuffer _frameVBO {QOpenGLBuffer::VertexBuffer};
         QOpenGLShaderProgram _frameShader {};
+        QVector<QVector3D> _frameVertices {24};
 
         //! \brief camera message
         float _posTheta  {RenderWidget::DEFAULT_THETA_VALUE};

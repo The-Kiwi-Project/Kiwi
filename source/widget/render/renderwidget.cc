@@ -1,8 +1,8 @@
 #include "./renderwidget.h"
 #include "qglobal.h"
 #include "qpoint.h"
+#include "qvector.h"
 #include "qvector3d.h"
-#include "std/collection.hh"
 #include <hardware/interposer.hh>
 #include <debug/debug.hh>
 
@@ -493,41 +493,8 @@ namespace kiwi::widget {
             this->_frameShader.bind();
     
             this->_frameVBO.bind();
-            auto [cube, i] = *(this->_pointedCube);
-            auto& pos = cube->positions[i];
 
-            float points[] = {
-                pos.x(), pos.y(), pos.z(), 
-                pos.x() + cube->width, pos.y(), pos.z(), 
-
-                pos.x(), pos.y(), pos.z(), 
-                pos.x(), pos.y(), pos.z() + cube->length, 
-                
-                pos.x() + cube->width, pos.y(), pos.z(), 
-                pos.x() + cube->width, pos.y(), pos.z() + cube->length, 
-
-                pos.x(), pos.y(), pos.z() + cube->length, 
-                pos.x() + cube->width, pos.y(), pos.z() + cube->length, 
-
-                pos.x(), pos.y(), pos.z(), pos.x(), pos.y() + cube->height, pos.z(), 
-                pos.x() + cube->width, pos.y(), pos.z(), pos.x() + cube->width, pos.y() + cube->height, pos.z(), 
-                pos.x(), pos.y(), pos.z() + cube->length, pos.x(), pos.y() + cube->height, pos.z() + cube->length, 
-                pos.x() + cube->width, pos.y(), pos.z() + cube->length, pos.x() + cube->width, pos.y() + cube->height, pos.z() + cube->length, 
-
-                pos.x(), pos.y() + cube->height, pos.z(), 
-                pos.x() + cube->width, pos.y() + cube->height, pos.z(), 
-
-                pos.x(), pos.y() + cube->height, pos.z(), 
-                pos.x(), pos.y() + cube->height, pos.z() + cube->length, 
-                
-                pos.x() + cube->width, pos.y() + cube->height, pos.z(), 
-                pos.x() + cube->width, pos.y() + cube->height, pos.z() + cube->length, 
-
-                pos.x(), pos.y() + cube->height, pos.z() + cube->length, 
-                pos.x() + cube->width, pos.y() + cube->height, pos.z() + cube->length, 
-
-            };
-            this->_frameVBO.allocate(points, sizeof(points));
+            this->_frameVBO.allocate(this->_frameVertices.data(), this->_frameVertices.size() * sizeof(QVector3D));
 
             this->_frameShader.bind();
             this->_frameShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
@@ -602,6 +569,7 @@ namespace kiwi::widget {
         auto projection = this->getProjection();
         this->_axisShader.setUniformValue("projection", projection);
         this->_cubeShader.setUniformValue("projection", projection);
+        this->_frameShader.setUniformValue("projection", projection);
     }
 
     QVector3D RenderWidget::screenPosToWorldRay(const QPoint& mousePos) {
@@ -632,7 +600,6 @@ namespace kiwi::widget {
         return rayWorld; // 返回光线的方向
     }
 
-    static int cc = 0;
     auto RenderWidget::resetPointedCube(const QPoint& pos) -> void {
         auto ray = this->screenPosToWorldRay(pos);
         auto viewPos = getViewPos();
@@ -644,7 +611,33 @@ namespace kiwi::widget {
                 auto boxMin = baseBoxMin + pos;
                 auto boxMax = baseBoxMax + pos;
                 if (doesRayIntersectBox(viewPos, ray, boxMin, boxMax)) {
-                    this->_pointedCube.emplace(OneCube{cube, i});
+                    auto oneCube = OneCube{cube, i};
+                    if (!this->_pointedCube.has_value() || (*this->_pointedCube) != oneCube) {
+                        // Create a new pointed cubes!
+                        auto& pos = cube->positions[i];
+
+                        auto x = pos.x(), y = pos.y(), z = pos.z();
+                        auto width = cube->width, height = cube->height, length = cube->length;
+
+                        auto p1 = QVector3D{x, y, z};
+                        auto p2 = QVector3D{x+width, y, z};
+                        auto p3 = QVector3D{x, y, z+length};
+                        auto p4 = QVector3D{x+width, y, z+length};
+                        auto p5 = QVector3D{x, y+height, z};
+                        auto p6= QVector3D{x+width, y+height, z};
+                        auto p7 = QVector3D{x, y+height, z+length};
+                        auto p8 = QVector3D{x+width, y+height, z+length};
+
+                        this->_frameVertices[0] = this->_frameVertices[2] = this->_frameVertices[8] = p1;
+                        this->_frameVertices[1] = this->_frameVertices[4] = this->_frameVertices[10] = p2;
+                        this->_frameVertices[3] = this->_frameVertices[6] = this->_frameVertices[12] = p3;
+                        this->_frameVertices[5] = this->_frameVertices[7] = this->_frameVertices[14] = p4;
+                        this->_frameVertices[9] = this->_frameVertices[16] = this->_frameVertices[18] = p5;
+                        this->_frameVertices[11] = this->_frameVertices[17] = this->_frameVertices[20] = p6;
+                        this->_frameVertices[13] = this->_frameVertices[19] = this->_frameVertices[22] = p7;
+                        this->_frameVertices[15] = this->_frameVertices[21] = this->_frameVertices[23] = p8;
+                    }
+                    this->_pointedCube.emplace(oneCube);
                     return;
                 }
             }
