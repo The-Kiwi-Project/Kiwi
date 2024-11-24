@@ -83,4 +83,10 @@ namespace kiwi::hardware {
         }
     }
 
+    auto Track::is_connected() const -> bool {
+        return
+            this->_next_track != nullptr ||
+            this->_prev_track != nullptr ||
+            this->connected_bump().has_value();
+    }
 }
