@@ -23,6 +23,7 @@ namespace kiwi::hardware {
 
     public:
         auto adjacent_cob_coords() -> std::Vector<std::Tuple<COBDirection, COBCoord>>;
+        auto is_connected() const -> bool;
 
     public:
         // this->next ==> pre_track, pre_track->prev = this

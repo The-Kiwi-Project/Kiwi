@@ -8,6 +8,10 @@
 #include "./page/aboutpage.h"
 #include "./render/renderwidget.h"
 
+namespace kiwi::hardware {
+    class Interposer;
+}
+
 namespace kiwi::widget {
 
     // class Window : public FramelessWindow {
@@ -39,7 +43,7 @@ namespace kiwi::widget {
         Q_OBJECT
 
     public:
-        Window(QWidget *parent = nullptr);
+        Window(hardware::Interposer* i, QWidget *parent = nullptr);
         ~Window();
 
     protected:

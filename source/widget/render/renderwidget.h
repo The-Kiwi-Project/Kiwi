@@ -1,8 +1,8 @@
 #pragma once
 
+#include "hardware/cob/cob.hh"
+#include "hardware/node/trackcoord.hh"
 #include "qmatrix4x4.h"
-#include "qpoint.h"
-#include "qvector.h"
 #include "qvector3d.h"
 #include "std/utility.hh"
 #include <QScopedPointer>
@@ -76,6 +76,7 @@ namespace kiwi::widget {
         static constexpr float CHANNEL_LENGTH = COB_INTERAL;
         static constexpr float CHANNEL_WIDTH  = 0.8f;
         static constexpr float CHANNEL_HEIGHT  = 0.2f;
+        static constexpr float TRACK_INTERVAL = CHANNEL_WIDTH / (hardware::COB::INDEX_SIZE + 1);
 
         static constexpr float TOB_WIDTH = 1.5f;
         static constexpr float TOB_HEIGHT = 0.6f;
@@ -89,21 +90,29 @@ namespace kiwi::widget {
         explicit RenderWidget(hardware::Interposer* interposer, QWidget *parent = nullptr);
         ~RenderWidget() noexcept;
 
-    private:
-        void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection);
-        void initCube(const QMatrix4x4& view, const QMatrix4x4& projection);
-        void initFrame(const QMatrix4x4& view, const QMatrix4x4& projection);
-        void initTracks(const QMatrix4x4& view, const QMatrix4x4& projection);
+    protected:
+        void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
+        void initCube(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
+        void initFrame(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
+        void initTracks(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
+
+    protected:
+        auto channelPosition(std::i64 row, std::i64 col, hardware::TrackDirection dir) -> QVector3D;
+        auto trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QVector3D, QVector3D>;
 
     protected:
         auto makeCube(
+            CubeType type,
             float length, float width, float height,
             QVector<QVector3D> positions,
             const QString& texturePath, unsigned int textureid
         ) -> Cube*;
         
         auto addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void;
+        auto addTrack(const hardware::TrackCoord& coord, bool update) -> void;
         
+        auto addConnectedTracks() -> void;
+
     protected:
         void renderCubes();
         void renderAxis();
@@ -115,10 +124,12 @@ namespace kiwi::widget {
         void reRender();
 
     private:
-        QVector3D getViewPos() const;
-        QVector3D getScreenViewPos(const QPoint& pos) const;
-        QMatrix4x4 getViewMatrix() const;
-        QMatrix4x4 getProjection() const;
+        auto getViewPos() const -> QVector3D;
+        auto getScreenViewPos(const QPoint& pos) const -> QVector3D;
+
+        auto getViewMatrix() const -> QMatrix4x4;
+        auto getProjectionMatrix() const -> QMatrix4x4;
+        auto getBiasMatrix() const -> QMatrix4x4;
 
     public:
         void updateViewMatrix();

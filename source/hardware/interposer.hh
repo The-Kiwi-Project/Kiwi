@@ -64,6 +64,10 @@ namespace kiwi::hardware {
 
     private:
         auto static check_track_coord(const TrackCoord& coord) -> bool;
+
+    public:
+        auto tracks() const -> const std::HashMap<TrackCoord, Track>&
+        { return this->_tracks; }
     
     private:
         // Maybe, just array...
