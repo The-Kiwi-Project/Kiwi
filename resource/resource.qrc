@@ -6,6 +6,8 @@
         <file>shader/cube.vert</file>
         <file>shader/frame.frag</file>
         <file>shader/frame.vert</file>
+        <file>shader/track.frag</file>
+        <file>shader/track.vert</file>
     </qresource>
     <qresource prefix="/texture">
         <file>texture/cob.jpg</file>
