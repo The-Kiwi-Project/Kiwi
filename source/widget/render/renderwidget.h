@@ -2,6 +2,7 @@
 
 #include "hardware/cob/cob.hh"
 #include "hardware/node/trackcoord.hh"
+#include "hardware/tob/tobcoord.hh"
 #include "qmatrix4x4.h"
 #include "qvector3d.h"
 #include "std/utility.hh"
@@ -99,6 +100,8 @@ namespace kiwi::widget {
     protected:
         auto channelPosition(std::i64 row, std::i64 col, hardware::TrackDirection dir) -> QVector3D;
         auto trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QVector3D, QVector3D>;
+        auto cobPosition(std::i64 row, std::i64 col) -> QVector3D;
+        auto tobPosition(const hardware::TOBCoord& coord) -> QVector3D;
 
     protected:
         auto makeCube(
@@ -107,7 +110,7 @@ namespace kiwi::widget {
             QVector<QVector3D> positions,
             const QString& texturePath, unsigned int textureid
         ) -> Cube*;
-        
+
         auto addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void;
         auto addTrack(const hardware::TrackCoord& coord, bool update) -> void;
         
@@ -133,8 +136,14 @@ namespace kiwi::widget {
 
     public:
         void updateViewMatrix();
-        void updateCoordBias();
-        void updateProjection();
+        void updateViewMatrix(const QMatrix4x4& view);
+
+        void updateBiasMatrix();
+        void updateBiasMatrix(const QMatrix4x4& bias);
+
+        void updateProjectionMatrix();
+        void updateProjectionMatrix(const QMatrix4x4& projection);
+
         void updateTrackInstMatrices();
 
         void resetView();
@@ -154,9 +163,8 @@ namespace kiwi::widget {
         virtual void paintGL() override;
 
     protected:
-        auto screenPosToWorldRay(const QPoint& mousePos) -> QVector3D;
         using OneCube = std::Tuple<Cube*, int>;
-        auto resetPointedCube(const QPoint& pos) -> void;
+        auto resetPointedCube(const QVector3D& raySource, const QVector3D& rayDirection) -> void;
 
     private:
         //! \brief axis
