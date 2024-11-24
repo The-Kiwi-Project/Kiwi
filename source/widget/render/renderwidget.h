@@ -28,12 +28,32 @@
 #include <QOpenGLVertexArrayObject>
 #endif
 
-
 namespace kiwi::hardware {
     class Interposer;
 };
 
 namespace kiwi::widget {
+
+    enum class CubeType {
+        TOB,
+        COB,
+        Channel,
+        Chip,
+    };
+
+    struct Cube {
+        CubeType type;
+        float length; float width; float height;
+
+        QVector<float> vertices {};
+        QOpenGLBuffer verticesVBO {QOpenGLBuffer::VertexBuffer};
+        
+        QVector<QVector3D> positions {};
+        QOpenGLBuffer positionsVBO {QOpenGLBuffer::VertexBuffer};
+        
+        QScopedPointer<QOpenGLTexture> texture {nullptr};
+        int textureid;
+    };
 
     class RenderWidget : public QOpenGLWidget, QOpenGLFunctions_3_3_Core {
         Q_OBJECT
@@ -63,6 +83,7 @@ namespace kiwi::widget {
     private:
         static float axisVertices[];
         static int cubeIndices[];
+        static float trackVertices[];
 
     public:
         explicit RenderWidget(hardware::Interposer* interposer, QWidget *parent = nullptr);
@@ -72,50 +93,46 @@ namespace kiwi::widget {
         void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection);
         void initCube(const QMatrix4x4& view, const QMatrix4x4& projection);
         void initFrame(const QMatrix4x4& view, const QMatrix4x4& projection);
+        void initTracks(const QMatrix4x4& view, const QMatrix4x4& projection);
 
-        struct Cube {
-            float length; float width; float height;
-            QVector<float> vertices {};
-            QOpenGLBuffer verticesVBO {QOpenGLBuffer::VertexBuffer};
-            QVector<QVector3D> positions {};
-            QOpenGLBuffer positionsVBO {QOpenGLBuffer::VertexBuffer};
-            QScopedPointer<QOpenGLTexture> texture {nullptr};
-            int textureid;
-        };
-
+    protected:
         auto makeCube(
             float length, float width, float height,
             QVector<QVector3D> positions,
             const QString& texturePath, unsigned int textureid
         ) -> Cube*;
         
-        void renderCube(Cube* cube);
+        auto addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void;
+        
+    protected:
         void renderCubes();
         void renderAxis();
         void renderFrame();
+        void renderTracks();
+
+        void renderCube(Cube* cube);
 
         void reRender();
 
     private:
         QVector3D getViewPos() const;
         QVector3D getScreenViewPos(const QPoint& pos) const;
-
         QMatrix4x4 getViewMatrix() const;
         QMatrix4x4 getProjection() const;
 
     public:
         void updateViewMatrix();
         void updateCoordBias();
-        void updateInstantiateMatrices();
         void updateProjection();
+        void updateTrackInstMatrices();
 
         void resetView();
-
 
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;
         virtual void mousePressEvent(QMouseEvent *event) override;
         virtual void mouseReleaseEvent(QMouseEvent *event) override;
+        virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
         virtual void mouseMoveEvent(QMouseEvent *event) override;
         virtual void dragEnterEvent(QDragEnterEvent *event) override;
         virtual void resizeEvent(QResizeEvent *event) override;
@@ -132,8 +149,8 @@ namespace kiwi::widget {
 
     private:
         //! \brief axis
-        QOpenGLVertexArrayObject _axisVao {};
-        QOpenGLBuffer _axisVbo {QOpenGLBuffer::VertexBuffer};
+        QOpenGLVertexArrayObject _axisVAO {};
+        QOpenGLBuffer _axisVBO {QOpenGLBuffer::VertexBuffer};
         QOpenGLShaderProgram _axisShader {};
 
         //! \brief cubes
@@ -149,6 +166,13 @@ namespace kiwi::widget {
         QOpenGLBuffer _frameVBO {QOpenGLBuffer::VertexBuffer};
         QOpenGLShaderProgram _frameShader {};
         QVector<QVector3D> _frameVertices {24};
+
+        //! \brief track
+        QOpenGLVertexArrayObject _trackVAO;
+        QOpenGLBuffer _trackVBO {QOpenGLBuffer::VertexBuffer};
+        QOpenGLBuffer _trackInstVBO {QOpenGLBuffer::VertexBuffer};
+        QVector<QMatrix4x4> _trackInstMatrices;
+        QOpenGLShaderProgram _trackShader;
 
         //! \brief camera message
         float _posTheta  {RenderWidget::DEFAULT_THETA_VALUE};

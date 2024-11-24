@@ -107,6 +107,10 @@ namespace kiwi::widget {
         1, 5, 7,
     };
 
+    float RenderWidget::trackVertices[] = {
+        0.0f, 0.0f, -0.5f, 0.0f, 0.0f, 0.5f,
+    };
+
     //! \brief construct function
     RenderWidget::RenderWidget(hardware::Interposer* interposer, QWidget *parent) :
         QOpenGLWidget(parent),
@@ -129,8 +133,8 @@ namespace kiwi::widget {
     RenderWidget::~RenderWidget() noexcept {
         this->makeCurrent();
 
-        this->_axisVao.destroy();
-        this->_axisVbo.destroy();
+        this->_axisVAO.destroy();
+        this->_axisVBO.destroy();
         
         for (auto cube : this->_cubes) {
             cube->positionsVBO.destroy();
@@ -151,13 +155,13 @@ namespace kiwi::widget {
 
     //! \brief iniatil axis object
     void RenderWidget::initAxis(const QMatrix4x4& view, const QMatrix4x4& projection) {
-        this->_axisVao.create();
-        this->_axisVao.bind();
+        this->_axisVAO.create();
+        this->_axisVAO.bind();
         
         // Set axis vertices buffer
-        this->_axisVbo.create();
-        this->_axisVbo.bind();
-        this->_axisVbo.allocate(RenderWidget::axisVertices, sizeof(RenderWidget::axisVertices));
+        this->_axisVBO.create();
+        this->_axisVBO.bind();
+        this->_axisVBO.allocate(RenderWidget::axisVertices, sizeof(RenderWidget::axisVertices));
 
         // Set shader program 
         this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/shader/axis.vert");
@@ -165,15 +169,13 @@ namespace kiwi::widget {
         this->_axisShader.bind();
         this->_axisShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
         this->_axisShader.enableAttributeArray(0);
-        this->_axisVbo.release();
+        this->_axisVBO.release();
 
-        QMatrix4x4 bias;
-        bias.translate({0.0f, Z_BIAS, 0.0f});
         this->_axisShader.setUniformValue("view", view);
         this->_axisShader.setUniformValue("projection", projection);
         this->_axisShader.release();
 
-        this->_axisVao.release();
+        this->_axisVAO.release();
     }
 
     void RenderWidget::initCube(const QMatrix4x4& view, const QMatrix4x4& projection) {
@@ -253,15 +255,11 @@ namespace kiwi::widget {
         
         // Set axis vertices buffer
         this->_frameVBO.create();
-        // this->_frameVBO.bind();
-        // this->_frameVBO.allocate(points, sizeof(points));
 
         // Set shader program 
         this->_frameShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/shader/frame.vert");
         this->_frameShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader/shader/frame.frag");
         this->_frameShader.bind();
-        // this->_frameShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
-        // this->_frameShader.enableAttributeArray(0);
 
         QMatrix4x4 bias;
         bias.translate(this->_coordbias);
@@ -271,6 +269,36 @@ namespace kiwi::widget {
         this->_frameShader.release();
 
         this->_frameVAO.release();
+    }
+
+    void RenderWidget::initTracks(const QMatrix4x4& view, const QMatrix4x4& projection)
+    {
+        this->_trackVAO.create();
+        this->_trackVBO.create();
+        this->_trackInstVBO.create();
+        this->_trackShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/shader/track.vert");
+        this->_trackShader.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shader/shader/track.frag");
+
+        this->_trackVAO.bind();
+
+        this->_trackVBO.bind();
+        this->_trackVBO.allocate(RenderWidget::trackVertices, sizeof(RenderWidget::trackVertices));
+
+        this->_trackShader.bind();
+        this->_trackShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
+        this->_trackShader.enableAttributeArray(0);
+
+        QMatrix4x4 bias;
+        bias.translate(this->_coordbias);
+        this->_frameShader.setUniformValue("bias", bias);
+        this->_trackShader.setUniformValue("view", view);
+        this->_trackShader.setUniformValue("projection", projection);
+
+        this->_trackVAO.release();
+        this->_trackShader.release();
+        this->_trackVAO.release();
+
+        this->updateTrackInstMatrices();
     }
 
     auto RenderWidget::makeCube(
@@ -306,6 +334,44 @@ namespace kiwi::widget {
         return cube;
     }
 
+    auto RenderWidget::addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void {
+        QMatrix4x4 model;
+
+        // move to the mid of two position!
+        model.translate((begin + end) / 2.);
+        // model.translate(QVector3D(0.0f, Z_BIAS, 0.0f));
+
+        // sacle
+        float distance = begin.distanceToPoint(end);
+        model.scale(distance);
+
+        // roate
+        QVector3D direction = (end - begin);
+        QVector3D horizontalDiretion =
+                QVector3D{direction.x(), 0.0f, direction.z()}.normalized();
+
+        // vertical ratate
+        if (horizontalDiretion.length() != 0)
+        {
+            float phi = radian2Angle(qAsin(direction.y() / direction.length()));
+            QVector3D verticalNormal{-1 * horizontalDiretion.z(), 0.0f, horizontalDiretion.x()};
+            model.rotate(phi, verticalNormal);
+
+            // horizontal rotate
+            float theta = radian2Angle(qAcos(horizontalDiretion.z()));
+            model.rotate(( horizontalDiretion.x() > 0.0f ? theta : -1.0f * theta ), {0.0f, 1.0f, 0.0f});
+        }
+        else
+        {
+            model.rotate(90, {1.0f, 0.0f, 0.0f});
+        }
+
+        this->_trackInstMatrices.push_back(model);
+
+        if (update)
+            this->updateTrackInstMatrices();
+    }
+
     //! \brief reset uniform view matrix in shaders
     void RenderWidget::updateViewMatrix() {
         this->makeCurrent();
@@ -324,6 +390,10 @@ namespace kiwi::widget {
         this->_frameShader.setUniformValue("view", view);
         this->_frameShader.release();
 
+        this->_trackShader.bind();
+        this->_trackShader.setUniformValue("view", view);
+        this->_trackShader.release();
+
         this->doneCurrent();
     }
 
@@ -341,6 +411,10 @@ namespace kiwi::widget {
         this->_frameShader.bind();
         this->_frameShader.setUniformValue("bias", bias);
         this->_frameShader.release();
+
+        this->_trackShader.bind();
+        this->_trackShader.setUniformValue("bias", bias);
+        this->_trackShader.release();
 
         this->doneCurrent();
     }
@@ -378,7 +452,7 @@ namespace kiwi::widget {
         QPoint delta = event->pos() - this->_lastMousePos;
         this->resetPointedCube(event->pos());
 
-        // rotate model
+        // rotate track
         if (this->_mouseButton == Qt::LeftButton) {
             this->_posTheta -= (delta.x() / 100.0);
             this->_posPitch += (delta.y() / 100.0);
@@ -392,7 +466,7 @@ namespace kiwi::widget {
             this->updateViewMatrix();
         }
 
-        // translate model
+        // translate track
         else if (this->_mouseButton == Qt::RightButton) {
             float deltaX = delta.x() * -1.0f * qSin(this->_posTheta)
                         + delta.y() * qCos(this->_posTheta);
@@ -408,6 +482,11 @@ namespace kiwi::widget {
         this->_lastMousePos = event->pos();
 
         this->reRender();
+    }
+
+    static float a = 0;
+    void RenderWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+        
     }
 
     void RenderWidget::dragEnterEvent(QDragEnterEvent *event) {
@@ -444,6 +523,7 @@ namespace kiwi::widget {
         this->initAxis(view, projection);
         this->initCube(view, projection);
         this->initFrame(view, projection);
+        this->initTracks(view, projection);
 
         this->updateViewMatrix();
         this->updateCoordBias();
@@ -461,10 +541,11 @@ namespace kiwi::widget {
         this->renderAxis();
         this->renderCubes();
         this->renderFrame();
+        this->renderTracks();
     }
 
     void RenderWidget::renderAxis() {
-        this->_axisVao.bind();
+        this->_axisVAO.bind();
 
         this->_axisShader.bind();
         // y axis
@@ -478,7 +559,7 @@ namespace kiwi::widget {
         this->glDrawArrays(GL_LINES, 12, 6);
         this->_axisShader.release();
 
-        this->_axisVao.release();
+        this->_axisVAO.release();
     }
 
     void RenderWidget::renderCubes() {
@@ -505,6 +586,16 @@ namespace kiwi::widget {
             this->_frameShader.release();
             this->_frameVAO.release();
         }
+    }
+
+    void RenderWidget::renderTracks() {
+        this->_trackVAO.bind();
+        this->_trackShader.bind();
+
+        this->glDrawArraysInstanced(GL_LINES, 0, 2, this->_trackInstMatrices.size());
+
+        this->_trackShader.release();
+        this->_trackVAO.release();
     }
 
     void RenderWidget::renderCube(Cube* cube) {
@@ -570,6 +661,38 @@ namespace kiwi::widget {
         this->_axisShader.setUniformValue("projection", projection);
         this->_cubeShader.setUniformValue("projection", projection);
         this->_frameShader.setUniformValue("projection", projection);
+        this->_trackShader.setUniformValue("projection", projection);
+    }
+
+    void RenderWidget::updateTrackInstMatrices()
+    {
+        this->_trackVAO.bind();
+
+        this->_trackInstVBO.bind();
+        qDebug() << this->_trackInstMatrices.size();
+        this->_trackInstVBO.allocate(
+            this->_trackInstMatrices.data(),                                
+            this->_trackInstMatrices.size() * sizeof(QMatrix4x4)
+        );
+
+        this->_trackShader.bind();
+        this->_trackShader.setAttributeBuffer(1, GL_FLOAT, 0, 4, sizeof(QMatrix4x4));
+        this->_trackShader.enableAttributeArray(1);
+        this->_trackShader.setAttributeBuffer(2, GL_FLOAT, sizeof(QVector4D), 4, sizeof(QMatrix4x4));
+        this->_trackShader.enableAttributeArray(2);
+        this->_trackShader.setAttributeBuffer(3, GL_FLOAT, 2 * sizeof(QVector4D), 4, sizeof(QMatrix4x4));
+        this->_trackShader.enableAttributeArray(3);
+        this->_trackShader.setAttributeBuffer(4, GL_FLOAT, 3 * sizeof(QVector4D), 4, sizeof(QMatrix4x4));
+        this->_trackShader.enableAttributeArray(4);
+
+        this->glVertexAttribDivisor(1, 1);
+        this->glVertexAttribDivisor(2, 1);
+        this->glVertexAttribDivisor(3, 1);
+        this->glVertexAttribDivisor(4, 1);
+
+        this->_trackShader.release();
+        this->_trackInstVBO.release();
+        this->_trackVAO.release();
     }
 
     QVector3D RenderWidget::screenPosToWorldRay(const QPoint& mousePos) {
