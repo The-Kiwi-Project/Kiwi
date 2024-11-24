@@ -31,6 +31,9 @@
 
 namespace kiwi::hardware {
     class Interposer;
+    class TOB;
+    class COB;
+    class Track;
 };
 
 namespace kiwi::widget {
@@ -115,6 +118,7 @@ namespace kiwi::widget {
         auto addTrack(const hardware::TrackCoord& coord, bool update) -> void;
         
         auto addConnectedTracks() -> void;
+        auto displayCOBConnections() -> void;
 
     protected:
         void renderCubes();
@@ -147,6 +151,10 @@ namespace kiwi::widget {
         void updateTrackInstMatrices();
 
         void resetView();
+
+    protected:
+        auto getTOBByCubeIndeces(int index) -> hardware::TOB*;
+        auto getCOBByCubeIndeces(int index) -> hardware::COB*;
 
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;

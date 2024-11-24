@@ -4,13 +4,9 @@
 #include "hardware/cob/cobdirection.hh"
 #include "hardware/node/track.hh"
 #include "hardware/node/trackcoord.hh"
-#include "qdebug.h"
-#include "qglobal.h"
-#include "qmatrix4x4.h"
-#include "qpoint.h"
-#include "qvector.h"
-#include "qvector3d.h"
 #include "std/collection.hh"
+#include "../dialog/tobinfo.h"
+#include "../dialog/cobinfo.h"
 #include <hardware/interposer.hh>
 #include <debug/debug.hh>
 
@@ -473,6 +469,18 @@ namespace kiwi::widget {
         this->doneCurrent();
     }
 
+    auto RenderWidget::getTOBByCubeIndeces(int index) -> hardware::TOB* {
+        std::i64 row = index / hardware::Interposer::TOB_ARRAY_WIDTH;
+        std::i64 col = index % hardware::Interposer::TOB_ARRAY_WIDTH;
+        return this->_interposer->get_tob(row, col).value();
+    }
+
+    auto RenderWidget::getCOBByCubeIndeces(int index) -> hardware::COB* {
+        std::i64 row = index / hardware::Interposer::COB_ARRAY_WIDTH;
+        std::i64 col = index % hardware::Interposer::COB_ARRAY_WIDTH;
+        return this->_interposer->get_cob(row, col).value();
+    }
+
     void RenderWidget::resetView() {
         this->_posTheta = RenderWidget::DEFAULT_THETA_VALUE;
         this->_posPitch = RenderWidget::DEFAULT_PITCH_VALUE;
@@ -546,19 +554,24 @@ namespace kiwi::widget {
     }
 
     void RenderWidget::mouseDoubleClickEvent(QMouseEvent *event) {
-        if (this->_pointedCube.has_value()) {
-            auto [cube, i] = *(this->_pointedCube);
-            switch (cube->type) {
-                case CubeType::COB: {
-                    
-                    break;
-                }
-                case CubeType::TOB: {
-                    
-                    break;                    
-                }
-                default: break;
+        if (!this->_pointedCube.has_value())
+            return;
+
+        auto [cube, i] = *(this->_pointedCube);
+        switch (cube->type) {
+            case CubeType::COB: {
+                auto cob = this->getCOBByCubeIndeces(i);
+                auto dialog = COBInfoDialog{cob};
+                dialog.exec();
+                break;
             }
+            case CubeType::TOB: {
+                auto tob = this->getTOBByCubeIndeces(i);
+                auto dialog = TOBInfoDialog{tob};
+                dialog.exec();
+                break;                    
+            }
+            default: break;
         }
     }
 
