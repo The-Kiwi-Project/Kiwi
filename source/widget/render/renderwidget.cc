@@ -1,4 +1,5 @@
 #include "./renderwidget.h"
+#include "./renderutil.hh"
 #include "hardware/cob/cob.hh"
 #include "hardware/cob/cobdirection.hh"
 #include "hardware/node/track.hh"
@@ -23,39 +24,6 @@
 #include <QtDebug>
 
 namespace kiwi::widget {
-
-    static bool doesRayIntersectBox(const QVector3D& lightSource, 
-                            const QVector3D& lightDirection, 
-                            const QVector3D& boxMin, 
-                            const QVector3D& boxMax) {
-        // 光线方向的倒数
-        QVector3D invDir(1.0f / lightDirection.x(), 
-                        1.0f / lightDirection.y(), 
-                        1.0f / lightDirection.z());
-
-        // 计算每个面与光线的交点参数 t
-        float t1 = (boxMin.x() - lightSource.x()) * invDir.x();
-        float t2 = (boxMax.x() - lightSource.x()) * invDir.x();
-        float t3 = (boxMin.y() - lightSource.y()) * invDir.y();
-        float t4 = (boxMax.y() - lightSource.y()) * invDir.y();
-        float t5 = (boxMin.z() - lightSource.z()) * invDir.z();
-        float t6 = (boxMax.z() - lightSource.z()) * invDir.z();
-
-        // 获取进入和离开长方体的 t 值
-        float tMin = std::max({std::min(t1, t2), std::min(t3, t4), std::min(t5, t6)});
-        float tMax = std::min({std::max(t1, t2), std::max(t3, t4), std::max(t5, t6)});
-
-        // 判断是否相交
-        return tMax >= std::max(0.0f, tMin); // 光线与长方体相交（t >= 0 确保相交点在光线前方）
-    }
-
-    float radian2Angle(float radian) {
-        return radian / 3.14159f * 180.0f;
-    }
-
-    float angle2Radian(float angle) {
-        return angle * 3.14159f / 180.0f;
-    }
 
     // Coord (y, z, x)
     static auto generateCubVertices(float length, float width, float height) -> QVector<float> {
@@ -208,9 +176,8 @@ namespace kiwi::widget {
         auto positions = QVector<QVector3D>{};
         for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
             for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
-                auto rowPos = row * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
-                auto colPos = col * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
-                positions.push_back(QVector3D{rowPos, 0.f, colPos});
+                auto position = RenderWidget::cobPosition(row, col);
+                positions.push_back(position);
             }
         }
         auto cobCube = this->makeCube(CubeType::COB, COB_WIDTH, COB_WIDTH, COB_HEIGHT, qMove(positions), ":/texture/texture/cob.jpg", 0);
@@ -242,11 +209,9 @@ namespace kiwi::widget {
         ///////////////////////// TOB /////////////////////////
         auto tobPos = QVector<QVector3D>{};
         for (auto& [_, coord] : hardware::Interposer::TOB_COORD_MAP) {
-            auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOB_WIDTH) / 2.f;
-            auto colPos = coord.col * (COB_WIDTH + COB_INTERAL) - (TOB_WIDTH - COB_WIDTH) / 2.f;
-            tobPos.push_back(QVector3D{rowPos, 0.f, colPos});
+            auto position = this->tobPosition(coord);
+            tobPos.push_back(position);
         }
-
         auto tobCube = this->makeCube(CubeType::TOB, TOB_WIDTH, TOB_WIDTH, TOB_HEIGHT, qMove(tobPos), ":/texture/texture/tob.jpg", 3);
         this->_cubes.push_back(tobCube);
 
@@ -353,6 +318,18 @@ namespace kiwi::widget {
         return {begin, end};
     }
 
+    auto RenderWidget::cobPosition(std::i64 row, std::i64 col) -> QVector3D {
+        auto rowPos = row * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
+        auto colPos = col * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
+        return QVector3D {rowPos, 0.f, colPos};
+    }
+
+    auto RenderWidget::tobPosition(const hardware::TOBCoord& coord) -> QVector3D {
+        auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOB_WIDTH) / 2.f;
+        auto colPos = coord.col * (COB_WIDTH + COB_INTERAL) - (TOB_WIDTH - COB_WIDTH) / 2.f;
+        return QVector3D { rowPos, 0.f, colPos };
+    }
+
     auto RenderWidget::makeCube(
         CubeType type,
         float length, float width, float height,
@@ -407,12 +384,12 @@ namespace kiwi::widget {
 
         // vertical ratate
         if (horizontalDiretion.length() != 0) {
-            float phi = radian2Angle(qAsin(direction.y() / direction.length()));
+            float phi = RenderUtil::radian2Angle(qAsin(direction.y() / direction.length()));
             QVector3D verticalNormal{-1 * horizontalDiretion.z(), 0.0f, horizontalDiretion.x()};
             model.rotate(phi, verticalNormal);
 
             // horizontal rotate
-            float theta = radian2Angle(qAcos(horizontalDiretion.z()));
+            float theta = RenderUtil::radian2Angle(qAcos(horizontalDiretion.z()));
             model.rotate(( horizontalDiretion.x() > 0.0f ? theta : -1.0f * theta ), {0.0f, 1.0f, 0.0f});
         }
         else {
@@ -446,11 +423,13 @@ namespace kiwi::widget {
         this->updateTrackInstMatrices();
     }
 
-    //! \brief reset uniform view matrix in shaders
     void RenderWidget::updateViewMatrix() {
-        this->makeCurrent();
-
         QMatrix4x4 view = this->getViewMatrix();
+        this->updateViewMatrix(view);
+    }
+
+    void RenderWidget::updateViewMatrix(const QMatrix4x4& view) {
+        this->makeCurrent();
 
         this->_axisShader.bind();
         this->_axisShader.setUniformValue("view", view);
@@ -471,12 +450,13 @@ namespace kiwi::widget {
         this->doneCurrent();
     }
 
-    //! \brief update coord bias
-    void RenderWidget::updateCoordBias() {
-        this->makeCurrent();
+    void RenderWidget::updateBiasMatrix() {
+        auto bias = this->getBiasMatrix();
+        this->updateBiasMatrix(bias);
+    }
 
-        QMatrix4x4 bias;
-        bias.translate(this->_coordbias);
+    void RenderWidget::updateBiasMatrix(const QMatrix4x4& bias) {
+        this->makeCurrent();
 
         this->_cubeShader.bind();
         this->_cubeShader.setUniformValue("bias", bias);
@@ -493,14 +473,13 @@ namespace kiwi::widget {
         this->doneCurrent();
     }
 
-    //! \brief reset the view matrix
     void RenderWidget::resetView() {
         this->_posTheta = RenderWidget::DEFAULT_THETA_VALUE;
         this->_posPitch = RenderWidget::DEFAULT_PITCH_VALUE;
         this->_posRadius = RenderWidget::DEFAULT_RADIUS_VALUE;
 
         this->updateViewMatrix();
-        this->updateCoordBias();
+        this->updateBiasMatrix();
 
         this->reRender();
     }
@@ -508,7 +487,6 @@ namespace kiwi::widget {
     void RenderWidget::wheelEvent(QWheelEvent *event) {
         this->_posRadius += (event->angleDelta().y() / 100.0);
         this->updateViewMatrix();
-        // this->resetPointedCube(event->pos());
         this->reRender();
     }
 
@@ -524,7 +502,16 @@ namespace kiwi::widget {
 
     void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
         QPoint delta = event->pos() - this->_lastMousePos;
-        this->resetPointedCube(event->pos());
+        
+        int width = this->width();
+        int height = this->height();
+
+        QMatrix4x4 projection = this->getProjectionMatrix();
+        QMatrix4x4 view = this->getViewMatrix();
+
+        auto raySource = getViewPos();
+        auto rayDirection = RenderUtil::screenPosToWorldRay(event->pos(), width, height, projection, view);
+        this->resetPointedCube(raySource, rayDirection);
 
         // rotate track
         if (this->_mouseButton == Qt::LeftButton) {
@@ -537,7 +524,7 @@ namespace kiwi::widget {
             else if (this->_posPitch < RenderWidget::MIN_PITCH)
                 this->_posPitch = RenderWidget::MIN_PITCH;
 
-            this->updateViewMatrix();
+            this->updateViewMatrix(view);
         }
 
         // translate track
@@ -550,7 +537,7 @@ namespace kiwi::widget {
                                         0.0f,
                                         deltaX / 30.0);
 
-            this->updateCoordBias();
+            this->updateBiasMatrix();
         }
 
         this->_lastMousePos = event->pos();
@@ -592,7 +579,7 @@ namespace kiwi::widget {
 
     void RenderWidget::resizeEvent(QResizeEvent *event) {
         QOpenGLWidget::resizeEvent(event);
-        this->updateProjection();
+        this->updateProjectionMatrix();
         this->reRender();
     }
 
@@ -746,12 +733,18 @@ namespace kiwi::widget {
         return bias;
     }
 
-    void RenderWidget::updateProjection() {
+    void RenderWidget::updateProjectionMatrix() {
         auto projection = this->getProjectionMatrix();
+        this->updateProjectionMatrix(projection);
+    }
+
+    void RenderWidget::updateProjectionMatrix(const QMatrix4x4& projection) {
+        this->makeCurrent();
         this->_axisShader.setUniformValue("projection", projection);
         this->_cubeShader.setUniformValue("projection", projection);
         this->_frameShader.setUniformValue("projection", projection);
         this->_trackShader.setUniformValue("projection", projection);
+        this->doneCurrent();
     }
 
     void RenderWidget::updateTrackInstMatrices() {
@@ -783,37 +776,7 @@ namespace kiwi::widget {
         this->_trackVAO.release();
     }
 
-    QVector3D RenderWidget::screenPosToWorldRay(const QPoint& mousePos) {
-        int width = this->width();
-        int height = this->height();
-
-        // 获取 OpenGL 的投影矩阵和视图矩阵
-        QMatrix4x4 projection = this->getProjectionMatrix();
-        QMatrix4x4 view = this->getViewMatrix();
-
-        // 归一化屏幕坐标 (从 [0, width] 转为 [-1, 1])
-        float x = (2.0f * mousePos.x()) / width - 1.0f;
-        float y = 1.0f - (2.0f * mousePos.y()) / height; // OpenGL 的 Y 轴是反的
-        float z = 1.0f; // 鼠标在远裁剪面
-
-        // 将屏幕坐标转换为 4D 点 (Clip Space)
-        QVector4D rayClip(x, y, -1.0f, 1.0f);
-
-        // 转换为 4D 眼空间坐标 (Eye Space)
-        QVector4D rayEye = projection.inverted() * rayClip;
-        rayEye.setZ(-1.0f);
-        rayEye.setW(0.0f);
-
-        // 转换为 3D 世界空间 (World Space)
-        QVector3D rayWorld = (view.inverted() * rayEye).toVector3D();
-        rayWorld.normalize();
-
-        return rayWorld; // 返回光线的方向
-    }
-
-    auto RenderWidget::resetPointedCube(const QPoint& pos) -> void {
-        auto ray = this->screenPosToWorldRay(pos);
-        auto viewPos = getViewPos();
+    auto RenderWidget::resetPointedCube(const QVector3D& raySource, const QVector3D& rayDirection) -> void {
         for (auto cube : this->_cubes) {
             auto baseBoxMin = QVector3D{0.f, 0.f, 0.f} + this->_coordbias;
             auto baseBoxMax = QVector3D{cube->width, cube->height, cube->length} + this->_coordbias;
@@ -821,7 +784,7 @@ namespace kiwi::widget {
                 auto& pos = cube->positions[i];
                 auto boxMin = baseBoxMin + pos;
                 auto boxMax = baseBoxMax + pos;
-                if (doesRayIntersectBox(viewPos, ray, boxMin, boxMax)) {
+                if (RenderUtil::doesRayIntersectBox(raySource, rayDirection, boxMin, boxMax)) {
                     auto oneCube = OneCube{cube, i};
                     if (!this->_pointedCube.has_value() || (*this->_pointedCube) != oneCube) {
                         // Create a new pointed cubes!
