@@ -309,8 +309,8 @@ namespace kiwi::widget {
             }
         }
 
-        begin.setY(channelPos.y() + COB_HEIGHT);
-        end.setY(channelPos.y() + COB_HEIGHT);
+        begin.setY(channelPos.y() + COB_HEIGHT + 0.05);
+        end.setY(channelPos.y() + COB_HEIGHT + 0.05);
 
         return {begin, end};
     }
@@ -701,8 +701,6 @@ namespace kiwi::widget {
         if (!this->_pointedCube.has_value())
             return;
 
-        this->displayCOBConnections();
-
         auto [cube, i] = *(this->_pointedCube);
         switch (cube->type) {
             case CubeType::COB: {
@@ -719,6 +717,8 @@ namespace kiwi::widget {
             }
             default: break;
         }
+
+        this->updateTrackInstMatrices();
     }
 
     void RenderWidget::dragEnterEvent(QDragEnterEvent *event) {
@@ -747,6 +747,8 @@ namespace kiwi::widget {
 
         this->glEnable(GL_DEPTH_TEST);
 
+        this->glLineWidth(5.0f);
+
         // calculate uniform matrix
         auto view = this->getViewMatrix();
         auto projection = this->getProjectionMatrix();
@@ -757,6 +759,8 @@ namespace kiwi::widget {
         this->initCube(view, projection, bias);
         this->initFrame(view, projection, bias);
         this->initTracks(view, projection, bias);
+
+        this->displayCOBConnections();
     }
 
     void RenderWidget::resizeGL(int w, int h) {
