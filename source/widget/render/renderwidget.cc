@@ -2,9 +2,9 @@
 #include "./renderutil.hh"
 #include "hardware/cob/cob.hh"
 #include "hardware/cob/cobdirection.hh"
+#include "hardware/cob/cobregister.hh"
 #include "hardware/node/track.hh"
 #include "hardware/node/trackcoord.hh"
-#include "std/collection.hh"
 #include "../dialog/tobinfo.h"
 #include "../dialog/cobinfo.h"
 #include <hardware/interposer.hh>
@@ -279,6 +279,7 @@ namespace kiwi::widget {
     }
 
     auto RenderWidget::trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QVector3D, QVector3D> {
+        // MARK: Channel position error
         auto channelPos = this->channelPosition(coord.row, coord.col, coord.dir);
         auto begin = QVector3D{};
         auto end = QVector3D{};
@@ -288,10 +289,10 @@ namespace kiwi::widget {
                 auto xpos = channelPos.x() + (coord.index+1) * TRACK_INTERVAL;
 
                 begin.setX(xpos);
-                begin.setZ(channelPos.z());
+                begin.setZ(channelPos.z() - COB_WIDTH - CHANNEL_LENGTH);
 
                 end.setX(xpos);
-                end.setZ(channelPos.z() + CHANNEL_LENGTH);
+                end.setZ(channelPos.z() - COB_WIDTH);
 
                 break;
             }
@@ -299,17 +300,17 @@ namespace kiwi::widget {
                 auto zpos = channelPos.z() + (coord.index+1) * TRACK_INTERVAL;
 
                 begin.setZ(zpos);
-                begin.setX(channelPos.x());
+                begin.setX(channelPos.x() - COB_WIDTH - CHANNEL_LENGTH);
 
                 end.setZ(zpos);
-                end.setX(channelPos.x() + CHANNEL_LENGTH);
+                end.setX(channelPos.x() - COB_WIDTH);
 
                 break;
             }
         }
 
-        begin.setY(channelPos.y() + CHANNEL_HEIGHT);
-        end.setY(channelPos.y() + CHANNEL_HEIGHT);
+        begin.setY(channelPos.y() + COB_HEIGHT);
+        end.setY(channelPos.y() + COB_HEIGHT);
 
         return {begin, end};
     }
@@ -404,16 +405,159 @@ namespace kiwi::widget {
         this->addTrack(begin, end, update);
     }
 
-    auto RenderWidget::addConnectedTracks() -> void {
-        if (this->_interposer == nullptr) {
-            debug::error("No interposer in this widget");
-            return;
-        }
+    auto RenderWidget::displayCOBConnections() -> void {
+        using enum hardware::COBDirection;
+        using enum hardware::TrackDirection;
+        using hardware::COBSwState;
+        for (auto& [coord, cob] : this->_interposer->cobs()) {
+            // Left to Up
+            for (auto track_index = 0; track_index < hardware::COB::INDEX_SIZE; track_index++) {
+                auto from_cob_index = hardware::COB::track_index_to_cob_index(track_index);
+                auto to_cob_index = hardware::COB::cob_index_map(Left, from_cob_index, Up);
+                auto value = cob.get_sw_resgiter_value(Left, from_cob_index, Up);
+                if (value == COBSwState::Connected) {
+                    auto [beginl, endl] = this->trackPosition(cob.to_dir_track_coord(Left, from_cob_index));
+                    auto [beginu, endu] = this->trackPosition(cob.to_dir_track_coord(Up, to_cob_index));
 
-        auto usedTracks = std::HashSet<hardware::Track*>{};
-        for (auto& [coord, track] : this->_interposer->tracks()) {
-            if (track.is_connected()) {
-                this->addTrack(coord, false);
+                    /*
+                                           endu
+                                            |
+                                          beginu
+                                       +---------
+                        beginl -> endl |
+                                       |
+
+                    */
+
+                    this->addTrack(beginl, endl, false);
+                    this->addTrack(beginu, endu, false);
+                    this->addTrack(endl, beginu, false);
+                }
+            }
+
+            // Left to Down
+            for (auto track_index = 0; track_index < hardware::COB::INDEX_SIZE; track_index++) {
+                auto from_cob_index = hardware::COB::track_index_to_cob_index(track_index);
+                auto to_cob_index = hardware::COB::cob_index_map(Left, from_cob_index, Down);
+                auto value = cob.get_sw_resgiter_value(Left, from_cob_index, Down);
+                if (value == COBSwState::Connected) {
+                    auto [beginl, endl] = this->trackPosition(cob.to_dir_track_coord(Left, from_cob_index));
+                    auto [begind, endd] = this->trackPosition(cob.to_dir_track_coord(Down, to_cob_index));
+
+                    /*
+                                       |
+                        beginl -> endl |
+                                       |
+                                       +------------
+                                          endd
+                                           |
+                                         begind 
+                    */
+
+                    this->addTrack(beginl, endl, false);
+                    this->addTrack(begind, endd, false);
+                    this->addTrack(endl, endd, false);
+                }
+            }
+
+            // Right to Up
+            for (auto track_index = 0; track_index < hardware::COB::INDEX_SIZE; track_index++) {
+                auto from_cob_index = hardware::COB::track_index_to_cob_index(track_index);
+                auto to_cob_index = hardware::COB::cob_index_map(Right, from_cob_index, Up);
+                auto value = cob.get_sw_resgiter_value(Right, from_cob_index, Up);
+                if (value == COBSwState::Connected) {
+                    auto [beginr, endr] = this->trackPosition(cob.to_dir_track_coord(Right, from_cob_index));
+                    auto [beginu, endu] = this->trackPosition(cob.to_dir_track_coord(Up, to_cob_index));
+
+                    /*
+                                endu
+                                  |
+                                beginu
+                            ---------+
+                                     |
+                                     | beginr -> endr
+                                     |
+                    */
+
+                    this->addTrack(beginr, endr, false);
+                    this->addTrack(beginu, endu, false);
+                    this->addTrack(beginr, beginu, false);
+                }
+            }
+
+            // Right to Down
+            for (auto track_index = 0; track_index < hardware::COB::INDEX_SIZE; track_index++) {
+                auto from_cob_index = hardware::COB::track_index_to_cob_index(track_index);
+                auto to_cob_index = hardware::COB::cob_index_map(Right, from_cob_index, Down);
+                auto value = cob.get_sw_resgiter_value(Right, from_cob_index, Down);
+                if (value == COBSwState::Connected) {
+                    auto [beginr, endr] = this->trackPosition(cob.to_dir_track_coord(Right, from_cob_index));
+                    auto [begind, endd] = this->trackPosition(cob.to_dir_track_coord(Down, to_cob_index));
+
+                    /*
+                                        |
+                                        | beginr -> endr
+                                        |
+                            ------------+
+                                 endd
+                                   |
+                                begind 
+                    */
+
+                    this->addTrack(beginr, endr, false);
+                    this->addTrack(begind, endd, false);
+                    this->addTrack(beginr, endd, false);
+                }
+            }
+
+            // Left to Right
+            for (auto track_index = 0; track_index < hardware::COB::INDEX_SIZE; track_index++) {
+                auto from_cob_index = hardware::COB::track_index_to_cob_index(track_index);
+                auto to_cob_index = hardware::COB::cob_index_map(Left, from_cob_index, Right);
+                auto value = cob.get_sw_resgiter_value(Left, from_cob_index, Right);
+                if (value == COBSwState::Connected) {
+                    auto [beginl, endl] = this->trackPosition(cob.to_dir_track_coord(Left, from_cob_index));
+                    auto [beginr, endr] = this->trackPosition(cob.to_dir_track_coord(Right, to_cob_index));
+
+                    /*
+                                       |        |
+                        beginl -> endl |        | beginr -> endr
+                                       |        |
+
+                    */
+
+                    this->addTrack(beginl, endl, false);
+                    this->addTrack(beginr, endr, false);
+                    this->addTrack(endl, beginr, false);
+                }
+            }
+
+            // Up to Down
+            for (auto track_index = 0; track_index < hardware::COB::INDEX_SIZE; track_index++) {
+                auto from_cob_index = hardware::COB::track_index_to_cob_index(track_index);
+                auto to_cob_index = hardware::COB::cob_index_map(Up, from_cob_index, Down);
+                auto value = cob.get_sw_resgiter_value(Up, from_cob_index, Down);
+                if (value == COBSwState::Connected) {
+                    auto [beginu, endu] = this->trackPosition(cob.to_dir_track_coord(Up, from_cob_index));
+                    auto [begind, endd] = this->trackPosition(cob.to_dir_track_coord(Down, to_cob_index));
+
+                    /*
+                                endu
+                                  |
+                                beginu
+                            ------------
+
+
+                            ------------
+                                 endd
+                                   |
+                                begind 
+                    */
+
+                    this->addTrack(beginu, endu, false);
+                    this->addTrack(begind, endd, false);
+                    this->addTrack(beginu, endd, false);
+                }
             }
         }
         this->updateTrackInstMatrices();
@@ -556,6 +700,8 @@ namespace kiwi::widget {
     void RenderWidget::mouseDoubleClickEvent(QMouseEvent *event) {
         if (!this->_pointedCube.has_value())
             return;
+
+        this->displayCOBConnections();
 
         auto [cube, i] = *(this->_pointedCube);
         switch (cube->type) {

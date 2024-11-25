@@ -117,7 +117,6 @@ namespace kiwi::widget {
         auto addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void;
         auto addTrack(const hardware::TrackCoord& coord, bool update) -> void;
         
-        auto addConnectedTracks() -> void;
         auto displayCOBConnections() -> void;
 
     protected:

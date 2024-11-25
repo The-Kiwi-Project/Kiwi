@@ -6,7 +6,6 @@
 #include "qgroupbox.h"
 #include "qlabel.h"
 #include "qlineedit.h"
-#include "qlocale.h"
 #include "qnamespace.h"
 #include "qtextformat.h"
 #include <hardware/cob/cob.hh>
