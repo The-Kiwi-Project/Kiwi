@@ -53,6 +53,14 @@ namespace kiwi::hardware {
     }
 
     auto COBUnit::sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> COBSwRegister& {
+        return const_cast<COBSwRegister&>(const_cast<const COBUnit*>(this)->sw_register(from_dir, from_index, to_dir));
+    }
+
+    auto COBUnit::sel_register(COBDirection dir, std::usize index) -> COBSelRegister& {
+        return const_cast<COBSelRegister&>(const_cast<const COBUnit*>(this)->sel_register(dir, index));
+    }
+
+    auto COBUnit::sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) const -> const COBSwRegister& {
         COBUnit::assert_index(from_index);
 
         auto to_index = COBUnit::index_map(from_dir, from_index, to_dir);
@@ -88,7 +96,7 @@ namespace kiwi::hardware {
         return this->_switch_lu[0];
     }
 
-    auto COBUnit::sel_register(COBDirection dir, std::usize index) -> COBSelRegister& {
+    auto COBUnit::sel_register(COBDirection dir, std::usize index) const -> const COBSelRegister& {
         COBUnit::assert_index(index);
         switch (dir) {
             case COBDirection::Left:  return this->_left_sel[index];

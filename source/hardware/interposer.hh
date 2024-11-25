@@ -68,6 +68,9 @@ namespace kiwi::hardware {
     public:
         auto tracks() const -> const std::HashMap<TrackCoord, Track>&
         { return this->_tracks; }
+
+        auto cobs() const -> const std::HashMap<COBCoord, COB>& 
+        { return this->_cobs; }
     
     private:
         // Maybe, just array...

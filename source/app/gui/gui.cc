@@ -17,10 +17,10 @@ namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
         QApplication a(argc, argv);
-        // kiwi::MainWindow w;
 
         debug::debug("test_route_bump_to_bump_net");
 
+        // Init interposer
         auto i = hardware::Interposer{};
         auto router = algo::MazeRouteStrategy{};
 
@@ -30,6 +30,13 @@ namespace kiwi {
 
         router.route_bump_to_bump_net(&i, &net1);
 
+        begin_bump = i.get_bump(3, 2, 125).value();
+        end_bump = i.get_bump(2, 1, 39).value();
+        auto net2 = circuit::BumpToBumpNet{begin_bump, end_bump};
+
+        router.route_bump_to_bump_net(&i, &net2);
+
+        // Window
         auto w = widget::Window{&i};
         w.show();
         return a.exec();
