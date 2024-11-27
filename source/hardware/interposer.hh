@@ -6,8 +6,8 @@
 #include "./tob/tobcoord.hh"
 #include "./tob/tob.hh"
 
-#include "./node/track.hh"
-#include "./node/bump.hh"
+#include "./track/track.hh"
+#include "./bump/bump.hh"
 #include "hardware/coord.hh"
 #include <std/integer.hh>
 

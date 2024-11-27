@@ -3,8 +3,7 @@
 #include "hardware/cob/cob.hh"
 #include "hardware/cob/cobdirection.hh"
 #include "hardware/cob/cobregister.hh"
-#include "hardware/node/track.hh"
-#include "hardware/node/trackcoord.hh"
+#include "hardware/track/trackcoord.hh"
 #include "../dialog/tobinfo.h"
 #include "../dialog/cobinfo.h"
 #include <hardware/interposer.hh>
@@ -941,6 +940,9 @@ namespace kiwi::widget {
 
     auto RenderWidget::resetPointedCube(const QVector3D& raySource, const QVector3D& rayDirection) -> void {
         for (auto cube : this->_cubes) {
+            if (cube->type == CubeType::Channel) {
+                continue;
+            }
             auto baseBoxMin = QVector3D{0.f, 0.f, 0.f} + this->_coordbias;
             auto baseBoxMax = QVector3D{cube->width, cube->height, cube->length} + this->_coordbias;
             for (int i = 0; i < cube->positions.size(); ++i) {

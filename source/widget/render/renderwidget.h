@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hardware/cob/cob.hh"
-#include "hardware/node/trackcoord.hh"
+#include "hardware/track/trackcoord.hh"
 #include "hardware/tob/tobcoord.hh"
 #include "qmatrix4x4.h"
 #include "qvector3d.h"

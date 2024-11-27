@@ -1,15 +1,15 @@
 #include "./interposer.hh"
 #include "./cob/cob.hh"
 #include "./tob/tob.hh"
-#include "./node/track.hh"
-#include "./node/bump.hh"
+#include "./track/track.hh"
+#include "./bump/bump.hh"
 
 #include <std/collection.hh>
 #include <std/utility.hh>
 #include <std/integer.hh>
 #include "hardware/cob/cobcoord.hh"
 #include "hardware/coord.hh"
-#include "hardware/node/trackcoord.hh"
+#include "hardware/track/trackcoord.hh"
 #include "hardware/tob/tobcoord.hh"
 
 #include <debug/debug.hh>

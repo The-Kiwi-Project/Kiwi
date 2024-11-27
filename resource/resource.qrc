@@ -27,7 +27,7 @@
         <file>image/icon/load.png</file>
     </qresource>
     <qresource prefix="/qss">
-        <file>qss/button.qss</file>
-        <file>qss/switch.qss</file>
+        <file>qss/default.qss</file>
+        <file>qss/default.qss</file>
     </qresource>
 </RCC>

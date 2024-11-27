@@ -1,5 +1,5 @@
 #include "./track.hh"
-#include "./bump.hh"
+#include "../bump/bump.hh"
 #include "../cob/cobcoord.hh"
 #include "../cob/cobdirection.hh"
 

@@ -31,7 +31,7 @@
 
 #include "./config/config.hh"
 #include "circuit/topdie/topdieinst.hh"
-#include "hardware/node/trackcoord.hh"
+#include "hardware/track/trackcoord.hh"
 #include "parse/reader/config/connection.hh"
 
 namespace kiwi::hardware {

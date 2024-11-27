@@ -3,6 +3,9 @@
 #include "qdialog.h"
 #include <QDialog>
 
+class QComboBox;
+class QSpinBox;
+
 namespace kiwi::hardware {
     class TOB;
 }
@@ -16,6 +19,8 @@ namespace kiwi::widget {
         
     private:
         hardware::TOB* _tob;
+
+        QSpinBox* _bumpIndexSpinBox;
     };
 
 }

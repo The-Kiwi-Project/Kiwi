@@ -1,9 +1,6 @@
 #pragma once
 
-#include "hardware/cob/cobdirection.hh"
 #include "hardware/cob/cobregister.hh"
-#include "qchar.h"
-#include "std/integer.hh"
 #include "std/utility.hh"
 #include <QDialog>
 
