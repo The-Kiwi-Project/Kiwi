@@ -1,5 +1,5 @@
 #include "./tsbsnet.hh"
-#include <hardware/node/bump.hh>
+#include <hardware/bump/bump.hh>
 
 
 namespace kiwi::circuit {

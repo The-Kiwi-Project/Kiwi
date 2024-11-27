@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../tob/tobsigdir.hh"
-#include "./track.hh"
+#include "../track/track.hh"
 #include "hardware/coord.hh"
 
 #include <std/integer.hh>

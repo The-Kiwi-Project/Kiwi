@@ -4,8 +4,8 @@
 #include <hardware/cob/cob.hh>
 #include <hardware/tob/tob.hh>
 #include <hardware/interposer.hh>
-#include <hardware/node/track.hh>
-#include <hardware/node/bump.hh>
+#include <hardware/track/track.hh>
+#include <hardware/bump/bump.hh>
 
 #include <std/integer.hh>
 #include <std/collection.hh>

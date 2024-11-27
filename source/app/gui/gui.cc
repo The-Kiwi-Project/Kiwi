@@ -7,7 +7,7 @@
 #include <std/collection.hh>
 #include <std/memory.hh>
 #include "debug/debug.hh"
-#include "hardware/node/track.hh"
+#include "hardware/track/track.hh"
 #include "hardware/tob/tobsigdir.hh"
 #include <algo/router/maze/mazeroutestrategy.hh>
 #include <hardware/interposer.hh>
@@ -16,10 +16,6 @@
 namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
-        QApplication a(argc, argv);
-
-        debug::debug("test_route_bump_to_bump_net");
-
         // Init interposer
         auto i = hardware::Interposer{};
         auto router = algo::MazeRouteStrategy{};
@@ -36,10 +32,20 @@ namespace kiwi {
 
         router.route_bump_to_bump_net(&i, &net2);
 
+        ////////////////////////////////////////////////
+        QApplication app(argc, argv);
+
+        QFile file(":/qss/qss/default.qss");
+        file.open(QFile::ReadOnly);
+        QTextStream filetext(&file);
+        QString stylesheet = filetext.readAll();
+        app.setStyleSheet(stylesheet);
+        file.close();
+
         // Window
         auto w = widget::Window{&i};
         w.show();
-        return a.exec();
+        return app.exec();
     }
 
 }
