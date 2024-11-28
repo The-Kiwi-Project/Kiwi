@@ -7,6 +7,7 @@
 #include "hardware/track/trackcoord.hh"
 #include "../dialog/tobinfo.h"
 #include "../dialog/cobinfo.h"
+#include "widget/dialog/topdieinstinfo.h"
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 #include <debug/debug.hh>
@@ -788,6 +789,12 @@ namespace kiwi::widget {
                 auto dialog = TOBInfoDialog{tob};
                 dialog.exec();
                 break;                    
+            }
+            case CubeType::Topdie: {
+                auto topdieinst = this->getTopdieInstByCubeIndeces(i);
+                auto dialog = TopDieInsDialog{topdieinst};
+                dialog.exec();
+                break;
             }
             default: break;
         }

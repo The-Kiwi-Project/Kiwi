@@ -39,7 +39,7 @@ namespace kiwi::widget {
         layout->addWidget(baseGroup);
         
         // coord
-        auto baseLayout1 = new QHBoxLayout {baseGroup};
+        auto baseLayout1 = new QHBoxLayout {};
         auto coordLabel = new QLabel {baseGroup};
         coordLabel->setText("Coord");
         baseLayout1->addWidget(coordLabel);
@@ -59,7 +59,7 @@ namespace kiwi::widget {
         layout->addWidget(inquiryGroup);
 
         // Bump index spinbox
-        auto inquiryLayout1 = new QHBoxLayout {inquiryGroup};
+        auto inquiryLayout1 = new QHBoxLayout {};
         inquiryLayout1->setContentsMargins(0, 0, 0, 0);
 
         auto bumpIndexLabel = new QLabel {inquiryGroup};

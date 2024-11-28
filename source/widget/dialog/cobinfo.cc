@@ -13,6 +13,7 @@
 #include "qpushbutton.h"
 #include "qspinbox.h"
 #include "qtextformat.h"
+#include "qwidget.h"
 #include <hardware/cob/cob.hh>
 
 #include <QComboBox>
@@ -43,14 +44,14 @@ namespace kiwi::widget {
         auto baseLayout = new QVBoxLayout {baseGroup};
         baseLayout->setContentsMargins(10, 10, 10, 10);
         
-        auto sublayout1 = new QHBoxLayout {this};
+        auto sublayout1 = new QHBoxLayout {};
         sublayout1->setContentsMargins(0, 0, 0, 0);
 
-        auto label = new QLabel {this};
+        auto label = new QLabel {baseGroup};
         label->setText("Coord");
         sublayout1->addWidget(label);
         
-        label = new QLabel {this};
+        label = new QLabel {baseGroup};
         label->setText(QString("(%1, %2)")
             .arg(cob->coord().row)
             .arg(cob->coord().col)
@@ -72,7 +73,7 @@ namespace kiwi::widget {
         registerLayout->setContentsMargins(10, 10, 10, 10);
         
         // From dir
-        auto sublayout2 = new QHBoxLayout {registerGroup};
+        auto sublayout2 = new QHBoxLayout {};
         sublayout2->setContentsMargins(0, 0, 0, 0);
 
         auto fromdirLabel = new QLabel {registerGroup};
@@ -89,7 +90,7 @@ namespace kiwi::widget {
         registerLayout->addLayout(sublayout2);
 
         // From index
-        auto sublayout4 = new QHBoxLayout {registerGroup};
+        auto sublayout4 = new QHBoxLayout {};
         sublayout4->setContentsMargins(0, 0, 0, 0);
 
         auto fromTrackIndex = new QLabel {registerGroup};
@@ -104,7 +105,7 @@ namespace kiwi::widget {
         registerLayout->addLayout(sublayout4);
 
         // To dir
-        auto sublayout3 = new QHBoxLayout {registerGroup};
+        auto sublayout3 = new QHBoxLayout {};
         sublayout3->setContentsMargins(0, 0, 0, 0);
 
         auto todirLabel = new QLabel {registerGroup};
@@ -121,7 +122,7 @@ namespace kiwi::widget {
         registerLayout->addLayout(sublayout3);
 
         // To Index
-        auto sublayout5 = new QHBoxLayout {registerGroup};
+        auto sublayout5 = new QHBoxLayout {};
         sublayout5->setContentsMargins(0, 0, 0, 0);
 
         auto toindexLabel = new QLabel {registerGroup};
@@ -144,7 +145,7 @@ namespace kiwi::widget {
         resultLayout->setContentsMargins(10, 10, 10, 10); 
 
         // SW Register
-        auto sublayout6 = new QHBoxLayout {resultGroup};
+        auto sublayout6 = new QHBoxLayout {};
         sublayout6->setContentsMargins(0, 0, 0, 0);
 
         auto swregLabel = new QLabel {registerGroup};
@@ -161,7 +162,7 @@ namespace kiwi::widget {
         resultLayout->addLayout(sublayout6);
 
         // Sel Register
-        auto sublayout7 = new QHBoxLayout {resultGroup};
+        auto sublayout7 = new QHBoxLayout {};
         sublayout7->setContentsMargins(0, 0, 0, 0);
 
         auto selregLabel = new QLabel {registerGroup};
@@ -179,7 +180,7 @@ namespace kiwi::widget {
 
         ///////////////////////////////////////////////////////////////////////
 
-        auto buttonLayout = new QHBoxLayout {this};
+        auto buttonLayout = new QHBoxLayout {};
         layout->addLayout(buttonLayout);
 
         this->_editorButton = new QPushButton {this};
