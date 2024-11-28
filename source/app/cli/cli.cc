@@ -21,7 +21,6 @@ namespace kiwi {
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);
 
         algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
-        
         interposer->randomly_map_remain_indexes();
 
         parse::write_control_bits(

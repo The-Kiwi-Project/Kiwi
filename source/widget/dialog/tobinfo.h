@@ -1,10 +1,12 @@
 #pragma once
 
-#include "qdialog.h"
 #include <QDialog>
 
 class QComboBox;
 class QSpinBox;
+class QTreeView;
+class QStandardItemModel;
+class QLabel;
 
 namespace kiwi::hardware {
     class TOB;
@@ -18,9 +20,15 @@ namespace kiwi::widget {
         ~TOBInfoDialog();
         
     private:
+        auto updateTreeView(int bumpIndex) -> void;
+
+    private:
         hardware::TOB* _tob;
 
         QSpinBox* _bumpIndexSpinBox;
+        QLabel* _connectionLabel;
+        QTreeView* _treeView;
+        QStandardItemModel *_model;
     };
 
 }
