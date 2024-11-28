@@ -36,6 +36,7 @@ namespace kiwi::hardware {
         TOB(TOBCoord const& coord, Coord const& coord_in_interposer);
         TOB(std::i64 row, std::i64 col);
 
+    // MARK: Some method should impl `const` version
     public:
         auto available_connectors_bump_to_track(std::usize bump_index) -> std::Vector<TOBConnector>;
         auto available_connectors_track_to_bump(std::usize bump_index) -> std::Vector<TOBConnector>;

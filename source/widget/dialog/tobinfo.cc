@@ -1,6 +1,10 @@
 #include "./tobinfo.h"
-#include "qboxlayout.h"
-#include "qgroupbox.h"
+#include "qchar.h"
+#include "qlabel.h"
+#include "qspinbox.h"
+#include "qstringliteral.h"
+#include "std/collection.hh"
+#include "std/integer.hh"
 #include <hardware/tob/tob.hh>
 
 #include <QVBoxLayout>
@@ -9,6 +13,10 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QComboBox>
+#include <QTreeView>
+#include <QTableView>
+#include <QListView>
+#include <QStandardItemModel>
 
 namespace kiwi::widget {
 
@@ -66,8 +74,84 @@ namespace kiwi::widget {
         inquiryLayout->addLayout(inquiryLayout1);
 
         //// Optional 
+        auto optionalGroup = new QGroupBox {this};
+        optionalGroup->setTitle("Register Inquiry");
+        auto optionalLayout = new QVBoxLayout {optionalGroup};
+        optionalLayout->setContentsMargins(10, 10, 10, 10);
+        layout->addWidget(optionalGroup);
+
+        // Connection info label
+        this->_connectionLabel = new QLabel {optionalGroup};
+        optionalLayout->addWidget(this->_connectionLabel);
+
+        // Tree view
+        this->_treeView = new QTreeView {optionalGroup};
+        optionalLayout->addWidget(this->_treeView);
+
+        this->_model = new QStandardItemModel {this->_treeView};
+        this->_treeView->setModel(this->_model);
+
+        /////////////////////////////////////////////////////////////////////////
+        this->connect(
+            this->_bumpIndexSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), 
+            this, &TOBInfoDialog::updateTreeView);
 
         this->setMinimumSize(400, 400);
+        this->updateTreeView(this->_bumpIndexSpinBox->value());
+    }
+
+    auto TOBInfoDialog::updateTreeView(int bumpIndex) -> void {
+        auto connectors = this->_tob->available_connectors_bump_to_track(bumpIndex);
+    
+        using TrackIndexes = std::Vector<std::usize>;
+        using VertIndexes = std::HashMap<std::usize, TrackIndexes>;
+        using HoriIndexes = std::HashMap<std::usize, VertIndexes>;
+
+        auto horiIndexes = HoriIndexes{};
+
+        for (const auto& connector : connectors) {
+            auto horiIndex = connector.hori_index();
+            auto vertIndex = connector.vert_index();
+            auto trackIndex = connector.track_index();
+
+            auto& vertIndexes = horiIndexes.emplace(horiIndex, VertIndexes{}).first->second;
+            auto& trackIndexes = vertIndexes.emplace(vertIndex, TrackIndexes{}).first->second;
+            trackIndexes.emplace_back(trackIndex);
+        }
+
+        this->_model->clear();
+        this->_model->setHorizontalHeaderLabels(QStringList{QString{"Optional settings: %1"}.arg(connectors.size())});  
+        
+        if (connectors.size() == 0) {
+            // Already connect!
+            auto hortIndex = this->_tob->bump_index_map_hori_index(bumpIndex).value();
+            auto veriIndex = this->_tob->hori_index_map_vert_index(hortIndex).value();
+            auto trackIndex = this->_tob->vert_index_map_track_index(veriIndex).value();
+
+            this->_connectionLabel->setText(QString{
+                "Bump connected in path: %1 > %2 > %3 > %4"}
+                .arg(bumpIndex).arg(hortIndex).arg(veriIndex).arg(trackIndex)
+            );
+        }
+        else {
+            this->_connectionLabel->setText(QStringLiteral("Bump unconnected"));
+
+            auto itemRoot = this->_model->invisibleRootItem(); 
+            for (const auto& [horiIndex, vertIndexes] : horiIndexes) {
+                auto horiItem = new QStandardItem(QString{"hori index %1"}.arg(horiIndex));
+                itemRoot->appendRow(horiItem);
+
+                for (const auto& [vertIndex, trackIndexes] : vertIndexes) {
+                    auto vertItem = new QStandardItem(QString{"vert index %1"}.arg(vertIndex));
+                    horiItem->appendRow(vertItem);
+
+                    for (auto trackIndex : trackIndexes) {
+                        auto trackItem = new QStandardItem(QString{"track index %1"}.arg(trackIndex));
+                        vertItem->appendRow(trackItem);
+                    }
+                }
+            }
+        }
     }
 
     TOBInfoDialog::~TOBInfoDialog() {}
