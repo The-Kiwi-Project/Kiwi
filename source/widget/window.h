@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include "./base/framelesswindow.h"
-#include "./base/sidebar.h"
 #include "./page/welcomepage.h"
 #include "./page/workpage.h"
 #include "./page/aboutpage.h"
@@ -10,6 +8,10 @@
 
 namespace kiwi::hardware {
     class Interposer;
+}
+
+namespace kiwi::circuit {
+    class BaseDie;
 }
 
 namespace kiwi::widget {
@@ -43,7 +45,7 @@ namespace kiwi::widget {
         Q_OBJECT
 
     public:
-        Window(hardware::Interposer* i, QWidget *parent = nullptr);
+        Window(hardware::Interposer* i, circuit::BaseDie* b, QWidget *parent = nullptr);
         ~Window();
 
     protected:

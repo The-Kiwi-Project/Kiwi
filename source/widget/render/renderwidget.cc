@@ -1,12 +1,14 @@
 #include "./renderwidget.h"
 #include "./renderutil.hh"
 #include "hardware/cob/cob.hh"
+#include "hardware/cob/cobcoord.hh"
 #include "hardware/cob/cobdirection.hh"
 #include "hardware/cob/cobregister.hh"
 #include "hardware/track/trackcoord.hh"
 #include "../dialog/tobinfo.h"
 #include "../dialog/cobinfo.h"
 #include <hardware/interposer.hh>
+#include <circuit/basedie.hh>
 #include <debug/debug.hh>
 
 #include <QVector>
@@ -82,9 +84,14 @@ namespace kiwi::widget {
     };
 
     //! \brief construct function
-    RenderWidget::RenderWidget(hardware::Interposer* interposer, QWidget *parent) :
+    RenderWidget::RenderWidget(
+        hardware::Interposer* interposer, 
+        circuit::BaseDie* basedie,
+        QWidget *parent
+    ) :
         QOpenGLWidget(parent),
-        _interposer{interposer}
+        _interposer{interposer},
+        _basedie{basedie}
     {
         auto cob_array_height = static_cast<float>(hardware::Interposer::COB_ARRAY_HEIGHT);
         auto cob_array_width  = static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH);
@@ -167,48 +174,11 @@ namespace kiwi::widget {
         this->_cubeIndicesVBO.allocate(RenderWidget::cubeIndices, sizeof(RenderWidget::cubeIndices));
         this->_cubeIndicesVBO.release();
 
-        ///////////////////////// Build cob /////////////////////////
-        auto positions = QVector<QVector3D>{};
-        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
-            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
-                auto position = RenderWidget::cobPosition(row, col);
-                positions.push_back(position);
-            }
-        }
-        auto cobCube = this->makeCube(CubeType::COB, COB_WIDTH, COB_WIDTH, COB_HEIGHT, qMove(positions), ":/texture/texture/cob.jpg", 0);
-        this->_cubes.push_back(cobCube);
-
-        ///////////////////////// H Channel /////////////////////////
-        auto channelPos = QVector<QVector3D>{};
-        
-        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
-            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH - 1; ++col) {
-                auto position = this->channelPosition(row, col, hardware::TrackDirection::Horizontal);
-                channelPos.push_back(position);
-            }
-        }
-        auto channelCube = this->makeCube(CubeType::Channel, CHANNEL_LENGTH, CHANNEL_WIDTH, CHANNEL_HEIGHT, qMove(channelPos), ":/texture/texture/channel.jpg", 1);
-        this->_cubes.push_back(channelCube);
-
-        ///////////////////////// V Channel /////////////////////////
-        auto vchannelPos = QVector<QVector3D>{};
-        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT - 1; ++row) {
-            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
-                auto position = this->channelPosition(row, col, hardware::TrackDirection::Vertical);
-                channelPos.push_back(position);
-            }
-        }
-        auto vchannelCube = this->makeCube(CubeType::Channel, CHANNEL_WIDTH, CHANNEL_LENGTH, CHANNEL_HEIGHT, qMove(channelPos), ":/texture/texture/channel.jpg", 2);
-        this->_cubes.push_back(vchannelCube);
-
-        ///////////////////////// TOB /////////////////////////
-        auto tobPos = QVector<QVector3D>{};
-        for (auto& [_, coord] : hardware::Interposer::TOB_COORD_MAP) {
-            auto position = this->tobPosition(coord);
-            tobPos.push_back(position);
-        }
-        auto tobCube = this->makeCube(CubeType::TOB, TOB_WIDTH, TOB_WIDTH, TOB_HEIGHT, qMove(tobPos), ":/texture/texture/tob.jpg", 3);
-        this->_cubes.push_back(tobCube);
+        // Init cubes
+        this->initCOBCube();
+        this->initChannelCube();
+        this->initTOBCube();
+        this->initTopdieInstance();
 
         this->_cubeVAO.release();
     }
@@ -233,8 +203,7 @@ namespace kiwi::widget {
         this->_frameVAO.release();
     }
 
-    void RenderWidget::initTracks(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias)
-    {
+    void RenderWidget::initTracks(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
         this->_trackVAO.create();
         this->_trackVBO.create();
         this->_trackInstVBO.create();
@@ -259,6 +228,68 @@ namespace kiwi::widget {
         this->_trackVAO.release();
 
         this->updateTrackInstMatrices();
+    }
+
+    void RenderWidget::initTOBCube() {
+        auto positions = QVector<QVector3D>{};
+        // MARK: TOB coord should diff type with cob coord...
+        for (auto& [tobcoord, basecoord] : hardware::Interposer::TOB_COORD_MAP) {
+            auto position = this->tobPosition(basecoord);
+            positions.push_back(position);
+            this->_tobs.push_back(this->_interposer->get_tob(tobcoord).value());
+        }
+        auto tobCube = this->addCube(CubeType::TOB, TOB_WIDTH, TOB_WIDTH, TOB_HEIGHT, ":/texture/texture/tob.jpg", 3, qMove(positions));
+    }
+
+    void RenderWidget::initCOBCube() {
+        auto positions = QVector<QVector3D>{};
+        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
+            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
+                auto coord = hardware::COBCoord{row, col};
+                auto position = RenderWidget::cobPosition(coord);
+                positions.push_back(position);
+                this->_cobs.emplace_back(this->_interposer->get_cob(coord).value());
+            }
+        }
+        auto cobCube = this->addCube(CubeType::COB, COB_WIDTH, COB_WIDTH, COB_HEIGHT, ":/texture/texture/cob.jpg", 0, qMove(positions));
+    }
+
+    void RenderWidget::initTopdieInstance() {
+        auto positions = QVector<QVector3D>{};
+        for (auto& [name, topdieinst] : this->_basedie->topdie_insts()) {
+            auto tobcoord = topdieinst.tob()->coord();
+            auto basecoord = hardware::Interposer::TOB_COORD_MAP.at(tobcoord);
+        
+            positions.push_back(RenderWidget::topdiePosition(basecoord));
+            this->_topdieinsts.push_back(&topdieinst);
+        }
+
+        auto shipCube = this->addCube(CubeType::Topdie, TOPDIE_WIDTH, TOPDIE_WIDTH, TOPDIE_HEIGHT, ":/texture/texture/topdie.jpg", 4, qMove(positions));
+    }
+
+    void RenderWidget::initChannelCube() {
+        ///////////////////////// H Channel /////////////////////////
+        auto channelPos = QVector<QVector3D>{};
+        
+        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
+            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH - 1; ++col) {
+                auto position = this->channelPosition(row, col, hardware::TrackDirection::Horizontal);
+                channelPos.push_back(position);
+            }
+        }
+        auto channelCube = this->makeCube(CubeType::Channel, CHANNEL_LENGTH, CHANNEL_WIDTH, CHANNEL_HEIGHT, qMove(channelPos), ":/texture/texture/channel.jpg", 1);
+        this->_cubes.push_back(channelCube);
+
+        ///////////////////////// V Channel /////////////////////////
+        auto vchannelPos = QVector<QVector3D>{};
+        for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT - 1; ++row) {
+            for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
+                auto position = this->channelPosition(row, col, hardware::TrackDirection::Vertical);
+                channelPos.push_back(position);
+            }
+        }
+        auto vchannelCube = this->makeCube(CubeType::Channel, CHANNEL_WIDTH, CHANNEL_LENGTH, CHANNEL_HEIGHT, qMove(channelPos), ":/texture/texture/channel.jpg", 2);
+        this->_cubes.push_back(vchannelCube);
     }
 
     auto RenderWidget::channelPosition(std::i64 row, std::i64 col, hardware::TrackDirection dir) -> QVector3D {
@@ -314,9 +345,9 @@ namespace kiwi::widget {
         return {begin, end};
     }
 
-    auto RenderWidget::cobPosition(std::i64 row, std::i64 col) -> QVector3D {
-        auto rowPos = row * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
-        auto colPos = col * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
+    auto RenderWidget::cobPosition(const hardware::Coord& coord) -> QVector3D {
+        auto rowPos = coord.row * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
+        auto colPos = coord.col * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
         return QVector3D {rowPos, 0.f, colPos};
     }
 
@@ -324,6 +355,12 @@ namespace kiwi::widget {
         auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOB_WIDTH) / 2.f;
         auto colPos = coord.col * (COB_WIDTH + COB_INTERAL) - (TOB_WIDTH - COB_WIDTH) / 2.f;
         return QVector3D { rowPos, 0.f, colPos };
+    }
+
+    auto RenderWidget::topdiePosition(const hardware::TOBCoord& coord) -> QVector3D {
+        auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOPDIE_WIDTH) / 2.f;
+        auto colPos = coord.col * (COB_WIDTH + COB_INTERAL) - (TOPDIE_WIDTH - COB_WIDTH) / 2.f;
+        return QVector3D { rowPos, TOB_HEIGHT, colPos };
     }
 
     auto RenderWidget::makeCube(
@@ -357,6 +394,44 @@ namespace kiwi::widget {
         cube->positionsVBO.create();
         cube->positionsVBO.bind();
         cube->positionsVBO.allocate(cube->positions.data(), cube->positions.size() * sizeof(QVector3D));
+
+        return cube;
+    }
+
+    auto RenderWidget::addCube(
+        CubeType type, float length, float width, float height,
+        const QString& texturePath, unsigned int textureid,
+        QVector<QVector3D> positions
+    ) -> Cube*
+    {
+        this->_cubeVAO.bind();
+
+        auto cube = new Cube {};
+        cube->type = type;
+        cube->length = length;
+        cube->width = width;
+        cube->height = height;
+
+        cube->vertices = generateCubVertices(length, width, height);
+        
+        cube->positions = qMove(positions);
+
+        cube->texture.reset(new QOpenGLTexture {QImage(texturePath)});
+        cube->texture->setWrapMode(QOpenGLTexture::Repeat);
+        cube->texture->setMinificationFilter(QOpenGLTexture::Linear);
+        cube->texture->setMagnificationFilter(QOpenGLTexture::Linear);
+        cube->texture->generateMipMaps();
+        cube->texture->bind(textureid);
+        cube->textureid = textureid;
+
+        cube->verticesVBO.create();
+        cube->verticesVBO.bind();
+        cube->verticesVBO.allocate(cube->vertices.data(), cube->vertices.size() * sizeof(float));
+        cube->positionsVBO.create();
+        cube->positionsVBO.bind();
+        cube->positionsVBO.allocate(cube->positions.data(), cube->positions.size() * sizeof(QVector3D));
+
+        this->_cubes.push_back(cube);
 
         return cube;
     }
@@ -613,15 +688,15 @@ namespace kiwi::widget {
     }
 
     auto RenderWidget::getTOBByCubeIndeces(int index) -> hardware::TOB* {
-        std::i64 row = index / hardware::Interposer::TOB_ARRAY_WIDTH;
-        std::i64 col = index % hardware::Interposer::TOB_ARRAY_WIDTH;
-        return this->_interposer->get_tob(row, col).value();
+        return this->_tobs.at(index);
     }
 
     auto RenderWidget::getCOBByCubeIndeces(int index) -> hardware::COB* {
-        std::i64 row = index / hardware::Interposer::COB_ARRAY_WIDTH;
-        std::i64 col = index % hardware::Interposer::COB_ARRAY_WIDTH;
-        return this->_interposer->get_cob(row, col).value();
+        return this->_cobs.at(index);
+    }
+
+    auto RenderWidget::getTopdieInstByCubeIndeces(int index) -> circuit::TopDieInstance* {
+        return this->_topdieinsts.at(index);
     }
 
     void RenderWidget::resetView() {

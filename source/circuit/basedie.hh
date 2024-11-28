@@ -31,6 +31,7 @@ namespace kiwi::circuit {
         auto nets() const -> std::Span<const std::Box<Net>> { return this->_nets; }
 
     private:
+        // Pointer better..
         std::HashMap<std::String, TopDie> _topdies;
         std::HashMap<std::String, TopDieInstance> _topdie_insts;
         std::Vector<std::Box<Net>> _nets;

@@ -100,14 +100,14 @@ namespace kiwi::widget {
     //     return FramelessWindow::eventFilter(object, event);
     // }
 
-    Window::Window(hardware::Interposer* i, QWidget *parent)
+    Window::Window(hardware::Interposer* i, circuit::BaseDie* b, QWidget *parent)
         : QWidget{parent}
     {
         
         this->resize(1000, 800);
         auto layout = new QVBoxLayout{this};
         layout->setContentsMargins(10, 10, 10, 10);
-        this->_renderWidget = new RenderWidget{i, this};
+        this->_renderWidget = new RenderWidget{i, b, this};
         layout->addWidget(this->_renderWidget);
         this->setLayout(layout);
 

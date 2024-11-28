@@ -13,6 +13,7 @@
         <file>texture/cob.jpg</file>
         <file>texture/channel.jpg</file>
         <file>texture/tob.jpg</file>
+        <file>texture/topdie.jpg</file>
     </qresource>
     <qresource prefix="/image">
         <file>image/icon/list.png</file>

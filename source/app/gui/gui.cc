@@ -1,49 +1,32 @@
 #include "./gui.hh"
+
 #include <widget/window.h>
-#include <QApplication>
-#include "circuit/net/types/btnet.hh"
-#include "circuit/net/types/btsnet.hh"
-#include "circuit/net/types/tbnet.hh"
-#include <std/collection.hh>
-#include <std/memory.hh>
-#include "debug/debug.hh"
-#include "hardware/track/track.hh"
-#include "hardware/tob/tobsigdir.hh"
-#include <algo/router/maze/mazeroutestrategy.hh>
+
 #include <hardware/interposer.hh>
-#include <circuit/net/nets.hh>
+#include <circuit/basedie.hh>
+
+#include <algo/router/route.hh>
+#include <algo/router/maze/mazeroutestrategy.hh>
+
+#include <parse/reader/module.hh>
+#include <parse/writer/module.hh>
+
+#include <std/utility.hh>
+#include <std/range.hh>
+#include <std/string.hh>
+#include <debug/debug.hh>
+#include <std/algorithm.hh>
+
+#include <QApplication>
 
 namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
-        // Init interposer
-        auto i = hardware::Interposer{};
-        auto router = algo::MazeRouteStrategy{};
+        auto [interposer, basedie] 
+            = kiwi::parse::read_config("../config/muyan");
 
-        auto begin_bump = i.get_bump(0, 0, 45).value();
-        auto end_bump = i.get_bump(0, 1, 4).value();
-        auto net1 = circuit::BumpToBumpNet{begin_bump, end_bump};
-
-        router.route_bump_to_bump_net(&i, &net1);
-
-        begin_bump = i.get_bump(3, 2, 125).value();
-        end_bump = i.get_bump(2, 1, 39).value();
-        auto net2 = circuit::BumpToBumpNet{begin_bump, end_bump};
-
-        router.route_bump_to_bump_net(&i, &net2);
-
-        ////////////////////////////////////////////////
         QApplication app(argc, argv);
-
-        QFile file(":/qss/qss/default.qss");
-        file.open(QFile::ReadOnly);
-        QTextStream filetext(&file);
-        QString stylesheet = filetext.readAll();
-        app.setStyleSheet(stylesheet);
-        file.close();
-
-        // Window
-        auto w = widget::Window{&i};
+        auto w = widget::Window{interposer.get(), basedie.get()};
         w.show();
         return app.exec();
     }
