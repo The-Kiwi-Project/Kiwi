@@ -3,8 +3,7 @@
 #include "hardware/cob/cob.hh"
 #include "hardware/track/trackcoord.hh"
 #include "hardware/tob/tobcoord.hh"
-#include "qmatrix4x4.h"
-#include "qvector3d.h"
+#include "std/collection.hh"
 #include "std/utility.hh"
 #include <QScopedPointer>
 #include <QVector>
@@ -36,13 +35,18 @@ namespace kiwi::hardware {
     class Track;
 };
 
+namespace kiwi::circuit {
+    class BaseDie;
+    class TopDieInstance;
+};
+
 namespace kiwi::widget {
 
     enum class CubeType {
         TOB,
         COB,
         Channel,
-        Chip,
+        Topdie,
     };
 
     struct Cube {
@@ -85,13 +89,19 @@ namespace kiwi::widget {
         static constexpr float TOB_WIDTH = 1.5f;
         static constexpr float TOB_HEIGHT = 0.6f;
 
+        static constexpr float TOPDIE_WIDTH = 1.2f;
+        static constexpr float TOPDIE_HEIGHT = 0.2f;
+
     private:
         static float axisVertices[];
         static int cubeIndices[];
         static float trackVertices[];
 
     public:
-        explicit RenderWidget(hardware::Interposer* interposer, QWidget *parent = nullptr);
+        explicit RenderWidget(
+            hardware::Interposer* interposer, 
+            circuit::BaseDie* basedie,
+            QWidget *parent = nullptr);
         ~RenderWidget() noexcept;
 
     protected:
@@ -100,11 +110,17 @@ namespace kiwi::widget {
         void initFrame(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
         void initTracks(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
 
+        void initTOBCube();
+        void initCOBCube();
+        void initTopdieInstance();
+        void initChannelCube();
+
     protected:
         auto channelPosition(std::i64 row, std::i64 col, hardware::TrackDirection dir) -> QVector3D;
         auto trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QVector3D, QVector3D>;
-        auto cobPosition(std::i64 row, std::i64 col) -> QVector3D;
+        auto cobPosition(const hardware::COBCoord& coord) -> QVector3D;
         auto tobPosition(const hardware::TOBCoord& coord) -> QVector3D;
+        auto topdiePosition(const hardware::TOBCoord& coord) -> QVector3D;
 
     protected:
         auto makeCube(
@@ -112,6 +128,12 @@ namespace kiwi::widget {
             float length, float width, float height,
             QVector<QVector3D> positions,
             const QString& texturePath, unsigned int textureid
+        ) -> Cube*;
+
+        auto addCube(
+            CubeType type, float length, float width, float height,
+            const QString& texturePath, unsigned int textureid,
+            QVector<QVector3D> positions
         ) -> Cube*;
 
         auto addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void;
@@ -154,6 +176,7 @@ namespace kiwi::widget {
     protected:
         auto getTOBByCubeIndeces(int index) -> hardware::TOB*;
         auto getCOBByCubeIndeces(int index) -> hardware::COB*;
+        auto getTopdieInstByCubeIndeces(int index) -> circuit::TopDieInstance*;
 
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;
@@ -212,8 +235,13 @@ namespace kiwi::widget {
         QVector3D _coordbias {};
         Qt::MouseButton _mouseButton {Qt::NoButton};
 
-        // Hardware
+    private:
         hardware::Interposer* _interposer {nullptr};
+        circuit::BaseDie* _basedie {nullptr};
+
+        std::Vector<hardware::TOB*> _tobs {};
+        std::Vector<hardware::COB*> _cobs {};
+        std::Vector<circuit::TopDieInstance*> _topdieinsts {};
     };
 
 }
