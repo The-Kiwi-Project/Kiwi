@@ -21,6 +21,8 @@
 
 本项目由 [xmake](https://github.com/xmake-io/xmake) 工具构建。
 
+安装xmake：[xmake安装](https://xmake.io/mirror/zh-cn/guide/installation.html)
+
 保证系统安装 xmake 以及支持 C++20 版本的编译器。在根目录调用：
 
 ````bash
