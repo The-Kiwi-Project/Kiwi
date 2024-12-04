@@ -77,20 +77,22 @@ namespace kiwi::widget {
 
         static constexpr float AXIS_LENGTH = 10.0f;
 
-        static constexpr float COB_WIDTH = 1.0f;
-        static constexpr float COB_HEIGHT = 0.4f;
-        static constexpr float COB_INTERAL = 3.0f;
+        static constexpr float COB_WIDTH = 2.0f;
+        static constexpr float COB_HEIGHT = 0.6f;
 
-        static constexpr float CHANNEL_LENGTH = COB_INTERAL;
-        static constexpr float CHANNEL_WIDTH  = 0.8f;
+        static constexpr float TOB_WIDTH = 2.0f;
+        static constexpr float TOB_HEIGHT = 1.0f;
+
+        static constexpr float TOPDIE_WIDTH = 2.5f;
+        static constexpr float TOPDIE_HEIGHT = 0.2f;
+
+        static constexpr float COB_INTERAL = 3.0f;
+        static constexpr float CHANNEL_LENGTH = 3.0f;
+        static constexpr float CHANNEL_WIDTH  = 1.5f;
         static constexpr float CHANNEL_HEIGHT  = 0.2f;
         static constexpr float TRACK_INTERVAL = CHANNEL_WIDTH / (hardware::COB::INDEX_SIZE + 1);
 
-        static constexpr float TOB_WIDTH = 1.5f;
-        static constexpr float TOB_HEIGHT = 0.6f;
-
-        static constexpr float TOPDIE_WIDTH = 1.2f;
-        static constexpr float TOPDIE_HEIGHT = 0.2f;
+        static_assert(COB_INTERAL > TOB_WIDTH);
 
     private:
         static float axisVertices[];

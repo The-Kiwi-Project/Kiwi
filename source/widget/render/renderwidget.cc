@@ -7,6 +7,7 @@
 #include "hardware/track/trackcoord.hh"
 #include "../dialog/tobinfo.h"
 #include "../dialog/cobinfo.h"
+#include "qdebug.h"
 #include "widget/dialog/topdieinstinfo.h"
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
@@ -948,6 +949,7 @@ namespace kiwi::widget {
 
     void RenderWidget::reRender() {
         this->update();
+        // this->parentWidget()->update();
     }
 
     QVector3D RenderWidget::getViewPos() const {

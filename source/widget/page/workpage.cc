@@ -12,17 +12,15 @@
 namespace kiwi::widget
 {
 
-    WorkPage::WorkPage(QWidget* parent) :
+    WorkPage::WorkPage(hardware::Interposer* i, circuit::BaseDie* b, QWidget* parent) :
         TitlePageWidget("WORK", parent)
     {
         this->setMouseTracking(true);
         this->buildTitle();
 
-        this->_renderWidget = new RenderWidget(nullptr, nullptr, this->_mainWidget);
+        this->_renderWidget = new RenderWidget(i, b, this->_mainWidget);
         this->_renderWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        // this->_renderWidget->setMinimumSize(10, 10);
         this->_mainLayout->addWidget(this->_renderWidget);
-        this->_renderWidget->show();
     }
 
     WorkPage::~WorkPage() {

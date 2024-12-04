@@ -8,6 +8,14 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QGridLayout;
 
+namespace kiwi::hardware {
+    class Interposer;
+}
+
+namespace kiwi::circuit {
+    class BaseDie;
+}
+
 namespace kiwi::widget {
 
     class PushButton;
@@ -20,7 +28,7 @@ namespace kiwi::widget {
 
     //! \group constrcutor and desctructor
     public:
-        WorkPage(QWidget* parent = 0);
+        WorkPage(hardware::Interposer* i, circuit::BaseDie* b, QWidget* parent = 0);
         ~WorkPage();
 
     //! \group UI elements
