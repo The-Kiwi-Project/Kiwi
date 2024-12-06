@@ -96,6 +96,21 @@ namespace kiwi::algo{
         auto Manhattan_distance(const std::Rc<Node> node, const std::HashSet<hardware::Track*>& end_tracks) const -> std::usize;\
         auto check_found(const std::HashSet<hardware::Track*>& end_tracks, hardware::Track* track) const -> bool;
     
+    private:    // for debug
+        auto print_end_tracks(const std::HashSet<hardware::Track*>& end_tracks) const -> void{
+            for (auto& t: end_tracks){
+                debug::debug_fmt("{}", t->coord());
+            }
+            debug::debug("\n");
+        }
+
+        auto print_path(const routed_path* ptr_path) const -> void{
+            for (auto& [p, _]: *ptr_path){
+                debug::debug_fmt("{}", p->coord());
+            }
+            debug::debug("\n\n");
+        }
+    
     private:
         const NodeTrackInterface _node_track_interface {};
     };

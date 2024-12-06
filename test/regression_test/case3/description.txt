@@ -1,0 +1,1 @@
+muyan without bus, to test basic routing functionality

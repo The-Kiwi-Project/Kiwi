@@ -235,7 +235,11 @@ namespace kiwi::algo {
     {
         try{
             // three: [bump_to_bump, track_to_bump, bump_to_track]
+//!
+// debug::initial_log("./debug.log")；
+//!
             debug::debug("Maze routing for synchronized nets");
+            
             std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};
             std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};
             std::Array<std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};

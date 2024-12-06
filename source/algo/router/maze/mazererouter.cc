@@ -193,6 +193,10 @@ namespace kiwi::algo{
         std::Vector<std::Rc<Node>> queue {tree._root};
         std::make_heap(queue.begin(), queue.end(), Node::CompareNodes);
 
+//!
+// print_end_tracks(end_tracks);
+//!
+
         while (!queue.empty()) {
             // get current node
             std::pop_heap(queue.begin(), queue.end(), Node::CompareNodes);
@@ -225,7 +229,10 @@ namespace kiwi::algo{
                     for (auto& tp: temp_path){
                         path_ptr->push_back(tp);
                     }
-                    return {false, path_ptr->size() + temp_path.size() + bump_length};
+//!
+// print_path(path_ptr);
+//!
+                    return {false, path_ptr->size() + bump_length};
                 }
                 else if(path_ptr->size() + temp_path.size() + bump_length == max_length){
                     // connect
@@ -247,6 +254,9 @@ namespace kiwi::algo{
                     for (auto& tp: temp_path){
                         path_ptr->push_back(tp);
                     }
+//!
+// print_path(path_ptr);
+//!
                     return {true, max_length};
                 }
                 else{
