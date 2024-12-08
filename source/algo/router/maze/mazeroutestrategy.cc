@@ -236,7 +236,7 @@ namespace kiwi::algo {
         try{
             // three: [bump_to_bump, track_to_bump, bump_to_track]
 //!
-// debug::initial_log("./debug.log")；
+debug::initial_log("./debug.log");
 //!
             debug::debug("Maze routing for synchronized nets");
             

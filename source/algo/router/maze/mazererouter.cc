@@ -194,7 +194,7 @@ namespace kiwi::algo{
         std::make_heap(queue.begin(), queue.end(), Node::CompareNodes);
 
 //!
-// print_end_tracks(end_tracks);
+print_end_tracks(end_tracks);
 //!
 
         while (!queue.empty()) {
@@ -230,7 +230,7 @@ namespace kiwi::algo{
                         path_ptr->push_back(tp);
                     }
 //!
-// print_path(path_ptr);
+print_path(path_ptr);
 //!
                     return {false, path_ptr->size() + bump_length};
                 }
@@ -255,7 +255,7 @@ namespace kiwi::algo{
                         path_ptr->push_back(tp);
                     }
 //!
-// print_path(path_ptr);
+print_path(path_ptr);
 //!
                     return {true, max_length};
                 }
