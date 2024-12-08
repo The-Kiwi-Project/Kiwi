@@ -91,6 +91,8 @@ namespace kiwi::algo {
             std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
             std::usize bump_length, std::usize max_length
         ) const -> std::tuple<bool, std::usize>;
+
+        auto print_sync_path(circuit::SyncNet*) const -> void;
     
     private:
         std::Box<RerouteStrategy> _rerouter;

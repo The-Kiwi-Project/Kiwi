@@ -18,6 +18,9 @@
 namespace kiwi {
 
     auto cli_main(std::StringView config_path, std::Option<std::StringView> output_path) -> int {
+//!
+debug::initial_log("./debug.log");
+//!
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);
 
         algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});

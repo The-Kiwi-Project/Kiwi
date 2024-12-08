@@ -154,7 +154,7 @@ namespace kiwi::algo{
             (*end_bump)->disconnect_track(end_track);
         }
         
-        auto path_length {path_ptr->size()};
+        auto path_length {path_ptr->size()};        // 这里不是真实的长度
         hardware::Track* next_track = nullptr;
         std::usize cut_length = path_length > 1 ? ((path_length * cut_rate) < 1 ? 1 : int(path_length * cut_rate)) : 0;
         std::usize remain_length {path_length - cut_length};
@@ -194,6 +194,7 @@ namespace kiwi::algo{
         std::make_heap(queue.begin(), queue.end(), Node::CompareNodes);
 
 //!
+debug::debug("Rerouting...");
 print_end_tracks(end_tracks);
 //!
 
@@ -208,8 +209,10 @@ print_end_tracks(end_tracks);
             if (check_found(end_tracks, track)){                // 这里直接用contains可能哈希过程有问题，因为track*里面不只有坐标，还有其他值
                 auto temp_node_list {tree.backtrace(node_sptr)};
                 auto temp_path {_node_track_interface.nodes_trackify(temp_node_list)};
+                auto temp_path_length {path_length(temp_path)};
+                auto current_path_length {path_length(*path_ptr)};
 
-                if (path_ptr->size() + temp_path.size() + bump_length > max_length){
+                if (current_path_length + temp_path_length + bump_length > max_length){
                     // connect
                     hardware::Track* prev_track = nullptr;
                     for (auto it = temp_path.begin(); it != temp_path.end(); ++it){
@@ -232,9 +235,9 @@ print_end_tracks(end_tracks);
 //!
 print_path(path_ptr);
 //!
-                    return {false, path_ptr->size() + bump_length};
+                    return {false, path_length(*path_ptr) + bump_length};
                 }
-                else if(path_ptr->size() + temp_path.size() + bump_length == max_length){
+                else if(current_path_length + temp_path_length + bump_length == max_length){
                     // connect
                     hardware::Track* prev_track = nullptr;
                     for (auto it = temp_path.begin(); it != temp_path.end(); ++it){
@@ -291,6 +294,76 @@ print_path(path_ptr);
             }
         }
         return false;
+    }
+
+    auto MazeRerouter::shared_cobs(const std::Vector<hardware::COBCoord>& cobs1, const std::Vector<hardware::COBCoord>& cobs2) const -> std::Vector<hardware::COBCoord>{
+        std::Vector<hardware::COBCoord> shared_cobs {};
+        for (auto& c1: cobs1){
+            for (auto& c2: cobs2){
+                if (c1 == c2){
+                    shared_cobs.emplace_back(c1);
+                }
+            }
+        }
+        return shared_cobs;
+    }
+
+    auto MazeRerouter::track_pos_to_cobs(const hardware::Track* track) const -> std::Vector<hardware::COBCoord>{
+        std::Vector<hardware::COBCoord> cobs {};
+        auto coord {track->coord()};
+        cobs.emplace_back(coord.row, coord.col);
+        if (coord.dir == hardware::TrackDirection::Horizontal){
+            if (coord.col >= 1){
+                cobs.emplace_back(coord.row, coord.col - 1);
+            }
+        }
+        else if (coord.dir == hardware::TrackDirection::Vertical){
+            if (coord.row >= 1){
+                cobs.emplace_back(coord.row - 1, coord.col);
+            }
+        }
+        return cobs;
+    }
+
+    auto MazeRerouter::path_length(const routed_path& path, bool switch_length) const -> std::usize {
+        assert(!path.empty());
+
+        if (switch_length){
+            return path.size();
+        }
+        else{
+            std::usize head{0}, tail{0};
+            std::usize path_length{0};
+
+            if (path.size() <= 2){
+                return path.size();
+            }
+            while(tail != path.size() - 1){
+                auto current_pos {track_pos_to_cobs(std::get<0>(path[head]))};
+                while (true){
+                    if (tail == path.size() - 1){
+                        if (tail == head){
+                            path_length += 1;
+                        }
+                        else{
+                            path_length += 2;
+                        }
+                        break;
+                    }
+                    auto tail_cobs {track_pos_to_cobs(std::get<0>(path[tail]))};
+                    current_pos = shared_cobs(current_pos, tail_cobs);
+                    if (current_pos.empty()){
+                        path_length += 2;
+                        head = tail;
+                        break;
+                    }
+                    else{
+                        tail += 1;
+                    }
+                }
+            }
+            return path_length;
+        }
     }
 
 }
