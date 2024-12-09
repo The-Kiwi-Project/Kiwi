@@ -1,9 +1,8 @@
 #include "window.h"
 #include "./page/aboutpage.h"
-#include "qboxlayout.h"
-#include "qwidget.h"
-#include "widget/page/workpage.h"
-#include "widget/render/renderwidget.h"
+#include "./page/workpage.h"
+#include "./view/3d/view3dwidget.h"
+#include "./view/2d/view2dwidget.h"
 #include <QDebug>
 #include <QResizeEvent>
 
@@ -103,12 +102,11 @@ namespace kiwi::widget {
         this->resize(1000, 800);
         auto layout = new QVBoxLayout{this};
         layout->setContentsMargins(10, 10, 10, 10);
-        this->_renderWidget = new RenderWidget{i, b, this};
+        this->_renderWidget = new View2DWidget{i, b, this};
         layout->addWidget(this->_renderWidget);
         this->setLayout(layout);
 
         this->_renderWidget->installEventFilter(this);
-
     }
 
     SWindow::~SWindow() {}

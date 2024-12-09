@@ -20,8 +20,9 @@ namespace kiwi::widget {
 
     class PushButton;
     class LineEdit;
-    class RenderWidget;
-
+    class View3DWidget;
+    class View2DWidget;
+    
     class WorkPage : public TitlePageWidget {
 
         Q_OBJECT
@@ -33,7 +34,7 @@ namespace kiwi::widget {
 
     //! \group UI elements
     private:
-        RenderWidget* _renderWidget;
+        View3DWidget* _renderWidget;
 
     //! \group override the pure virtual function for PageWidget
     private:

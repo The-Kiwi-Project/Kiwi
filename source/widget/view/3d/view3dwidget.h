@@ -63,7 +63,7 @@ namespace kiwi::widget {
         int textureid;
     };
 
-    class RenderWidget : public QOpenGLWidget, QOpenGLFunctions_3_3_Core {
+    class View3DWidget : public QOpenGLWidget, QOpenGLFunctions_3_3_Core {
         Q_OBJECT
 
     private:
@@ -100,11 +100,11 @@ namespace kiwi::widget {
         static float trackVertices[];
 
     public:
-        explicit RenderWidget(
+        explicit View3DWidget(
             hardware::Interposer* interposer, 
             circuit::BaseDie* basedie,
             QWidget *parent = nullptr);
-        ~RenderWidget() noexcept;
+        ~View3DWidget() noexcept;
 
     protected:
         void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
@@ -226,9 +226,9 @@ namespace kiwi::widget {
         QOpenGLShaderProgram _trackShader;
 
         //! \brief camera message
-        float _posTheta  {RenderWidget::DEFAULT_THETA_VALUE};
-        float _posPitch  {RenderWidget::DEFAULT_PITCH_VALUE};
-        float _posRadius {RenderWidget::DEFAULT_RADIUS_VALUE};
+        float _posTheta  {View3DWidget::DEFAULT_THETA_VALUE};
+        float _posPitch  {View3DWidget::DEFAULT_PITCH_VALUE};
+        float _posRadius {View3DWidget::DEFAULT_RADIUS_VALUE};
 
         //! \brief last mouse pos
         QPoint _lastMousePos {100, 100};

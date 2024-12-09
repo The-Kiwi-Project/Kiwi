@@ -1,16 +1,16 @@
-#include "./renderutil.hh"
+#include "./view3dutil.hh"
 
 namespace kiwi::widget {
 
-    float RenderUtil::radian2Angle(float radian) {
+    float View3DUtil::radian2Angle(float radian) {
         return radian / 3.14159f * 180.0f;
     }
 
-    float RenderUtil::angle2Radian(float angle) {
+    float View3DUtil::angle2Radian(float angle) {
         return angle * 3.14159f / 180.0f;
     }
 
-    auto RenderUtil::doesRayIntersectBox(
+    auto View3DUtil::doesRayIntersectBox(
         const QVector3D& lightSource, 
         const QVector3D& lightDirection, 
         const QVector3D& boxMin, 
@@ -37,7 +37,7 @@ namespace kiwi::widget {
         return tMax >= std::max(0.0f, tMin); // 光线与长方体相交（t >= 0 确保相交点在光线前方）
     }
 
-    auto RenderUtil::screenPosToWorldRay(
+    auto View3DUtil::screenPosToWorldRay(
         const QPoint& screenPos,
         int width, int height,
         const QMatrix4x4 projection,

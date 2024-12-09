@@ -71,6 +71,9 @@ namespace kiwi::hardware {
 
         auto cobs() const -> const std::HashMap<COBCoord, COB>& 
         { return this->_cobs; }
+
+        auto tobs() const -> const std::HashMap<COBCoord, TOB>& 
+        { return this->_tobs; }
     
     private:
         // Maybe, just array...

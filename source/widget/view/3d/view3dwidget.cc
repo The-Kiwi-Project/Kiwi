@@ -1,12 +1,12 @@
-#include "./renderwidget.h"
-#include "./renderutil.hh"
+#include "./view3dwidget.h"
+#include "./view3dutil.hh"
 #include "hardware/cob/cob.hh"
 #include "hardware/cob/cobcoord.hh"
 #include "hardware/cob/cobdirection.hh"
 #include "hardware/cob/cobregister.hh"
 #include "hardware/track/trackcoord.hh"
-#include "../dialog/tobinfo.h"
-#include "../dialog/cobinfo.h"
+#include "../../dialog/tobinfo.h"
+#include "../../dialog/cobinfo.h"
 #include "qdebug.h"
 #include "widget/dialog/topdieinstinfo.h"
 #include <hardware/interposer.hh>
@@ -40,7 +40,7 @@ namespace kiwi::widget {
     } 
 
     //! \brief verices date
-    float RenderWidget::axisVertices[] = {
+    float View3DWidget::axisVertices[] = {
         // y axis
         -1 * AXIS_LENGTH / 2.0, 0.0f, 0.0f, AXIS_LENGTH, 0.0f, 0.0f,
         AXIS_LENGTH - ARROWHEAD_SIZE, ARROWHEAD_SIZE, 0.0f, AXIS_LENGTH, 0.0f, 0.0f,
@@ -55,7 +55,7 @@ namespace kiwi::widget {
         -ARROWHEAD_SIZE, AXIS_LENGTH - ARROWHEAD_SIZE, 0.0f, 0.0f, AXIS_LENGTH, 0.0f,
     };
 
-    int RenderWidget::cubeIndices[] = {
+    int View3DWidget::cubeIndices[] = {
         // Bottom
         0, 1, 3,
         0, 2, 3,
@@ -81,12 +81,12 @@ namespace kiwi::widget {
         1, 5, 7,
     };
 
-    float RenderWidget::trackVertices[] = {
+    float View3DWidget::trackVertices[] = {
         0.0f, 0.0f, -0.5f, 0.0f, 0.0f, 0.5f,
     };
 
     //! \brief construct function
-    RenderWidget::RenderWidget(
+    View3DWidget::View3DWidget(
         hardware::Interposer* interposer, 
         circuit::BaseDie* basedie,
         QWidget *parent
@@ -109,7 +109,7 @@ namespace kiwi::widget {
     }
 
     //! \brief destruct function
-    RenderWidget::~RenderWidget() noexcept {
+    View3DWidget::~View3DWidget() noexcept {
         this->makeCurrent();
 
         this->_axisVAO.destroy();
@@ -133,14 +133,14 @@ namespace kiwi::widget {
     }
 
     //! \brief iniatil axis object
-    void RenderWidget::initAxis(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
+    void View3DWidget::initAxis(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
         this->_axisVAO.create();
         this->_axisVAO.bind();
         
         // Set axis vertices buffer
         this->_axisVBO.create();
         this->_axisVBO.bind();
-        this->_axisVBO.allocate(RenderWidget::axisVertices, sizeof(RenderWidget::axisVertices));
+        this->_axisVBO.allocate(View3DWidget::axisVertices, sizeof(View3DWidget::axisVertices));
 
         // Set shader program 
         this->_axisShader.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/shader/axis.vert");
@@ -157,7 +157,7 @@ namespace kiwi::widget {
         this->_axisVAO.release();
     }
 
-    void RenderWidget::initCube(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
+    void View3DWidget::initCube(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
         this->_cubeVAO.create();
         this->_cubeVAO.bind();
 
@@ -173,7 +173,7 @@ namespace kiwi::widget {
         // Indices VBO
         this->_cubeIndicesVBO.create();
         this->_cubeIndicesVBO.bind();
-        this->_cubeIndicesVBO.allocate(RenderWidget::cubeIndices, sizeof(RenderWidget::cubeIndices));
+        this->_cubeIndicesVBO.allocate(View3DWidget::cubeIndices, sizeof(View3DWidget::cubeIndices));
         this->_cubeIndicesVBO.release();
 
         // Init cubes
@@ -185,7 +185,7 @@ namespace kiwi::widget {
         this->_cubeVAO.release();
     }
 
-    void RenderWidget::initFrame(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
+    void View3DWidget::initFrame(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
         this->_frameVAO.create();
         this->_frameVAO.bind();
         
@@ -205,7 +205,7 @@ namespace kiwi::widget {
         this->_frameVAO.release();
     }
 
-    void RenderWidget::initTracks(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
+    void View3DWidget::initTracks(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias) {
         this->_trackVAO.create();
         this->_trackVBO.create();
         this->_trackInstVBO.create();
@@ -215,7 +215,7 @@ namespace kiwi::widget {
         this->_trackVAO.bind();
 
         this->_trackVBO.bind();
-        this->_trackVBO.allocate(RenderWidget::trackVertices, sizeof(RenderWidget::trackVertices));
+        this->_trackVBO.allocate(View3DWidget::trackVertices, sizeof(View3DWidget::trackVertices));
 
         this->_trackShader.bind();
         this->_trackShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(float));
@@ -232,7 +232,7 @@ namespace kiwi::widget {
         this->updateTrackInstMatrices();
     }
 
-    void RenderWidget::initTOBCube() {
+    void View3DWidget::initTOBCube() {
         auto positions = QVector<QVector3D>{};
         // MARK: TOB coord should diff type with cob coord...
         for (auto& [tobcoord, basecoord] : hardware::Interposer::TOB_COORD_MAP) {
@@ -243,12 +243,12 @@ namespace kiwi::widget {
         auto tobCube = this->addCube(CubeType::TOB, TOB_WIDTH, TOB_WIDTH, TOB_HEIGHT, ":/texture/texture/tob.jpg", 3, qMove(positions));
     }
 
-    void RenderWidget::initCOBCube() {
+    void View3DWidget::initCOBCube() {
         auto positions = QVector<QVector3D>{};
         for (int row = 0; row < hardware::Interposer::COB_ARRAY_HEIGHT; ++row) {
             for (int col = 0; col < hardware::Interposer::COB_ARRAY_WIDTH; ++col) {
                 auto coord = hardware::COBCoord{row, col};
-                auto position = RenderWidget::cobPosition(coord);
+                auto position = View3DWidget::cobPosition(coord);
                 positions.push_back(position);
                 this->_cobs.emplace_back(this->_interposer->get_cob(coord).value());
             }
@@ -256,20 +256,20 @@ namespace kiwi::widget {
         auto cobCube = this->addCube(CubeType::COB, COB_WIDTH, COB_WIDTH, COB_HEIGHT, ":/texture/texture/cob.jpg", 0, qMove(positions));
     }
 
-    void RenderWidget::initTopdieInstance() {
+    void View3DWidget::initTopdieInstance() {
         auto positions = QVector<QVector3D>{};
         for (auto& [name, topdieinst] : this->_basedie->topdie_insts()) {
             auto tobcoord = topdieinst.tob()->coord();
             auto basecoord = hardware::Interposer::TOB_COORD_MAP.at(tobcoord);
         
-            positions.push_back(RenderWidget::topdiePosition(basecoord));
+            positions.push_back(View3DWidget::topdiePosition(basecoord));
             this->_topdieinsts.push_back(&topdieinst);
         }
 
         auto shipCube = this->addCube(CubeType::Topdie, TOPDIE_WIDTH, TOPDIE_WIDTH, TOPDIE_HEIGHT, ":/texture/texture/topdie.jpg", 4, qMove(positions));
     }
 
-    void RenderWidget::initChannelCube() {
+    void View3DWidget::initChannelCube() {
         ///////////////////////// H Channel /////////////////////////
         auto channelPos = QVector<QVector3D>{};
         
@@ -294,7 +294,7 @@ namespace kiwi::widget {
         this->_cubes.push_back(vchannelCube);
     }
 
-    auto RenderWidget::channelPosition(std::i64 row, std::i64 col, hardware::TrackDirection dir) -> QVector3D {
+    auto View3DWidget::channelPosition(std::i64 row, std::i64 col, hardware::TrackDirection dir) -> QVector3D {
         switch (dir) {
             case hardware::TrackDirection::Horizontal: {
                 auto rowPos = row * (COB_WIDTH + COB_INTERAL) + (COB_WIDTH - CHANNEL_WIDTH) / 2.f;
@@ -310,7 +310,7 @@ namespace kiwi::widget {
         debug::unimplement();
     }
 
-    auto RenderWidget::trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QVector3D, QVector3D> {
+    auto View3DWidget::trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QVector3D, QVector3D> {
         // MARK: Channel position error
         auto channelPos = this->channelPosition(coord.row, coord.col, coord.dir);
         auto begin = QVector3D{};
@@ -347,25 +347,25 @@ namespace kiwi::widget {
         return {begin, end};
     }
 
-    auto RenderWidget::cobPosition(const hardware::Coord& coord) -> QVector3D {
-        auto rowPos = coord.row * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
-        auto colPos = coord.col * (RenderWidget::COB_WIDTH + RenderWidget::COB_INTERAL);
+    auto View3DWidget::cobPosition(const hardware::Coord& coord) -> QVector3D {
+        auto rowPos = coord.row * (View3DWidget::COB_WIDTH + View3DWidget::COB_INTERAL);
+        auto colPos = coord.col * (View3DWidget::COB_WIDTH + View3DWidget::COB_INTERAL);
         return QVector3D {rowPos, 0.f, colPos};
     }
 
-    auto RenderWidget::tobPosition(const hardware::TOBCoord& coord) -> QVector3D {
+    auto View3DWidget::tobPosition(const hardware::TOBCoord& coord) -> QVector3D {
         auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOB_WIDTH) / 2.f;
         auto colPos = coord.col * (COB_WIDTH + COB_INTERAL) - (TOB_WIDTH - COB_WIDTH) / 2.f;
         return QVector3D { rowPos, 0.f, colPos };
     }
 
-    auto RenderWidget::topdiePosition(const hardware::TOBCoord& coord) -> QVector3D {
+    auto View3DWidget::topdiePosition(const hardware::TOBCoord& coord) -> QVector3D {
         auto rowPos = coord.row * (COB_WIDTH + COB_INTERAL) - (COB_INTERAL + TOPDIE_WIDTH) / 2.f;
         auto colPos = coord.col * (COB_WIDTH + COB_INTERAL) - (TOPDIE_WIDTH - COB_WIDTH) / 2.f;
         return QVector3D { rowPos, TOB_HEIGHT, colPos };
     }
 
-    auto RenderWidget::makeCube(
+    auto View3DWidget::makeCube(
         CubeType type,
         float length, float width, float height,
         QVector<QVector3D> positions,
@@ -400,7 +400,7 @@ namespace kiwi::widget {
         return cube;
     }
 
-    auto RenderWidget::addCube(
+    auto View3DWidget::addCube(
         CubeType type, float length, float width, float height,
         const QString& texturePath, unsigned int textureid,
         QVector<QVector3D> positions
@@ -438,7 +438,7 @@ namespace kiwi::widget {
         return cube;
     }
 
-    auto RenderWidget::addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void {
+    auto View3DWidget::addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void {
         qDebug() << "Add track from " << begin << " to " << end;
         
         QMatrix4x4 model;
@@ -457,12 +457,12 @@ namespace kiwi::widget {
 
         // vertical ratate
         if (horizontalDiretion.length() != 0) {
-            float phi = RenderUtil::radian2Angle(qAsin(direction.y() / direction.length()));
+            float phi = View3DUtil::radian2Angle(qAsin(direction.y() / direction.length()));
             QVector3D verticalNormal{-1 * horizontalDiretion.z(), 0.0f, horizontalDiretion.x()};
             model.rotate(phi, verticalNormal);
 
             // horizontal rotate
-            float theta = RenderUtil::radian2Angle(qAcos(horizontalDiretion.z()));
+            float theta = View3DUtil::radian2Angle(qAcos(horizontalDiretion.z()));
             model.rotate(( horizontalDiretion.x() > 0.0f ? theta : -1.0f * theta ), {0.0f, 1.0f, 0.0f});
         }
         else {
@@ -476,12 +476,12 @@ namespace kiwi::widget {
         }
     }
 
-    auto RenderWidget::addTrack(const hardware::TrackCoord& coord, bool update) -> void {
+    auto View3DWidget::addTrack(const hardware::TrackCoord& coord, bool update) -> void {
         auto [begin, end] = this->trackPosition(coord);
         this->addTrack(begin, end, update);
     }
 
-    auto RenderWidget::displayCOBConnections() -> void {
+    auto View3DWidget::displayCOBConnections() -> void {
         using enum hardware::COBDirection;
         using enum hardware::TrackDirection;
         using hardware::COBSwState;
@@ -639,12 +639,12 @@ namespace kiwi::widget {
         this->updateTrackInstMatrices();
     }
 
-    void RenderWidget::updateViewMatrix() {
+    void View3DWidget::updateViewMatrix() {
         QMatrix4x4 view = this->getViewMatrix();
         this->updateViewMatrix(view);
     }
 
-    void RenderWidget::updateViewMatrix(const QMatrix4x4& view) {
+    void View3DWidget::updateViewMatrix(const QMatrix4x4& view) {
         this->makeCurrent();
 
         this->_axisShader.bind();
@@ -666,12 +666,12 @@ namespace kiwi::widget {
         this->doneCurrent();
     }
 
-    void RenderWidget::updateBiasMatrix() {
+    void View3DWidget::updateBiasMatrix() {
         auto bias = this->getBiasMatrix();
         this->updateBiasMatrix(bias);
     }
 
-    void RenderWidget::updateBiasMatrix(const QMatrix4x4& bias) {
+    void View3DWidget::updateBiasMatrix(const QMatrix4x4& bias) {
         this->makeCurrent();
 
         this->_cubeShader.bind();
@@ -689,22 +689,22 @@ namespace kiwi::widget {
         this->doneCurrent();
     }
 
-    auto RenderWidget::getTOBByCubeIndeces(int index) -> hardware::TOB* {
+    auto View3DWidget::getTOBByCubeIndeces(int index) -> hardware::TOB* {
         return this->_tobs.at(index);
     }
 
-    auto RenderWidget::getCOBByCubeIndeces(int index) -> hardware::COB* {
+    auto View3DWidget::getCOBByCubeIndeces(int index) -> hardware::COB* {
         return this->_cobs.at(index);
     }
 
-    auto RenderWidget::getTopdieInstByCubeIndeces(int index) -> circuit::TopDieInstance* {
+    auto View3DWidget::getTopdieInstByCubeIndeces(int index) -> circuit::TopDieInstance* {
         return this->_topdieinsts.at(index);
     }
 
-    void RenderWidget::resetView() {
-        this->_posTheta = RenderWidget::DEFAULT_THETA_VALUE;
-        this->_posPitch = RenderWidget::DEFAULT_PITCH_VALUE;
-        this->_posRadius = RenderWidget::DEFAULT_RADIUS_VALUE;
+    void View3DWidget::resetView() {
+        this->_posTheta = View3DWidget::DEFAULT_THETA_VALUE;
+        this->_posPitch = View3DWidget::DEFAULT_PITCH_VALUE;
+        this->_posRadius = View3DWidget::DEFAULT_RADIUS_VALUE;
 
         this->updateViewMatrix();
         this->updateBiasMatrix();
@@ -712,23 +712,23 @@ namespace kiwi::widget {
         this->reRender();
     }
 
-    void RenderWidget::wheelEvent(QWheelEvent *event) {
+    void View3DWidget::wheelEvent(QWheelEvent *event) {
         this->_posRadius += (event->angleDelta().y() / 100.0);
         this->updateViewMatrix();
         this->reRender();
     }
 
-    void RenderWidget::mousePressEvent(QMouseEvent *event) {
+    void View3DWidget::mousePressEvent(QMouseEvent *event) {
         this->_mouseButton = event->button();
         this->_lastMousePos = event->pos();
     }
 
-    void RenderWidget::mouseReleaseEvent(QMouseEvent *event) {
+    void View3DWidget::mouseReleaseEvent(QMouseEvent *event) {
         Q_UNUSED(event);
         this->_mouseButton = Qt::NoButton;
     }
 
-    void RenderWidget::mouseMoveEvent(QMouseEvent *event) {
+    void View3DWidget::mouseMoveEvent(QMouseEvent *event) {
         QPoint delta = event->pos() - this->_lastMousePos;
         
         int width = this->width();
@@ -738,7 +738,7 @@ namespace kiwi::widget {
         QMatrix4x4 view = this->getViewMatrix();
 
         auto raySource = getViewPos();
-        auto rayDirection = RenderUtil::screenPosToWorldRay(event->pos(), width, height, projection, view);
+        auto rayDirection = View3DUtil::screenPosToWorldRay(event->pos(), width, height, projection, view);
         this->resetPointedCube(raySource, rayDirection);
 
         // rotate track
@@ -747,10 +747,10 @@ namespace kiwi::widget {
             this->_posPitch += (delta.y() / 100.0);
 
             // pitch range
-            if (this->_posPitch > RenderWidget::MAX_PITCH)
-                this->_posPitch = RenderWidget::MAX_PITCH;
-            else if (this->_posPitch < RenderWidget::MIN_PITCH)
-                this->_posPitch = RenderWidget::MIN_PITCH;
+            if (this->_posPitch > View3DWidget::MAX_PITCH)
+                this->_posPitch = View3DWidget::MAX_PITCH;
+            else if (this->_posPitch < View3DWidget::MIN_PITCH)
+                this->_posPitch = View3DWidget::MIN_PITCH;
 
             this->updateViewMatrix(view);
         }
@@ -773,7 +773,7 @@ namespace kiwi::widget {
         this->reRender();
     }
 
-    void RenderWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+    void View3DWidget::mouseDoubleClickEvent(QMouseEvent *event) {
         if (!this->_pointedCube.has_value())
             return;
 
@@ -803,7 +803,7 @@ namespace kiwi::widget {
         this->updateTrackInstMatrices();
     }
 
-    void RenderWidget::dragEnterEvent(QDragEnterEvent *event) {
+    void View3DWidget::dragEnterEvent(QDragEnterEvent *event) {
         // if (event->mimeData()->hasUrls()) {
         //     QString filename = event->mimeData()->urls()[0].fileName();
         //     QFileInfo info(filename);
@@ -818,13 +818,13 @@ namespace kiwi::widget {
         // }
     }
 
-    void RenderWidget::resizeEvent(QResizeEvent *event) {
+    void View3DWidget::resizeEvent(QResizeEvent *event) {
         QOpenGLWidget::resizeEvent(event);
         this->updateProjectionMatrix();
         this->reRender();
     }
 
-    void RenderWidget::initializeGL() {
+    void View3DWidget::initializeGL() {
         this->initializeOpenGLFunctions();
 
         this->glEnable(GL_DEPTH_TEST);
@@ -845,11 +845,11 @@ namespace kiwi::widget {
         this->displayCOBConnections();
     }
 
-    void RenderWidget::resizeGL(int w, int h) {
+    void View3DWidget::resizeGL(int w, int h) {
         this->glViewport(0, 0, w, h);
     }
 
-    void RenderWidget::paintGL() {
+    void View3DWidget::paintGL() {
         // clear screen and buffer
         this->glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         this->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -860,7 +860,7 @@ namespace kiwi::widget {
         this->renderTracks();
     }
 
-    void RenderWidget::renderAxis() {
+    void View3DWidget::renderAxis() {
         this->_axisVAO.bind();
 
         this->_axisShader.bind();
@@ -878,13 +878,13 @@ namespace kiwi::widget {
         this->_axisVAO.release();
     }
 
-    void RenderWidget::renderCubes() {
+    void View3DWidget::renderCubes() {
         for (auto& cube : this->_cubes) {
             this->renderCube(cube);
         }
     }
 
-    void RenderWidget::renderFrame() {
+    void View3DWidget::renderFrame() {
         if (this->_pointedCube.has_value()) {
             this->_frameVAO.bind();
             this->_frameShader.bind();
@@ -904,7 +904,7 @@ namespace kiwi::widget {
         }
     }
 
-    void RenderWidget::renderTracks() {
+    void View3DWidget::renderTracks() {
         this->_trackVAO.bind();
         this->_trackShader.bind();
 
@@ -914,7 +914,7 @@ namespace kiwi::widget {
         this->_trackVAO.release();
     }
 
-    void RenderWidget::renderCube(Cube* cube) {
+    void View3DWidget::renderCube(Cube* cube) {
         this->_cubeVAO.bind();
         this->_cubeShader.bind();
 
@@ -947,19 +947,19 @@ namespace kiwi::widget {
         this->_cubeVAO.release();
     }
 
-    void RenderWidget::reRender() {
+    void View3DWidget::reRender() {
         this->update();
         // this->parentWidget()->update();
     }
 
-    QVector3D RenderWidget::getViewPos() const {
+    QVector3D View3DWidget::getViewPos() const {
         float horizontalRadius = this->_posRadius * qCos(this->_posPitch);
         return QVector3D(horizontalRadius * qSin(this->_posTheta),
                         this->_posRadius * qSin(this->_posPitch),
                         horizontalRadius * qCos(this->_posTheta));
     }
 
-    auto RenderWidget::getViewMatrix() const -> QMatrix4x4 {
+    auto View3DWidget::getViewMatrix() const -> QMatrix4x4 {
         QMatrix4x4 view;
         view.lookAt(this->getViewPos(),
                     QVector3D(0.0f, 0.0f, 0.0f),
@@ -967,24 +967,24 @@ namespace kiwi::widget {
         return view;
     }
 
-    auto RenderWidget::getProjectionMatrix() const -> QMatrix4x4 {
+    auto View3DWidget::getProjectionMatrix() const -> QMatrix4x4 {
         QMatrix4x4 projection;
         projection.perspective(45.0f, 1.0f * this->width() / this->height(), 0.1f, 100.0f);
         return projection;
     }
 
-    auto RenderWidget::getBiasMatrix() const -> QMatrix4x4 {
+    auto View3DWidget::getBiasMatrix() const -> QMatrix4x4 {
         auto bias = QMatrix4x4{};
         bias.translate(this->_coordbias);
         return bias;
     }
 
-    void RenderWidget::updateProjectionMatrix() {
+    void View3DWidget::updateProjectionMatrix() {
         auto projection = this->getProjectionMatrix();
         this->updateProjectionMatrix(projection);
     }
 
-    void RenderWidget::updateProjectionMatrix(const QMatrix4x4& projection) {
+    void View3DWidget::updateProjectionMatrix(const QMatrix4x4& projection) {
         this->makeCurrent();
         this->_axisShader.setUniformValue("projection", projection);
         this->_cubeShader.setUniformValue("projection", projection);
@@ -993,7 +993,7 @@ namespace kiwi::widget {
         this->doneCurrent();
     }
 
-    void RenderWidget::updateTrackInstMatrices() {
+    void View3DWidget::updateTrackInstMatrices() {
         this->_trackVAO.bind();
 
         this->_trackInstVBO.bind();
@@ -1022,7 +1022,7 @@ namespace kiwi::widget {
         this->_trackVAO.release();
     }
 
-    auto RenderWidget::resetPointedCube(const QVector3D& raySource, const QVector3D& rayDirection) -> void {
+    auto View3DWidget::resetPointedCube(const QVector3D& raySource, const QVector3D& rayDirection) -> void {
         for (auto cube : this->_cubes) {
             if (cube->type == CubeType::Channel) {
                 continue;
@@ -1033,7 +1033,7 @@ namespace kiwi::widget {
                 auto& pos = cube->positions[i];
                 auto boxMin = baseBoxMin + pos;
                 auto boxMax = baseBoxMax + pos;
-                if (RenderUtil::doesRayIntersectBox(raySource, rayDirection, boxMin, boxMax)) {
+                if (View3DUtil::doesRayIntersectBox(raySource, rayDirection, boxMin, boxMax)) {
                     auto oneCube = OneCube{cube, i};
                     if (!this->_pointedCube.has_value() || (*this->_pointedCube) != oneCube) {
                         // Create a new pointed cubes!

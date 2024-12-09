@@ -4,7 +4,6 @@
 #include "./page/welcomepage.h"
 #include "./page/workpage.h"
 #include "./page/aboutpage.h"
-#include "./render/renderwidget.h"
 #include "./base/framelesswindow.h"
 #include "./base/sidebar.h"
 
@@ -17,6 +16,9 @@ namespace kiwi::circuit {
 }
 
 namespace kiwi::widget {
+
+    class View2DWidget;
+    class View3DWidget;
 
     class Window : public FramelessWindow {
         Q_OBJECT
@@ -51,7 +53,7 @@ namespace kiwi::widget {
         ~SWindow();
 
     private:
-        RenderWidget* _renderWidget {nullptr};
+        View2DWidget* _renderWidget {nullptr};
     };
 
 }

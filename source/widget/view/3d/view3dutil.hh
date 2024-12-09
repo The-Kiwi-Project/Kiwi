@@ -6,7 +6,7 @@
 
 namespace kiwi::widget {
 
-    struct RenderUtil {
+    struct View3DUtil {
 
         static auto radian2Angle(float radian) -> float;
 
