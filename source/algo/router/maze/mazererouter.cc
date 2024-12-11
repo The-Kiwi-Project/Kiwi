@@ -104,7 +104,7 @@ namespace kiwi::algo{
             assert(end_tracks_set.size() > 0);     // if failed, then routing failed            
             auto tree {Tree(_node_track_interface.track_rootify(std::get<0>(path_ptr->back()), std::get<1>(path_ptr->back()).value()))};
     
-            auto [success, ml] = reroute_single_net(interposer, tree, path_ptr, max_length, end_tracks_set, bump_length);
+            auto [success, ml] = refind_path(interposer, tree, path_ptr, max_length, end_tracks_set, bump_length);
             max_length = ml;
 
             if (end_track_to_tob_map != nullptr){
@@ -186,7 +186,7 @@ namespace kiwi::algo{
         return std::abs(node->track()->coord().row - coord.row) + std::abs(node->track()->coord().col - coord.col);
     }
 
-    auto MazeRerouter::reroute_single_net(
+    auto MazeRerouter::refind_path(
             hardware::Interposer* interposer, Tree& tree, routed_path* path_ptr,\
             std::usize max_length, const std::HashSet<hardware::Track*>& end_tracks, std::usize bump_length
         ) const -> std::tuple<bool, std::usize>{
@@ -283,7 +283,7 @@ print_path(path_ptr);
             }
         }
 
-        debug::error("MazeRerouter::reroute_single_net: no path found");
+        debug::error("MazeRerouter::refind_path: no path found");
         return {false, max_length};
     }
 

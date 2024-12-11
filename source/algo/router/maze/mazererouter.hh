@@ -91,7 +91,7 @@ namespace kiwi::algo{
         auto remove_tracks(
             routed_path* path_ptr, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>* end_tracks, int cut_rate = 0.2
         ) const -> void;
-        auto reroute_single_net(
+        auto refind_path(
             hardware::Interposer* interposer, Tree& tree, routed_path* path_ptr,\
             std::usize max_length, const std::HashSet<hardware::Track*>& end_tracks, std::usize bump_length
         ) const -> std::tuple<bool, std::usize>;

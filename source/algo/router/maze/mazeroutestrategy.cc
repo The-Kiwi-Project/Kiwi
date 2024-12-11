@@ -238,12 +238,14 @@ namespace kiwi::algo {
 
             debug::debug("Maze routing for synchronized nets");
             
-            std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};
-            std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};
-            std::Array<std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};
-            std::HashSet<hardware::Track*> occupied_tracks_vec {}; // 某些线的头尾track已经被占用了
+            std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};  
+            std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};    
+            std::Array<std::Vector<std::HashMap<hardware::Track*,\                        
+                                                hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};    // connections between track and TOB
+            std::HashSet<hardware::Track*> occupied_tracks_vec {}; 
             std::usize max_length {0};
 
+            // set all begin/end tracks as occupied tracks
             if (ptr_sync_net->bttnets().size() > 0){
                 for (auto& net: ptr_sync_net->bttnets()){
                     occupied_tracks_vec.emplace(net->end_track());
@@ -255,6 +257,7 @@ namespace kiwi::algo {
                 }
             }
 
+            // the first round of routing
             if (ptr_sync_net->btbnets().size() > 0){
                 auto current_len = sync_preroute<circuit::BumpToBumpNet>(
                     ptr_interposer, ptr_sync_net->btbnets(),
@@ -280,6 +283,7 @@ namespace kiwi::algo {
                 max_length = current_len > max_length ? current_len : max_length;
             }
 
+            // reroute for adjusting length
             while (true){
                 debug::debug("Route BumpToBump Synchronized Net");
                 auto [success, ml] = sync_reroute(
@@ -300,7 +304,7 @@ namespace kiwi::algo {
                         );
                         max_length = ml;
                         if (success){
-                            break;
+                            break;      // break only when all three nets are successfully routed
                         }
                         else{
                             continue;
@@ -588,7 +592,7 @@ print_sync_path(ptr_sync_net);
         std::Vector<std::Option<hardware::Bump*>> related_end_bumps {};
         std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*> related_maps {};
 
-        // collect nets to be rerouted
+        // collect nets to be rerouted, along with their end bumps and track to tob maps
         for (std::usize i = 0; i < paths.size(); ++i) {
             auto& path = paths[i];
             if (_rerouter->path_length(path) + bump_extra_length < max_length) {
@@ -612,7 +616,7 @@ print_sync_path(ptr_sync_net);
                 assert (max_length == ml);
                 return std::tuple<std::usize, std::usize>{true, max_length};
             }
-            else{   // have longer path OR routing failed
+            else{           // have longer path OR routing failed
                 return std::tuple<std::usize, std::usize>{false, ml};
             }
         }
@@ -633,11 +637,11 @@ print_sync_path(ptr_sync_net);
                 auto begin_bump {net->begin_bump()};
                 auto end_bump {net->end_bump()};
                 auto path {begin_bump->connected_track()->track_path()};
-                debug::debug_fmt("Begin_bump: {}", begin_bump->coord());
+                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
                 for (auto& t: path){
                     debug::debug_fmt("{}", t->coord());
                 }
-                debug::debug_fmt("End_bump: {}", end_bump->coord());
+                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
             }
             debug::debug("\n");
         }
@@ -647,7 +651,7 @@ print_sync_path(ptr_sync_net);
             for (auto& net : bttnets) {
                 auto begin_bump {net->begin_bump()};
                 auto path {begin_bump->connected_track()->track_path()};
-                debug::debug_fmt("Begin_bump: {}", begin_bump->coord());
+                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
                 for (auto& t: path){
                     debug::debug_fmt("{}", t->coord());
                 }
@@ -664,7 +668,7 @@ print_sync_path(ptr_sync_net);
                 for (auto& t: path){
                     debug::debug_fmt("{}", t->coord());
                 }
-                debug::debug_fmt("End_bump: {}", end_bump->coord());
+                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
             }
             debug::debug("\n");
         }
