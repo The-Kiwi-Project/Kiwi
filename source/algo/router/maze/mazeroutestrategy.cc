@@ -235,17 +235,17 @@ namespace kiwi::algo {
     {
         try{
             // three: [bump_to_bump, track_to_bump, bump_to_track]
-//!
-debug::initial_log("./debug.log");
-//!
+
             debug::debug("Maze routing for synchronized nets");
             
-            std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};
-            std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};
-            std::Array<std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};
-            std::HashSet<hardware::Track*> occupied_tracks_vec {}; // 某些线的头尾track已经被占用了
+            std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};  
+            std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};    
+            std::Array<std::Vector<std::HashMap<hardware::Track*,\                        
+                                                hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};    // connections between track and TOB
+            std::HashSet<hardware::Track*> occupied_tracks_vec {}; 
             std::usize max_length {0};
 
+            // set all begin/end tracks as occupied tracks
             if (ptr_sync_net->bttnets().size() > 0){
                 for (auto& net: ptr_sync_net->bttnets()){
                     occupied_tracks_vec.emplace(net->end_track());
@@ -257,6 +257,7 @@ debug::initial_log("./debug.log");
                 }
             }
 
+            // the first round of routing
             if (ptr_sync_net->btbnets().size() > 0){
                 auto current_len = sync_preroute<circuit::BumpToBumpNet>(
                     ptr_interposer, ptr_sync_net->btbnets(),
@@ -282,6 +283,7 @@ debug::initial_log("./debug.log");
                 max_length = current_len > max_length ? current_len : max_length;
             }
 
+            // reroute for adjusting length
             while (true){
                 debug::debug("Route BumpToBump Synchronized Net");
                 auto [success, ml] = sync_reroute(
@@ -302,7 +304,7 @@ debug::initial_log("./debug.log");
                         );
                         max_length = ml;
                         if (success){
-                            break;
+                            break;      // break only when all three nets are successfully routed
                         }
                         else{
                             continue;
@@ -318,6 +320,9 @@ debug::initial_log("./debug.log");
                     continue;
                 }
             }
+//!
+print_sync_path(ptr_sync_net);
+//!
         }
         catch (const std::exception& e){
             throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
@@ -521,7 +526,7 @@ debug::initial_log("./debug.log");
                                                                                         //  |
             auto path = std::Vector<hardware::Track*>{};                                //  V
             hardware::Track* prev_track = nullptr;                                      // prev_track is the track before this
-            for (auto iter = path_info.rbegin(); iter != path_info.rend(); ++iter) {               
+            for (auto iter = path_info.rbegin(); iter != path_info.rend(); ++iter) {    // get tracks in positive sequence        
                 auto [track, connector] = *iter;       
                 path.emplace_back(track);
 
@@ -556,15 +561,17 @@ debug::initial_log("./debug.log");
                 end_track_to_tob_maps.emplace_back(std::HashMap<hardware::Track*, hardware::TOBConnector>{*end_track_to_tob_map.find(end_track)});
             }
 
-            RerouteStrategy::routed_path reversed_path_info {};
+            RerouteStrategy::routed_path reversed_path_info {};     // get whole path in positive sequence
             std::transform(path_info.rbegin(), path_info.rend(), std::back_inserter(reversed_path_info), [](auto& pair) {
                 return pair; 
             });
             paths.emplace_back(reversed_path_info);
         }
+
         std::usize max_length = 0;
         for (auto& path: paths) {
-            max_length = max_length < path.size() ? path.size() : max_length;
+            auto current_length = _rerouter->path_length(path);
+            max_length = max_length < current_length ? current_length : max_length;
         }
         if constexpr(std::is_same<Net, circuit::BumpToBumpNet>::value){
             return max_length + 2;
@@ -584,9 +591,11 @@ debug::initial_log("./debug.log");
         std::Vector<algo::RerouteStrategy::routed_path*> nets_to_be_rerouted {};
         std::Vector<std::Option<hardware::Bump*>> related_end_bumps {};
         std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*> related_maps {};
+
+        // collect nets to be rerouted, along with their end bumps and track to tob maps
         for (std::usize i = 0; i < paths.size(); ++i) {
             auto& path = paths[i];
-            if (path.size() + bump_extra_length < max_length) {
+            if (_rerouter->path_length(path) + bump_extra_length < max_length) {
                 nets_to_be_rerouted.emplace_back((&path));
                 if (end_bumps.size() > 0){
                     related_end_bumps.emplace_back(end_bumps[i]);
@@ -596,6 +605,8 @@ debug::initial_log("./debug.log");
                 }
             }
         }
+
+        // reroute
         if (nets_to_be_rerouted.size() > 0) {
             auto [success, ml] = _rerouter->reroute(
                 interposer, nets_to_be_rerouted, max_length, related_end_bumps, related_maps, bump_extra_length
@@ -605,7 +616,7 @@ debug::initial_log("./debug.log");
                 assert (max_length == ml);
                 return std::tuple<std::usize, std::usize>{true, max_length};
             }
-            else{   // have longer path OR routing failed
+            else{           // have longer path OR routing failed
                 return std::tuple<std::usize, std::usize>{false, ml};
             }
         }
@@ -614,4 +625,52 @@ debug::initial_log("./debug.log");
         }
     }
 
+    auto MazeRouteStrategy::print_sync_path(circuit::SyncNet* sync_net) const -> void{
+        debug::debug("\nPrinting synchronized nets path...");
+        auto& btbnets {sync_net->btbnets()};
+        auto& bttnets {sync_net->bttnets()};
+        auto& ttbnets {sync_net->ttbnets()};
+
+        if (btbnets.size() > 0) {
+            debug::debug("BumpToBump sync nets:");
+            for (auto& net : btbnets) {
+                auto begin_bump {net->begin_bump()};
+                auto end_bump {net->end_bump()};
+                auto path {begin_bump->connected_track()->track_path()};
+                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
+                for (auto& t: path){
+                    debug::debug_fmt("{}", t->coord());
+                }
+                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
+            }
+            debug::debug("\n");
+        }
+
+        if (bttnets.size() > 0) {
+            debug::debug("BumpToTrack sync nets:");
+            for (auto& net : bttnets) {
+                auto begin_bump {net->begin_bump()};
+                auto path {begin_bump->connected_track()->track_path()};
+                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
+                for (auto& t: path){
+                    debug::debug_fmt("{}", t->coord());
+                }
+            }
+            debug::debug("\n");
+        }
+
+        if (ttbnets.size() > 0) {
+            debug::debug("TrackToBump sync nets:");
+            for (auto& net : ttbnets) {
+                auto begin_track {net->begin_track()};
+                auto end_bump {net->end_bump()};
+                auto path {begin_track->track_path()};
+                for (auto& t: path){
+                    debug::debug_fmt("{}", t->coord());
+                }
+                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
+            }
+            debug::debug("\n");
+        }
+    }
 }

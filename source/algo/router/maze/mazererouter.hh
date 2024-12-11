@@ -84,17 +84,21 @@ namespace kiwi::algo{
             std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*>& end_track_to_tob_maps,
             std::usize bump_length
         ) const -> std::tuple<bool, std::usize> override;
+
+        auto path_length(const routed_path& path, bool switch_length = true) const -> std::usize;
     
     private:
         auto remove_tracks(
             routed_path* path_ptr, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>* end_tracks, int cut_rate = 0.2
         ) const -> void;
-        auto reroute_single_net(
+        auto refind_path(
             hardware::Interposer* interposer, Tree& tree, routed_path* path_ptr,\
             std::usize max_length, const std::HashSet<hardware::Track*>& end_tracks, std::usize bump_length
         ) const -> std::tuple<bool, std::usize>;
         auto Manhattan_distance(const std::Rc<Node> node, const std::HashSet<hardware::Track*>& end_tracks) const -> std::usize;\
         auto check_found(const std::HashSet<hardware::Track*>& end_tracks, hardware::Track* track) const -> bool;
+        auto track_pos_to_cobs(const hardware::Track* track) const -> std::Vector<hardware::COBCoord>;
+        auto shared_cobs(const std::Vector<hardware::COBCoord>& cobs1, const std::Vector<hardware::COBCoord>& cobs2) const -> std::Vector<hardware::COBCoord>;
     
     private:    // for debug
         auto print_end_tracks(const std::HashSet<hardware::Track*>& end_tracks) const -> void{
