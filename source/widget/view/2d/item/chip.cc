@@ -49,6 +49,7 @@
 ****************************************************************************/
 
 #include "chip.h"
+#include "qglobal.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -169,26 +170,4 @@ void Chip::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         painter->drawPath(path);
         painter->setPen(p);
     }
-}
-
-void Chip::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    QGraphicsItem::mousePressEvent(event);
-    update();
-}
-
-void Chip::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-//    if (event->modifiers() & Qt::ShiftModifier) {
-//        stuff << event->pos();
-//        update();
-//        return;
-//    }
-    QGraphicsItem::mouseMoveEvent(event);
-}
-
-void Chip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    QGraphicsItem::mouseReleaseEvent(event);
-    update();
 }

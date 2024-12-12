@@ -1,17 +1,8 @@
 #pragma once
 
 #include "hardware/cob/cob.hh"
-#include "hardware/cob/cobcoord.hh"
-#include "hardware/tob/tobcoord.hh"
-#include "hardware/track/trackcoord.hh"
-#include "qevent.h"
 #include "qpoint.h"
 #include "qregion.h"
-#include "std/memory.hh"
-#include "std/utility.hh"
-#include "widget/view/2d/item/cobitem.hh"
-#include "widget/view/2d/item/item.hh"
-#include "widget/view/2d/item/topdieitem.hh"
 #include <QWidget>
 #include <QGraphicsView>
 #include <std/collection.hh>
@@ -34,7 +25,6 @@ namespace kiwi::widget {
 
         enum {
             COB_INTERVAL = 50,
-            COB_PITCH = COB_INTERVAL + COBItem::WIDTH
         };
 
     public:
@@ -46,26 +36,12 @@ namespace kiwi::widget {
         ~View2DWidget() noexcept;
 
     protected:
-        void addCOBItems();
-        auto cobPosition(const hardware::COBCoord& coord) -> QPoint;
-
-        void addTOBItems();
-        auto tobPosition(const hardware::TOBCoord& coord) -> QPoint;
-
-        void addTopDieInstItems();
-        auto topDieInstPosition(const hardware::TOBCoord& coord) -> QPoint;
-
-        auto trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QPoint, QPoint>;
-
-    protected:
         virtual void wheelEvent(QWheelEvent *event) override;
 
     protected:
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie* _basedie {nullptr};
 
-        std::Vector<std::Box<Item>> _items;
-        std::Vector<TopDieInstItem*> _topdieinst_items;
         QRect interposerBoard;
 
         std::Vector<hardware::TOB*> _tobs {};
