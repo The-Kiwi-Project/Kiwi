@@ -13,10 +13,10 @@ namespace kiwi::widget {
     {
     }
 
-    void TopDieInstItem::paintSelf(QPainter& painter) const {
-        painter.setPen(QPen{TopDieInstItem::color});
-        painter.setBrush(QBrush{TopDieInstItem::color});
-        painter.drawRect(QRect{this->leftdown(), this->rightup()});
+    void TopDieInstItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+        // painter.setPen(QPen{TopDieInstItem::color});
+        painter->setBrush(QBrush{TopDieInstItem::color});
+        painter->drawRect(QRect{this->leftdown(), this->rightup()});
     }
 
 }

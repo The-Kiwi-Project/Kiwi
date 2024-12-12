@@ -3,14 +3,17 @@
 #include "hardware/cob/cob.hh"
 #include "hardware/cob/cobcoord.hh"
 #include "hardware/tob/tobcoord.hh"
+#include "hardware/track/trackcoord.hh"
 #include "qevent.h"
 #include "qpoint.h"
 #include "qregion.h"
 #include "std/memory.hh"
+#include "std/utility.hh"
 #include "widget/view/2d/item/cobitem.hh"
 #include "widget/view/2d/item/item.hh"
 #include "widget/view/2d/item/topdieitem.hh"
 #include <QWidget>
+#include <QGraphicsView>
 #include <std/collection.hh>
 
 namespace kiwi::hardware {
@@ -27,7 +30,7 @@ namespace kiwi::circuit {
 
 namespace kiwi::widget {
    
-    class View2DWidget : public QWidget {
+    class View2DWidget : public QGraphicsView {
 
         enum {
             COB_INTERVAL = 50,
@@ -52,12 +55,10 @@ namespace kiwi::widget {
         void addTopDieInstItems();
         auto topDieInstPosition(const hardware::TOBCoord& coord) -> QPoint;
 
+        auto trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QPoint, QPoint>;
+
     protected:
-        virtual void paintEvent(QPaintEvent* event) override;
         virtual void wheelEvent(QWheelEvent *event) override;
-        virtual void mousePressEvent(QMouseEvent *event) override;
-        virtual void mouseReleaseEvent(QMouseEvent *event) override;
-        virtual void mouseMoveEvent(QMouseEvent *event) override;
 
     protected:
         hardware::Interposer* _interposer {nullptr};
@@ -72,10 +73,13 @@ namespace kiwi::widget {
         std::Vector<circuit::TopDieInstance*> _topdieinsts {};
 
         // view
+        QGraphicsScene* _scene;
+        
         qreal _offsetX {0.};
         qreal _offsetY {0.};
         qreal _scale {1.0};
         Qt::MouseButton _mouseButton {Qt::NoButton};
+        bool _isDragging = false;
         QPoint _lastMousePos {0, 0};
     };
 

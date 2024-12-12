@@ -13,10 +13,10 @@ namespace kiwi::widget {
     {
     }
 
-    void TOBItem::paintSelf(QPainter& painter) const {
-        painter.setPen(QPen{TOBItem::color});
-        painter.setBrush(QBrush{TOBItem::color});
-        painter.drawRect(QRect{this->leftdown(), this->rightup()});
+    void TOBItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+        // painter.setPen(QPen{TOBItem::color});
+        painter->setBrush(QBrush{TOBItem::color});
+        painter->drawRect(QRect{this->leftdown(), this->rightup()});
     }
 
 }

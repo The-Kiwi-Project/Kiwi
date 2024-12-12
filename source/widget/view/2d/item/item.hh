@@ -2,17 +2,17 @@
 
 #include "qpoint.h"
 #include <QPainter>
+#include <QGraphicsItem>
 
 namespace kiwi::widget {
 
-    class Item {
+    class Item : public QGraphicsItem {
     public:
         Item(const QPoint& center, int width, int height);
     
     public:
-        virtual void paintSelf(QPainter& painter) const = 0;
         virtual void paintPointed(QPainter& painter) const;
-        virtual void onClicked() {};
+        virtual auto boundingRect() const -> QRectF override;
 
     public:
         auto isPointed(const QPoint& pointed) -> bool;

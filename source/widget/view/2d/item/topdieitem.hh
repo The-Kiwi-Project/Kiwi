@@ -19,7 +19,7 @@ namespace kiwi::widget {
         TopDieInstItem(const QPoint& offset);
 
     public: 
-        virtual void paintSelf(QPainter& painter) const override;
+        virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
     };
 
 }

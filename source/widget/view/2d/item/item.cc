@@ -12,6 +12,12 @@ namespace kiwi::widget {
     {
     }
 
+    auto Item::boundingRect() const -> QRectF {
+        const auto leftdown = this->leftdown();
+        const auto rightup  = this->rightup();
+        return QRectF{leftdown, rightup};
+    }
+
     void Item::paintPointed(QPainter& painter) const {
         auto pen = QPen{QColor::fromRgb(0, 255, 0)};
         painter.setPen(pen);
