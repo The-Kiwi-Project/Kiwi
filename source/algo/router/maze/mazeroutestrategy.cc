@@ -240,12 +240,13 @@ namespace kiwi::algo {
             
             std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};  
             std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};    
-            std::Array<std::Vector<std::HashMap<hardware::Track*,\                        
+            std::Array<std::Vector<std::HashMap<hardware::Track*,\
                                                 hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};    // connections between track and TOB
             std::HashSet<hardware::Track*> occupied_tracks_vec {}; 
             std::usize max_length {0};
 
             // set all begin/end tracks as occupied tracks
+            // for these cannot be used by other nets
             if (ptr_sync_net->bttnets().size() > 0){
                 for (auto& net: ptr_sync_net->bttnets()){
                     occupied_tracks_vec.emplace(net->end_track());
@@ -483,6 +484,7 @@ print_sync_path(ptr_sync_net);
         for (auto& uptr_net: sync_net){
             auto net = uptr_net.get();
             
+            // collect begin bumps & begin tracks
             if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::BumpToTrackNet>::value){
                 begin_bump = net->begin_bump();
                 begin_track_to_tob_map = interposer->available_tracks_bump_to_track(begin_bump);
@@ -491,6 +493,7 @@ print_sync_path(ptr_sync_net);
             else if constexpr(std::is_same<Net, circuit::TrackToBumpNet>::value){
                 begin_tracks_set = std::HashSet<hardware::Track*>{net->begin_track()};
             }
+            // collect end bumps & end tracks
             if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::TrackToBumpNet>::value){
                 end_bump = net->end_bump();
                 end_track_to_tob_map = interposer->available_tracks_track_to_bump(end_bump);
@@ -504,6 +507,7 @@ print_sync_path(ptr_sync_net);
                 assert(begin_bump->tob() != end_bump->tob());
             }
 
+            // set end track of Net as unoccupied
             if constexpr(std::is_same<Net, circuit::BumpToTrackNet>::value){
                 auto track = net->end_track();
                 for (auto& ot: occupied_tracks_vec){
@@ -522,6 +526,8 @@ print_sync_path(ptr_sync_net);
                     }
                 }
             }
+
+            // route and connect
             auto path_info = search_path(interposer, begin_tracks_set, end_tracks_set, occupied_tracks_vec); // notice: negative sequence
                                                                                         //  |
             auto path = std::Vector<hardware::Track*>{};                                //  V
@@ -541,6 +547,7 @@ print_sync_path(ptr_sync_net);
                 prev_track = track;     
             }
 
+            // connect begin bump / end bump
             if (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::BumpToTrackNet>::value){
                 assert (begin_bump != nullptr);
 
@@ -561,13 +568,14 @@ print_sync_path(ptr_sync_net);
                 end_track_to_tob_maps.emplace_back(std::HashMap<hardware::Track*, hardware::TOBConnector>{*end_track_to_tob_map.find(end_track)});
             }
 
-            RerouteStrategy::routed_path reversed_path_info {};     // get whole path in positive sequence
+            RerouteStrategy::routed_path reversed_path_info {};     // collect whole path in positive sequence
             std::transform(path_info.rbegin(), path_info.rend(), std::back_inserter(reversed_path_info), [](auto& pair) {
                 return pair; 
             });
             paths.emplace_back(reversed_path_info);
         }
-
+        
+        // calculate length
         std::usize max_length = 0;
         for (auto& path: paths) {
             auto current_length = _rerouter->path_length(path);

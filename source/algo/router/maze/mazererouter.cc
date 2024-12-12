@@ -81,6 +81,8 @@ namespace kiwi::algo{
             std::HashSet<hardware::Track*> end_tracks_set {};
             std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector> possible_end_tracks_map{};
 
+            // if there is an end bump, then the tob state will be updated after removing end track
+            // --> possible end tracks will be changed
             if (end_track_to_tob_map != nullptr){
                 remove_tracks(path_ptr, end_track_to_tob_map);
 
@@ -89,7 +91,6 @@ namespace kiwi::algo{
                 assert(end_bump.has_value());
 
                 possible_end_tracks_map = interposer->available_tracks_track_to_bump(end_bump.value());
-                // There was an amazing piece of code here
                 for (auto& [track, _]: possible_end_tracks_map){
                     if (track && !end_tracks_set.contains(track)){
                         end_tracks_set.emplace(track);
@@ -100,18 +101,25 @@ namespace kiwi::algo{
                 end_tracks_set.emplace(std::get<0>(path_ptr->back()));
                 remove_tracks(path_ptr, end_track_to_tob_map);
             }
- 
-            assert(end_tracks_set.size() > 0);     // if failed, then routing failed            
+
+            // if failed, then routing failed  
+            assert(end_tracks_set.size() > 0);   
+
+            // construct a path-tree for reroute
             auto tree {Tree(_node_track_interface.track_rootify(std::get<0>(path_ptr->back()), std::get<1>(path_ptr->back()).value()))};
-    
             auto [success, ml] = refind_path(interposer, tree, path_ptr, max_length, end_tracks_set, bump_length);
             max_length = ml;
 
+            // connect end bump to end track
             if (end_track_to_tob_map != nullptr){
                 auto end_track {std::get<0>(path_ptr->back())};
                 auto end_bump {end_bumps[i]};
                 assert(check_found(end_tracks_set, end_track));
                 
+                // notice: the following "for" loop cannot be replaced by "possible_end_tracks_map.find(end_track)->second.connect();"
+                // there will be unexpected behaviour during "find(end_track)"
+                // for there are some other members not related to coordinates in value "end_track"
+                // use "if (track->coord() == end_track->coord())" is safer
                 for (auto& t: possible_end_tracks_map){
                     auto& [track, connector] = t;
                     if (track->coord() == end_track->coord()){
@@ -120,8 +128,6 @@ namespace kiwi::algo{
                         break;
                     }
                 }
-                // 这里的find在哈希的时候有点bug，虽然坐标一样但是_prev_track_和_next_track_不一样
-                // possible_end_tracks_map.find(end_track)->second.connect();
                 end_bump.value()->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
             }
 
@@ -154,7 +160,7 @@ namespace kiwi::algo{
             (*end_bump)->disconnect_track(end_track);
         }
         
-        auto path_length {path_ptr->size()};        // 这里不是真实的长度
+        auto path_length {path_ptr->size()};        // notice: do not use function path_length() here
         hardware::Track* next_track = nullptr;
         std::usize cut_length = path_length > 1 ? ((path_length * cut_rate) < 1 ? 1 : int(path_length * cut_rate)) : 0;
         std::usize remain_length {path_length - cut_length};
@@ -197,7 +203,7 @@ namespace kiwi::algo{
 debug::debug("Rerouting...");
 print_end_tracks(end_tracks);
 //!
-
+        // mazing with A* 
         while (!queue.empty()) {
             // get current node
             std::pop_heap(queue.begin(), queue.end(), Node::CompareNodes);
@@ -206,12 +212,13 @@ print_end_tracks(end_tracks);
 
             // find the end node
             auto track {node_sptr->track().get()};
-            if (check_found(end_tracks, track)){                // 这里直接用contains可能哈希过程有问题，因为track*里面不只有坐标，还有其他值
+            if (check_found(end_tracks, track)){                
                 auto temp_node_list {tree.backtrace(node_sptr)};
                 auto temp_path {_node_track_interface.nodes_trackify(temp_node_list)};
                 auto temp_path_length {path_length(temp_path)};
                 auto current_path_length {path_length(*path_ptr)};
 
+                // find a longer path
                 if (current_path_length + temp_path_length + bump_length > max_length){
                     // connect
                     hardware::Track* prev_track = nullptr;
@@ -237,6 +244,7 @@ print_path(path_ptr);
 //!
                     return {false, path_length(*path_ptr) + bump_length};
                 }
+                // find a equal path
                 else if(current_path_length + temp_path_length + bump_length == max_length){
                     // connect
                     hardware::Track* prev_track = nullptr;
@@ -262,6 +270,7 @@ print_path(path_ptr);
 //!
                     return {true, max_length};
                 }
+                // find a shorter path
                 else{
                     auto parent {node_sptr->parent()};
                     if(parent.has_value()){
@@ -308,6 +317,7 @@ print_path(path_ptr);
         return shared_cobs;
     }
 
+    // return all cobs connected with track
     auto MazeRerouter::track_pos_to_cobs(const hardware::Track* track) const -> std::Vector<hardware::COBCoord>{
         std::Vector<hardware::COBCoord> cobs {};
         auto coord {track->coord()};
@@ -325,12 +335,16 @@ print_path(path_ptr);
         return cobs;
     }
 
+    // calculate path length with different strategy
     auto MazeRerouter::path_length(const routed_path& path, bool switch_length) const -> std::usize {
         assert(!path.empty());
 
+        // path length = number of tracks
         if (switch_length){
             return path.size();
         }
+        // for a group with number of consecutive tracks connected with the same COB >= 3, the length of the group is 2
+        // because those tracks in the middle are not truely used as signal pathways
         else{
             std::usize head{0}, tail{0};
             std::usize path_length{0};

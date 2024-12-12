@@ -7,11 +7,12 @@
 
 ## 项目结构
 
+- [algorithm](./algorithm/)：算法开发与实验
 - [config](./config/)：输入配置文件
 - [document](./document/)：项目文档
+- [resource](./resource/): GUI 资源
 - [source](./source/)：项目源码
 - [test](./test/)：项目模块测试
-- [resource](./resource/): GUI 资源
 - [tools](./tools/)：工具程序
 
 
@@ -49,19 +50,23 @@ Options：
 
 ## 测试
 
-test 目录下保存项目的测试代码。
+test 目录下保存项目的测试代码，分为 simpletest 和 regressiontest 两个部分
+- simpletest 用于手动构造简单的测例，快速测试
+- regressiontest 用于做回归测试
+
 
 编译：
+(注： regressiontest 还没有实现)
 
 ````bash
-xmake build test
+xmake build simpletest
 ````
 
 运行测试：
 
 ````bash
-xamek run test [module]
+xmake run simpletest [module]
 ````
 
-`module` 指定要测试的模块（见 test 目录），`all` 表示全部测试
+`module` 指定要测试的模块（见 simpletest 目录），`all` 表示全部测试
 
