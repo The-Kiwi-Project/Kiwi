@@ -1,11 +1,14 @@
 #include "./view2dwidget.h"
+#include "qdebug.h"
 #include "qgraphicsitem.h"
 #include "qgraphicsscene.h"
 #include "qobject.h"
 
 #include "./item/topdieinstitem.h"
+#include "widget/view/2d/item/net.h"
 #include <QPainter>
 #include <QBrush>
+#include <cassert>
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 #include <QDebug>
@@ -31,10 +34,29 @@ namespace kiwi::widget {
         this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
         for (auto& [name, topdie] : this->_basedie->topdie_insts()) {
-            QGraphicsItem* t = new TopDieInstanceItem{&topdie};
+            TopDieInstanceItem* t = new TopDieInstanceItem{&topdie};
+            this->_topdieInstItems.push_back(t);
             this->_scene->addItem(t);
         }
-                
+
+        auto spacing = 20.0;
+
+        int cols = std::ceil(std::sqrt(this->_topdieInstItems.size()));
+        int rows = std::ceil(static_cast<double>(this->_topdieInstItems.size()) / cols);
+
+        int startX = spacing;
+        int startY = spacing;
+
+        for (size_t i = 0; i < this->_topdieInstItems.size(); ++i) {
+            int row = i / cols;
+            int col = i % cols;
+
+            int x = startX + col * (this->_topdieInstItems[i]->width() + spacing);
+            int y = startY + row * (this->_topdieInstItems[i]->width() + spacing);
+
+            this->_topdieInstItems[i]->setPos(x, y);
+        }
+    
         auto cobArrayHeight = static_cast<float>(hardware::Interposer::COB_ARRAY_HEIGHT);
         auto cobArrayWidth  = static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH);
     }

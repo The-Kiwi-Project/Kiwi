@@ -2,6 +2,8 @@
 
 #include "./pinitem.h"
 #include "qchar.h"
+#include "qglobal.h"
+#include "qmap.h"
 #include <QGraphicsItem>
 
 namespace kiwi::circuit {
@@ -25,11 +27,17 @@ namespace kiwi::widget {
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 
     protected:
-        void createPins(int n, qreal side_length, qreal x_offset, qreal y_offset, int &index, PinSide side);
+        void createPins(int n, qreal side_length, qreal x_offset, qreal y_offset, QVector<QString>::iterator& iter, PinSide side);
     
+    public: 
+        auto width() const -> qreal { return this->_width; }
+        auto height() const -> qreal { return this->_height; }
+        auto pinitems() const -> const QMap<QString, PinItem*>& { return this->_pinitems; }
+
     protected:
         circuit::TopDieInstance* _topdieinst {nullptr};
-        QVector<QString> _pinNames {};
+
+        QMap<QString, PinItem*> _pinitems {};
 
         QString _name {};
         qreal _width {};

@@ -4,6 +4,7 @@
 #include "qnamespace.h"
 #include "qpoint.h"
 #include "qregion.h"
+#include "qvector.h"
 
 #include <circuit/topdie/topdieinst.hh>
 #include <circuit/topdie/topdie.hh>
@@ -23,8 +24,9 @@ namespace kiwi::widget {
 
         // Dive pinsize to four size:
         auto pinmap = this->_topdieinst->topdie()->pins_map();
+        auto pinnames = QVector<QString>{};
         for (const auto& [name, _] : pinmap) {
-            this->_pinNames.push_back(QString::fromStdString(name));
+            pinnames.push_back(QString::fromStdString(name));
         }
 
         this->_name = QString::fromStdString(topdieinst->name().data());
@@ -50,9 +52,9 @@ namespace kiwi::widget {
             +----+-------------------------+----+
         
         */
-        auto pin_count = this->_pinNames.size();
+        auto pin_count = pinmap.size();
 
-        auto pinsCount = this->_pinNames.size();
+        auto pinsCount = pinmap.size();
         auto pinsPeSide = pinsCount / 4;
         auto remainder = pinsCount % 4;
 
@@ -67,11 +69,11 @@ namespace kiwi::widget {
         this->_width = pinAreaWidth + 2 * SPACE_LENGTH;
         this->_height = pinAreaHeight + 2 * SPACE_LENGTH;
 
-        int index = 0;
-        this->createPins(top_pins, pinAreaWidth, SPACE_LENGTH, 0., index, PinSide::Top); 
-        this->createPins(right_pins, pinAreaHeight, this->_width, SPACE_LENGTH, index, PinSide::Right); 
-        this->createPins(bottom_pins, pinAreaWidth, SPACE_LENGTH, this->_height, index, PinSide::Bottom); 
-        this->createPins(left_pins, pinAreaHeight, 0, SPACE_LENGTH, index, PinSide::Left);
+        auto iter = pinnames.begin();
+        this->createPins(top_pins, pinAreaWidth, SPACE_LENGTH, 0., iter, PinSide::Top); 
+        this->createPins(right_pins, pinAreaHeight, this->_width, SPACE_LENGTH, iter, PinSide::Right); 
+        this->createPins(bottom_pins, pinAreaWidth, SPACE_LENGTH, this->_height, iter, PinSide::Bottom); 
+        this->createPins(left_pins, pinAreaHeight, 0, SPACE_LENGTH, iter, PinSide::Left);
     }
 
     QRectF TopDieInstanceItem::boundingRect() const {
@@ -100,21 +102,20 @@ namespace kiwi::widget {
         painter->drawText(rect, Qt::AlignCenter,this->_name);
     }
 
-    void TopDieInstanceItem::createPins(int n, qreal side_length, qreal x_offset, qreal y_offset, int &index, PinSide side) {
+    void TopDieInstanceItem::createPins(int n, qreal side_length, qreal x_offset, qreal y_offset, QVector<QString>::iterator& iter, PinSide side) {
         if (n == 0) return;
 
         auto horizontal = side == PinSide::Bottom || side == PinSide::Top;
 
         double spacing = static_cast<double>(side_length) / (n + 1);
 
-        for (int i = 0; i < n; ++i, ++index) {
-            if (index >= static_cast<int>(this->_pinNames.size())) break;
-
+        for (int i = 0; i < n; ++i, ++iter) {
             double pos = (i + 1) * spacing;
             int x = horizontal ? static_cast<int>(pos + x_offset) : x_offset;
             int y = horizontal ? y_offset : static_cast<int>(pos + y_offset);
 
-            Pin *pin = new Pin{this->_pinNames[index], QPointF(x, y), side, this};
+            auto *pin = new PinItem {*iter, QPointF(x, y), side, this};
+            this->_pinitems.insert(*iter, pin);
         }
     }
 

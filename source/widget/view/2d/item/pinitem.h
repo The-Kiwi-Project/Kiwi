@@ -13,7 +13,7 @@ namespace kiwi::widget {
         Bottom,
     };
 
-    class Pin : public QGraphicsItem {
+    class PinItem : public QGraphicsItem {
     public:
         static constexpr qreal PIN_RADIUS = 5.;
         static constexpr qreal PIN_DIAMETER = 2 * PIN_RADIUS;
@@ -24,7 +24,7 @@ namespace kiwi::widget {
         static const    QColor HOVERED_COLOR;
     
     public:
-        Pin(const QString &name, QPointF position, PinSide side, QGraphicsItem *parent = nullptr);
+        PinItem(const QString &name, QPointF position, PinSide side, QGraphicsItem *parent = nullptr);
         
         QRectF boundingRect() const override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
@@ -33,9 +33,11 @@ namespace kiwi::widget {
         void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
 
+    public: 
+        auto name() const -> const QString& { return this->_name; }
+
     private:
         QString _name;
-        QPointF _position;
         PinSide _side;
 
         bool _hovered;
