@@ -313,5 +313,5 @@ void test_router_main() {
     test_route_bump_to_bumps_net();
     test_route_track_to_bumps_net();
     test_route_bump_to_tracks_net();
-    // test_route_bump_to_bump_sync_net();
+    test_route_bump_to_bump_sync_net();
 }

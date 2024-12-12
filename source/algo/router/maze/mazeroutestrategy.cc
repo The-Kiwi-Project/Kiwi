@@ -235,13 +235,18 @@ namespace kiwi::algo {
     {
         try{
             // three: [bump_to_bump, track_to_bump, bump_to_track]
+
             debug::debug("Maze routing for synchronized nets");
-            std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};
-            std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};
-            std::Array<std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};
-            std::HashSet<hardware::Track*> occupied_tracks_vec {}; // 某些线的头尾track已经被占用了
+            
+            std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};  
+            std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};    
+            std::Array<std::Vector<std::HashMap<hardware::Track*,\
+                                                hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};    // connections between track and TOB
+            std::HashSet<hardware::Track*> occupied_tracks_vec {}; 
             std::usize max_length {0};
 
+            // set all begin/end tracks as occupied tracks
+            // for these cannot be used by other nets
             if (ptr_sync_net->bttnets().size() > 0){
                 for (auto& net: ptr_sync_net->bttnets()){
                     occupied_tracks_vec.emplace(net->end_track());
@@ -253,6 +258,7 @@ namespace kiwi::algo {
                 }
             }
 
+            // the first round of routing
             if (ptr_sync_net->btbnets().size() > 0){
                 auto current_len = sync_preroute<circuit::BumpToBumpNet>(
                     ptr_interposer, ptr_sync_net->btbnets(),
@@ -278,6 +284,7 @@ namespace kiwi::algo {
                 max_length = current_len > max_length ? current_len : max_length;
             }
 
+            // reroute for adjusting length
             while (true){
                 debug::debug("Route BumpToBump Synchronized Net");
                 auto [success, ml] = sync_reroute(
@@ -298,7 +305,7 @@ namespace kiwi::algo {
                         );
                         max_length = ml;
                         if (success){
-                            break;
+                            break;      // break only when all three nets are successfully routed
                         }
                         else{
                             continue;
@@ -314,6 +321,9 @@ namespace kiwi::algo {
                     continue;
                 }
             }
+//!
+print_sync_path(ptr_sync_net);
+//!
         }
         catch (const std::exception& e){
             throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
@@ -474,6 +484,7 @@ namespace kiwi::algo {
         for (auto& uptr_net: sync_net){
             auto net = uptr_net.get();
             
+            // collect begin bumps & begin tracks
             if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::BumpToTrackNet>::value){
                 begin_bump = net->begin_bump();
                 begin_track_to_tob_map = interposer->available_tracks_bump_to_track(begin_bump);
@@ -482,6 +493,7 @@ namespace kiwi::algo {
             else if constexpr(std::is_same<Net, circuit::TrackToBumpNet>::value){
                 begin_tracks_set = std::HashSet<hardware::Track*>{net->begin_track()};
             }
+            // collect end bumps & end tracks
             if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::TrackToBumpNet>::value){
                 end_bump = net->end_bump();
                 end_track_to_tob_map = interposer->available_tracks_track_to_bump(end_bump);
@@ -495,6 +507,7 @@ namespace kiwi::algo {
                 assert(begin_bump->tob() != end_bump->tob());
             }
 
+            // set end track of Net as unoccupied
             if constexpr(std::is_same<Net, circuit::BumpToTrackNet>::value){
                 auto track = net->end_track();
                 for (auto& ot: occupied_tracks_vec){
@@ -513,11 +526,13 @@ namespace kiwi::algo {
                     }
                 }
             }
+
+            // route and connect
             auto path_info = search_path(interposer, begin_tracks_set, end_tracks_set, occupied_tracks_vec); // notice: negative sequence
                                                                                         //  |
             auto path = std::Vector<hardware::Track*>{};                                //  V
             hardware::Track* prev_track = nullptr;                                      // prev_track is the track before this
-            for (auto iter = path_info.rbegin(); iter != path_info.rend(); ++iter) {               
+            for (auto iter = path_info.rbegin(); iter != path_info.rend(); ++iter) {    // get tracks in positive sequence        
                 auto [track, connector] = *iter;       
                 path.emplace_back(track);
 
@@ -532,6 +547,7 @@ namespace kiwi::algo {
                 prev_track = track;     
             }
 
+            // connect begin bump / end bump
             if (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::BumpToTrackNet>::value){
                 assert (begin_bump != nullptr);
 
@@ -552,15 +568,18 @@ namespace kiwi::algo {
                 end_track_to_tob_maps.emplace_back(std::HashMap<hardware::Track*, hardware::TOBConnector>{*end_track_to_tob_map.find(end_track)});
             }
 
-            RerouteStrategy::routed_path reversed_path_info {};
+            RerouteStrategy::routed_path reversed_path_info {};     // collect whole path in positive sequence
             std::transform(path_info.rbegin(), path_info.rend(), std::back_inserter(reversed_path_info), [](auto& pair) {
                 return pair; 
             });
             paths.emplace_back(reversed_path_info);
         }
+        
+        // calculate length
         std::usize max_length = 0;
         for (auto& path: paths) {
-            max_length = max_length < path.size() ? path.size() : max_length;
+            auto current_length = _rerouter->path_length(path);
+            max_length = max_length < current_length ? current_length : max_length;
         }
         if constexpr(std::is_same<Net, circuit::BumpToBumpNet>::value){
             return max_length + 2;
@@ -580,9 +599,11 @@ namespace kiwi::algo {
         std::Vector<algo::RerouteStrategy::routed_path*> nets_to_be_rerouted {};
         std::Vector<std::Option<hardware::Bump*>> related_end_bumps {};
         std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*> related_maps {};
+
+        // collect nets to be rerouted, along with their end bumps and track to tob maps
         for (std::usize i = 0; i < paths.size(); ++i) {
             auto& path = paths[i];
-            if (path.size() + bump_extra_length < max_length) {
+            if (_rerouter->path_length(path) + bump_extra_length < max_length) {
                 nets_to_be_rerouted.emplace_back((&path));
                 if (end_bumps.size() > 0){
                     related_end_bumps.emplace_back(end_bumps[i]);
@@ -592,6 +613,8 @@ namespace kiwi::algo {
                 }
             }
         }
+
+        // reroute
         if (nets_to_be_rerouted.size() > 0) {
             auto [success, ml] = _rerouter->reroute(
                 interposer, nets_to_be_rerouted, max_length, related_end_bumps, related_maps, bump_extra_length
@@ -601,7 +624,7 @@ namespace kiwi::algo {
                 assert (max_length == ml);
                 return std::tuple<std::usize, std::usize>{true, max_length};
             }
-            else{   // have longer path OR routing failed
+            else{           // have longer path OR routing failed
                 return std::tuple<std::usize, std::usize>{false, ml};
             }
         }
@@ -610,4 +633,52 @@ namespace kiwi::algo {
         }
     }
 
+    auto MazeRouteStrategy::print_sync_path(circuit::SyncNet* sync_net) const -> void{
+        debug::debug("\nPrinting synchronized nets path...");
+        auto& btbnets {sync_net->btbnets()};
+        auto& bttnets {sync_net->bttnets()};
+        auto& ttbnets {sync_net->ttbnets()};
+
+        if (btbnets.size() > 0) {
+            debug::debug("BumpToBump sync nets:");
+            for (auto& net : btbnets) {
+                auto begin_bump {net->begin_bump()};
+                auto end_bump {net->end_bump()};
+                auto path {begin_bump->connected_track()->track_path()};
+                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
+                for (auto& t: path){
+                    debug::debug_fmt("{}", t->coord());
+                }
+                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
+            }
+            debug::debug("\n");
+        }
+
+        if (bttnets.size() > 0) {
+            debug::debug("BumpToTrack sync nets:");
+            for (auto& net : bttnets) {
+                auto begin_bump {net->begin_bump()};
+                auto path {begin_bump->connected_track()->track_path()};
+                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
+                for (auto& t: path){
+                    debug::debug_fmt("{}", t->coord());
+                }
+            }
+            debug::debug("\n");
+        }
+
+        if (ttbnets.size() > 0) {
+            debug::debug("TrackToBump sync nets:");
+            for (auto& net : ttbnets) {
+                auto begin_track {net->begin_track()};
+                auto end_bump {net->end_bump()};
+                auto path {begin_track->track_path()};
+                for (auto& t: path){
+                    debug::debug_fmt("{}", t->coord());
+                }
+                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
+            }
+            debug::debug("\n");
+        }
+    }
 }

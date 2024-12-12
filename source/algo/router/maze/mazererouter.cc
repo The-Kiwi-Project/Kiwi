@@ -81,6 +81,8 @@ namespace kiwi::algo{
             std::HashSet<hardware::Track*> end_tracks_set {};
             std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector> possible_end_tracks_map{};
 
+            // if there is an end bump, then the tob state will be updated after removing end track
+            // --> possible end tracks will be changed
             if (end_track_to_tob_map != nullptr){
                 remove_tracks(path_ptr, end_track_to_tob_map);
 
@@ -89,7 +91,6 @@ namespace kiwi::algo{
                 assert(end_bump.has_value());
 
                 possible_end_tracks_map = interposer->available_tracks_track_to_bump(end_bump.value());
-                // There was an amazing piece of code here
                 for (auto& [track, _]: possible_end_tracks_map){
                     if (track && !end_tracks_set.contains(track)){
                         end_tracks_set.emplace(track);
@@ -100,18 +101,25 @@ namespace kiwi::algo{
                 end_tracks_set.emplace(std::get<0>(path_ptr->back()));
                 remove_tracks(path_ptr, end_track_to_tob_map);
             }
- 
-            assert(end_tracks_set.size() > 0);     // if failed, then routing failed            
+
+            // if failed, then routing failed  
+            assert(end_tracks_set.size() > 0);   
+
+            // construct a path-tree for reroute
             auto tree {Tree(_node_track_interface.track_rootify(std::get<0>(path_ptr->back()), std::get<1>(path_ptr->back()).value()))};
-    
-            auto [success, ml] = reroute_single_net(interposer, tree, path_ptr, max_length, end_tracks_set, bump_length);
+            auto [success, ml] = refind_path(interposer, tree, path_ptr, max_length, end_tracks_set, bump_length);
             max_length = ml;
 
+            // connect end bump to end track
             if (end_track_to_tob_map != nullptr){
                 auto end_track {std::get<0>(path_ptr->back())};
                 auto end_bump {end_bumps[i]};
                 assert(check_found(end_tracks_set, end_track));
                 
+                // notice: the following "for" loop cannot be replaced by "possible_end_tracks_map.find(end_track)->second.connect();"
+                // there will be unexpected behaviour during "find(end_track)"
+                // for there are some other members not related to coordinates in value "end_track"
+                // use "if (track->coord() == end_track->coord())" is safer
                 for (auto& t: possible_end_tracks_map){
                     auto& [track, connector] = t;
                     if (track->coord() == end_track->coord()){
@@ -120,8 +128,6 @@ namespace kiwi::algo{
                         break;
                     }
                 }
-                // 这里的find在哈希的时候有点bug，虽然坐标一样但是_prev_track_和_next_track_不一样
-                // possible_end_tracks_map.find(end_track)->second.connect();
                 end_bump.value()->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
             }
 
@@ -154,7 +160,7 @@ namespace kiwi::algo{
             (*end_bump)->disconnect_track(end_track);
         }
         
-        auto path_length {path_ptr->size()};
+        auto path_length {path_ptr->size()};        // notice: do not use function path_length() here
         hardware::Track* next_track = nullptr;
         std::usize cut_length = path_length > 1 ? ((path_length * cut_rate) < 1 ? 1 : int(path_length * cut_rate)) : 0;
         std::usize remain_length {path_length - cut_length};
@@ -186,13 +192,18 @@ namespace kiwi::algo{
         return std::abs(node->track()->coord().row - coord.row) + std::abs(node->track()->coord().col - coord.col);
     }
 
-    auto MazeRerouter::reroute_single_net(
+    auto MazeRerouter::refind_path(
             hardware::Interposer* interposer, Tree& tree, routed_path* path_ptr,\
             std::usize max_length, const std::HashSet<hardware::Track*>& end_tracks, std::usize bump_length
         ) const -> std::tuple<bool, std::usize>{
         std::Vector<std::Rc<Node>> queue {tree._root};
         std::make_heap(queue.begin(), queue.end(), Node::CompareNodes);
 
+//!
+debug::debug("Rerouting...");
+print_end_tracks(end_tracks);
+//!
+        // mazing with A* 
         while (!queue.empty()) {
             // get current node
             std::pop_heap(queue.begin(), queue.end(), Node::CompareNodes);
@@ -201,11 +212,14 @@ namespace kiwi::algo{
 
             // find the end node
             auto track {node_sptr->track().get()};
-            if (check_found(end_tracks, track)){                // 这里直接用contains可能哈希过程有问题，因为track*里面不只有坐标，还有其他值
+            if (check_found(end_tracks, track)){                
                 auto temp_node_list {tree.backtrace(node_sptr)};
                 auto temp_path {_node_track_interface.nodes_trackify(temp_node_list)};
+                auto temp_path_length {path_length(temp_path)};
+                auto current_path_length {path_length(*path_ptr)};
 
-                if (path_ptr->size() + temp_path.size() + bump_length > max_length){
+                // find a longer path
+                if (current_path_length + temp_path_length + bump_length > max_length){
                     // connect
                     hardware::Track* prev_track = nullptr;
                     for (auto it = temp_path.begin(); it != temp_path.end(); ++it){
@@ -225,9 +239,13 @@ namespace kiwi::algo{
                     for (auto& tp: temp_path){
                         path_ptr->push_back(tp);
                     }
-                    return {false, path_ptr->size() + temp_path.size() + bump_length};
+//!
+print_path(path_ptr);
+//!
+                    return {false, path_length(*path_ptr) + bump_length};
                 }
-                else if(path_ptr->size() + temp_path.size() + bump_length == max_length){
+                // find a equal path
+                else if(current_path_length + temp_path_length + bump_length == max_length){
                     // connect
                     hardware::Track* prev_track = nullptr;
                     for (auto it = temp_path.begin(); it != temp_path.end(); ++it){
@@ -247,8 +265,12 @@ namespace kiwi::algo{
                     for (auto& tp: temp_path){
                         path_ptr->push_back(tp);
                     }
+//!
+print_path(path_ptr);
+//!
                     return {true, max_length};
                 }
+                // find a shorter path
                 else{
                     auto parent {node_sptr->parent()};
                     if(parent.has_value()){
@@ -270,7 +292,7 @@ namespace kiwi::algo{
             }
         }
 
-        debug::error("MazeRerouter::reroute_single_net: no path found");
+        debug::error("MazeRerouter::refind_path: no path found");
         return {false, max_length};
     }
 
@@ -281,6 +303,81 @@ namespace kiwi::algo{
             }
         }
         return false;
+    }
+
+    auto MazeRerouter::shared_cobs(const std::Vector<hardware::COBCoord>& cobs1, const std::Vector<hardware::COBCoord>& cobs2) const -> std::Vector<hardware::COBCoord>{
+        std::Vector<hardware::COBCoord> shared_cobs {};
+        for (auto& c1: cobs1){
+            for (auto& c2: cobs2){
+                if (c1 == c2){
+                    shared_cobs.emplace_back(c1);
+                }
+            }
+        }
+        return shared_cobs;
+    }
+
+    // return all cobs connected with track
+    auto MazeRerouter::track_pos_to_cobs(const hardware::Track* track) const -> std::Vector<hardware::COBCoord>{
+        std::Vector<hardware::COBCoord> cobs {};
+        auto coord {track->coord()};
+        cobs.emplace_back(coord.row, coord.col);
+        if (coord.dir == hardware::TrackDirection::Horizontal){
+            if (coord.col >= 1){
+                cobs.emplace_back(coord.row, coord.col - 1);
+            }
+        }
+        else if (coord.dir == hardware::TrackDirection::Vertical){
+            if (coord.row >= 1){
+                cobs.emplace_back(coord.row - 1, coord.col);
+            }
+        }
+        return cobs;
+    }
+
+    // calculate path length with different strategy
+    auto MazeRerouter::path_length(const routed_path& path, bool switch_length) const -> std::usize {
+        assert(!path.empty());
+
+        // path length = number of tracks
+        if (switch_length){
+            return path.size();
+        }
+        // for a group with number of consecutive tracks connected with the same COB >= 3, the length of the group is 2
+        // because those tracks in the middle are not truely used as signal pathways
+        else{
+            std::usize head{0}, tail{0};
+            std::usize path_length{0};
+
+            if (path.size() <= 2){
+                return path.size();
+            }
+            while(tail != path.size() - 1){
+                auto current_pos {track_pos_to_cobs(std::get<0>(path[head]))};
+                while (true){
+                    if (tail == path.size() - 1){
+                        if (tail == head){
+                            path_length += 1;
+                        }
+                        else{
+                            path_length += 2;
+                        }
+                        break;
+                    }
+                    auto tail_cobs {track_pos_to_cobs(std::get<0>(path[tail]))};
+                    current_pos = shared_cobs(current_pos, tail_cobs);
+                    if (current_pos.empty()){
+                        path_length += 2;
+                        head = tail;
+                        break;
+                    }
+                    else{
+                        tail += 1;
+                    }
+                }
+            }
+            return path_length;
+        }
     }
 
 }

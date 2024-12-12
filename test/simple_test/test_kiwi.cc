@@ -16,7 +16,7 @@ try {
     auto [interposer, basedie] = kiwi::parse::read_config("../config/muyan_no_bus");
     algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
     interposer->randomly_map_remain_indexes();
-    parse::write_control_bits(interposer.get(), "../test/controlbit/muyan_no_bus.ctb");
+    parse::write_control_bits(interposer.get(), "../test/simple_test/controlbit/muyan_no_bus.ctb");
 }
 THROW_UP_WITH("test_muyan_xinzhai_no_bus");
 

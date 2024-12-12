@@ -1,0 +1,18 @@
+{
+    "muyan_0"  : { "topdie" : "muyan", "coord" : { "row" : 0, "col" : 0 } },
+    "muyan_1"  : { "topdie" : "muyan", "coord" : { "row" : 0, "col" : 1 } },
+    "muyan_2"  : { "topdie" : "muyan", "coord" : { "row" : 0, "col" : 2 } },
+    "muyan_3"  : { "topdie" : "muyan", "coord" : { "row" : 0, "col" : 3 } },
+    "muyan_4"  : { "topdie" : "muyan", "coord" : { "row" : 1, "col" : 0 } },
+    "muyan_5"  : { "topdie" : "muyan", "coord" : { "row" : 1, "col" : 1 } },
+    "muyan_6"  : { "topdie" : "muyan", "coord" : { "row" : 1, "col" : 2 } },
+    "muyan_7"  : { "topdie" : "muyan", "coord" : { "row" : 1, "col" : 3 } },
+    "muyan_8"  : { "topdie" : "muyan", "coord" : { "row" : 2, "col" : 0 } },
+    "muyan_9"  : { "topdie" : "muyan", "coord" : { "row" : 2, "col" : 1 } },
+    "muyan_10" : { "topdie" : "muyan", "coord" : { "row" : 2, "col" : 2 } },
+    "muyan_11" : { "topdie" : "muyan", "coord" : { "row" : 2, "col" : 3 } },
+    "muyan_12" : { "topdie" : "muyan", "coord" : { "row" : 3, "col" : 0 } },
+    "muyan_13" : { "topdie" : "muyan", "coord" : { "row" : 3, "col" : 1 } },
+    "muyan_14" : { "topdie" : "muyan", "coord" : { "row" : 3, "col" : 2 } },
+    "muyan_15" : { "topdie" : "muyan", "coord" : { "row" : 3, "col" : 3 } }
+}

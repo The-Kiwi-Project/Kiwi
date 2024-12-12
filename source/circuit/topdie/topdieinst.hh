@@ -12,7 +12,7 @@ namespace kiwi::hardware {
 }
 
 namespace kiwi::circuit {
-
+    
     class TopDieInstance {
     public:
         TopDieInstance(std::String name, TopDie* topdie, hardware::TOB* tob);

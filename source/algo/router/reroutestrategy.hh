@@ -28,5 +28,7 @@ namespace kiwi::algo{
             std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*>& end_track_to_tob_maps,
             std::usize bump_length
         ) const -> std::tuple<bool, std::usize> = 0;
+
+        virtual auto path_length(const routed_path& path, bool switch_length = false) const -> std::usize = 0;
     };
 }
