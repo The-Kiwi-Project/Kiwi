@@ -23,7 +23,6 @@ namespace kiwi::widget {
         TopDieInstanceItem(circuit::TopDieInstance* topdieinst);
 
         QRectF boundingRect() const override;
-        QPainterPath shape() const override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 
     protected:

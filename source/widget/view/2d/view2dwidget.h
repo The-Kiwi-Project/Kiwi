@@ -20,7 +20,7 @@ namespace kiwi::circuit {
 namespace kiwi::widget {
    
     class View2DWidget : public QGraphicsView {
-
+        
         enum {
             COB_INTERVAL = 50,
         };

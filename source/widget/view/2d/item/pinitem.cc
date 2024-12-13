@@ -4,6 +4,7 @@
 #include "qnamespace.h"
 #include "qobject.h"
 #include "qpoint.h"
+#include "./netitem.h"
 
 namespace kiwi::widget {
 
@@ -18,15 +19,16 @@ namespace kiwi::widget {
     {
         this->setPos(position);
         this->setAcceptHoverEvents(true);
+        this->setFlags(ItemSendsScenePositionChanges);
     }
 
     auto PinItem::boundingRect() const -> QRectF {
-        return QRectF(-PIN_RADIUS,  -PIN_RADIUS, PIN_DIAMETER, PIN_DIAMETER);
+        return QRectF(-this->_raduis,  -this->_raduis, 2 * this->_raduis, 2 * this->_raduis);
     }
 
     void PinItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
         painter->setBrush(this->_hovered ? HOVERED_COLOR : COLOR);
-        painter->drawEllipse(QPointF{0., 0.}, PIN_RADIUS, PIN_RADIUS);
+        painter->drawEllipse(QPointF{0., 0.}, this->_raduis, this->_raduis);
 
         auto length = this->_name.size() * CHAR_WIDTH_;
         painter->setPen(Qt::blue);
@@ -86,14 +88,29 @@ namespace kiwi::widget {
         }
     }
 
+    auto PinItem::connectTo(PinItem* other) -> NetItem* {
+        // Make two point to wrap two pin
+        auto net = new NetItem {this, other};
+        return net;
+    }
+
+    auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {
+        if (change == QGraphicsItem::ItemScenePositionHasChanged) {
+            if (this->_connectedNetPoint) {
+                this->_connectedNetPoint->setPos(this->scenePos());
+            }
+        }
+        return QGraphicsItem::itemChange(change, value);
+    }
+
     void PinItem::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
         this->_hovered = true;
-        update();
+        this->update();
     }
 
     void PinItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
         this->_hovered = false;
-        update();
+        this->update();
     }
 
 }

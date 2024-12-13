@@ -5,7 +5,7 @@
 #include "qobject.h"
 
 #include "./item/topdieinstitem.h"
-#include "widget/view/2d/item/net.h"
+#include "./item/netitem.h"
 #include <QPainter>
 #include <QBrush>
 #include <cassert>
@@ -56,7 +56,16 @@ namespace kiwi::widget {
 
             this->_topdieInstItems[i]->setPos(x, y);
         }
+
+        auto chip1 = this->_topdieInstItems[0];
+        auto chip2 = this->_topdieInstItems[6];
     
+        auto p1 = chip1->pinitems().begin().value();
+        auto p2 = chip2->pinitems().begin().value();
+
+        auto net = p1->connectTo(p2);
+        this->_scene->addItem(net);
+
         auto cobArrayHeight = static_cast<float>(hardware::Interposer::COB_ARRAY_HEIGHT);
         auto cobArrayWidth  = static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH);
     }

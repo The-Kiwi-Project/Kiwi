@@ -77,19 +77,13 @@ namespace kiwi::widget {
     }
 
     QRectF TopDieInstanceItem::boundingRect() const {
-        return QRectF(0., 0., this->_width, this->_height);
-    }
-
-    QPainterPath TopDieInstanceItem::shape() const {
-        QPainterPath path;
-        path.addRect(this->boundingRect());
-        return path;
+        return QRectF{0., 0., this->_width,  this->_height};
     }
 
     void TopDieInstanceItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
         painter->setPen(Qt::black);
         painter->setBrush(Qt::lightGray);
-        painter->drawRect(boundingRect());
+        painter->drawRect(this->boundingRect());
 
         auto length = this->_name.size() * NAME_CHAR_WIDTH;
         auto rect = QRectF {
