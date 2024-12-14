@@ -19,7 +19,7 @@ namespace kiwi::circuit {
     
     public:
         virtual auto update_tob_postion(hardware::TOB* prev_tob, hardware::TOB* next_tob) -> void override;
-        virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void override;
+        virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize override;
         virtual auto priority() const -> Priority override;
 
     public:

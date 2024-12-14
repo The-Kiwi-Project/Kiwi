@@ -17,7 +17,7 @@ namespace kiwi::circuit {
         this->_begin_bump = hardware::Bump::update_bump(this->_begin_bump, prev_tob, next_tob);
     }
 
-    auto BumpToTrackNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
+    auto BumpToTrackNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
         return strategy.route_bump_to_track_net(interposer, this);
     }
 

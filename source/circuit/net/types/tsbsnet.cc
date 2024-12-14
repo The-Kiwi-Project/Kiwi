@@ -16,7 +16,7 @@ namespace kiwi::circuit {
         }
     }
 
-    auto TracksToBumpsNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
+    auto TracksToBumpsNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
         return strategy.route_tracks_to_bumps_net(interposer, this);
     }
 
