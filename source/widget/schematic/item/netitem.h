@@ -6,7 +6,7 @@
 #include <QPen>
 #include <QDebug>
 
-namespace kiwi::widget {
+namespace kiwi::widget::schematic {
 
     class PinItem;
 

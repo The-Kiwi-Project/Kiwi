@@ -1,11 +1,8 @@
-#include "./view2dwidget.h"
-#include "qdebug.h"
-#include "qgraphicsitem.h"
-#include "qgraphicsscene.h"
-#include "qobject.h"
+#include "./schematicwidget.h"
 
-#include "./item/topdieinstitem.h"
 #include "./item/netitem.h"
+#include "./item/pinitem.h"
+#include "./item/topdieinstitem.h"
 #include <QPainter>
 #include <QBrush>
 #include <cassert>
@@ -16,9 +13,12 @@
 #include <QScrollBar>
 #include <cmath>
 
-namespace kiwi::widget {
 
-    View2DWidget::View2DWidget(
+namespace kiwi::widget {
+    
+    using namespace schematic;
+
+    SchematicWidget::SchematicWidget(
         hardware::Interposer* interposer, 
         circuit::BaseDie* basedie,
         QWidget *parent
@@ -65,14 +65,11 @@ namespace kiwi::widget {
 
         auto net = p1->connectTo(p2);
         this->_scene->addItem(net);
-
-        auto cobArrayHeight = static_cast<float>(hardware::Interposer::COB_ARRAY_HEIGHT);
-        auto cobArrayWidth  = static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH);
     }
 
-    View2DWidget::~View2DWidget() noexcept {}
+    SchematicWidget::~SchematicWidget() noexcept {}
 
-    void View2DWidget::wheelEvent(QWheelEvent *event) {
+    void SchematicWidget::wheelEvent(QWheelEvent *event) {
         const double scaleFactor = 1.15;
         if (event->angleDelta().y() > 0) {
             scale(scaleFactor, scaleFactor); // 放大

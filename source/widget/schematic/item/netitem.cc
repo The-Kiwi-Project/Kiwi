@@ -8,7 +8,7 @@
 
 #include <QDebug>
 
-namespace kiwi::widget {
+namespace kiwi::widget::schematic {
 
     NetPointItem::NetPointItem(PinItem* connectedPin, QGraphicsItem* parent)
         : QGraphicsEllipseItem{parent}, 
@@ -45,12 +45,12 @@ namespace kiwi::widget {
     }
 
     void NetPointItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(Qt::red, 3)); // 高亮颜色
+        setPen(QPen(Qt::red, 3)); 
         QGraphicsEllipseItem::hoverEnterEvent(event);
     }
 
     void NetPointItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(Qt::black, 2)); // 恢复颜色
+        setPen(QPen(Qt::black, 2));
         QGraphicsEllipseItem::hoverLeaveEvent(event);
     }
 

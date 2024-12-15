@@ -1,11 +1,14 @@
 #pragma once
 
 #include <QMainWindow>
-#include "./page/welcomepage.h"
-#include "./page/workpage.h"
-#include "./page/aboutpage.h"
-#include "./base/framelesswindow.h"
-#include "./base/sidebar.h"
+#include "./frame/page/welcomepage.h"
+#include "./frame/page/workpage.h"
+#include "./frame/page/aboutpage.h"
+
+#include "./frame/base/framelesswindow.h"
+#include "./frame/base/sidebar.h"
+#include "qwidget.h"
+
 
 namespace kiwi::hardware {
     class Interposer;
@@ -53,7 +56,7 @@ namespace kiwi::widget {
         ~SWindow();
 
     private:
-        View2DWidget* _renderWidget {nullptr};
+        QWidget* _widget {nullptr};
     };
 
 }

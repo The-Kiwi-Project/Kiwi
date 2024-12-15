@@ -10,7 +10,7 @@ namespace kiwi::circuit {
     class TopDieInstance;
 }
 
-namespace kiwi::widget {
+namespace kiwi::widget::schematic {
 
     class TopDieInstanceItem : public QGraphicsItem {
     public:

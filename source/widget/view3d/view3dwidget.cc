@@ -5,10 +5,10 @@
 #include "hardware/cob/cobdirection.hh"
 #include "hardware/cob/cobregister.hh"
 #include "hardware/track/trackcoord.hh"
-#include "../../dialog/tobinfo.h"
-#include "../../dialog/cobinfo.h"
-#include "qdebug.h"
-#include "widget/dialog/topdieinstinfo.h"
+
+#include "./dialog/tobinfo.h"
+#include "./dialog/cobinfo.h"
+#include "./dialog/topdieinstinfo.h"
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 #include <debug/debug.hh>

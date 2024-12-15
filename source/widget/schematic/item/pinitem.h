@@ -7,7 +7,7 @@
 #include <QPainter>
 #include <QDebug>
 
-namespace kiwi::widget {
+namespace kiwi::widget::schematic {
 
     enum class PinSide {
         Top,

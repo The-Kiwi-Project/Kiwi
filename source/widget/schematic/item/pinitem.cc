@@ -6,7 +6,7 @@
 #include "qpoint.h"
 #include "./netitem.h"
 
-namespace kiwi::widget {
+namespace kiwi::widget::schematic {
 
     const QColor PinItem::COLOR = Qt::black;
     const QColor PinItem::HOVERED_COLOR = Qt::red;

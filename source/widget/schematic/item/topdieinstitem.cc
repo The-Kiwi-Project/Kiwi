@@ -15,7 +15,7 @@
 #include <QStyleOptionGraphicsItem>
 
 
-namespace kiwi::widget {
+namespace kiwi::widget::schematic {
     
     TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst):
         _topdieinst{topdieinst} 
