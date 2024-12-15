@@ -41,6 +41,7 @@ namespace kiwi::algo {
 
         virtual auto route_sync_net(hardware::Interposer*, circuit::SyncNet*) const -> std::usize override;
     
+    // simple routing functions
     private:
         auto search_path(
             hardware::Interposer* interposer, 
@@ -72,6 +73,8 @@ namespace kiwi::algo {
             hardware::Track* track
         ) const -> bool;
 
+    // synchrnized rouitng functions
+    private:
         // first round of routing & collecting paths 
         template <class Net>
         auto sync_preroute(

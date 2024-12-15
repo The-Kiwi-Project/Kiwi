@@ -21,7 +21,7 @@ namespace kiwi::circuit {
     }
 
     auto TracksToBumpsNet::priority() const -> Priority {
-        return {3};
+        return {5};
     }
 
     auto TracksToBumpsNet::coords() const -> std::Vector<hardware::Coord> {

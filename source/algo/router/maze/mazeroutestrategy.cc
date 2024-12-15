@@ -25,26 +25,46 @@ namespace kiwi::algo {
         auto end_bump = net->end_bump();
         debug::check(begin_bump->tob() != end_bump->tob(), "Route bump in the same tob");
 
-        auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
         auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
 
-        // Route a track path from one of `begin_tracks` to one of `end_tracks`
-        // the function will connected the COBConnector
-        auto path = this->route_path(interposer, track_map_to_track_set(begin_tracks), track_map_to_track_set(end_tracks));
+        std::Vector<hardware::Track*> path {};
+        std::usize path_length {0};
+        if (begin_bump->connected_track() == nullptr) {
+            auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
 
-        auto begin_track = path.front();
+            // Route a track path from one of `begin_tracks` to one of `end_tracks`
+            // the function will connected the COBConnector
+            path = this->route_path(interposer, track_map_to_track_set(begin_tracks), track_map_to_track_set(end_tracks));
+
+            auto begin_track = path.front();
+            assert(begin_tracks.contains(begin_track));
+
+            // Connect the TOB Connector
+            begin_tracks.find(begin_track)->second.connect();
+            begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
+
+            path_length = _rerouter->path_length(path) + 2;
+        }
+        else{
+            auto begin_track = begin_bump->connected_track();
+            std::HashSet<hardware::Track*> begin_tracks_set {};
+            while (begin_track != nullptr) {
+                begin_tracks_set.emplace(begin_track);
+                begin_track = begin_track->next_track();
+            }
+            path = this->route_path(interposer, begin_tracks_set, track_map_to_track_set(end_tracks));
+
+            path_length = _rerouter->path_length(path) + 1;
+        }
+
         auto end_track = path.back();
-
-        assert(begin_tracks.contains(begin_track));
         assert(end_tracks.contains(end_track));
         
         // Connect the TOB Connector
-        begin_tracks.find(begin_track)->second.connect();
-        begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
         end_tracks.find(end_track)->second.connect();
         end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
 
-        return _rerouter->path_length(path) + 2;
+        return path_length;
     }
 
     auto MazeRouteStrategy::route_track_to_bump_net(hardware::Interposer* interposer, circuit::TrackToBumpNet* net) const -> std::usize {
@@ -76,20 +96,34 @@ namespace kiwi::algo {
         auto begin_bump = net->begin_bump();
         auto end_track = net->end_track();
 
-        auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
+        std::Vector<hardware::Track*> path {};
+        if (begin_bump->connected_track() == nullptr) {
+            auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
 
-        // Route a track path from one of `begin_tracks` to one of `end_tracks`
-        // the function will connected the COBConnector
-        auto path = this->route_path(interposer, track_map_to_track_set(begin_tracks), std::HashSet<hardware::Track*>{end_track});
+            // Route a track path from one of `begin_tracks` to one of `end_tracks`
+            // the function will connected the COBConnector
+            path = this->route_path(interposer, track_map_to_track_set(begin_tracks), std::HashSet<hardware::Track*>{end_track});
 
-        auto begin_track = path.front();
-        assert(begin_tracks.contains(begin_track));
+            auto begin_track = path.front();
+            assert(begin_tracks.contains(begin_track));
 
-        // Connect the TOB Connector
-        begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
-        begin_tracks.find(begin_track)->second.connect();
+            // Connect the TOB Connector
+            begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
+            begin_tracks.find(begin_track)->second.connect();
+            return _rerouter->path_length(path) + 1;
+        }
+        else{
+            auto begin_track = begin_bump->connected_track();
+            std::HashSet<hardware::Track*> begin_tracks_set {};
+            while (begin_track != nullptr) {
+                begin_tracks_set.emplace(begin_track);
+                begin_track = begin_track->next_track();
+            }
 
-        return _rerouter->path_length(path) + 1;
+            path = this->route_path(interposer, begin_tracks_set, std::HashSet<hardware::Track*>{end_track});
+
+            return _rerouter->path_length(path);
+        }
     }
 
     auto MazeRouteStrategy::route_bump_to_bumps_net(hardware::Interposer* interposer, circuit::BumpToBumpsNet* net)  const -> std::usize {
