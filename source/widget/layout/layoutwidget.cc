@@ -36,6 +36,9 @@ namespace kiwi::widget {
         auto i = new TopDieInstItem {nullptr};
         this->_scene->addItem(i);
 
+        i = new TopDieInstItem {nullptr};
+        this->_scene->addItem(i);
+        i->setPos(1000, 1000);
 
         auto t = new TOBItem {nullptr};
         this->_scene->addItem(t);

@@ -45,7 +45,7 @@ namespace kiwi::widget::layout {
     TopDieInstItem::TopDieInstItem(circuit::TopDieInstance* topdieInst): 
         _topdieInst{topdieInst} 
     {   
-        this->setFlags(ItemIsSelectable | ItemIsMovable | ItemSendsGeometryChanges);
+        this->setFlags(ItemIsSelectable | ItemIsMovable);
 
         auto basePos = QPointF{BUMP_AREA_BEGIN_X - WIDTH / 2, BUMP_AREA_BEGIN_Y - HEIGHT / 2.};
         for (int r = 0; r < BUMP_ARRAY_ROW; ++r) {
@@ -67,14 +67,14 @@ namespace kiwi::widget::layout {
     
     void TopDieInstItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
         painter->setBrush(COLOR);
-        painter->drawRect(this->boundingRect());
+        painter->drawRect(-WIDTH / 2., -HEIGHT / 2., WIDTH, HEIGHT);
     }
 
     void TopDieInstItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
         if (event->button() == Qt::LeftButton) {
             this->_originPos = event->scenePos();
         }
-        QGraphicsItem::mouseReleaseEvent(event);
+        QGraphicsItem::mousePressEvent(event);
     }
 
     void TopDieInstItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
