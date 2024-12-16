@@ -1,6 +1,5 @@
 #include "./netitem.h"
 #include "./pinitem.h"
-#include "qglobal.h"
 #include "qnamespace.h"
 #include "qobject.h"
 
@@ -30,15 +29,19 @@ namespace kiwi::widget::schematic {
         if (pin != nullptr) {
             this->_connectedPin = pin;
             this->setPos(pin->scenePos());
-            pin->setConnectedPoint(this); 
+            pin->addConnectedPoint(this); 
         }
     }
 
     auto NetPointItem::unlinkPin() -> PinItem* {
         auto pin = this->_connectedPin;
         this->_connectedPin = nullptr;
-        pin->setConnectedPoint(nullptr);
+        pin->removeConnectedPoint(this);
         return pin;
+    }
+
+    void NetPointItem::updatePos() {
+        this->setPos(this->_connectedPin->scenePos());
     }
 
     QVariant NetPointItem::itemChange(GraphicsItemChange change, const QVariant& value) {

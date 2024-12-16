@@ -8,7 +8,7 @@ namespace kiwi::widget {
     namespace schematic {
         class NetPointItem;
         class NetItem;
-        class PintItem;
+        class PinItem;
         class TopDieInstanceItem;
     }
 
@@ -20,13 +20,14 @@ namespace kiwi::widget {
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 
     public:
-        auto floatingNet() -> schematic::NetItem* 
-        { return this->_floatingNet; }
+        auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;
+        auto addNet(schematic::NetPointItem* beginPoint, schematic::NetPointItem* endPoint) -> schematic::NetItem*;
+        
+        auto connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem*;
 
-        void setFloatingNet(schematic::NetItem* net) 
-        { this->_floatingNet = net; }
+        void headleCreateNet(schematic::PinItem* pin, QGraphicsSceneMouseEvent* event);
 
-    public:
+    protected:
         schematic::NetItem* _floatingNet {};
     };
 

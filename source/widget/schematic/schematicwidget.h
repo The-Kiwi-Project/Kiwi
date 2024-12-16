@@ -39,9 +39,6 @@ namespace kiwi::widget {
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;
 
-    public:
-        auto connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem*;
-
     protected:
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie* _basedie {nullptr};

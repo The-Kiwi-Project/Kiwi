@@ -98,32 +98,15 @@ namespace kiwi::widget::schematic {
 
     auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {
         if (change == QGraphicsItem::ItemScenePositionHasChanged) {
-            if (this->_connectedNetPoint != nullptr) {
-                this->_connectedNetPoint->setPos(this->scenePos());
+            for (auto point : this->_connectedNetPoints) {
+                point->updatePos();
             }
         }
         return QGraphicsItem::itemChange(change, value);
     }
 
     void PinItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-        auto net = this->_scene->floatingNet();
-        if (net != nullptr) {
-            auto endPoint = new NetPointItem {this};
-            this->_scene->addItem(endPoint);
-            net->setEndPoint(endPoint);
-            endPoint->setNetItem(net);
-
-            this->_scene->setFloatingNet(nullptr);
-        } else {
-            auto beginPoint = new NetPointItem {this};
-            this->_scene->addItem(beginPoint);
-        
-            auto fnet = new NetItem {beginPoint};
-            this->_scene->addItem(fnet);
-
-            this->_scene->setFloatingNet(fnet);
-        }
-
+        this->_scene->headleCreateNet(this, event);
         QGraphicsItem::mousePressEvent(event);
     }
 

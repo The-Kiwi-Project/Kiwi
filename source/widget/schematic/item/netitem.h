@@ -29,6 +29,8 @@ namespace kiwi::widget::schematic {
         void setNetItem(NetItem* netitem) 
         { this->_netitem = netitem; }
 
+        void updatePos();
+
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 

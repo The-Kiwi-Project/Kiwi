@@ -65,23 +65,10 @@ namespace kiwi::widget {
 
         // auto net = p1->connectTo(p2);
         // this->_scene->addItem(net);
-        this->connectPins(p1, p2);
+        this->_scene->connectPins(p1, p2);
     }
 
     SchematicWidget::~SchematicWidget() noexcept {}
-
-    auto SchematicWidget::connectPins(PinItem* begin, PinItem* end) -> NetItem* {
-        auto beginPoint = new NetPointItem {begin};
-        auto endPoint = new NetPointItem {end};
-
-        this->_scene->addItem(beginPoint);
-        this->_scene->addItem(endPoint);
-        
-        auto net = new NetItem {beginPoint, endPoint};
-        this->_scene->addItem(net);
-
-        return net;
-    }
 
     void SchematicWidget::wheelEvent(QWheelEvent *event) {
         const double scaleFactor = 1.15;

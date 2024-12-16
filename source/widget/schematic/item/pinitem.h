@@ -2,6 +2,7 @@
 
 #include "qglobal.h"
 #include "qvariant.h"
+#include "qvector.h"
 #include <QColor>
 #include <QGraphicsItem>
 #include <QPainter>
@@ -57,7 +58,11 @@ namespace kiwi::widget::schematic {
     public: 
         auto name() const -> const QString& { return this->_name; }
 
-        void setConnectedPoint(NetPointItem* point) { this->_connectedNetPoint = point; }
+        void addConnectedPoint(NetPointItem* point) 
+        { this->_connectedNetPoints.push_back(point); }
+
+        void removeConnectedPoint(NetPointItem* point)
+        { this->_connectedNetPoints.removeOne(point); }
 
         void setRaduis(qreal radius) { this->_raduis = radius; }
         void resetRaduis() { this->_raduis = PIN_RADIUS; }
@@ -68,7 +73,7 @@ namespace kiwi::widget::schematic {
 
         qreal _raduis {PIN_RADIUS};
 
-        NetPointItem* _connectedNetPoint {nullptr};
+        QVector<NetPointItem*> _connectedNetPoints {};
 
         bool _hovered {false};
 
