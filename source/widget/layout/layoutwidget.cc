@@ -1,4 +1,4 @@
-#include "./layoutwidget.h"
+#include "./layoutview.h"
 
 #include "./item/topdieinstitem.h"
 #include "widget/layout/item/tobitem.h"
@@ -18,7 +18,7 @@ namespace kiwi::widget {
 
     using namespace layout;
 
-    LayoutWidget::LayoutWidget(
+    LayoutView::LayoutView(
         hardware::Interposer* interposer, 
         circuit::BaseDie* basedie,
         QWidget *parent
@@ -51,9 +51,9 @@ namespace kiwi::widget {
         t->setPos(1200, 500);
     }
 
-    LayoutWidget::~LayoutWidget() noexcept {}
+    LayoutView::~LayoutView() noexcept {}
 
-    void LayoutWidget::wheelEvent(QWheelEvent *event) {
+    void LayoutView::wheelEvent(QWheelEvent *event) {
         const double scaleFactor = 1.15;
         if (event->angleDelta().y() > 0) {
             scale(scaleFactor, scaleFactor); // 放大

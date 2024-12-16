@@ -18,19 +18,19 @@ namespace kiwi::circuit {
 
 namespace kiwi::widget {
    
-    class View2DWidget : public QGraphicsView {
+    class LayoutView : public QGraphicsView {
         
         enum {
             COB_INTERVAL = 50,
         };
 
     public:
-        explicit View2DWidget(
+        explicit LayoutView(
             hardware::Interposer* interposer, 
             circuit::BaseDie* basedie,
             QWidget *parent = nullptr);
 
-        ~View2DWidget() noexcept;
+        ~LayoutView() noexcept;
 
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;

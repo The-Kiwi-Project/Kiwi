@@ -1,4 +1,4 @@
-#include "./view2dwidget.h"
+#include "./view2dview.h"
 #include "qgraphicsitem.h"
 #include "qgraphicsscene.h"
 #include "qobject.h"
@@ -18,7 +18,7 @@
 namespace kiwi::widget {
     using namespace view2d;
 
-    View2DWidget::View2DWidget(
+    View2DView::View2DView(
         hardware::Interposer* interposer, 
         circuit::BaseDie* basedie,
         QWidget *parent
@@ -53,9 +53,9 @@ namespace kiwi::widget {
         auto cobArrayWidth  = static_cast<float>(hardware::Interposer::COB_ARRAY_WIDTH);
     }
 
-    View2DWidget::~View2DWidget() noexcept {}
+    View2DView::~View2DView() noexcept {}
 
-    void View2DWidget::wheelEvent(QWheelEvent *event) {
+    void View2DView::wheelEvent(QWheelEvent *event) {
         const double scaleFactor = 1.15;
         if (event->angleDelta().y() > 0) {
             scale(scaleFactor, scaleFactor); // 放大

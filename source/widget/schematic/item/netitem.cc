@@ -10,14 +10,15 @@
 
 namespace kiwi::widget::schematic {
 
-    extern NetItem* currentNetItem;
+    const QColor NetPointItem::COLOR = Qt::blue;
+    const QColor NetPointItem::HOVER_COLOR = Qt::red;
 
     NetPointItem::NetPointItem(PinItem* connectedPin, QGraphicsItem* parent): 
         QGraphicsEllipseItem{parent}, 
         _connectedPin{connectedPin}
     {
         this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
-        this->setBrush(Qt::blue);
+        this->setBrush(COLOR);
         this->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsGeometryChanges);
         this->setAcceptHoverEvents(true);
 
@@ -52,12 +53,12 @@ namespace kiwi::widget::schematic {
     }
 
     void NetPointItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(Qt::red, 3)); 
+        setPen(QPen(HOVER_COLOR, 3)); 
         QGraphicsEllipseItem::hoverEnterEvent(event);
     }
 
     void NetPointItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(Qt::black, 2));
+        setPen(QPen(COLOR, 2));
         QGraphicsEllipseItem::hoverLeaveEvent(event);
     }
 
@@ -102,6 +103,9 @@ namespace kiwi::widget::schematic {
 
     ///////////////////////////////////////////////////////////////////////////
 
+    const QColor NetItem::COLOR = Qt::black;
+    const QColor NetItem::HOVER_COLOR = Qt::red;
+
     NetItem::NetItem(NetPointItem* beginPoint, NetPointItem* endPoint):
         QGraphicsLineItem{},
         _beginPoint{beginPoint},
@@ -135,12 +139,12 @@ namespace kiwi::widget::schematic {
     }
     
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(Qt::red, 3)); // 高亮颜色
+        this->setPen(QPen(HOVER_COLOR, 3));
         QGraphicsLineItem::hoverEnterEvent(event);
     }
 
     void NetItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(Qt::black, 2)); // 恢复颜色
+        this->setPen(QPen(COLOR, 2));
         QGraphicsLineItem::hoverLeaveEvent(event);
     }
 

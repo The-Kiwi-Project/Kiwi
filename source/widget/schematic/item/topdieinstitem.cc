@@ -17,6 +17,8 @@
 
 namespace kiwi::widget::schematic {
     
+    const QColor TopDieInstanceItem::COLOR = Qt::lightGray;;
+
     TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene):
         _topdieinst{topdieinst},
         _scene{scene}
@@ -82,8 +84,7 @@ namespace kiwi::widget::schematic {
     }
 
     void TopDieInstanceItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-        painter->setPen(Qt::black);
-        painter->setBrush(Qt::lightGray);
+        painter->setBrush(COLOR);
         painter->drawRect(this->boundingRect());
 
         auto length = this->_name.size() * NAME_CHAR_WIDTH;

@@ -18,6 +18,8 @@ namespace kiwi::widget::schematic {
 
         static constexpr qreal MOVING_RADIUS = 8.;
         static constexpr qreal MOVING_DIAMETER = 2. * MOVING_RADIUS;
+        static const     QColor COLOR;
+        static const     QColor HOVER_COLOR;
     
     public:
         NetPointItem(PinItem* connectedPin, QGraphicsItem* parent = nullptr);
@@ -49,6 +51,10 @@ namespace kiwi::widget::schematic {
     };
 
     class NetItem : public QGraphicsLineItem {
+    public:
+        static const     QColor COLOR;
+        static const     QColor HOVER_COLOR;
+        
     public:
         NetItem(NetPointItem* beginPoint, NetPointItem* endPoint);
         NetItem(NetPointItem* beginPoint);

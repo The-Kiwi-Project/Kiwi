@@ -1,5 +1,7 @@
 #include "./schematicscene.h"
 #include "./item/netitem.h"
+#include "./item/pinitem.h"
+#include "./item/exportitem.hh"
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
@@ -26,6 +28,12 @@ namespace kiwi::widget {
         auto net = new schematic::NetItem {beginPoint, endPoint};
         this->addItem(net);
         return net;
+    }
+
+    auto SchematicScene::addExPort(const QString& name) -> schematic::ExPortItem* {
+        auto port = new schematic::ExPortItem {name, this};
+        this->addItem(port);
+        return port;
     }
 
     auto SchematicScene::connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem* {

@@ -1,8 +1,8 @@
-#include "./schematicwidget.h"
+#include "./schematicview.h"
 
-#include "./item/netitem.h"
 #include "./item/pinitem.h"
 #include "./item/topdieinstitem.h"
+#include "./item/exportitem.hh"
 #include "widget/schematic/schematicscene.h"
 #include <QPainter>
 #include <QBrush>
@@ -18,7 +18,7 @@ namespace kiwi::widget {
 
     using namespace schematic;
 
-    SchematicWidget::SchematicWidget(
+    SchematicView::SchematicView(
         hardware::Interposer* interposer, 
         circuit::BaseDie* basedie,
         QWidget *parent
@@ -66,11 +66,14 @@ namespace kiwi::widget {
         // auto net = p1->connectTo(p2);
         // this->_scene->addItem(net);
         this->_scene->connectPins(p1, p2);
+
+        auto p = this->_scene->addExPort("xinzhai_outout_0");
+        p->setPos(-100, 500);
     }
 
-    SchematicWidget::~SchematicWidget() noexcept {}
+    SchematicView::~SchematicView() noexcept {}
 
-    void SchematicWidget::wheelEvent(QWheelEvent *event) {
+    void SchematicView::wheelEvent(QWheelEvent *event) {
         const double scaleFactor = 1.15;
         if (event->angleDelta().y() > 0) {
             scale(scaleFactor, scaleFactor); // 放大

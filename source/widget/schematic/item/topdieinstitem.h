@@ -23,6 +23,8 @@ namespace kiwi::widget::schematic {
         static constexpr qreal NAME_CHAR_HEIGHT = 20.;
         static constexpr qreal NAME_CHAR_WIDTH = 10.;
 
+        static const     QColor COLOR;
+
     public:
         TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene);
 

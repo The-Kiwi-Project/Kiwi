@@ -2,7 +2,6 @@
 
 #include "./item/topdieinstitem.h"
 #include "./item/pinitem.h"
-#include "./item/netitem.h"
 
 #include <QWidget>
 #include <QGraphicsView>
@@ -22,19 +21,19 @@ namespace kiwi::circuit {
 
 namespace kiwi::widget {
    
-    class SchematicWidget : public QGraphicsView {
+    class SchematicView : public QGraphicsView {
         
         enum {
             COB_INTERVAL = 50,
         };
 
     public:
-        explicit SchematicWidget(
+        explicit SchematicView(
             hardware::Interposer* interposer, 
             circuit::BaseDie* basedie,
             QWidget *parent = nullptr);
 
-        ~SchematicWidget() noexcept;
+        ~SchematicView() noexcept;
 
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;
