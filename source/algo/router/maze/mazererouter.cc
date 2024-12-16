@@ -335,9 +335,9 @@ print_path(path_ptr);
         return cobs;
     }
 
-    // calculate path length with different strategy
+
     auto MazeRerouter::path_length(const routed_path& path, bool switch_length) const -> std::usize {
-        assert(!path.empty());
+        assert(path.size() != 0);
 
         // path length = number of tracks
         if (switch_length){
@@ -365,6 +365,50 @@ print_path(path_ptr);
                         break;
                     }
                     auto tail_cobs {track_pos_to_cobs(std::get<0>(path[tail]))};
+                    current_pos = shared_cobs(current_pos, tail_cobs);
+                    if (current_pos.empty()){
+                        path_length += 2;
+                        head = tail;
+                        break;
+                    }
+                    else{
+                        tail += 1;
+                    }
+                }
+            }
+            return path_length;
+        }
+    }
+
+    auto MazeRerouter::path_length(const std::Vector<hardware::Track*>& path, bool switch_length) const -> std::usize {
+        assert(path.size() != 0);
+
+        // path length = number of tracks
+        if (switch_length){
+            return path.size();
+        }
+        // for a group with number of consecutive tracks connected with the same COB >= 3, the length of the group is 2
+        // because those tracks in the middle are not truely used as signal pathways
+        else{
+            std::usize head{0}, tail{0};
+            std::usize path_length{0};
+
+            if (path.size() <= 2){
+                return path.size();
+            }
+            while(tail != path.size() - 1){
+                auto current_pos {track_pos_to_cobs(path[head])};
+                while (true){
+                    if (tail == path.size() - 1){
+                        if (tail == head){
+                            path_length += 1;
+                        }
+                        else{
+                            path_length += 2;
+                        }
+                        break;
+                    }
+                    auto tail_cobs {track_pos_to_cobs(path[tail])};
                     current_pos = shared_cobs(current_pos, tail_cobs);
                     if (current_pos.empty()){
                         path_length += 2;

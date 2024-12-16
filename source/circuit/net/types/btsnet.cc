@@ -18,8 +18,8 @@ namespace kiwi::circuit {
         this->_begin_bump = hardware::Bump::update_bump(this->_begin_bump, prev_tob, next_tob);
     }
 
-    auto BumpToTracksNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
-        // return strategy.route_bump_to_tracks_net(interposer, this);
+    auto BumpToTracksNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
+        return strategy.route_bump_to_tracks_net(interposer, this);
     }
 
     auto BumpToTracksNet::priority() const -> Priority {

@@ -85,7 +85,8 @@ namespace kiwi::algo{
             std::usize bump_length
         ) const -> std::tuple<bool, std::usize> override;
 
-        auto path_length(const routed_path& path, bool switch_length = true) const -> std::usize;
+        auto path_length(const routed_path& path, bool switch_length = RerouteStrategy::_use_switch_length) const -> std::usize override;
+        auto path_length(const std::Vector<hardware::Track*>& path, bool switch_length = RerouteStrategy::_use_switch_length) const -> std::usize override;
     
     private:
         auto remove_tracks(

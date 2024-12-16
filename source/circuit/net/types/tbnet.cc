@@ -17,12 +17,12 @@ namespace kiwi::circuit {
         this->_end_bump = hardware::Bump::update_bump(this->_end_bump, prev_tob, next_tob);
     }
 
-    auto TrackToBumpNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
+    auto TrackToBumpNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
         return strategy.route_track_to_bump_net(interposer, this);
     }
 
     auto TrackToBumpNet::priority() const -> Priority {
-        return {2};
+        return {3};
     }
 
     auto TrackToBumpNet::coords() const -> std::Vector<hardware::Coord> {

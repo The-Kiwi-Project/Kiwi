@@ -32,7 +32,7 @@ namespace kiwi::circuit
         }
     }
 
-    auto SyncNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
+    auto SyncNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
         return strategy.route_sync_net(interposer, this);
     }
 

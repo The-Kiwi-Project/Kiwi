@@ -22,6 +22,6 @@ namespace kiwi::algo {
         hardware::Interposer* interposer,
         circuit::BaseDie* basedie,
         const RouteStrategy& strategy
-    ) -> void;
+    ) -> std::usize;
 
 }

@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c99", "c++20")
-add_requires("xlnt")
+add_requires("xlnt", "catch2")
 
 rule("qt.opengl")
     on_config(function (target) 
@@ -48,21 +48,21 @@ target("simpletest")
         "source/serde/**.cc"
     )
 
--- target("regressiontest")
---     set_kind("binary")
---     set_targetdir("./output")
---     set_default(false)
---     add_packages("xlnt", "catch2")
---     add_includedirs("source", "source/global", "test/regression_test")
---     add_files("test/regression_test/**.cc")
---     add_files(
---         "source/algo/**.cc",
---         "source/circuit/**.cc",
---         "source/global/**.cc",
---         "source/hardware/**.cc",
---         "source/parse/**.cc",
---         "source/serde/**.cc"
---     )
+target("regressiontest")
+    set_kind("binary")
+    set_targetdir("./output")
+    set_default(false)
+    add_packages("xlnt", "catch2")
+    add_includedirs("source", "source/global", "test/regression_test")
+    add_files("test/regression_test/**.cc")
+    add_files(
+        "source/algo/**.cc",
+        "source/circuit/**.cc",
+        "source/global/**.cc",
+        "source/hardware/**.cc",
+        "source/parse/**.cc",
+        "source/serde/**.cc"
+    )
 
 -- xmake project -k compile_commands
 
