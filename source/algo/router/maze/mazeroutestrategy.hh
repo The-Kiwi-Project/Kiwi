@@ -20,6 +20,11 @@ namespace kiwi::circuit {
     class BumpToTrackNet;
 }
 
+namespace kiwi::hardware{
+    class Bump;
+    class Track;
+}
+
 namespace kiwi::algo {
 
     class MazeRerouter;
@@ -40,6 +45,10 @@ namespace kiwi::algo {
         virtual auto route_tracks_to_bumps_net(hardware::Interposer*, circuit::TracksToBumpsNet*) const -> std::usize override;
 
         virtual auto route_sync_net(hardware::Interposer*, circuit::SyncNet*) const -> std::usize override;
+    
+    private:
+        template<class InputNode, class OutputNode>
+        auto route_node_to_node_net(hardware::Interposer* interposer, InputNode* input_node, OutputNode* output_node) const -> std::usize;
     
     // simple routing functions
     private:

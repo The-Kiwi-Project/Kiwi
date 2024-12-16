@@ -37,5 +37,16 @@ namespace kiwi::circuit {
         coords.emplace_back(this->begin_bump()->coord());
         return coords;
     }
+
+    auto BumpToBumpsNet::check_accessable_cobunit() -> void {
+        std::HashSet<std::usize> accessable_cobunit {};
+        for (std::usize i = 0; i < hardware::COB::UNIT_SIZE; ++i){
+            accessable_cobunit.emplace(i);
+        }
+        _begin_bump->intersect_access_unit(accessable_cobunit);
+        for (auto bump : _end_bumps) {
+            bump->intersect_access_unit(accessable_cobunit);
+        }
+    }
     
 }
