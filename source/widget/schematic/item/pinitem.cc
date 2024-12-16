@@ -5,21 +5,29 @@
 #include "qobject.h"
 #include "qpoint.h"
 #include "./netitem.h"
+#include "../schematicscene.h"
+#include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget::schematic {
+
+    extern SchematicScene* scene;
 
     const QColor PinItem::COLOR = Qt::black;
     const QColor PinItem::HOVERED_COLOR = Qt::red;
 
-    PinItem::PinItem(const QString &name, QPointF position, PinSide side, QGraphicsItem *parent)
+    PinItem::PinItem(
+        const QString &name, QPointF position, PinSide side, 
+        SchematicScene* scene, QGraphicsItem *parent
+    )
         : QGraphicsItem(parent), 
         _name{name}, 
         _side{side},
-        _hovered{false} 
+        _hovered{false},
+        _scene{scene}
     {
         this->setPos(position);
         this->setAcceptHoverEvents(true);
-        this->setFlags(ItemSendsScenePositionChanges);
+        this->setFlags(ItemSendsScenePositionChanges | ItemIsSelectable);
     }
 
     auto PinItem::boundingRect() const -> QRectF {
@@ -88,29 +96,47 @@ namespace kiwi::widget::schematic {
         }
     }
 
-    auto PinItem::connectTo(PinItem* other) -> NetItem* {
-        // Make two point to wrap two pin
-        auto net = new NetItem {this, other};
-        return net;
-    }
-
     auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {
         if (change == QGraphicsItem::ItemScenePositionHasChanged) {
-            if (this->_connectedNetPoint) {
+            if (this->_connectedNetPoint != nullptr) {
                 this->_connectedNetPoint->setPos(this->scenePos());
             }
         }
         return QGraphicsItem::itemChange(change, value);
     }
 
-    void PinItem::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
-        this->_hovered = true;
-        this->update();
+    void PinItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+        auto net = this->_scene->floatingNet();
+        if (net != nullptr) {
+            auto endPoint = new NetPointItem {this};
+            this->_scene->addItem(endPoint);
+            net->setEndPoint(endPoint);
+            endPoint->setNetItem(net);
+
+            this->_scene->setFloatingNet(nullptr);
+        } else {
+            auto beginPoint = new NetPointItem {this};
+            this->_scene->addItem(beginPoint);
+        
+            auto fnet = new NetItem {beginPoint};
+            this->_scene->addItem(fnet);
+
+            this->_scene->setFloatingNet(fnet);
+        }
+
+        QGraphicsItem::mousePressEvent(event);
     }
 
-    void PinItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
+    void PinItem::hoverEnterEvent(QGraphicsSceneHoverEvent * event) {
+        this->_hovered = true;
+        this->update();
+        QGraphicsItem::hoverEnterEvent(event);
+    }
+
+    void PinItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
         this->_hovered = false;
         this->update();
+        QGraphicsItem::hoverLeaveEvent(event);
     }
 
 }

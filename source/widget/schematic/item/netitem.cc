@@ -1,5 +1,6 @@
 #include "./netitem.h"
 #include "./pinitem.h"
+#include "qglobal.h"
 #include "qnamespace.h"
 #include "qobject.h"
 
@@ -10,8 +11,10 @@
 
 namespace kiwi::widget::schematic {
 
-    NetPointItem::NetPointItem(PinItem* connectedPin, QGraphicsItem* parent)
-        : QGraphicsEllipseItem{parent}, 
+    extern NetItem* currentNetItem;
+
+    NetPointItem::NetPointItem(PinItem* connectedPin, QGraphicsItem* parent): 
+        QGraphicsEllipseItem{parent}, 
         _connectedPin{connectedPin}
     {
         this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
@@ -20,8 +23,9 @@ namespace kiwi::widget::schematic {
         this->setAcceptHoverEvents(true);
 
         this->linkToPin(connectedPin);
+        this->setZValue(10);
     }
-
+ 
     void NetPointItem::linkToPin(PinItem* pin) {
         if (pin != nullptr) {
             this->_connectedPin = pin;
@@ -39,7 +43,7 @@ namespace kiwi::widget::schematic {
 
     QVariant NetPointItem::itemChange(GraphicsItemChange change, const QVariant& value) {
         if (change == GraphicsItemChange::ItemPositionChange && this->scene()) {
-            emit positionChanged();
+            this->_netitem->updateLine();
         }
         return QGraphicsEllipseItem::itemChange(change, value);
     }
@@ -77,29 +81,53 @@ namespace kiwi::widget::schematic {
                 }
             }
 
+            if (this->_connectedPin != nullptr) {
+                this->unlinkPin();
+            }
             this->linkToPin(pin);
             this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
+
+            this->_dragging = false;
         }
 
         QGraphicsEllipseItem::mouseReleaseEvent(event);
     }
 
+    void NetPointItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+        event->ignore(); 
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
-    NetItem::NetItem(PinItem* beginPin, PinItem* endPin) : 
+    NetItem::NetItem(NetPointItem* beginPoint, NetPointItem* endPoint):
         QGraphicsLineItem{},
-        _beginPoint{new NetPointItem {beginPin, this}},
-        _endPoint{new NetPointItem {endPin, this}}
+        _beginPoint{beginPoint},
+        _endPoint{endPoint}
     {
-        QObject::connect(this->_beginPoint, &NetPointItem::positionChanged, this, &NetItem::updateLine);
-        QObject::connect(this->_endPoint, &NetPointItem::positionChanged, this, &NetItem::updateLine);
+        this->_beginPoint->setNetItem(this);
+        this->_endPoint->setNetItem(this);
 
         this->setAcceptHoverEvents(true);
-        this->setFlags(QGraphicsItem::ItemIsSelectable);
         this->updateLine();
     }
 
+    NetItem::NetItem(NetPointItem* beginPoint) :
+        QGraphicsLineItem{},
+        _beginPoint{beginPoint}
+    {
+        this->_beginPoint->setNetItem(this);
+        this->setAcceptHoverEvents(true);
+        this->setLine(QLineF(this->_beginPoint->scenePos(), this->_beginPoint->scenePos()));
+    }
+
+    void NetItem::updateEndPoint(const QPointF& point) {
+        this->setLine(QLineF(this->_beginPoint->scenePos(), point));
+    }
+
     void NetItem::updateLine() {
+        if (this->_beginPoint == nullptr || this->_endPoint == nullptr) {
+            return;
+        }
         this->setLine(QLineF(this->_beginPoint->scenePos(), this->_endPoint->scenePos()));
     }
     

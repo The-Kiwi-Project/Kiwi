@@ -1,6 +1,5 @@
 #include "./topdieinstitem.h"
 #include "./pinitem.h"
-#include "qglobal.h"
 #include "widget/layout/item/tobitem.h"
 
 #include <QGraphicsScene>

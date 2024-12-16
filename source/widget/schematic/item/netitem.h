@@ -9,10 +9,9 @@
 namespace kiwi::widget::schematic {
 
     class PinItem;
-
-    class NetPointItem : public QObject, public QGraphicsEllipseItem {
-        Q_OBJECT
-
+    class NetItem;
+    
+    class NetPointItem : public QGraphicsEllipseItem {
     public:
         static constexpr qreal RADIUS = 5.;
         static constexpr qreal DIAMETER = 2. * RADIUS;
@@ -20,12 +19,15 @@ namespace kiwi::widget::schematic {
         static constexpr qreal MOVING_RADIUS = 8.;
         static constexpr qreal MOVING_DIAMETER = 2. * MOVING_RADIUS;
     
-
     public:
         NetPointItem(PinItem* connectedPin, QGraphicsItem* parent = nullptr);
 
+    public:
         void linkToPin(PinItem* pin);
         auto unlinkPin() -> PinItem*;
+
+        void setNetItem(NetItem* netitem) 
+        { this->_netitem = netitem; }
 
     protected:
         QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
@@ -36,23 +38,22 @@ namespace kiwi::widget::schematic {
         void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
         void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
-
-    signals:
-        void positionChanged();
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
 
     private:
         bool _dragging {false};
         PinItem* _connectedPin {nullptr};
+        NetItem* _netitem;
     };
 
-    class NetItem : public QObject, public QGraphicsLineItem {
-        Q_OBJECT
-
+    class NetItem : public QGraphicsLineItem {
     public:
-        NetItem(PinItem* beginPin, PinItem* endPin);
+        NetItem(NetPointItem* beginPoint, NetPointItem* endPoint);
+        NetItem(NetPointItem* beginPoint);
 
     public:
         void updateLine();
+        void updateEndPoint(const QPointF& point);
 
     protected:
         void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
@@ -62,11 +63,13 @@ namespace kiwi::widget::schematic {
         auto beginPoint() const -> NetPointItem* { return this->_beginPoint; }
         auto endPoint() const -> NetPointItem* { return this->_endPoint; }
 
-    protected:
-        NetPointItem* const _beginPoint;
-        NetPointItem* const _endPoint;
+        void setEndPoint(NetPointItem* point) { this->_endPoint = point; }
 
-        QPointF _dragStartOffset;
+    protected:
+        NetPointItem* _beginPoint {nullptr};
+        NetPointItem* _endPoint {nullptr};
+
+        QPointF _dragStartOffset {};
     };
 
 }

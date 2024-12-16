@@ -10,6 +10,10 @@ namespace kiwi::circuit {
     class TopDieInstance;
 }
 
+namespace kiwi::widget {
+    class SchematicScene;
+}
+
 namespace kiwi::widget::schematic {
 
     class TopDieInstanceItem : public QGraphicsItem {
@@ -20,7 +24,7 @@ namespace kiwi::widget::schematic {
         static constexpr qreal NAME_CHAR_WIDTH = 10.;
 
     public:
-        TopDieInstanceItem(circuit::TopDieInstance* topdieinst);
+        TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene);
 
         QRectF boundingRect() const override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
@@ -41,6 +45,8 @@ namespace kiwi::widget::schematic {
         QString _name {};
         qreal _width {};
         qreal _height {};
+
+        SchematicScene* const _scene {};
     };
 
 

@@ -1,6 +1,9 @@
 #pragma once
 
 #include "./item/topdieinstitem.h"
+#include "./item/pinitem.h"
+#include "./item/netitem.h"
+
 #include <QWidget>
 #include <QGraphicsView>
 #include <std/collection.hh>
@@ -36,11 +39,14 @@ namespace kiwi::widget {
     protected:
         virtual void wheelEvent(QWheelEvent *event) override;
 
+    public:
+        auto connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem*;
+
     protected:
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie* _basedie {nullptr};
 
-        QGraphicsScene* _scene {nullptr};
+        SchematicScene* _scene {nullptr};
 
         QVector<schematic::TopDieInstanceItem*> _topdieInstItems {};
     };

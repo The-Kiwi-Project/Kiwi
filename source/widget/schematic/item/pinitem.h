@@ -7,6 +7,10 @@
 #include <QPainter>
 #include <QDebug>
 
+namespace kiwi::widget {
+   class SchematicScene;
+}
+
 namespace kiwi::widget::schematic {
 
     enum class PinSide {
@@ -34,16 +38,19 @@ namespace kiwi::widget::schematic {
         int type() const override { return Type; }
     
     public:
-        PinItem(const QString &name, QPointF position, PinSide side, QGraphicsItem *parent = nullptr);
+        PinItem(
+            const QString &name, QPointF position, PinSide side, 
+            SchematicScene* scene, QGraphicsItem *parent = nullptr
+        );
 
     public:        
         auto boundingRect() const -> QRectF override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
         auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
 
-        auto connectTo(PinItem* other) -> NetItem*;
-
     protected:
+        // void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
+        void mousePressEvent(QGraphicsSceneMouseEvent*) override;
         void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
 
@@ -64,6 +71,8 @@ namespace kiwi::widget::schematic {
         NetPointItem* _connectedNetPoint {nullptr};
 
         bool _hovered {false};
+
+        SchematicScene* _scene;
     };
 
 

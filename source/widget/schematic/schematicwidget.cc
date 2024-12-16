@@ -3,6 +3,7 @@
 #include "./item/netitem.h"
 #include "./item/pinitem.h"
 #include "./item/topdieinstitem.h"
+#include "widget/schematic/schematicscene.h"
 #include <QPainter>
 #include <QBrush>
 #include <cassert>
@@ -13,9 +14,8 @@
 #include <QScrollBar>
 #include <cmath>
 
-
 namespace kiwi::widget {
-    
+
     using namespace schematic;
 
     SchematicWidget::SchematicWidget(
@@ -27,14 +27,14 @@ namespace kiwi::widget {
         _interposer{interposer},
         _basedie{basedie}
     {
-        this->_scene = new QGraphicsScene{};
+        this->_scene = new SchematicScene {};
         this->setScene(this->_scene);
         this->setDragMode(QGraphicsView::RubberBandDrag);
         this->setInteractive(true);
         this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
         for (auto& [name, topdie] : this->_basedie->topdie_insts()) {
-            TopDieInstanceItem* t = new TopDieInstanceItem{&topdie};
+            TopDieInstanceItem* t = new TopDieInstanceItem{&topdie, this->_scene};
             this->_topdieInstItems.push_back(t);
             this->_scene->addItem(t);
         }
@@ -63,11 +63,25 @@ namespace kiwi::widget {
         auto p1 = chip1->pinitems().begin().value();
         auto p2 = chip2->pinitems().begin().value();
 
-        auto net = p1->connectTo(p2);
-        this->_scene->addItem(net);
+        // auto net = p1->connectTo(p2);
+        // this->_scene->addItem(net);
+        this->connectPins(p1, p2);
     }
 
     SchematicWidget::~SchematicWidget() noexcept {}
+
+    auto SchematicWidget::connectPins(PinItem* begin, PinItem* end) -> NetItem* {
+        auto beginPoint = new NetPointItem {begin};
+        auto endPoint = new NetPointItem {end};
+
+        this->_scene->addItem(beginPoint);
+        this->_scene->addItem(endPoint);
+        
+        auto net = new NetItem {beginPoint, endPoint};
+        this->_scene->addItem(net);
+
+        return net;
+    }
 
     void SchematicWidget::wheelEvent(QWheelEvent *event) {
         const double scaleFactor = 1.15;

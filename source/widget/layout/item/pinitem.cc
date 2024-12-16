@@ -16,14 +16,14 @@ namespace kiwi::widget::layout {
         this->setAcceptHoverEvents(true);
     }
 
-    void PinItem::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
+    void PinItem::hoverEnterEvent(QGraphicsSceneHoverEvent * e) {
         this->setBrush(HOVERED_COLOR); 
-        this->update();
+        QGraphicsEllipseItem::hoverEnterEvent(e);
     }
 
-    void PinItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
+    void PinItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e) {
         this->setBrush(COLOR); 
-        this->update();
+        QGraphicsEllipseItem::hoverLeaveEvent(e);
     }
     
     

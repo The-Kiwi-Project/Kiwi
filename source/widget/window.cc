@@ -103,7 +103,7 @@ namespace kiwi::widget {
         this->resize(1000, 800);
         auto layout = new QVBoxLayout{this};
         layout->setContentsMargins(10, 10, 10, 10);
-        this->_widget = new LayoutWidget {i, b, this};
+        this->_widget = new SchematicWidget {i, b, this};
         layout->addWidget(this->_widget);
         this->setLayout(layout);
     }

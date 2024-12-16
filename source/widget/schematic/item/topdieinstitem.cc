@@ -17,10 +17,11 @@
 
 namespace kiwi::widget::schematic {
     
-    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst):
-        _topdieinst{topdieinst} 
+    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene):
+        _topdieinst{topdieinst},
+        _scene{scene}
     {
-        this->setFlags(ItemIsSelectable | ItemIsMovable);
+        this->setFlags(ItemIsMovable);
 
         // Dive pinsize to four size:
         auto pinmap = this->_topdieinst->topdie()->pins_map();
@@ -108,7 +109,7 @@ namespace kiwi::widget::schematic {
             int x = horizontal ? static_cast<int>(pos + x_offset) : x_offset;
             int y = horizontal ? y_offset : static_cast<int>(pos + y_offset);
 
-            auto *pin = new PinItem {*iter, QPointF(x, y), side, this};
+            auto *pin = new PinItem {*iter, QPointF(x, y), side, this->_scene, this};
             this->_pinitems.insert(*iter, pin);
         }
     }
