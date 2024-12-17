@@ -22,6 +22,10 @@ namespace kiwi::algo {
         debug::debug("Sort by priority");
         std::sort(nets.begin(), nets.end(), compare);
 
+        for (auto& net: nets){
+            net->check_accessable_cobunit();
+        }
+
         std::usize total_length {0};
         for (auto& net : nets) {
             try {

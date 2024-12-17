@@ -34,5 +34,18 @@ namespace kiwi::circuit {
         coords.emplace_back(this->begin_bump()->coord());
         return coords;
     }
+
+    auto BumpToTracksNet::check_accessable_cobunit() -> void {
+        std::HashSet<std::usize> accessable_cobunit {};
+        std::usize bank_size = hardware::COB::INDEX_SIZE/2;
+        std::usize wilton_size = hardware::COBUnit::WILTON_SIZE;
+
+        for (auto track: _end_tracks){
+            std::usize index = track->coord().index;
+            std::usize id {(index/bank_size)*wilton_size + (index%wilton_size)};
+            accessable_cobunit.emplace(id);
+        }
+        _begin_bump->intersect_access_unit(accessable_cobunit);
+    }
     
 }

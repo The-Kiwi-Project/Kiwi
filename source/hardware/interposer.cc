@@ -54,13 +54,21 @@ namespace kiwi::hardware {
 
     auto Interposer::available_tracks(Bump* bump, TOBSignalDirection dir) -> std::HashMap<Track*, TOBConnector> {
         auto tob = bump->tob();
+        auto accessable_cobunit = bump->accessable_cobunit();
 
         auto result = std::HashMap<Track*, TOBConnector>{};
         for (auto& connector : tob->available_connectors(bump->index(), dir)) {
-            auto& coord = Interposer::TOB_COORD_MAP.at(tob->coord());
-            auto track = this->get_track(coord.row, coord.col, TrackDirection::Vertical, connector.track_index());
-            if (track.has_value()){
-                result.emplace(track.value(), connector);
+            // check cobunit
+            std::usize index = connector.track_index();
+            std::usize bank_size = COB::INDEX_SIZE/2;
+            std::usize wilton_size = COBUnit::WILTON_SIZE;
+            std::usize cobunit_id = (index/bank_size)*wilton_size + (index%wilton_size);
+            if (bump->accessable_cobunit().contains(cobunit_id)) {
+                auto& coord = Interposer::TOB_COORD_MAP.at(tob->coord());
+                auto track = this->get_track(coord.row, coord.col, TrackDirection::Vertical, index);
+                if (track.has_value()){
+                    result.emplace(track.value(), connector);
+                }
             }
         }
         return result;

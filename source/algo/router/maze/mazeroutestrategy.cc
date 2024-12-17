@@ -25,46 +25,7 @@ namespace kiwi::algo {
         auto end_bump = net->end_bump();
         debug::check(begin_bump->tob() != end_bump->tob(), "Route bump in the same tob");
 
-        auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
-
-        std::Vector<hardware::Track*> path {};
-        std::usize path_length {0};
-        if (begin_bump->connected_track() == nullptr) {
-            auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
-
-            // Route a track path from one of `begin_tracks` to one of `end_tracks`
-            // the function will connected the COBConnector
-            path = this->route_path(interposer, track_map_to_track_set(begin_tracks), track_map_to_track_set(end_tracks));
-
-            auto begin_track = path.front();
-            assert(begin_tracks.contains(begin_track));
-
-            // Connect the TOB Connector
-            begin_tracks.find(begin_track)->second.connect();
-            begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
-
-            path_length = _rerouter->path_length(path) + 2;
-        }
-        else{
-            auto begin_track = begin_bump->connected_track();
-            std::HashSet<hardware::Track*> begin_tracks_set {};
-            while (begin_track != nullptr) {
-                begin_tracks_set.emplace(begin_track);
-                begin_track = begin_track->next_track();
-            }
-            path = this->route_path(interposer, begin_tracks_set, track_map_to_track_set(end_tracks));
-
-            path_length = _rerouter->path_length(path) + 1;
-        }
-
-        auto end_track = path.back();
-        assert(end_tracks.contains(end_track));
-        
-        // Connect the TOB Connector
-        end_tracks.find(end_track)->second.connect();
-        end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
-
-        return path_length;
+        return this->route_node_to_node_net<hardware::Bump, hardware::Bump>(interposer, begin_bump, end_bump);
     }
 
     auto MazeRouteStrategy::route_track_to_bump_net(hardware::Interposer* interposer, circuit::TrackToBumpNet* net) const -> std::usize {
@@ -73,21 +34,7 @@ namespace kiwi::algo {
         auto begin_track = net->begin_track();
         auto end_bump = net->end_bump();
 
-        auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
-
-        // Route a track path from one of `begin_tracks` to one of `end_tracks`
-        // the function will connected the COBConnector
-        auto path = this->route_path(interposer, std::HashSet<hardware::Track*>{begin_track}, track_map_to_track_set(end_tracks));
-
-        auto end_track = path.back();
-        assert(end_tracks.contains(end_track));
-
-        // Connect the TOB Connector
-        end_tracks.find(end_track)->second.connect();
-
-        end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
-
-        return _rerouter->path_length(path) + 1;
+        return this->route_node_to_node_net<hardware::Track, hardware::Bump>(interposer, begin_track, end_bump);
     }
 
     auto MazeRouteStrategy::route_bump_to_track_net(hardware::Interposer* interposer, circuit::BumpToTrackNet* net) const -> std::usize {
@@ -96,34 +43,87 @@ namespace kiwi::algo {
         auto begin_bump = net->begin_bump();
         auto end_track = net->end_track();
 
+        return this->route_node_to_node_net<hardware::Bump, hardware::Track>(interposer, begin_bump, end_track);
+    }
+
+    template<class InputNode, class OutputNode>
+        auto MazeRouteStrategy::route_node_to_node_net(hardware::Interposer* interposer, InputNode* input_node, OutputNode* output_node) const -> std::usize {
         std::Vector<hardware::Track*> path {};
-        if (begin_bump->connected_track() == nullptr) {
-            auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
+        std::usize path_length {0};
+        std::HashSet<hardware::Track*> begin_tracks_set {};
+        std::HashSet<hardware::Track*> end_tracks_set {};
+        std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector> begin_tracks_map {};
+        std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector> end_tracks_map {};
+        bool is_begin_connector_connected {false};
+        bool is_end_connector_connected {false};
 
-            // Route a track path from one of `begin_tracks` to one of `end_tracks`
-            // the function will connected the COBConnector
-            path = this->route_path(interposer, track_map_to_track_set(begin_tracks), std::HashSet<hardware::Track*>{end_track});
-
-            auto begin_track = path.front();
-            assert(begin_tracks.contains(begin_track));
-
-            // Connect the TOB Connector
-            begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
-            begin_tracks.find(begin_track)->second.connect();
-            return _rerouter->path_length(path) + 1;
+        // track node
+        if constexpr (std::is_same<InputNode, hardware::Track>::value){
+            begin_tracks_set.emplace(input_node);
         }
-        else{
-            auto begin_track = begin_bump->connected_track();
-            std::HashSet<hardware::Track*> begin_tracks_set {};
-            while (begin_track != nullptr) {
-                begin_tracks_set.emplace(begin_track);
-                begin_track = begin_track->next_track();
+        if constexpr( std::is_same<OutputNode, hardware::Track>::value){
+            end_tracks_set.emplace(output_node);
+        }
+
+        // bump node
+        if constexpr (std::is_same<InputNode, hardware::Bump>::value){
+            // not been connected yet
+            if (input_node->connected_track() == nullptr) {
+                begin_tracks_map = interposer->available_tracks_bump_to_track(input_node);
+                begin_tracks_set = track_map_to_track_set(begin_tracks_map);
             }
-
-            path = this->route_path(interposer, begin_tracks_set, std::HashSet<hardware::Track*>{end_track});
-
-            return _rerouter->path_length(path);
+            // already been connected
+            else{
+                is_begin_connector_connected = true;
+                auto begin_track = input_node->connected_track();
+                while (begin_track != nullptr) {
+                    begin_tracks_set.emplace(begin_track);
+                    begin_track = begin_track->next_track();
+                }
+            }
         }
+        if constexpr (std::is_same<OutputNode, hardware::Bump>::value){
+            // not been connected yet
+            if (output_node->connected_track() == nullptr) {
+                end_tracks_map = interposer->available_tracks_track_to_bump(output_node);
+                end_tracks_set = track_map_to_track_set(end_tracks_map);
+            }
+            // already been connected
+            else{
+                is_end_connector_connected = true;
+                auto end_track = output_node->connected_track();
+                while (end_track != nullptr) {
+                    end_tracks_set.emplace(end_track);
+                    end_track = end_track->prev_track();
+                }
+            }
+        }
+        assert(!begin_tracks_set.empty() && !end_tracks_set.empty());   // cannot be empty given the only two types of nodes are covered 
+
+        // route path
+        path = this->route_path(interposer, begin_tracks_set, end_tracks_set);
+        auto begin_track = path.front();
+        auto end_track = path.back();
+        assert(begin_tracks_set.contains(begin_track) && end_tracks_set.contains(end_track));
+
+        // connect bump to track
+        if constexpr(std::is_same<InputNode, hardware::Bump>::value){
+            if (!is_begin_connector_connected){
+                input_node->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
+                begin_tracks_map.find(begin_track)->second.connect();
+                path_length += 1;
+            }
+        }
+        if constexpr(std::is_same<OutputNode, hardware::Bump>::value){
+            if (!is_end_connector_connected){
+                output_node->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
+                end_tracks_map.find(end_track)->second.connect();
+                path_length += 1;
+            }
+        }
+
+        path_length += path.size();
+        return path_length;
     }
 
     auto MazeRouteStrategy::route_bump_to_bumps_net(hardware::Interposer* interposer, circuit::BumpToBumpsNet* net)  const -> std::usize {

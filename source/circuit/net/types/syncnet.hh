@@ -44,6 +44,7 @@ namespace kiwi::circuit {
         virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize override;
         virtual auto priority() const -> Priority override;
         virtual auto coords() const -> std::Vector<hardware::Coord> override;
+        virtual auto check_accessable_cobunit() -> void override;
     
     public:
         auto btbnets() -> std::Vector<std::Box<BumpToBumpNet>>& {return this->_btbnets;}
