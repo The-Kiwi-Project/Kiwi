@@ -27,7 +27,7 @@ namespace kiwi::test{
                     }
 
                     std::String golden_length;
-                    if (!(golden_file >> golden_length)) { // 检查读取是否成功
+                    if (!(golden_file >> golden_length)) { 
                         debug::exception_in("regression test case 1", "golden file read failure");
                     }
 
@@ -55,7 +55,7 @@ namespace kiwi::test{
                 }
             }
 
-            WHEN("Case 3: Muyan topdie with simple nets only"){
+            WHEN("Case 3: Muyan topdie with unsynchronized nets only"){
                 std::FilePath config_path{"../test/regression_test/case3"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
@@ -67,7 +67,7 @@ namespace kiwi::test{
                     }
 
                     std::String golden_length;
-                    if (!(golden_file >> golden_length)) { // 检查读取是否成功
+                    if (!(golden_file >> golden_length)) { 
                         debug::exception_in("regression test case 1", "golden file read failure");
                     }
 
