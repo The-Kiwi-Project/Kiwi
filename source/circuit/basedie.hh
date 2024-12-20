@@ -2,6 +2,7 @@
 
 #include "./topdie/topdie.hh"
 #include "./topdie/topdieinst.hh"
+#include "circuit/cntpin.hh"
 #include "std/utility.hh"
 
 #include <std/memory.hh>
@@ -16,6 +17,7 @@ namespace kiwi::circuit {
         auto add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> void;
         auto add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> void;
         auto add_net(std::Box<Net>) -> void;
+        auto add_connections(int sync, Connection connection) -> void;
 
         auto get_topdie(std::StringView name) -> std::Option<TopDie*>;
         auto get_topdie_inst(std::StringView name) -> std::Option<TopDieInstance*>;
@@ -23,6 +25,9 @@ namespace kiwi::circuit {
     public:
         auto topdies() -> std::HashMap<std::String, TopDie>& { return this->_topdies; }
         auto topdies() const -> const std::HashMap<std::String, TopDie>& { return this->_topdies; }
+
+        auto connections() -> std::HashMap<int, std::Vector<Connection>> { return this->_connections; };
+        auto connections() const -> const std::HashMap<int, std::Vector<Connection>> { return this->_connections; };
 
         auto topdie_insts() -> std::HashMap<std::String, TopDieInstance>& { return this->_topdie_insts; }
         auto topdie_insts() const -> const std::HashMap<std::String, TopDieInstance>& { return this->_topdie_insts; }
@@ -34,6 +39,9 @@ namespace kiwi::circuit {
         // Pointer better..
         std::HashMap<std::String, TopDie> _topdies;
         std::HashMap<std::String, TopDieInstance> _topdie_insts;
+
+        std::HashMap<int, std::Vector<Connection>> _connections;
+    
         std::Vector<std::Box<Net>> _nets;
     };
 

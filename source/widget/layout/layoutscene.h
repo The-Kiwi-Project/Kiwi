@@ -2,7 +2,6 @@
 
 #include "qchar.h"
 #include "qgraphicsscene.h"
-#include "widget/layout/item/topdieinstitem.h"
 #include <QGraphicsScene>
 
 namespace kiwi::hardware {
@@ -18,7 +17,8 @@ namespace kiwi::widget {
     namespace layout {
         class NetItem;
         class PinItem;
-        class TopDieInstanceItem;
+        class TOBItem;
+        class TopDieInstItem;
         class ExPortItem;
     }
 
@@ -31,6 +31,13 @@ namespace kiwi::widget {
         auto addTOB(hardware::TOB* tob) -> layout::TOBItem*;
         auto addTopDieInst(circuit::TopDieInstance* topdieInst) -> layout::TopDieInstItem*;
         auto addExPort(const QString& name) -> layout::ExPortItem*;
+
+    public:
+        auto topdieinstMap() const -> const QHash<circuit::TopDieInstance*, layout::TopDieInstItem*> 
+        { return this->_topdieinstMap; }
+
+    protected:
+        QHash<circuit::TopDieInstance*, layout::TopDieInstItem*> _topdieinstMap {};
     };
 
 

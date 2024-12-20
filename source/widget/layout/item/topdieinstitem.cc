@@ -52,13 +52,14 @@ namespace kiwi::widget::layout {
         auto basePos = QPointF{BUMP_AREA_BEGIN_X - WIDTH / 2, BUMP_AREA_BEGIN_Y - HEIGHT / 2.};
         for (int r = 0; r < BUMP_ARRAY_ROW; ++r) {
             for (int c = 0; c < BUMP_ARRAY_COL; ++c) {
-                auto bumpItem = new PinItem {
+                auto pinItem = new PinItem {
                     nullptr, 
                     basePos + QPointF{
                     c * BUMP_HORI_INTERVAL, r * BUMP_VERT_INTERVAL
                     },
                     this
                 };
+                this->_pins.push_back(pinItem);
             }
         }
     }

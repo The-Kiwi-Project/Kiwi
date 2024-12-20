@@ -4,6 +4,7 @@
 #include "circuit/topdie/topdieinst.hh"
 #include "qchar.h"
 #include "qpoint.h"
+#include "qvector.h"
 #include <hardware/tob/tob.hh>
 
 #include <QGraphicsItem>
@@ -56,13 +57,17 @@ namespace kiwi::widget::layout {
         void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
         // auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
 
+    public:
+        auto pins() const -> const QVector<PinItem*> 
+        { return this->_pins; }
+
     private:
         circuit::TopDieInstance* _topdieInst;
         QString _name;
 
         TOBItem* _currentTOB {nullptr};
 
-    
+        QVector<PinItem*> _pins {};
         QPointF _originPos {};
     };
 

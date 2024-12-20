@@ -2,6 +2,7 @@
 #include "./layoutscene.h"
 
 #include "./item/topdieinstitem.h"
+#include "circuit/cntpin.hh"
 #include "hardware/tob/tobcoord.hh"
 #include "qbrush.h"
 #include "qcolor.h"
@@ -12,6 +13,9 @@
 #include "qpoint.h"
 #include "./item/netitem.h"
 #include "./item/tobitem.h"
+#include "std/utility.hh"
+#include "widget/layout/item/pinitem.h"
+#include "circuit/topdie/topdieinst.hh"
 
 #include <QPainter>
 #include <QBrush>
@@ -80,13 +84,47 @@ namespace kiwi::widget {
         r->setZValue(-5);
         this->_scene->addItem(r);
 
-        
         for (auto& [name, inst] : this->_basedie->topdie_insts()) {
             auto i = this->_scene->addTopDieInst(&inst);
             if (inst.tob() != nullptr) {
                 i->setPos(LayoutView::tobPosition(inst.tob()->coord()));
             } else {
                 i->setPos(LayoutView::tobPosition(hardware::TOBCoord{-1, -1}));
+            }
+        }
+
+        for (auto& [sync, connections] : this->_basedie->connections()) {
+            for (const auto& connection : connections) {
+                layout::PinItem* beginPin, *endPin;
+                bool cont = false;
+
+                std::match(connection.input,
+                    [this, &cont](const circuit::ConnectExPort& eport) {
+                        cont = true;
+                    },
+                    [this, &beginPin](const circuit::ConnectBump& bump) {
+                        auto inst = this->_scene->topdieinstMap().value(bump.inst);
+                        auto pin = inst->pins()[bump.inst->topdie()->pins_map().at(bump.name)];
+                        beginPin = pin;
+                    }
+                );
+
+                std::match(connection.output,
+                    [this, &cont](const circuit::ConnectExPort& eport) {
+                        cont = true;
+                    },
+                    [this, &endPin](const circuit::ConnectBump& bump) {
+                        auto inst = this->_scene->topdieinstMap().value(bump.inst);
+                        auto pin = inst->pins()[bump.inst->topdie()->pins_map().at(bump.name)];
+                        endPin = pin;
+                    }
+                );
+
+                if (cont) {
+                    continue;
+                }
+
+                this->_scene->addNet(beginPin, endPin);
             }
         }
     }

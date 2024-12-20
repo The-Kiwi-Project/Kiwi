@@ -23,6 +23,7 @@ namespace kiwi::widget {
     auto LayoutScene::addTopDieInst(circuit::TopDieInstance* topdieInst) -> layout::TopDieInstItem* {
         auto ti = new layout::TopDieInstItem {topdieInst};
         this->addItem(ti);
+        this->_topdieinstMap.insert(topdieInst, ti);
         return ti;
     }
 
