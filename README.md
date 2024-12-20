@@ -61,6 +61,7 @@ test 目录下保存项目的测试代码，分为 simpletest 和 regressiontest
 
 
 编译：
+(注： regressiontest 还没有实现)
 
 - simpletest:
     ````bash
