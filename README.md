@@ -52,21 +52,38 @@ Options：
 
 test 目录下保存项目的测试代码，分为 simpletest 和 regressiontest 两个部分
 - simpletest 用于手动构造简单的测例，快速测试
-- regressiontest 用于做回归测试
+- regressiontest 用于做回归测试，目前包含三个 case ：
+  |case|说明|
+  |:---:|:---:|
+  |case1|仅测试同步线布线功能|
+  |case2|测试同步线，并对同步线中的一个bump增加一根连到I/O的线，测试已布线bump的复用|
+  |case3|仅测试非同步线布线功能|
 
 
 编译：
-(注： regressiontest 还没有实现)
 
-````bash
-xmake build simpletest
-````
+- simpletest:
+    ````bash
+    xmake build simpletest
+    ````
 
-运行测试：
+    运行测试：
 
-````bash
-xmake run simpletest [module]
-````
+    ````bash
+    xmake run simpletest [module]
+    ````
 
-`module` 指定要测试的模块（见 simpletest 目录），`all` 表示全部测试
+    `module` 指定要测试的模块（见 simpletest 目录），`all` 表示全部测试
+
+- regressiontest:
+    ````bash
+    xmake build regressiontest
+    ````
+
+    运行测试：
+
+    ````bash
+    xmake run regressiontest
+    ````
+
 

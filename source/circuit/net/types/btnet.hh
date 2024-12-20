@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "../net.hh"
+#include <hardware/cob/cob.hh>
 #include <algo/router/maze/mazeroutestrategy.hh>
 #include <algo/router/route.hh>
 
@@ -8,6 +9,8 @@
 namespace kiwi::hardware {
     class Track;
     class Bump;
+    class COB;
+    class COBUnit;
 }
 
 namespace kiwi::circuit {
@@ -19,9 +22,10 @@ namespace kiwi::circuit {
     
     public:
         virtual auto update_tob_postion(hardware::TOB* prev_tob, hardware::TOB* next_tob) -> void override;
-        virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void override;
+        virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize override;
         virtual auto priority() const -> Priority override;
         virtual auto coords() const -> std::Vector<hardware::Coord> override;
+        virtual auto check_accessable_cobunit() -> void override;
 
         auto begin_bump() const -> hardware::Bump* { return this->_begin_bump; }
         auto end_track() const -> hardware::Track* { return this->_end_track; }

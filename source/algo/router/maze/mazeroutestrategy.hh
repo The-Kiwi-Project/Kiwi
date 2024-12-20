@@ -20,6 +20,11 @@ namespace kiwi::circuit {
     class BumpToTrackNet;
 }
 
+namespace kiwi::hardware{
+    class Bump;
+    class Track;
+}
+
 namespace kiwi::algo {
 
     class MazeRerouter;
@@ -29,18 +34,23 @@ namespace kiwi::algo {
         MazeRouteStrategy(): _rerouter(std::make_unique<MazeRerouter>(MazeRerouter{})) {}
 
     public:
-        virtual auto route_bump_to_bump_net(hardware::Interposer*, circuit::BumpToBumpNet*)  const -> void override;
-        virtual auto route_track_to_bump_net(hardware::Interposer*, circuit::TrackToBumpNet*) const -> void override;
-        virtual auto route_bump_to_track_net(hardware::Interposer*, circuit::BumpToTrackNet*) const -> void override;
+        virtual auto route_bump_to_bump_net(hardware::Interposer*, circuit::BumpToBumpNet*)  const -> std::usize override;
+        virtual auto route_track_to_bump_net(hardware::Interposer*, circuit::TrackToBumpNet*) const -> std::usize override;
+        virtual auto route_bump_to_track_net(hardware::Interposer*, circuit::BumpToTrackNet*) const -> std::usize override;
 
-        virtual auto route_bump_to_bumps_net(hardware::Interposer*, circuit::BumpToBumpsNet*)  const -> void override;
-        virtual auto route_track_to_bumps_net(hardware::Interposer*, circuit::TrackToBumpsNet*) const -> void override;
-        virtual auto route_bump_to_tracks_net(hardware::Interposer*, circuit::BumpToTracksNet*) const -> void override;
+        virtual auto route_bump_to_bumps_net(hardware::Interposer*, circuit::BumpToBumpsNet*)  const -> std::usize override;
+        virtual auto route_track_to_bumps_net(hardware::Interposer*, circuit::TrackToBumpsNet*) const -> std::usize override;
+        virtual auto route_bump_to_tracks_net(hardware::Interposer*, circuit::BumpToTracksNet*) const -> std::usize override;
 
-        virtual auto route_tracks_to_bumps_net(hardware::Interposer*, circuit::TracksToBumpsNet*) const -> void override;
+        virtual auto route_tracks_to_bumps_net(hardware::Interposer*, circuit::TracksToBumpsNet*) const -> std::usize override;
 
-        virtual auto route_sync_net(hardware::Interposer*, circuit::SyncNet*) const -> void override;
+        virtual auto route_sync_net(hardware::Interposer*, circuit::SyncNet*) const -> std::usize override;
     
+    private:
+        template<class InputNode, class OutputNode>
+        auto route_node_to_node_net(hardware::Interposer* interposer, InputNode* input_node, OutputNode* output_node) const -> std::usize;
+    
+    // simple routing functions
     private:
         auto search_path(
             hardware::Interposer* interposer, 
@@ -72,6 +82,8 @@ namespace kiwi::algo {
             hardware::Track* track
         ) const -> bool;
 
+    // synchrnized rouitng functions
+    private:
         // first round of routing & collecting paths 
         template <class Net>
         auto sync_preroute(

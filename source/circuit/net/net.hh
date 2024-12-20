@@ -28,9 +28,10 @@ namespace kiwi::circuit {
 
     struct Net {
         virtual auto update_tob_postion(hardware::TOB* prev_tob, hardware::TOB* next_tob) -> void = 0;
-        virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void = 0;
+        virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize = 0;
         virtual auto priority() const -> Priority = 0;
         virtual auto coords() const -> std::Vector<hardware::Coord> = 0;
+        virtual auto check_accessable_cobunit() -> void = 0;
 
         virtual ~Net() noexcept {}
     };

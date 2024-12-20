@@ -16,12 +16,12 @@ namespace kiwi::circuit {
         }
     }
 
-    auto TracksToBumpsNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
+    auto TracksToBumpsNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
         return strategy.route_tracks_to_bumps_net(interposer, this);
     }
 
     auto TracksToBumpsNet::priority() const -> Priority {
-        return {3};
+        return {5};
     }
 
     auto TracksToBumpsNet::coords() const -> std::Vector<hardware::Coord> {
@@ -35,4 +35,18 @@ namespace kiwi::circuit {
         return coords;
     }
 
+    auto TracksToBumpsNet::check_accessable_cobunit() -> void {
+        std::HashSet<std::usize> accessable_cobunit {};
+        std::usize bank_size = hardware::COB::INDEX_SIZE/2;
+        std::usize wilton_size = hardware::COBUnit::WILTON_SIZE;
+
+        for (auto track: _begin_tracks){
+            std::usize index = track->coord().index;
+            std::usize id {(index/bank_size)*wilton_size + (index%wilton_size)};
+            accessable_cobunit.emplace(id);
+        }
+        for (auto bump: _end_bumps){
+            bump->intersect_access_unit(accessable_cobunit);
+        }
+    }
 }

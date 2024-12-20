@@ -17,16 +17,25 @@ namespace kiwi::circuit {
         this->_begin_bump = hardware::Bump::update_bump(this->_begin_bump, prev_tob, next_tob);
     }
 
-    auto BumpToTrackNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
+    auto BumpToTrackNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
         return strategy.route_bump_to_track_net(interposer, this);
     }
 
     auto BumpToTrackNet::priority() const -> Priority {
-        return {2};
+        return {3};
     }
 
     auto BumpToTrackNet::coords() const -> std::Vector<hardware::Coord> {
         return std::Vector<hardware::Coord>{this->begin_bump()->coord(), this->end_track()->coord()};
     }
 
+    auto BumpToTrackNet::check_accessable_cobunit() -> void {
+        std::usize index = _end_track->coord().index;
+        std::usize bank_size = hardware::COB::INDEX_SIZE/2;
+        std::usize wilton_size = hardware::COBUnit::WILTON_SIZE;
+        std::usize id {(index/bank_size)*wilton_size + (index%wilton_size)};
+        
+        std::HashSet<std::usize> cobunit_ids {id};
+        _begin_bump->intersect_access_unit(cobunit_ids);
+    }
 }

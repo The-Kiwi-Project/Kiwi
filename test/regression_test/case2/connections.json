@@ -1,5 +1,5 @@
 {
-    "-1": [
+    "1": [
         [
             "muyan_1.s_tx_flit_b0",
             "muyan_0.m_rx_flit_b0"
@@ -47,11 +47,9 @@
         [
             "muyan_1.s_tx_flit_vld",
             "muyan_0.m_rx_flit_vld"
-        ],
-        [
-            "muyan_0.m_tx_flit_b0",
-            "xinzhai_jtag_tdo"
-        ],
+        ]
+    ],
+    "2": [
         [
             "muyan_0.m_tx_flit_b0",
             "muyan_1.s_rx_flit_b0"
@@ -131,7 +129,9 @@
         [
             "muyan_0.m_tx_flit_vld",
             "muyan_1.s_rx_vld"
-        ],
+        ]
+    ],
+    "3": [
         [
             "muyan_0.s_tx_flit_b0",
             "muyan_1.m_rx_flit_b0"
@@ -179,7 +179,9 @@
         [
             "muyan_0.s_tx_flit_vld",
             "muyan_1.m_rx_flit_vld"
-        ],
+        ]
+    ],
+    "4": [
         [
             "muyan_1.m_tx_flit_b0",
             "muyan_0.s_rx_flit_b0"
@@ -259,6 +261,12 @@
         [
             "muyan_1.m_tx_flit_vld",
             "muyan_0.s_rx_vld"
+        ]
+    ],
+    "-1": [
+        [
+            "muyan_0.m_tx_flit_b0",
+            "xinzhai_jtag_tdo"
         ]
     ]
 }

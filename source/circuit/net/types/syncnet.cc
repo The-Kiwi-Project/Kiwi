@@ -32,7 +32,7 @@ namespace kiwi::circuit
         }
     }
 
-    auto SyncNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> void {
+    auto SyncNet::route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize {
         return strategy.route_sync_net(interposer, this);
     }
 
@@ -61,6 +61,18 @@ namespace kiwi::circuit
         }
 
         return coords;
+    }
+
+    auto SyncNet::check_accessable_cobunit() -> void {
+        for (auto& net: _btbnets) {
+            net->check_accessable_cobunit();
+        }
+        for (auto& net: _bttnets) {
+            net->check_accessable_cobunit();
+        }
+        for (auto& net: _ttbnets) {
+            net->check_accessable_cobunit();
+        }
     }
 }
 
