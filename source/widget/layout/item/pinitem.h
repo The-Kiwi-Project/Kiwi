@@ -3,6 +3,7 @@
 #include <QColor>
 #include <QGraphicsItem>
 #include <QPainter>
+#include <QVector>
 
 namespace kiwi::hardware {
     class Bump;
@@ -10,6 +11,7 @@ namespace kiwi::hardware {
 
 namespace kiwi::widget::layout {
 
+    class NetItem;
     class PinItem : public QGraphicsEllipseItem {
     public:
         static constexpr qreal RADIUS = 5.;
@@ -23,9 +25,16 @@ namespace kiwi::widget::layout {
     protected:
         void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+        auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
+
+    public:
+        void addNet(NetItem* net) {
+            this->_nets.push_back(net);
+        }
 
     private:
         hardware::Bump* _bump;
+        QVector<NetItem*> _nets {};
     };
 
 

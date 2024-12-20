@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hardware/tob/tobcoord.hh"
 #include <QWidget>
 #include <QGraphicsView>
 #include <std/collection.hh>
@@ -18,11 +19,12 @@ namespace kiwi::circuit {
 
 namespace kiwi::widget {
    
+    class LayoutScene;
+
     class LayoutView : public QGraphicsView {
         
-        enum {
-            COB_INTERVAL = 50,
-        };
+        static constexpr qreal TOB_INTERVAL = 30.0;
+        static const     QColor BACK_COLOR;
 
     public:
         explicit LayoutView(
@@ -33,13 +35,16 @@ namespace kiwi::widget {
         ~LayoutView() noexcept;
 
     protected:
+        static auto tobPosition(const hardware::TOBCoord& coord) -> QPointF;
+
+    protected:
         virtual void wheelEvent(QWheelEvent *event) override;
 
     protected:
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie* _basedie {nullptr};
 
-        QGraphicsScene* _scene {nullptr};
+        LayoutScene* _scene {nullptr};
     };
 
 }

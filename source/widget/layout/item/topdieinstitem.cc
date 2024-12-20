@@ -1,5 +1,7 @@
 #include "./topdieinstitem.h"
 #include "./pinitem.h"
+#include "qchar.h"
+#include "qpoint.h"
 #include "widget/layout/item/tobitem.h"
 
 #include <QGraphicsScene>
@@ -42,7 +44,8 @@ namespace kiwi::widget::layout {
     const QColor TopDieInstItem::COLOR = QColor::fromRgb(84, 139, 84);
 
     TopDieInstItem::TopDieInstItem(circuit::TopDieInstance* topdieInst): 
-        _topdieInst{topdieInst} 
+        _topdieInst{topdieInst},
+        _name{ topdieInst != nullptr ? QString::fromStdString(topdieInst->name().data()) : "" }
     {   
         this->setFlags(ItemIsSelectable | ItemIsMovable);
 
@@ -67,6 +70,11 @@ namespace kiwi::widget::layout {
     void TopDieInstItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
         painter->setBrush(COLOR);
         painter->drawRect(-WIDTH / 2., -HEIGHT / 2., WIDTH, HEIGHT);
+        painter->drawText(QPointF{
+            NAME_AREA_BEGIN_X - WIDTH/2, 
+            NAME_AREA_BEGIN_Y - HEIGHT/2,
+            }, 
+            this->_name);
     }
 
     void TopDieInstItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {

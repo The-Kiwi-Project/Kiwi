@@ -54,6 +54,8 @@ namespace kiwi::widget::schematic {
     public:
         static const     QColor COLOR;
         static const     QColor HOVER_COLOR;
+        static constexpr qreal  WIDTH = 2;
+        static constexpr qreal  HOVER_WIDTH = 3;
         
     public:
         NetItem(NetPointItem* beginPoint, NetPointItem* endPoint);
@@ -76,8 +78,6 @@ namespace kiwi::widget::schematic {
     protected:
         NetPointItem* _beginPoint {nullptr};
         NetPointItem* _endPoint {nullptr};
-
-        QPointF _dragStartOffset {};
     };
 
 }

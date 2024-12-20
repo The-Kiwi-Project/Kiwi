@@ -1,4 +1,5 @@
 #include "./pinitem.h"
+#include "./netitem.h"
 #include <hardware/bump/bump.hh>
 
 namespace kiwi::widget::layout {
@@ -14,6 +15,8 @@ namespace kiwi::widget::layout {
         this->setPos(position);
         this->setBrush(COLOR); 
         this->setAcceptHoverEvents(true);
+
+        this->setFlags(ItemSendsScenePositionChanges | ItemIsSelectable);
     }
 
     void PinItem::hoverEnterEvent(QGraphicsSceneHoverEvent * e) {
@@ -26,5 +29,13 @@ namespace kiwi::widget::layout {
         QGraphicsEllipseItem::hoverLeaveEvent(e);
     }
     
+    auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {
+        if (change == QGraphicsItem::ItemScenePositionHasChanged) {
+            for (auto net : this->_nets) {
+                net->updateLine();
+            }
+        }
+        return QGraphicsItem::itemChange(change, value);
+    }
     
 }

@@ -2,6 +2,7 @@
 
 #include "./pinitem.h"
 #include "circuit/topdie/topdieinst.hh"
+#include "qchar.h"
 #include "qpoint.h"
 #include <hardware/tob/tob.hh>
 
@@ -22,6 +23,9 @@ namespace kiwi::widget::layout {
 
         static constexpr qreal BUMP_AREA_BEGIN_X = 250.;
         static constexpr qreal BUMP_AREA_BEGIN_Y = 250.;
+
+        static constexpr qreal NAME_AREA_BEGIN_X = 100.;
+        static constexpr qreal NAME_AREA_BEGIN_Y = 100.;
         
         static constexpr int BUMP_ARRAY_COL = 16;
         static constexpr int BUMP_ARRAY_ROW = 8;
@@ -54,6 +58,7 @@ namespace kiwi::widget::layout {
 
     private:
         circuit::TopDieInstance* _topdieInst;
+        QString _name;
 
         TOBItem* _currentTOB {nullptr};
 

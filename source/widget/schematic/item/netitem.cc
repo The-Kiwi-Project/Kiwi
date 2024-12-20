@@ -139,12 +139,12 @@ namespace kiwi::widget::schematic {
     }
     
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-        this->setPen(QPen(HOVER_COLOR, 3));
+        this->setPen(QPen{HOVER_COLOR, HOVER_WIDTH});
         QGraphicsLineItem::hoverEnterEvent(event);
     }
 
     void NetItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-        this->setPen(QPen(COLOR, 2));
+        this->setPen(QPen{COLOR, WIDTH});
         QGraphicsLineItem::hoverLeaveEvent(event);
     }
 

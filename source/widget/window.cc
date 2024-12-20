@@ -3,6 +3,8 @@
 #include "./view2d/view2dview.h"
 #include "./schematic/schematicview.h"
 #include "./layout/layoutview.h"
+#include "widget/layout/layoutview.h"
+#include "widget/schematic/schematicview.h"
 
 #include <QDebug>
 #include <QResizeEvent>
@@ -103,7 +105,7 @@ namespace kiwi::widget {
         this->resize(1000, 800);
         auto layout = new QVBoxLayout{this};
         layout->setContentsMargins(10, 10, 10, 10);
-        this->_widget = new SchematicView {i, b, this};
+        this->_widget = new LayoutView {i, b, this};
         layout->addWidget(this->_widget);
         this->setLayout(layout);
     }
