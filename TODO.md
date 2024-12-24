@@ -1,9 +1,7 @@
 # TODO
 
 - 输入文件里面的连接关系会重复写，读入的时候处理一下
-- 一个 tob 的所有资源都是共用的，应该优先考虑目标 track 选项较少的 bump 。可以统计对于 cobunit 的需求，然后在布线的时候先从需求少的 cobunit 开始用.
-  需要把 begin_tracks 改成 set ，考虑元素顺序
-  让 tob 统计所有 bump 的cobunit 使用情况，然后根据使用频率做一个排序。在把 begin_tracks_map -> begin_tracks_set 的时候，改成用 ordered_set ，然后把使用频率低的放前面
+- 考虑一个 tob 内所有 bump 的 cobunit 资源共享，现在可以跑通，但是长度比 xl 的长，而且每次结果长度不一样， case2 有概率失败
 
 - 测试布局
 - GUI 在 linux 下无法移动的 BUG

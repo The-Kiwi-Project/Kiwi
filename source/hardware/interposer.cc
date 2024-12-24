@@ -195,6 +195,12 @@ namespace kiwi::hardware {
         );
     }
 
+    auto Interposer::manage_cobunit_resources() -> void {
+        for (auto& [coord, tob]: this->_tobs) {
+            tob.collect_cobunit_usage();
+        }
+    }
+
     auto Interposer::randomly_map_remain_indexes() -> void {
         for (auto& [_, tob] : this->_tobs) {
             tob.randomly_map_remain_indexes();

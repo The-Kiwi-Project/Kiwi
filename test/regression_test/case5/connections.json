@@ -45,6 +45,14 @@
         [
             "muyan_0.uart_txd",
             "xinzhai_uart_rxd"
+        ],
+        [
+            "xinzhai_uart_txd",
+            "muyan_0.uart_rxd"
+        ],
+        [
+            "muyan_0.uart_txd",
+            "xinzhai_uart_rxd"
         ]
     ],
     "1": [
