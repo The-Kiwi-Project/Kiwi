@@ -70,6 +70,9 @@ namespace kiwi::algo {
             // not been connected yet
             if (input_node->connected_track() == nullptr) {
                 begin_tracks_map = interposer->available_tracks_bump_to_track(input_node);
+                if (begin_tracks_map.empty()){
+                    debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for input node");
+                }
                 begin_tracks_set = track_map_to_track_set(begin_tracks_map);
             }
             // already been connected
@@ -86,6 +89,9 @@ namespace kiwi::algo {
             // not been connected yet
             if (output_node->connected_track() == nullptr) {
                 end_tracks_map = interposer->available_tracks_track_to_bump(output_node);
+                if (end_tracks_map.empty()){
+                    debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for output node");
+                }
                 end_tracks_set = track_map_to_track_set(end_tracks_map);
             }
             // already been connected
@@ -383,7 +389,7 @@ namespace kiwi::algo {
                 }
             }
 //!
-print_sync_path(ptr_sync_net);
+// print_sync_path(ptr_sync_net);
 //!
         std::usize total_nets {ptr_sync_net->btbnets().size() + ptr_sync_net->bttnets().size() + ptr_sync_net->ttbnets().size()};
         return total_nets * max_length; 

@@ -1,0 +1,3 @@
+a complete case with more nets & IO, including positive/negative ports
+
+do not have a golden data because of a failure during xl's routing process
