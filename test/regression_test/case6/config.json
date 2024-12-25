@@ -1,8 +1,0 @@
-{
-    "interposer": "interposer.json",
-    "topdies": "topdies.json",
-    "topdie_insts": "topdie_insts.json",
-    "external_ports": "external_ports.json",
-    "connections": "connections.json",
-    "reigster_adder": "reigster_adder.json"
-}

@@ -32,7 +32,7 @@ namespace kiwi::hardware {
 
     public:
         COBUnit() = default;
-
+        
     public:
         auto adjacent_connectors(COBDirection from_dir, std::usize from_index) -> std::Vector<COBUnitConnector>;
         

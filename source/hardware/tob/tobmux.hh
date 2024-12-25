@@ -42,6 +42,7 @@ namespace kiwi::hardware {
     
     private:
         std::usize _mux_size;
+        // std::Vector<std::Box<TOBMuxRegister>> _registers;
         std::Vector<TOBMuxRegister> _registers;
     };
 

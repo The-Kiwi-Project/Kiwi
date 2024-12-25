@@ -68,5 +68,5 @@ namespace kiwi::circuit {
     auto BumpToBumpsNet::port_number() const -> std::usize {
         return (this->_end_bumps.size() + 1);
     }
-    
+        
 }

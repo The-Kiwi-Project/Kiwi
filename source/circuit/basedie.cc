@@ -2,6 +2,7 @@
 #include "circuit/topdie/topdie.hh"
 #include "circuit/topdie/topdieinst.hh"
 #include "std/string.hh"
+#include <memory>
 
 namespace kiwi::circuit {
     

@@ -14,6 +14,7 @@ namespace kiwi::hardware {
         BumpCoord(std::i64 r, std::i64 c, std::usize i);
         BumpCoord();
 
+                
         bool operator == (const BumpCoord& other) const;
         bool operator < (const BumpCoord& other) const;
         auto to_string() const -> std::String;

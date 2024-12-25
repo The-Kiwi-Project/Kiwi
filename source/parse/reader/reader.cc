@@ -64,6 +64,10 @@ namespace kiwi::parse {
         this->add_nets();
         for (auto& n : this->_basedie->nets()) {
             // debug::debug_fmt("{}", n->to_string());
+            debug::debug_fmt("{}", n->to_string());
+            // auto a = n->to_string();
+            // n->priority(); 不可以
+            // n->coords();
         }
         return { std::move(this->_interposer), std::move(this->_basedie) };
     }
@@ -224,7 +228,7 @@ namespace kiwi::parse {
             for (auto inst : topdie_insts) {
                 inst->add_net(net.get());
             }
-
+            
             this->_basedie->add_net(std::move(net));
         }
 

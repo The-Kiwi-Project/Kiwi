@@ -33,9 +33,7 @@ namespace kiwi::hardware {
         _mux_size{mux_size},
         _registers(mux_size)
     {
-
     }
-
 
     auto TOBMux::available_connectors(std::usize input_index) -> std::Vector<TOBMuxConnector> {
         if (this->_registers.at(input_index).get().has_value()) {
