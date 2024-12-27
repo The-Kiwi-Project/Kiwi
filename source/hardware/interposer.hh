@@ -61,6 +61,7 @@ namespace kiwi::hardware {
         
     public:
         auto randomly_map_remain_indexes() -> void;
+        auto manage_cobunit_resources() -> void;
 
     private:
         auto static check_track_coord(const TrackCoord& coord) -> bool;

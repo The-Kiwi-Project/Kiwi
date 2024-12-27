@@ -2,6 +2,7 @@
 #include "algo/router/routeerror.hh"
 #include "debug/debug.hh"
 #include <circuit/basedie.hh>
+#include <hardware/interposer.hh>
 
 namespace kiwi::algo {
 
@@ -22,9 +23,11 @@ namespace kiwi::algo {
         debug::debug("Sort by priority");
         std::sort(nets.begin(), nets.end(), compare);
 
+        // manage resources
         for (auto& net: nets){
             net->check_accessable_cobunit();
         }
+        interposer->manage_cobunit_resources();
 
         std::usize total_length {0};
         for (auto& net : nets) {

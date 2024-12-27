@@ -78,7 +78,9 @@ namespace kiwi::hardware {
         _vert_to_track_muxs(TOB::VERI_TO_TRACK_MUX_COUNT, TOBMux{TOB::VERI_TO_TRACK_MUX_SIZE}),
     
         _bump_dir_registers{TOB::INDEX_SIZE},
-        _track_dir_registers{TOB::INDEX_SIZE}
+        _track_dir_registers{TOB::INDEX_SIZE},
+
+        _cobunit_resources{0}
     {
     }
 
@@ -338,6 +340,14 @@ namespace kiwi::hardware {
     auto TOB::track_dir_reg_value(std::usize index) -> TOBTrackDirection {
         TOB::check_index(index);
         return this->_track_dir_registers[index].get();
+    }
+
+    auto TOB::collect_cobunit_usage() -> void {
+        for (auto& [index, bump]: this->_bumps){
+            for (auto cobunit: bump.accessable_cobunit()){
+                this->_cobunit_resources[cobunit] += 1;
+            }
+        }
     }
 
     auto TOB::check_index(std::usize index) -> void {

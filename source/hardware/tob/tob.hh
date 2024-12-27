@@ -111,6 +111,10 @@ namespace kiwi::hardware {
         auto track_dir_reg_value(std::usize index) -> TOBTrackDirection;
 
         auto get_bump(std::usize bump_index) -> std::Option<Bump*>;
+        auto cobunit_resources() -> std::Array<std::usize, 16>& {return this->_cobunit_resources;}
+    
+    public:
+        auto collect_cobunit_usage() -> void;
 
     public:
         auto coord() const -> TOBCoord const& { return this->_coord; }
@@ -123,6 +127,7 @@ namespace kiwi::hardware {
         Coord const _coord_in_interposer;
 
         std::HashMap<std::usize, Bump> _bumps;
+        std::Array<std::usize, 16> _cobunit_resources;
 
         std::Vector<TOBMux> _bump_to_hori_muxs;
         std::Vector<TOBMux> _hori_to_vert_muxs;

@@ -201,7 +201,7 @@ namespace kiwi::algo{
 
 //!
 debug::debug("Rerouting...");
-print_end_tracks(end_tracks);
+// print_end_tracks(end_tracks);
 //!
         // mazing with A* 
         while (!queue.empty()) {
@@ -240,7 +240,7 @@ print_end_tracks(end_tracks);
                         path_ptr->push_back(tp);
                     }
 //!
-print_path(path_ptr);
+// print_path(path_ptr);
 //!
                     return {false, path_length(*path_ptr) + bump_length};
                 }
@@ -266,7 +266,7 @@ print_path(path_ptr);
                         path_ptr->push_back(tp);
                     }
 //!
-print_path(path_ptr);
+// print_path(path_ptr);
 //!
                     return {true, max_length};
                 }

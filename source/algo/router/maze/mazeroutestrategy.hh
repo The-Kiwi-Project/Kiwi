@@ -23,11 +23,13 @@ namespace kiwi::circuit {
 namespace kiwi::hardware{
     class Bump;
     class Track;
+    class COB;
 }
 
 namespace kiwi::algo {
 
     class MazeRerouter;
+
 
     class MazeRouteStrategy : public RouteStrategy {
     public:
@@ -54,14 +56,14 @@ namespace kiwi::algo {
     private:
         auto search_path(
             hardware::Interposer* interposer, 
-            const std::HashSet<hardware::Track*>& begin_tracks,
+            const std::Vector<hardware::Track*>& begin_tracks,
             const std::HashSet<hardware::Track*>& end_tracks,
             const std::HashSet<hardware::Track*>& occupied_tracks
         ) const -> std::Vector<std::Tuple<hardware::Track*, std::Option<hardware::COBConnector>>>;
     
         auto route_path(
             hardware::Interposer* interposer, 
-            const std::HashSet<hardware::Track*>& begin_tracks,
+            const std::Vector<hardware::Track*>& begin_tracks,
             const std::HashSet<hardware::Track*>& end_tracks
         ) const -> std::Vector<hardware::Track*>;
 
@@ -70,6 +72,12 @@ namespace kiwi::algo {
             const std::HashSet<hardware::Track*>& begin_tracks,
             const std::HashSet<hardware::Track*>& end_tracks,
             std::usize path_len
+        ) const -> std::Vector<hardware::Track*>;
+
+        auto track_map_to_track_vec(
+            const std::HashMap<hardware::Track*, 
+            hardware::TOBConnector>& map,
+            const std::Array<std::usize, hardware::COB::UNIT_SIZE>& cobunit_usage
         ) const -> std::Vector<hardware::Track*>;
 
         auto track_map_to_track_set(
@@ -105,6 +113,9 @@ namespace kiwi::algo {
         ) const -> std::tuple<bool, std::usize>;
 
         auto print_sync_path(circuit::SyncNet*) const -> void;
+
+        template<class InputNode, class OutputNode>
+        auto print_path(InputNode* input_node, OutputNode* output_node, const std::Vector<hardware::Track*>& path) const -> void;
     
     private:
         std::Box<RerouteStrategy> _rerouter;

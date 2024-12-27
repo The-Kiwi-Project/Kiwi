@@ -37,8 +37,8 @@ FORMAT_ENUM(kiwi::hardware::TrackDirection,
 FORMAT_STRUCT(kiwi::hardware::TrackCoord, row, col, dir, index)
 
 DESERIALIZE_ENUM(kiwi::hardware::TrackDirection,
-    DE_VALUE_AS(kiwi::hardware::TrackDirection::Horizontal, "h")
-    DE_VALUE_AS(kiwi::hardware::TrackDirection::Vertical, "v")
+    DE_VALUE_AS(kiwi::hardware::TrackDirection::Horizontal, "hori")
+    DE_VALUE_AS(kiwi::hardware::TrackDirection::Vertical, "vert")
 )
 
 DESERIALIZE_STRUCT(kiwi::hardware::TrackCoord, 

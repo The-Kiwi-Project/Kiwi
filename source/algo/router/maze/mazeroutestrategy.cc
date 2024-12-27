@@ -50,7 +50,7 @@ namespace kiwi::algo {
         auto MazeRouteStrategy::route_node_to_node_net(hardware::Interposer* interposer, InputNode* input_node, OutputNode* output_node) const -> std::usize {
         std::Vector<hardware::Track*> path {};
         std::usize path_length {0};
-        std::HashSet<hardware::Track*> begin_tracks_set {};
+        std::Vector<hardware::Track*> begin_tracks_vec {};
         std::HashSet<hardware::Track*> end_tracks_set {};
         std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector> begin_tracks_map {};
         std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector> end_tracks_map {};
@@ -59,7 +59,7 @@ namespace kiwi::algo {
 
         // track node
         if constexpr (std::is_same<InputNode, hardware::Track>::value){
-            begin_tracks_set.emplace(input_node);
+            begin_tracks_vec.emplace_back(input_node);
         }
         if constexpr( std::is_same<OutputNode, hardware::Track>::value){
             end_tracks_set.emplace(output_node);
@@ -70,14 +70,17 @@ namespace kiwi::algo {
             // not been connected yet
             if (input_node->connected_track() == nullptr) {
                 begin_tracks_map = interposer->available_tracks_bump_to_track(input_node);
-                begin_tracks_set = track_map_to_track_set(begin_tracks_map);
+                if (begin_tracks_map.empty()){
+                    debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for input node");
+                }
+                begin_tracks_vec = track_map_to_track_vec(begin_tracks_map, input_node->tob()->cobunit_resources());
             }
             // already been connected
             else{
                 is_begin_connector_connected = true;
                 auto begin_track = input_node->connected_track();
                 while (begin_track != nullptr) {
-                    begin_tracks_set.emplace(begin_track);
+                    begin_tracks_vec.emplace_back(begin_track);
                     begin_track = begin_track->next_track();
                 }
             }
@@ -86,6 +89,9 @@ namespace kiwi::algo {
             // not been connected yet
             if (output_node->connected_track() == nullptr) {
                 end_tracks_map = interposer->available_tracks_track_to_bump(output_node);
+                if (end_tracks_map.empty()){
+                    debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for output node");
+                }
                 end_tracks_set = track_map_to_track_set(end_tracks_map);
             }
             // already been connected
@@ -98,13 +104,15 @@ namespace kiwi::algo {
                 }
             }
         }
-        assert(!begin_tracks_set.empty() && !end_tracks_set.empty());   // cannot be empty given the only two types of nodes are covered 
+        assert(!begin_tracks_vec.empty() && !end_tracks_set.empty());   // cannot be empty given the only two types of nodes are covered 
 
         // route path
-        path = this->route_path(interposer, begin_tracks_set, end_tracks_set);
+        path = this->route_path(interposer, begin_tracks_vec, end_tracks_set);
+//!
+print_path(input_node, output_node, path);
+//!
         auto begin_track = path.front();
         auto end_track = path.back();
-        assert(begin_tracks_set.contains(begin_track) && end_tracks_set.contains(end_track));
 
         // connect bump to track
         if constexpr(std::is_same<InputNode, hardware::Bump>::value){
@@ -132,7 +140,7 @@ namespace kiwi::algo {
         auto begin_bump = net->begin_bump();
         const auto& end_bumps = net->end_bumps();
 
-        auto begin_tracks_set = std::HashSet<hardware::Track*>{};
+        auto begin_tracks_vec = std::Vector<hardware::Track*>{};
 
         std::usize total_length {0};
         for (auto end_bump : end_bumps) {
@@ -140,14 +148,18 @@ namespace kiwi::algo {
             auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
             auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
             for (auto& [t, _] : begin_tracks) {
-                begin_tracks_set.emplace(t);
+                begin_tracks_vec.emplace_back(t);
             }
             
-            auto path = this->route_path(interposer, begin_tracks_set, this->track_map_to_track_set(end_tracks));
+            auto path = this->route_path(interposer, begin_tracks_vec, this->track_map_to_track_set(end_tracks));
 
-            for (auto& [t, _] : begin_tracks) {
-                begin_tracks_set.erase(t);
+            std::Vector<hardware::Track*> temp_vec {};
+            for (auto t: begin_tracks_vec){
+                if (!begin_tracks.contains(t)){
+                    temp_vec.emplace_back(t);
+                }
             }
+            begin_tracks_vec.swap(temp_vec);
 
             // Get begin and end track in path
             auto begin_track = path.front();
@@ -173,7 +185,7 @@ namespace kiwi::algo {
 
             // All track in path can see as `begin_track_set`
             for (auto t : path) {
-                begin_tracks_set.emplace(t);
+                begin_tracks_vec.emplace_back(t);
             } 
 
             total_length += (path.size() + 1);
@@ -188,12 +200,12 @@ namespace kiwi::algo {
         auto begin_track = net->begin_track();
         const auto& end_bumps = net->end_bumps();
 
-        auto begin_tracks_set = std::HashSet<hardware::Track *>{begin_track};
+        auto begin_tracks_vec = std::Vector<hardware::Track *>{begin_track};
 
         std::usize total_length {0};
         for (auto end_bump : end_bumps) {
             auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
-            auto path = this->route_path(interposer, begin_tracks_set, this->track_map_to_track_set(end_tracks));
+            auto path = this->route_path(interposer, begin_tracks_vec, this->track_map_to_track_set(end_tracks));
 
             // Get begin and end track in path
             auto begin_track = path.front();
@@ -206,7 +218,7 @@ namespace kiwi::algo {
 
             // All track in path can see as `begin_track_set`
             for (auto t : path) {
-                begin_tracks_set.emplace(t);
+                begin_tracks_vec.emplace_back(t);
             } 
 
             total_length += (path.size() + 1);
@@ -222,20 +234,24 @@ namespace kiwi::algo {
         auto begin_bump = net->begin_bump();
         const auto& end_tracks = net->end_tracks();
 
-        auto begin_tracks_set = std::HashSet<hardware::Track*>{};
+        auto begin_tracks_vec = std::Vector<hardware::Track*>{};
 
         std::usize total_length {0};
         for (auto end_track : end_tracks) {
             auto begin_tracks = interposer->available_tracks_bump_to_track(begin_bump);
             for (auto& [t, _] : begin_tracks) {
-                begin_tracks_set.emplace(t);
+                begin_tracks_vec.emplace_back(t);
             }
     
-            auto path = this->route_path(interposer, begin_tracks_set, std::HashSet<hardware::Track *>{end_track});
+            auto path = this->route_path(interposer, begin_tracks_vec, std::HashSet<hardware::Track *>{end_track});
 
-            for (auto& [t, _] : begin_tracks) {
-                begin_tracks_set.erase(t);
+            std::Vector<hardware::Track*> temp_vec {};
+            for (auto t: begin_tracks_vec){
+                if (!begin_tracks.contains(t)){
+                    temp_vec.emplace_back(t);
+                }
             }
+            begin_tracks_vec.swap(temp_vec);
 
             // Get begin and end track in path
             auto begin_track = path.front();
@@ -254,7 +270,7 @@ namespace kiwi::algo {
 
             // All track in path can see as `begin_track_set`
             for (auto t : path) {
-                begin_tracks_set.emplace(t);
+                begin_tracks_vec.emplace_back(t);
             } 
 
             total_length += path.size();
@@ -269,21 +285,21 @@ namespace kiwi::algo {
         auto& begin_tracks = net->begin_tracks();
         auto& end_bumps = net->end_bumps();
 
-        auto begin_tracks_set = std::HashSet<hardware::Track*>{};
+        auto begin_tracks_vec = std::Vector<hardware::Track*>{};
         for (auto t : begin_tracks) {
-            begin_tracks_set.emplace(t);
+            begin_tracks_vec.emplace_back(t);
         }
 
         std::usize total_length {0};
         for (auto end_bump : end_bumps) {
             auto end_tracks = interposer->available_tracks_track_to_bump(end_bump);
-            auto path = this->route_path(interposer, begin_tracks_set, track_map_to_track_set(end_tracks));
+            auto path = this->route_path(interposer, begin_tracks_vec, track_map_to_track_set(end_tracks));
 
             auto end_track = path.back();
             assert(end_tracks.contains(end_track));
 
             for (auto t : path) {
-                begin_tracks_set.emplace(t);
+                begin_tracks_vec.emplace_back(t);
             }
 
             total_length += (path.size() + 1);
@@ -410,7 +426,7 @@ print_sync_path(ptr_sync_net);
     // Return : Vector<(Track*, COBConnector)>
     auto MazeRouteStrategy::search_path(
         hardware::Interposer* interposer, 
-        const std::HashSet<hardware::Track*>& begin_tracks,
+        const std::Vector<hardware::Track*>& begin_tracks,
         const std::HashSet<hardware::Track*>& end_tracks,
         const std::HashSet<hardware::Track*>& occupied_tracks
     ) const -> std::Vector<std::Tuple<hardware::Track*, std::Option<hardware::COBConnector>>> {
@@ -468,7 +484,7 @@ print_sync_path(ptr_sync_net);
 
     auto MazeRouteStrategy::route_path(
         hardware::Interposer* interposer, 
-        const std::HashSet<hardware::Track*>& begin_tracks,
+        const std::Vector<hardware::Track*>& begin_tracks,
         const std::HashSet<hardware::Track*>& end_tracks
     ) const -> std::Vector<hardware::Track*> 
     try {
@@ -509,6 +525,29 @@ print_sync_path(ptr_sync_net);
         return {};
     }
 
+    auto MazeRouteStrategy::track_map_to_track_vec(
+        const std::HashMap<hardware::Track*, 
+        hardware::TOBConnector>& map,
+        const std::Array<std::usize, hardware::COB::UNIT_SIZE>& cobunit_usage
+    ) const -> std::Vector<hardware::Track*> {
+        auto vec = std::Vector<hardware::Track*>{};
+        for (auto [t, _] : map) {
+            vec.emplace_back(t);
+        }
+        std::sort(vec.begin(), vec.end(), [&cobunit_usage](hardware::Track* track1, hardware::Track* track2){
+            auto cobunit = [](hardware::Track* track){
+                auto index = track->coord().index;
+                auto bank = index / (hardware::TOB::INDEX_SIZE / 2);
+                return (bank*hardware::COBUnit::WILTON_SIZE + index%hardware::COBUnit::WILTON_SIZE);
+            };
+            auto cobunit1 = cobunit(track1);
+            auto cobunit2 = cobunit(track2);
+            return cobunit_usage[cobunit1] < cobunit_usage[cobunit2];
+        });
+
+        return vec;
+    }
+
     auto MazeRouteStrategy::track_map_to_track_set(
         const std::HashMap<hardware::Track*, 
         hardware::TOBConnector>& map
@@ -537,7 +576,7 @@ print_sync_path(ptr_sync_net);
         );
         assert (sync_net.size() > 0);
 
-        std::HashSet<hardware::Track*> begin_tracks_set {};
+        std::Vector<hardware::Track*> begin_tracks_vec {};
         std::HashSet<hardware::Track*> end_tracks_set {};
         hardware::Bump* begin_bump = nullptr;
         hardware::Bump* end_bump = nullptr;
@@ -551,10 +590,10 @@ print_sync_path(ptr_sync_net);
             if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::BumpToTrackNet>::value){
                 begin_bump = net->begin_bump();
                 begin_track_to_tob_map = interposer->available_tracks_bump_to_track(begin_bump);
-                begin_tracks_set = track_map_to_track_set(begin_track_to_tob_map);
+                begin_tracks_vec = track_map_to_track_vec(begin_track_to_tob_map, begin_bump->tob()->cobunit_resources());
             }
             else if constexpr(std::is_same<Net, circuit::TrackToBumpNet>::value){
-                begin_tracks_set = std::HashSet<hardware::Track*>{net->begin_track()};
+                begin_tracks_vec = std::Vector<hardware::Track*>{net->begin_track()};
             }
             // collect end bumps & end tracks
             if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::TrackToBumpNet>::value){
@@ -591,7 +630,7 @@ print_sync_path(ptr_sync_net);
             }
 
             // route and connect
-            auto path_info = search_path(interposer, begin_tracks_set, end_tracks_set, occupied_tracks_vec); // notice: negative sequence
+            auto path_info = search_path(interposer, begin_tracks_vec, end_tracks_set, occupied_tracks_vec); // notice: negative sequence
                                                                                         //  |
             auto path = std::Vector<hardware::Track*>{};                                //  V
             hardware::Track* prev_track = nullptr;                                      // prev_track is the track before this
@@ -743,5 +782,24 @@ print_sync_path(ptr_sync_net);
             }
             debug::debug("\n");
         }
+    }
+
+    template<class InputNode, class OutputNode>
+    auto MazeRouteStrategy::print_path(
+        InputNode* input_node, OutputNode* output_node, const std::Vector<hardware::Track*>& path
+    ) const -> void {
+        debug::debug("\nPrinting path...");
+        if constexpr (std::is_same<InputNode, hardware::Bump>::value){
+            debug::debug_fmt("Begin_bump: ({}, index={})", input_node->coord(), input_node->index());
+        }
+
+        for (auto& t: path){
+            debug::debug_fmt("{}", t->coord());
+        }
+
+        if constexpr (std::is_same<OutputNode, hardware::Bump>::value){
+            debug::debug_fmt("End_bump: ({}, index={})", output_node->coord(), output_node->index());
+        }
+        debug::debug("\n");
     }
 }
