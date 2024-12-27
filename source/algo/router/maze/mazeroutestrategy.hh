@@ -113,6 +113,9 @@ namespace kiwi::algo {
         ) const -> std::tuple<bool, std::usize>;
 
         auto print_sync_path(circuit::SyncNet*) const -> void;
+
+        template<class InputNode, class OutputNode>
+        auto print_path(InputNode* input_node, OutputNode* output_node, const std::Vector<hardware::Track*>& path) const -> void;
     
     private:
         std::Box<RerouteStrategy> _rerouter;

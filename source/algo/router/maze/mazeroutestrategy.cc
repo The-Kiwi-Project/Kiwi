@@ -108,6 +108,9 @@ namespace kiwi::algo {
 
         // route path
         path = this->route_path(interposer, begin_tracks_vec, end_tracks_set);
+//!
+print_path(input_node, output_node, path);
+//!
         auto begin_track = path.front();
         auto end_track = path.back();
 
@@ -396,7 +399,7 @@ namespace kiwi::algo {
                 }
             }
 //!
-// print_sync_path(ptr_sync_net);
+print_sync_path(ptr_sync_net);
 //!
         std::usize total_nets {ptr_sync_net->btbnets().size() + ptr_sync_net->bttnets().size() + ptr_sync_net->ttbnets().size()};
         return total_nets * max_length; 
@@ -779,5 +782,24 @@ namespace kiwi::algo {
             }
             debug::debug("\n");
         }
+    }
+
+    template<class InputNode, class OutputNode>
+    auto MazeRouteStrategy::print_path(
+        InputNode* input_node, OutputNode* output_node, const std::Vector<hardware::Track*>& path
+    ) const -> void {
+        debug::debug("\nPrinting path...");
+        if constexpr (std::is_same<InputNode, hardware::Bump>::value){
+            debug::debug_fmt("Begin_bump: ({}, index={})", input_node->coord(), input_node->index());
+        }
+
+        for (auto& t: path){
+            debug::debug_fmt("{}", t->coord());
+        }
+
+        if constexpr (std::is_same<OutputNode, hardware::Bump>::value){
+            debug::debug_fmt("End_bump: ({}, index={})", output_node->coord(), output_node->index());
+        }
+        debug::debug("\n");
     }
 }
