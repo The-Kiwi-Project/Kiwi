@@ -130,7 +130,7 @@ print_path(input_node, output_node, path);
             }
         }
 
-        path_length += path.size();
+        path_length += _rerouter->path_length(path);
         return path_length;
     }
 
@@ -188,7 +188,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += (path.size() + 1);
+            total_length += (_rerouter->path_length(path) + 1);
         }
 
         return total_length + 1;
@@ -221,7 +221,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += (path.size() + 1);
+            total_length += (_rerouter->path_length(path) + 1);
         }
 
         return total_length;
@@ -273,7 +273,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += path.size();
+            total_length += _rerouter->path_length(path);
         }
 
         return total_length + 1;
@@ -302,7 +302,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             }
 
-            total_length += (path.size() + 1);
+            total_length += (_rerouter->path_length(path) + 1);
         }
 
         return total_length;
