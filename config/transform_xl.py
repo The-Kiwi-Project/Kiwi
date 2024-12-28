@@ -142,11 +142,11 @@ class muyan_index():
         else:
             matchobj = re.match(r'xinzhai_nege', str1)  # 
             if matchobj:
-                self.num = "0" + " " + "0" + " " + "0" + " " + "-1" + " " + "0"     # 随便连一个外部IO端口, GND
+                self.num = "0" + " " + "0" + " " + "0" + " " + "-1" + " " + "0"    
             else:
                 matchobj = re.match(r'xinzhai_pose',str1) # 
                 if matchobj:
-                    self.num = "0" + " " + "0" + " " + "0" + " " + "-2" + " " + "0"     # 随便连一个外部IO端口, POWER
+                    self.num = "0" + " " + "0" + " " + "0" + " " + "-2" + " " + "0"     
                 else:
                     flag = -1
                     for i in range(len(self.xinzhaiIO_position)):

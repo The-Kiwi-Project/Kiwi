@@ -612,19 +612,23 @@ print_sync_path(ptr_sync_net);
             // set end track of Net as unoccupied
             if constexpr(std::is_same<Net, circuit::BumpToTrackNet>::value){
                 auto track = net->end_track();
-                for (auto& ot: occupied_tracks_vec){
-                    if (ot->coord() == track->coord()){
-                        occupied_tracks_vec.erase(track);
-                        break;
+                for (auto it = occupied_tracks_vec.begin(); it != occupied_tracks_vec.end(); ){
+                    if ((*it)->coord() == track->coord()){
+                        it = occupied_tracks_vec.erase(it);
+                    }
+                    else{
+                        ++it;
                     }
                 }
             }
             if constexpr(std::is_same<Net, circuit::TrackToBumpNet>::value){
                 auto track = net->begin_track();
-                for (auto& ot: occupied_tracks_vec){
-                    if (ot->coord() == track->coord()){
-                        occupied_tracks_vec.erase(track);
-                        break;
+                for (auto it = occupied_tracks_vec.begin(); it != occupied_tracks_vec.end(); ){
+                    if ((*it)->coord() == track->coord()){
+                        it = occupied_tracks_vec.erase(it);
+                    }
+                    else{
+                        ++it;
                     }
                 }
             }
