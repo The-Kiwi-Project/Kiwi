@@ -33,6 +33,6 @@ namespace kiwi::algo{
         virtual auto path_length(const std::Vector<hardware::Track*>& path, bool switch_length = RerouteStrategy::_use_switch_length) const -> std::usize = 0;
     
     protected:
-        static const bool _use_switch_length {true};
+        static const bool _use_switch_length {false};
     };
 }

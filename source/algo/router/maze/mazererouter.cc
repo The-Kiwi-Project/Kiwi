@@ -355,15 +355,6 @@ debug::debug("Rerouting...");
             while(tail != path.size() - 1){
                 auto current_pos {track_pos_to_cobs(std::get<0>(path[head]))};
                 while (true){
-                    if (tail == path.size() - 1){
-                        if (tail == head){
-                            path_length += 1;
-                        }
-                        else{
-                            path_length += 2;
-                        }
-                        break;
-                    }
                     auto tail_cobs {track_pos_to_cobs(std::get<0>(path[tail]))};
                     current_pos = shared_cobs(current_pos, tail_cobs);
                     if (current_pos.empty()){
@@ -372,10 +363,20 @@ debug::debug("Rerouting...");
                         break;
                     }
                     else{
+                        if (tail == path.size() - 1){
+                            break;
+                        }
                         tail += 1;
                     }
                 }
             }
+            if (tail == head){
+                path_length += 1;
+            }
+            else{
+                path_length += 2;
+            }
+
             return path_length;
         }
     }
@@ -399,15 +400,6 @@ debug::debug("Rerouting...");
             while(tail != path.size() - 1){
                 auto current_pos {track_pos_to_cobs(path[head])};
                 while (true){
-                    if (tail == path.size() - 1){
-                        if (tail == head){
-                            path_length += 1;
-                        }
-                        else{
-                            path_length += 2;
-                        }
-                        break;
-                    }
                     auto tail_cobs {track_pos_to_cobs(path[tail])};
                     current_pos = shared_cobs(current_pos, tail_cobs);
                     if (current_pos.empty()){
@@ -416,10 +408,20 @@ debug::debug("Rerouting...");
                         break;
                     }
                     else{
+                        if(tail == path.size() - 1){
+                            break;
+                        }
                         tail += 1;
                     }
                 }
             }
+            if (tail == head){
+                path_length += 1;
+            }
+            else{
+                path_length += 2;
+            }
+
             return path_length;
         }
     }
