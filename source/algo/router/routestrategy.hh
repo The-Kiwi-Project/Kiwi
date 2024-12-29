@@ -1,14 +1,10 @@
 #pragma once
 
-#include <circuit/net/nets.hh>
+#include <hardware/interposer.hh>
 
 #include <std/collection.hh>
-#include <std/memory.hh>
+#include <std/utility.hh>
 
-
-namespace kiwi::hardware {
-    class Interposer;
-}
 
 namespace kiwi::circuit {
     class BumpToBumpNet;
@@ -26,8 +22,6 @@ namespace kiwi::circuit {
 
 namespace kiwi::algo {
 
-    struct RerouteStrategy;
-
     struct RouteStrategy {
         virtual auto route_bump_to_bump_net(hardware::Interposer*, circuit::BumpToBumpNet*) const -> std::usize = 0;
         virtual auto route_track_to_bump_net(hardware::Interposer*, circuit::TrackToBumpNet*) const -> std::usize = 0;
@@ -41,5 +35,5 @@ namespace kiwi::algo {
         
         virtual auto route_sync_net(hardware::Interposer*, circuit::SyncNet*) const -> std::usize = 0;
     };
-
+    
 }
