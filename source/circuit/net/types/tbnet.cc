@@ -6,7 +6,8 @@ namespace kiwi::circuit {
 
     TrackToBumpNet::TrackToBumpNet(hardware::Track* begin_track, hardware::Bump* end_bump) :
         _begin_track{begin_track},
-        _end_bump{end_bump}
+        _end_bump{end_bump},
+        Net{Priority{3}}
     {
     }
 
@@ -21,8 +22,9 @@ namespace kiwi::circuit {
         return strategy.route_track_to_bump_net(interposer, this);
     }
 
-    auto TrackToBumpNet::priority() const -> Priority {
-        return {3};
+    auto TrackToBumpNet::update_priority(float bias) -> void {
+        assert(0 <= bias && bias < 1);
+        this->_priority = Priority{this->_priority.value() + bias};
     }
 
     auto TrackToBumpNet::coords() const -> std::Vector<hardware::Coord> {
@@ -37,5 +39,9 @@ namespace kiwi::circuit {
         
         std::HashSet<std::usize> cobunit_ids {id};
         _end_bump->intersect_access_unit(cobunit_ids);
+    }
+
+    auto TrackToBumpNet::port_number() const -> std::usize {
+        return 2;
     }
 }

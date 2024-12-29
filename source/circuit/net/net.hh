@@ -18,22 +18,37 @@ namespace kiwi::circuit {
 
     class Priority {
     public:
-        Priority(int value): _value{value} {}
+        Priority(float value): _value{value} {}
         auto operator > (const Priority& other) const -> bool {
             return this->_value < other._value;
         }
+        auto value() const -> float {
+            return this->_value;
+        }
+
     private:
-        int _value;
+        float _value;
     };
 
-    struct Net {
+    class Net {
+    public:
         virtual auto update_tob_postion(hardware::TOB* prev_tob, hardware::TOB* next_tob) -> void = 0;
         virtual auto route(hardware::Interposer* interposer, const algo::RouteStrategy& strategy) -> std::usize = 0;
-        virtual auto priority() const -> Priority = 0;
+        virtual auto update_priority(float bias) -> void = 0;
         virtual auto coords() const -> std::Vector<hardware::Coord> = 0;
         virtual auto check_accessable_cobunit() -> void = 0;
+        virtual auto port_number() const -> std::usize = 0;
 
+        virtual auto priority() const -> Priority{
+            return this->_priority;
+        }
+    
+    public:
+        Net(Priority priority): _priority{priority} {}
         virtual ~Net() noexcept {}
+    
+    protected:
+        Priority _priority;
     };
 
 }

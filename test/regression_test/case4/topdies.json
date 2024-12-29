@@ -1,6 +1,8 @@
 {
     "muyan": {
         "pin_map": {
+            "scan_clk": 0,
+            "scan_rstn": 1,
             "jtag_trstn": 2,
             "jtag_tdo": 3,
             "jtag_tdi": 4,
@@ -47,8 +49,6 @@
             "chipID2": 48,
             "chipID1": 49,
             "chipID0": 50,
-            "package_status_1": 51,
-            "package_status_0": 52,
             "interrupt_1": 53,
             "interrupt_0": 54,
             "rd6": 55,
@@ -60,8 +60,6 @@
             "Debug_out_3": 61,
             "chipID3": 62,
             "rd7": 63,
-            "Test_mode": 65,
-            "POR": 66,
             "spi_csn": 67,
             "spi_mosi": 68,
             "spi_sck": 69,

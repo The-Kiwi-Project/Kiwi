@@ -198,7 +198,7 @@ def config_json(output_file):
 
 
 if __name__ == "__main__":
-    input_xlsx = "config/case6.xlsx"   
+    input_xlsx = "config/case4.xlsx"   
 
     connections_to_json(input_xlsx, "config/connections.json")
     external_ports_to_json(input_xlsx, "config/external_ports.json")
