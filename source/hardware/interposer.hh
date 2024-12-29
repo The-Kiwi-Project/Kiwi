@@ -6,9 +6,10 @@
 #include "./tob/tobcoord.hh"
 #include "./tob/tob.hh"
 
-#include "./node/track.hh"
-#include "./node/bump.hh"
+#include "./track/track.hh"
+#include "./bump/bump.hh"
 #include "hardware/coord.hh"
+#include "std/memory.hh"
 #include <std/integer.hh>
 
 #include <std/utility.hh>
@@ -68,9 +69,9 @@ namespace kiwi::hardware {
     
     private:
         // Maybe, just array...
-        std::HashMap<COBCoord, COB> _cobs;
-        std::HashMap<TOBCoord, TOB> _tobs;
-        std::HashMap<TrackCoord, Track> _tracks;
+        std::HashMap<COBCoord, std::Box<COB>> _cobs;
+        std::HashMap<TOBCoord, std::Box<TOB>> _tobs;
+        std::HashMap<TrackCoord, std::Box<Track>> _tracks;
     };
 
 }

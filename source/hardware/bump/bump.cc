@@ -1,16 +1,15 @@
 #include "./bump.hh"
 #include "../tob/tob.hh"
 #include "../cob/cob.hh"
-#include "hardware/coord.hh"
+#include "../track/track.hh"
 #include <cassert>
 #include <numeric>
 
 namespace kiwi::hardware {
 
-    Bump::Bump(Coord const& coord, std::usize const index, TOB* tob) : 
+    Bump::Bump(BumpCoord const& coord, TOB* tob) : 
         _coord{coord},
         _tob{tob},
-        _index{index},
         _connected_track{nullptr},
         _signal_dir{TOBSignalDirection::DisConnected},
         _accessable_cobunit{}
@@ -31,7 +30,7 @@ namespace kiwi::hardware {
 
     auto Bump::update_bump(Bump* bump, TOB* prev_tob, TOB* next_tob) -> Bump* {
         if (bump->_tob == prev_tob) {
-            return next_tob->get_bump(bump->_index).value();
+            return next_tob->get_bump(bump->index()).value();
         } else {
             return bump;
         }

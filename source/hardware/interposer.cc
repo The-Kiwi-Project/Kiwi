@@ -1,15 +1,16 @@
 #include "./interposer.hh"
 #include "./cob/cob.hh"
 #include "./tob/tob.hh"
-#include "./node/track.hh"
-#include "./node/bump.hh"
+#include "./track/track.hh"
+#include "./bump/bump.hh"
 
+#include <memory>
 #include <std/collection.hh>
 #include <std/utility.hh>
 #include <std/integer.hh>
 #include "hardware/cob/cobcoord.hh"
 #include "hardware/coord.hh"
-#include "hardware/node/trackcoord.hh"
+#include "hardware/track/trackcoord.hh"
 #include "hardware/tob/tobcoord.hh"
 
 #include <debug/debug.hh>
@@ -39,7 +40,7 @@ namespace kiwi::hardware {
         for (std::i64 row = 0; row < Interposer::COB_ARRAY_HEIGHT; ++row) {
             for (std::i64 col = 0; col < Interposer::COB_ARRAY_WIDTH; ++col) {
                 auto coord = COBCoord{row, col};
-                this->_cobs.emplace(coord, coord);
+                this->_cobs.emplace(coord, std::make_unique<COB>(coord));
             }
         }
 
@@ -47,7 +48,7 @@ namespace kiwi::hardware {
             for (std::i64 col = 0; col < Interposer::TOB_ARRAY_WIDTH; ++col) {
                 auto coord = TOBCoord{row, col};
                 auto coord_in_interposer = Interposer::TOB_COORD_MAP.at(coord);
-                this->_tobs.emplace(coord, TOB{coord, coord_in_interposer});
+                this->_tobs.emplace(coord, std::make_unique<TOB>(coord, coord_in_interposer));
             }
         }
     }
@@ -136,7 +137,7 @@ namespace kiwi::hardware {
         if (find_res == this->_cobs.end()) {
             return std::nullopt;
         } else {
-            return { &find_res->second };
+            return { find_res->second.get() };
         }
     }
 
@@ -149,7 +150,7 @@ namespace kiwi::hardware {
         if (find_res == this->_tobs.end()) {
             return std::nullopt;
         } else {
-            return { &find_res->second };
+            return { find_res->second.get() };
         }
     }
 
@@ -161,7 +162,7 @@ namespace kiwi::hardware {
         if (!Interposer::check_track_coord(coord)) {
             return std::nullopt;
         }
-        return &this->_tracks.emplace(coord, Track{coord}).first->second;
+        return this->_tracks.emplace(coord, std::make_unique<Track>(coord)).first->second.get();
     }
 
     auto Interposer::get_track(std::i64 r, std::i64 c, TrackDirection d, std::usize i) -> std::Option<Track*> {
@@ -197,13 +198,13 @@ namespace kiwi::hardware {
 
     auto Interposer::manage_cobunit_resources() -> void {
         for (auto& [coord, tob]: this->_tobs) {
-            tob.collect_cobunit_usage();
+            tob->collect_cobunit_usage();
         }
     }
 
     auto Interposer::randomly_map_remain_indexes() -> void {
         for (auto& [_, tob] : this->_tobs) {
-            tob.randomly_map_remain_indexes();
+            tob->randomly_map_remain_indexes();
         }
     }
 

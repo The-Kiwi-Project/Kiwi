@@ -5,8 +5,8 @@
 
 #include <hardware/cob/cob.hh>
 #include <hardware/tob/tob.hh>
-#include <hardware/node/bump.hh>
-#include <hardware/node/track.hh>
+#include <hardware/bump/bump.hh>
+#include <hardware/track/track.hh>
 
 #include <std/collection.hh>
 #include <std/utility.hh>

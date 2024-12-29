@@ -26,6 +26,7 @@ namespace kiwi::circuit {
         virtual auto update_priority(float bias) -> void override;
         virtual auto coords() const -> std::Vector<hardware::Coord> override;
         virtual auto check_accessable_cobunit() -> void override;
+         virtual auto to_string() -> std::String override;
         virtual auto port_number() const -> std::usize override;
 
         auto begin_tracks() const -> const std::Vector<hardware::Track*>& { return this->_begin_tracks; }

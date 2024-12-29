@@ -1,5 +1,5 @@
 #include "./btnet.hh"
-#include <hardware/node/bump.hh>
+#include <hardware/bump/bump.hh>
 
 
 namespace kiwi::circuit {
@@ -39,6 +39,10 @@ namespace kiwi::circuit {
         
         std::HashSet<std::usize> cobunit_ids {id};
         _begin_bump->intersect_access_unit(cobunit_ids);
+    }
+
+    auto BumpToTrackNet::to_string() -> std::String {
+        return std::format("Begin bump: '{}' to End track '{}'", this->_begin_bump->coord(), this->_end_track->coord());
     }
 
     auto BumpToTrackNet::port_number() const -> std::usize {

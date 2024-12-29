@@ -1,7 +1,7 @@
 #pragma once
 
 #include "serde/de.hh"
-#include <hardware/node/trackcoord.hh>
+#include <hardware/track/trackcoord.hh>
 
 namespace kiwi::parse {
 

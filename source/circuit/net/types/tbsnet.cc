@@ -1,5 +1,5 @@
 #include "./tbsnet.hh"
-#include <hardware/node/bump.hh>
+#include <hardware/bump/bump.hh>
 
 
 
@@ -50,6 +50,19 @@ namespace kiwi::circuit {
         for (auto bump: _end_bumps){
             bump->intersect_access_unit(cobunit_ids);
         }
+    }
+
+    auto TrackToBumpsNet::to_string() -> std::String {
+        auto ss = std::StringStream {};
+        ss << std::format("Begin track '{}' to End bumps '[", this->_begin_track->coord());
+        for (int i = 0; i < this->_end_bumps.size(); ++i) {
+            if (i != 0) {
+                ss << ", ";
+            }
+            ss << std::format("{}", this->_end_bumps[i]->coord());
+        }
+        ss << ']';
+        return ss.str();
     }
 
     auto TrackToBumpsNet::port_number() const -> std::usize {

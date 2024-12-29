@@ -21,18 +21,18 @@ namespace kiwi::circuit {
         auto get_topdie_inst(std::StringView name) -> std::Option<TopDieInstance*>;
 
     public:
-        auto topdies() -> std::HashMap<std::String, TopDie>& { return this->_topdies; }
-        auto topdies() const -> const std::HashMap<std::String, TopDie>& { return this->_topdies; }
+        auto topdies() -> std::HashMap<std::String, std::Box<TopDie>>& { return this->_topdies; }
+        auto topdies() const -> const std::HashMap<std::String, std::Box<TopDie>>& { return this->_topdies; }
 
-        auto topdie_insts() -> std::HashMap<std::String, TopDieInstance>& { return this->_topdie_insts; }
-        auto topdie_insts() const -> const std::HashMap<std::String, TopDieInstance>& { return this->_topdie_insts; }
+        auto topdie_insts() -> std::HashMap<std::String, std::Box<TopDieInstance>>& { return this->_topdie_insts; }
+        auto topdie_insts() const -> const std::HashMap<std::String, std::Box<TopDieInstance>>& { return this->_topdie_insts; }
 
         auto nets() -> std::Vector<std::Box<Net>>& { return this->_nets; }
         auto nets() const -> std::Span<const std::Box<Net>> { return this->_nets; }
 
     private:
-        std::HashMap<std::String, TopDie> _topdies;
-        std::HashMap<std::String, TopDieInstance> _topdie_insts;
+        std::HashMap<std::String, std::Box<TopDie>> _topdies;
+        std::HashMap<std::String, std::Box<TopDieInstance>> _topdie_insts;
         std::Vector<std::Box<Net>> _nets;
     };
 
