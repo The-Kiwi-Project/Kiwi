@@ -7,9 +7,9 @@
 
 namespace kiwi::parse
 {
-    CobRegister::~CobRegister()
+    CobRegister::~CobRegister() noexcept
     {
-        _pinterposer = nullptr;
+        this->_pinterposer = nullptr;
     }
 
     auto CobRegister::fetch_controlbits(RegisterValue& rv) -> void

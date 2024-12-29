@@ -4,6 +4,7 @@
 #include "./cobdirection.hh"
 
 #include <std/integer.hh>
+#include <std/memory.hh>
 #include <std/collection.hh>
 
 namespace kiwi::hardware {
@@ -15,10 +16,10 @@ namespace kiwi::hardware {
         COBDirection    to_dir;
         std::usize      to_index;
 
-        COBSwRegister&  sw_reg;
+        COBSwRegister*  sw_reg;
 
-        COBSelRegister& t_to_c_sel_reg;
-        COBSelRegister& c_to_t_sel_reg;
+        COBSelRegister* t_to_c_sel_reg;
+        COBSelRegister* c_to_t_sel_reg;
 
         auto is_connected() -> bool {
             return this->sw_reg;
@@ -27,7 +28,7 @@ namespace kiwi::hardware {
 
     class COBUnit {
     public:
-        enum { WILTON_SIZE = 8};
+        enum { WILTON_SIZE = 8 };
 
     public:
         COBUnit() = default;
@@ -43,8 +44,8 @@ namespace kiwi::hardware {
         auto get_connector(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> COBUnitConnector;
 
     public:
-        auto sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> COBSwRegister&;
-        auto sel_register(COBDirection dir, std::usize index) -> COBSelRegister&;
+        auto sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> COBSwRegister*;
+        auto sel_register(COBDirection dir, std::usize index) -> COBSelRegister*;
 
     public:
         static auto index_map(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> std::usize;
@@ -65,18 +66,17 @@ namespace kiwi::hardware {
         static auto assert_index(std::usize index) -> void;
 
     private:
-        std::Array<COBSwRegister, 8>  _switch_ru;
-        std::Array<COBSwRegister, 8>  _switch_lu;
-        std::Array<COBSwRegister, 8>  _switch_rd;
-        std::Array<COBSwRegister, 8>  _switch_ld;
+        std::Vector<COBSwRegister> _switch_ru {WILTON_SIZE};
+        std::Vector<COBSwRegister> _switch_lu {WILTON_SIZE};
+        std::Vector<COBSwRegister> _switch_rd {WILTON_SIZE};
+        std::Vector<COBSwRegister> _switch_ld {WILTON_SIZE};
+        std::Vector<COBSwRegister> _switch_lr {WILTON_SIZE};
+        std::Vector<COBSwRegister> _switch_ud {WILTON_SIZE};
 
-        std::Array<COBSwRegister, 8>  _switch_lr;
-        std::Array<COBSwRegister, 8>  _switch_ud;
-
-        std::Array<COBSelRegister, 8> _left_sel;
-        std::Array<COBSelRegister, 8> _right_sel;
-        std::Array<COBSelRegister, 8> _up_sel;
-        std::Array<COBSelRegister, 8> _down_sel;    
+        std::Vector<COBSelRegister> _left_sel {WILTON_SIZE};
+        std::Vector<COBSelRegister> _right_sel {WILTON_SIZE};
+        std::Vector<COBSelRegister> _up_sel {WILTON_SIZE};
+        std::Vector<COBSelRegister> _down_sel {WILTON_SIZE};
     };
 
 }

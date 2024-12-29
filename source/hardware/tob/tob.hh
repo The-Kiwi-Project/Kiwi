@@ -2,7 +2,7 @@
 
 #include "./tobmux.hh"
 #include "./tobsigdir.hh"
-#include "../node/bump.hh"
+#include "std/memory.hh"
 
 #include <std/collection.hh>
 #include <std/integer.hh>
@@ -12,17 +12,22 @@
 
 namespace kiwi::hardware {
 
+    class Bump;
+
     class TOBConnector {
     public:
         TOBConnector(
-            std::usize bump_index, std::usize track_inde,
+            std::usize bump_index, 
+            std::usize hori_index, 
+            std::usize vert_index, 
+            std::usize track_inde,
 
             TOBMuxConnector bump_to_hori,
             TOBMuxConnector hori_to_vert,
             TOBMuxConnector vert_to_track,
             
-            TOBBumpDirRegister& bump_dir_register,
-            TOBTrackDirRegister& track_dir_register,
+            TOBBumpDirRegister* bump_dir_register,
+            TOBTrackDirRegister* track_dir_register,
             TOBSignalDirection signal_dir
         );
 
@@ -35,14 +40,16 @@ namespace kiwi::hardware {
 
     private:
         std::usize _bump_index;
+        std::usize _hori_index;
+        std::usize _vert_index;
         std::usize _track_index;
     
         TOBMuxConnector _bump_to_hori;
         TOBMuxConnector _hori_to_vert;
         TOBMuxConnector _vert_to_track;
 
-        TOBBumpDirRegister& _bump_dir_register;
-        TOBTrackDirRegister& _track_dir_register;
+        TOBBumpDirRegister* _bump_dir_register;
+        TOBTrackDirRegister* _track_dir_register;
         TOBSignalDirection _signal_dir;
     };
 
@@ -83,13 +90,13 @@ namespace kiwi::hardware {
         auto vert_index_map_track_index(std::usize vert_index) -> std::Option<std::usize>;
 
     public:
-        auto bump_to_hori_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister&;
-        auto hori_to_vert_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister&;
-        auto vert_to_track_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister&;
+        auto bump_to_hori_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister*;
+        auto hori_to_vert_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister*;
+        auto vert_to_track_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister*;
 
-        auto bump_to_hori_register(std::usize bump_index) -> TOBMuxRegister&;
-        auto hori_to_vert_register(std::usize hori_index) -> TOBMuxRegister&;
-        auto vert_to_track_register(std::usize vert_index) -> TOBMuxRegister&;
+        auto bump_to_hori_register(std::usize bump_index) -> TOBMuxRegister*;
+        auto hori_to_vert_register(std::usize hori_index) -> TOBMuxRegister*;
+        auto vert_to_track_register(std::usize vert_index) -> TOBMuxRegister*;
 
     public:
         auto randomly_map_remain_indexes() -> void;
@@ -126,15 +133,15 @@ namespace kiwi::hardware {
         TOBCoord const _coord;
         Coord const _coord_in_interposer;
 
-        std::HashMap<std::usize, Bump> _bumps;
+        std::HashMap<std::usize, std::Box<Bump>> _bumps {};
         std::Array<std::usize, 16> _cobunit_resources;
 
-        std::Vector<TOBMux> _bump_to_hori_muxs;
-        std::Vector<TOBMux> _hori_to_vert_muxs;
-        std::Vector<TOBMux> _vert_to_track_muxs;
+        std::Vector<std::Box<TOBMux>> _bump_to_hori_muxs {};
+        std::Vector<std::Box<TOBMux>> _hori_to_vert_muxs {};
+        std::Vector<std::Box<TOBMux>> _vert_to_track_muxs {};
 
-        std::Vector<TOBBumpDirRegister>  _bump_dir_registers;
-        std::Vector<TOBTrackDirRegister> _track_dir_registers; 
+        std::Vector<std::Box<TOBBumpDirRegister>>  _bump_dir_registers {};
+        std::Vector<std::Box<TOBTrackDirRegister>> _track_dir_registers {}; 
     };
 
 }

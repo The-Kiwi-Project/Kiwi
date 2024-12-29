@@ -1,8 +1,11 @@
 #include "./cobunit.hh"
+#include "./cobregister.hh"
 #include "./cobdirection.hh"
+#include "debug/debug.hh"
 
 #include <std/collection.hh>
 #include <std/integer.hh>
+#include <std/range.hh>
 #include <cassert>
 
 namespace kiwi::hardware {
@@ -52,7 +55,7 @@ namespace kiwi::hardware {
         };
     }
 
-    auto COBUnit::sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> COBSwRegister& {
+    auto COBUnit::sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> COBSwRegister* {
         COBUnit::assert_index(from_index);
 
         auto to_index = COBUnit::index_map(from_dir, from_index, to_dir);
@@ -60,44 +63,43 @@ namespace kiwi::hardware {
         switch (from_dir) {
             case COBDirection::Left: switch (to_dir) {
                 case COBDirection::Left:  assert(false);
-                case COBDirection::Right: return this->_switch_lr[from_index];
-                case COBDirection::Up:    return this->_switch_lu[from_index];
-                case COBDirection::Down:  return this->_switch_ld[from_index];
+                case COBDirection::Right: return &this->_switch_lr[from_index];
+                case COBDirection::Up:    return &this->_switch_lu[from_index];
+                case COBDirection::Down:  return &this->_switch_ld[from_index];
             }
             case COBDirection::Right: switch (to_dir) {
-                case COBDirection::Left:  return this->_switch_lr[from_index];
+                case COBDirection::Left:  return &this->_switch_lr[from_index];
                 case COBDirection::Right: assert(false);
-                case COBDirection::Up:    return this->_switch_ru[from_index];
-                case COBDirection::Down:  return this->_switch_rd[from_index];
+                case COBDirection::Up:    return &this->_switch_ru[from_index];
+                case COBDirection::Down:  return &this->_switch_rd[from_index];
             }
             case COBDirection::Up: switch (to_dir) {
-                case COBDirection::Left:  return this->_switch_lu[to_index];
-                case COBDirection::Right: return this->_switch_ru[to_index];
+                case COBDirection::Left:  return &this->_switch_lu[to_index];
+                case COBDirection::Right: return &this->_switch_ru[to_index];
                 case COBDirection::Up:    assert(false);
-                case COBDirection::Down:  return this->_switch_ud[to_index];
+                case COBDirection::Down:  return &this->_switch_ud[to_index];
             }
             case COBDirection::Down: switch (to_dir) {
-                case COBDirection::Left:  return this->_switch_ld[to_index];
-                case COBDirection::Right: return this->_switch_rd[to_index];
-                case COBDirection::Up:    return this->_switch_ud[to_index];
+                case COBDirection::Left:  return &this->_switch_ld[to_index];
+                case COBDirection::Right: return &this->_switch_rd[to_index];
+                case COBDirection::Up:    return &this->_switch_ud[to_index];
                 case COBDirection::Down:  assert(false);
             }
         }
 
-        // Just for clear compiler warning!
-        return this->_switch_lu[0];
+        debug::unreachable();
     }
 
-    auto COBUnit::sel_register(COBDirection dir, std::usize index) -> COBSelRegister& {
+    auto COBUnit::sel_register(COBDirection dir, std::usize index) -> COBSelRegister* {
         COBUnit::assert_index(index);
         switch (dir) {
-            case COBDirection::Left:  return this->_left_sel[index];
-            case COBDirection::Right: return this->_right_sel[index];
-            case COBDirection::Up:    return this->_up_sel[index];
-            case COBDirection::Down:  return this->_down_sel[index];
+            case COBDirection::Left:  return &this->_left_sel[index];
+            case COBDirection::Right: return &this->_right_sel[index];
+            case COBDirection::Up:    return &this->_up_sel[index];
+            case COBDirection::Down:  return &this->_down_sel[index];
         }
-        // Just for clear compiler warning!
-        return this->_left_sel[0];
+        
+        debug::unreachable();
     }
 
     auto COBUnit::index_map(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> std::usize {

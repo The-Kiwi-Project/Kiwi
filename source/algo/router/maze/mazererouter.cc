@@ -76,10 +76,10 @@ namespace kiwi::algo{
         ) const -> std::tuple<bool, std::usize>{
 
         for (std::usize i = 0; i < path_ptrs.size(); ++i){
-            auto path_ptr {path_ptrs[i]};
+            auto path_ptr {path_ptrs.at(i)};
             std::HashMap<hardware::Track*, hardware::TOBConnector>* end_track_to_tob_map {nullptr};
             if(end_track_to_tob_maps.size() > 0){
-                end_track_to_tob_map = end_track_to_tob_maps[i];
+                end_track_to_tob_map = end_track_to_tob_maps.at(i);
             }
 
             std::HashSet<hardware::Track*> end_tracks_set {};
@@ -94,7 +94,7 @@ namespace kiwi::algo{
                 if (path_ptrs.size() != end_bumps.size()){
                     throw FinalError("MazeRerouter::reroute: path vector is not end_bumps.size()");
                 }
-                auto end_bump {end_bumps[i]};
+                auto end_bump {end_bumps.at(i)};
                 // assert(end_bump.has_value());
                 if (!end_bump.has_value()){
                     throw FinalError("MazeRerouter::reroute: end bump not found");
@@ -124,7 +124,7 @@ namespace kiwi::algo{
             // connect end bump to end track
             if (end_track_to_tob_map != nullptr){
                 auto end_track {std::get<0>(path_ptr->back())};
-                auto end_bump {end_bumps[i]};
+                auto end_bump {end_bumps.at(i)};
                 if (!check_found(end_tracks_set, end_track)){
                     throw FinalError("MazeRerouter::reroute: end track not found");
                 }
@@ -137,7 +137,7 @@ namespace kiwi::algo{
                     auto& [track, connector] = t;
                     if (track->coord() == end_track->coord()){
                         connector.connect();
-                        *end_track_to_tob_maps[i] = std::HashMap<hardware::Track*, hardware::TOBConnector>{t};
+                        *end_track_to_tob_maps.at(i) = std::HashMap<hardware::Track*, hardware::TOBConnector>{t};
                         break;
                     }
                 }
@@ -180,7 +180,7 @@ namespace kiwi::algo{
         std::usize cut_length = path_length > 1 ? ((path_length * cut_rate) < 1 ? 1 : int(path_length * cut_rate)) : 0;
         std::usize remain_length {path_length - cut_length};
         for(std::usize i = remain_length; i < path_length; ++i){
-            auto& pair = (*path_ptr)[i];
+            auto& pair = (*path_ptr).at(i);
             auto& [track, connector] = pair;
             next_track = track->prev_track();
             if (next_track){

@@ -23,9 +23,9 @@ namespace kiwi::algo {
                 return path.size();
             }
             while(tail != path.size() - 1){
-                auto current_pos {track_pos_to_cobs(std::get<0>(path[head]))};
+                auto current_pos {track_pos_to_cobs(std::get<0>(path.at(head)))};
                 while (true){
-                    auto tail_cobs {track_pos_to_cobs(std::get<0>(path[tail]))};
+                    auto tail_cobs {track_pos_to_cobs(std::get<0>(path.at(tail)))};
                     current_pos = shared_cobs(current_pos, tail_cobs);
                     if (current_pos.empty()){
                         path_length += 2;
@@ -70,9 +70,9 @@ namespace kiwi::algo {
                 return path.size();
             }
             while(tail != path.size() - 1){
-                auto current_pos {track_pos_to_cobs(path[head])};
+                auto current_pos {track_pos_to_cobs(path.at(head))};
                 while (true){
-                    auto tail_cobs {track_pos_to_cobs(path[tail])};
+                    auto tail_cobs {track_pos_to_cobs(path.at(tail))};
                     current_pos = shared_cobs(current_pos, tail_cobs);
                     if (current_pos.empty()){
                         path_length += 2;

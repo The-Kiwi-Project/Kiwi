@@ -23,7 +23,7 @@ namespace kiwi::hardware {
             this->_state = state;
         }
 
-        operator bool() const {
+        auto is_connected() const -> bool {
             return this->get() == COBSwState::Connected;
         }
 
@@ -65,7 +65,7 @@ namespace kiwi::hardware {
             this->set_track_to_cob();
         }
 
-        operator bool() const {
+        auto is_cob_to_track() const -> bool {
             return this->get() == COBSignalDirection::COBToTrack;
         }
 

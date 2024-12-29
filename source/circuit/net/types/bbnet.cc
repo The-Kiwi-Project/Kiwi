@@ -1,6 +1,7 @@
 #include "./bbnet.hh"
-#include "debug/debug.hh"
-#include <hardware/node/bump.hh>
+#include "std/string.hh"
+#include <std/format.hh>
+#include <hardware/bump/bump.hh>
 
 
 namespace kiwi::circuit {
@@ -44,6 +45,10 @@ namespace kiwi::circuit {
 
     auto BumpToBumpNet::port_number() const -> std::usize {
         return 2;
+    }
+
+    auto BumpToBumpNet::to_string() -> std::String {
+        return std::format("Begin bump: '{}' to End bump '{}'", this->_begin_bump->coord(), this->_end_bump->coord());
     }
 
 }

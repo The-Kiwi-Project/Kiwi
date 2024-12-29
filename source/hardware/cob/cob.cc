@@ -1,57 +1,31 @@
 #include "./cob.hh"
-#include <std/collection.hh>
 #include "debug/debug.hh"
 #include "hardware/cob/cobcoord.hh"
 #include "hardware/cob/cobdirection.hh"
 #include "hardware/cob/cobregister.hh"
 #include "hardware/cob/cobunit.hh"
+
+#include <memory>
+#include <ranges>
+#include <std/collection.hh>
+#include <std/range.hh>
 #include <cassert>
 
 namespace kiwi::hardware {
-
-    COBConnector::COBConnector(
-        COBDirection from_dir, std::usize from_track_index, 
-        COBDirection to_dir, std::usize to_track_index,
-        COBSwRegister&  sw_reg, COBSelRegister& t_to_c_sel_reg, COBSelRegister& c_to_t_sel_reg
-    ) :
-        _from_dir{from_dir},
-        _from_track_index{from_track_index},
-        _to_dir{to_dir},
-        _to_track_index{to_track_index},
-        _sw_reg{sw_reg},
-        _t_to_c_sel_reg{t_to_c_sel_reg},
-        _c_to_t_sel_reg{c_to_t_sel_reg}
-    {}
-
-    auto COBConnector::is_connected() -> bool {
-        return this->_sw_reg;
-    }
-
-    auto COBConnector::connect() -> void {
-        this->_sw_reg.set(COBSwState::Connected);
-        this->_t_to_c_sel_reg.set_track_to_cob();
-        this->_c_to_t_sel_reg.set_cob_to_track();
-    }
-
-    auto COBConnector::disconnect() -> void {
-        this->_sw_reg.set(COBSwState::DisConnected);
-        this->_t_to_c_sel_reg.set_floating();
-        this->_c_to_t_sel_reg.set_floating();
-    }
-
-    //////////////////////////////////////////////////////
 
     COB::COB(const COBCoord& coord) :
         _coord{coord},
         _cobunits{}
     {
+        for (auto i : std::views::iota(0, int(UNIT_SIZE))) {
+            this->_cobunits.emplace_back(std::make_unique<COBUnit>());
+        }
     }
 
     COB::COB(std::i64 row, std::i64 col) : 
         COB{COBCoord{row, col}}
     {
     }
-
 
     auto COB::adjacent_connectors(COBDirection from_dir, std::usize from_track_index) -> std::Vector<COBConnector> {
         COB::assert_index(from_track_index);
@@ -60,10 +34,10 @@ namespace kiwi::hardware {
         
         auto [cobunit_index, from_cobunit_inner_index] = 
             COB::cob_index_to_cobunit_info(from_dir, from_cob_index);
-        COBUnit& cobunit = this->_cobunits[cobunit_index];
+        auto& cobunit = this->_cobunits.at(cobunit_index);
 
         auto connectors = std::Vector<COBConnector>{};
-        for (auto& unit_ctr : cobunit.adjacent_connectors(from_dir, from_cobunit_inner_index)) {
+        for (auto& unit_ctr : cobunit->adjacent_connectors(from_dir, from_cobunit_inner_index)) {
             auto to_cob_index = COB::cobunit_info_to_cob_index(
                 unit_ctr.to_dir,
                 {cobunit_index, unit_ctr.to_index}
@@ -178,33 +152,33 @@ namespace kiwi::hardware {
         COB::assert_index(cob_index);
         auto bank_size = COB::INDEX_SIZE / 2;
         auto unit = (cob_index / bank_size)*COBUnit::WILTON_SIZE + (cob_index % COBUnit::WILTON_SIZE);
-        return _cobunits[unit]; 
+        return *(_cobunits[unit]); 
     }
 
     auto COB::assert_index(std::usize index) -> void {
         assert(index < COB::INDEX_SIZE);
     }
 
-    auto COB::sw_register(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) -> COBSwRegister& {
+    auto COB::sw_register(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) -> COBSwRegister* {
         auto [group, group_index] = cob_index_to_cobunit_info(from_dir, from_cob_index);
-        auto& cob_unit = this->_cobunits[group];
-        return cob_unit.sw_register(from_dir, group_index, to_dir);
+        auto& cob_unit = this->_cobunits.at(group);
+        return cob_unit->sw_register(from_dir, group_index, to_dir);
     }
 
     auto COB::get_sw_resgiter_value(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) -> COBSwState {
-        auto& cob_swregister = sw_register(from_dir, from_cob_index, to_dir);
-        return cob_swregister.get();
+        auto cob_swregister = sw_register(from_dir, from_cob_index, to_dir);
+        return cob_swregister->get();
     }
 
-    auto COB::sel_register(COBDirection dir, std::usize cob_index) -> COBSelRegister& {
+    auto COB::sel_register(COBDirection dir, std::usize cob_index) -> COBSelRegister* {
         auto [group, group_index] = cob_index_to_cobunit_info(dir, cob_index);
-        auto& cob_unit = this->_cobunits[group];
-        return cob_unit.sel_register(dir, group_index);
+        auto& cob_unit = this->_cobunits.at(group);
+        return cob_unit->sel_register(dir, group_index);
     }
 
     auto COB::get_sel_resgiter_value(COBDirection dir, std::usize cob_index) -> COBSignalDirection {
-        auto& cob_selregister = sel_register(dir, cob_index);
-        return cob_selregister.get();
+        auto cob_selregister = sel_register(dir, cob_index);
+        return cob_selregister->get();
     }
 
 }

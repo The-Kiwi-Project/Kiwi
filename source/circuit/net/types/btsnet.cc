@@ -1,5 +1,5 @@
 #include "./btsnet.hh"
-#include <hardware/node/bump.hh>
+#include <hardware/bump/bump.hh>
 
 
 namespace kiwi::circuit {
@@ -48,6 +48,19 @@ namespace kiwi::circuit {
             accessable_cobunit.emplace(id);
         }
         _begin_bump->intersect_access_unit(accessable_cobunit);
+    }
+
+    auto BumpToTracksNet::to_string() -> std::String {
+        auto ss = std::StringStream {};
+        ss << std::format("Begin bump '{}' to End tracks '[", this->_begin_bump->coord());
+        for (int i = 0; i < this->_end_tracks.size(); ++i) {
+            if (i != 0) {
+                ss << ", ";
+            }
+            ss << std::format("{}", this->_end_tracks[i]->coord());
+        }
+        ss << ']';
+        return ss.str();
     }
 
     auto BumpToTracksNet::port_number() const -> std::usize {
