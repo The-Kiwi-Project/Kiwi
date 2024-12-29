@@ -1,11 +1,8 @@
 #include "./mazeroutestrategy.hh"
+#include "./path_length.hh"
 
 #include <circuit/net/nets.hh>
-#include <hardware/cob/cob.hh>
-#include <hardware/tob/tob.hh>
 #include <hardware/interposer.hh>
-#include <hardware/node/track.hh>
-#include <hardware/node/bump.hh>
 #include <algo/router/routeerror.hh>
 
 #include <std/integer.hh>
@@ -50,7 +47,7 @@ namespace kiwi::algo {
     template<class InputNode, class OutputNode>
         auto MazeRouteStrategy::route_node_to_node_net(hardware::Interposer* interposer, InputNode* input_node, OutputNode* output_node) const -> std::usize {
         std::Vector<hardware::Track*> path {};
-        std::usize path_length {0};
+        std::usize path_l {0};
         std::Vector<hardware::Track*> begin_tracks_vec {};
         std::HashSet<hardware::Track*> end_tracks_set {};
         std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector> begin_tracks_map {};
@@ -124,19 +121,19 @@ print_path(input_node, output_node, path);
             if (!is_begin_connector_connected){
                 input_node->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
                 begin_tracks_map.find(begin_track)->second.connect();
-                path_length += 1;
+                path_l += 1;
             }
         }
         if constexpr(std::is_same<OutputNode, hardware::Bump>::value){
             if (!is_end_connector_connected){
                 output_node->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
                 end_tracks_map.find(end_track)->second.connect();
-                path_length += 1;
+                path_l += 1;
             }
         }
 
-        path_length += _rerouter->path_length(path);
-        return path_length;
+        path_l += path_length(path);
+        return path_l;
     }
 
     auto MazeRouteStrategy::route_bump_to_bumps_net(hardware::Interposer* interposer, circuit::BumpToBumpsNet* net)  const -> std::usize {
@@ -195,7 +192,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += (_rerouter->path_length(path) + 1);
+            total_length += (path_length(path) + 1);
         }
 
         return total_length + 1;
@@ -230,7 +227,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += (_rerouter->path_length(path) + 1);
+            total_length += (path_length(path) + 1);
         }
 
         return total_length;
@@ -282,7 +279,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += _rerouter->path_length(path);
+            total_length += path_length(path);
         }
 
         return total_length + 1;
@@ -313,7 +310,7 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             }
 
-            total_length += (_rerouter->path_length(path) + 1);
+            total_length += (path_length(path) + 1);
         }
 
         return total_length;
@@ -326,7 +323,7 @@ print_path(input_node, output_node, path);
 
             debug::debug("Maze routing for synchronized nets");
             
-            std::Array<std::Vector<algo::RerouteStrategy::routed_path>, 3> three_paths {};  
+            std::Array<std::Vector<routed_path>, 3> three_paths {};  
             std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};    
             std::Array<std::Vector<std::HashMap<hardware::Track*,\
                                                 hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};    // connections between track and TOB
@@ -572,7 +569,7 @@ print_sync_path(ptr_sync_net);
     auto MazeRouteStrategy::sync_preroute(
             hardware::Interposer* interposer,
             std::Vector<std::Box<Net>>& sync_net,
-            std::Vector<algo::RerouteStrategy::routed_path>& paths,
+            std::Vector<routed_path>& paths,
             std::Vector<std::Option<hardware::Bump*>>& end_bumps,
             std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
             std::HashSet<hardware::Track*>& occupied_tracks_vec 
@@ -687,7 +684,7 @@ print_sync_path(ptr_sync_net);
                 end_track_to_tob_maps.emplace_back(std::HashMap<hardware::Track*, hardware::TOBConnector>{*end_track_to_tob_map.find(end_track)});
             }
 
-            RerouteStrategy::routed_path reversed_path_info {};     // collect whole path in positive sequence
+            routed_path reversed_path_info {};     // collect whole path in positive sequence
             std::transform(path_info.rbegin(), path_info.rend(), std::back_inserter(reversed_path_info), [](auto& pair) {
                 return pair; 
             });
@@ -697,7 +694,7 @@ print_sync_path(ptr_sync_net);
         // calculate length
         std::usize max_length = 0;
         for (auto& path: paths) {
-            auto current_length = _rerouter->path_length(path);
+            auto current_length = path_length(path);
             max_length = max_length < current_length ? current_length : max_length;
         }
         if constexpr(std::is_same<Net, circuit::BumpToBumpNet>::value){
@@ -710,19 +707,19 @@ print_sync_path(ptr_sync_net);
 
     auto MazeRouteStrategy::sync_reroute(
         hardware::Interposer* interposer,
-        std::Vector<RerouteStrategy::routed_path>& paths,
+        std::Vector<routed_path>& paths,
         const std::Vector<std::Option<hardware::Bump*>>& end_bumps,
         std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
         std::usize bump_extra_length, std::usize max_length
     ) const -> std::tuple<bool, std::usize>{
-        std::Vector<algo::RerouteStrategy::routed_path*> nets_to_be_rerouted {};
+        std::Vector<routed_path*> nets_to_be_rerouted {};
         std::Vector<std::Option<hardware::Bump*>> related_end_bumps {};
         std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*> related_maps {};
 
         // collect nets to be rerouted, along with their end bumps and track to tob maps
         for (std::usize i = 0; i < paths.size(); ++i) {
             auto& path = paths[i];
-            if (_rerouter->path_length(path) + bump_extra_length < max_length) {
+            if (path_length(path) + bump_extra_length < max_length) {
                 nets_to_be_rerouted.emplace_back((&path));
                 if (end_bumps.size() > 0){
                     related_end_bumps.emplace_back(end_bumps[i]);

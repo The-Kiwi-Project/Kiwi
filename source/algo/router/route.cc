@@ -1,5 +1,5 @@
 #include "./route.hh"
-#include "algo/router/routeerror.hh"
+#include <algo/router/routeerror.hh>
 #include "debug/debug.hh"
 #include <circuit/basedie.hh>
 #include <hardware/interposer.hh>
@@ -13,7 +13,6 @@ namespace kiwi::algo {
     ) -> std::usize 
     try {
         debug::info("Route nets");
-
         auto& nets = basedie->nets();
 
         debug::debug("Sort by priority");

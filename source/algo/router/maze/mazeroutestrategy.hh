@@ -14,22 +14,16 @@
 #include <std/memory.hh>
 
 
-namespace kiwi::circuit {
-    class BumpToBumpNet;
-    class TrackToBumpNet;
-    class BumpToTrackNet;
-}
-
 namespace kiwi::hardware{
     class Bump;
     class Track;
     class COB;
+    class COBConnector;
 }
 
 namespace kiwi::algo {
 
-    class MazeRerouter;
-
+    using routed_path = std::Vector<std::Tuple<kiwi::hardware::Track*, std::Option<kiwi::hardware::COBConnector>>>;
 
     class MazeRouteStrategy : public RouteStrategy {
     public:
@@ -90,7 +84,7 @@ namespace kiwi::algo {
         auto sync_preroute(
             hardware::Interposer* interposer,
             std::Vector<std::Box<Net>>& sync_net,
-            std::Vector<algo::RerouteStrategy::routed_path>& paths,
+            std::Vector<routed_path>& paths,
             std::Vector<std::Option<hardware::Bump*>>& end_bumps,
             std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
             std::HashSet<hardware::Track*>& occupied_tracks_vec
@@ -99,7 +93,7 @@ namespace kiwi::algo {
         // the path is already stored in ascending order with vector index when return 
         auto sync_reroute(
             hardware::Interposer* interposer,
-            std::Vector<RerouteStrategy::routed_path>& paths,
+            std::Vector<routed_path>& paths,
             const std::Vector<std::Option<hardware::Bump*>>& end_bumps,
             std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>>& end_track_to_tob_maps,
             std::usize bump_length, std::usize max_length
@@ -111,7 +105,7 @@ namespace kiwi::algo {
         auto print_path(InputNode* input_node, OutputNode* output_node, const std::Vector<hardware::Track*>& path) const -> void;
     
     private:
-        std::Box<RerouteStrategy> _rerouter;
+        std::Box<MazeRerouter> _rerouter;
     };
 
 
