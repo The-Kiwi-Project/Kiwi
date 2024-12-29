@@ -33,24 +33,8 @@
             "muyan_0.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_0.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_0.package_status_1"
-        ],
-        [
             "xinzhai_muyan_0_interrupt_0",
             "muyan_0.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_0_Test_mode",
-            "muyan_0.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_0_POR",
-            "muyan_0.POR"
         ],
         [
             "xinzhai_uart_txd",
@@ -73,24 +57,8 @@
             "muyan_1.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_1.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_1.package_status_1"
-        ],
-        [
             "xinzhai_muyan_1_interrupt_0",
             "muyan_1.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_1_Test_mode",
-            "muyan_1.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_1_POR",
-            "muyan_1.POR"
         ],
         [
             "xinzhai_nege",
@@ -109,24 +77,8 @@
             "muyan_2.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_2.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_2.package_status_1"
-        ],
-        [
             "xinzhai_muyan_2_interrupt_0",
             "muyan_2.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_2_Test_mode",
-            "muyan_2.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_2_POR",
-            "muyan_2.POR"
         ],
         [
             "xinzhai_pose",
@@ -145,24 +97,8 @@
             "muyan_3.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_3.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_3.package_status_1"
-        ],
-        [
             "xinzhai_muyan_3_interrupt_0",
             "muyan_3.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_3_Test_mode",
-            "muyan_3.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_3_POR",
-            "muyan_3.POR"
         ],
         [
             "xinzhai_nege",
@@ -181,24 +117,8 @@
             "muyan_4.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_4.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_4.package_status_1"
-        ],
-        [
             "xinzhai_muyan_4_interrupt_0",
             "muyan_4.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_4_Test_mode",
-            "muyan_4.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_4_POR",
-            "muyan_4.POR"
         ],
         [
             "xinzhai_pose",
@@ -217,24 +137,8 @@
             "muyan_5.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_5.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_5.package_status_1"
-        ],
-        [
             "xinzhai_muyan_5_interrupt_0",
             "muyan_5.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_5_Test_mode",
-            "muyan_5.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_5_POR",
-            "muyan_5.POR"
         ],
         [
             "xinzhai_nege",
@@ -253,24 +157,8 @@
             "muyan_6.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_6.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_6.package_status_1"
-        ],
-        [
             "xinzhai_muyan_6_interrupt_0",
             "muyan_6.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_6_Test_mode",
-            "muyan_6.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_6_POR",
-            "muyan_6.POR"
         ],
         [
             "xinzhai_pose",
@@ -289,24 +177,8 @@
             "muyan_7.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_7.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_7.package_status_1"
-        ],
-        [
             "xinzhai_muyan_7_interrupt_0",
             "muyan_7.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_7_Test_mode",
-            "muyan_7.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_7_POR",
-            "muyan_7.POR"
         ],
         [
             "xinzhai_nege",
@@ -325,24 +197,8 @@
             "muyan_8.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_8.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_8.package_status_1"
-        ],
-        [
             "xinzhai_muyan_8_interrupt_0",
             "muyan_8.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_8_Test_mode",
-            "muyan_8.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_8_POR",
-            "muyan_8.POR"
         ],
         [
             "xinzhai_pose",
@@ -361,24 +217,8 @@
             "muyan_9.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_9.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_9.package_status_1"
-        ],
-        [
             "xinzhai_muyan_9_interrupt_0",
             "muyan_9.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_9_Test_mode",
-            "muyan_9.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_9_POR",
-            "muyan_9.POR"
         ],
         [
             "xinzhai_nege",
@@ -397,24 +237,8 @@
             "muyan_10.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_10.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_10.package_status_1"
-        ],
-        [
             "xinzhai_muyan_10_interrupt_0",
             "muyan_10.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_10_Test_mode",
-            "muyan_10.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_10_POR",
-            "muyan_10.POR"
         ],
         [
             "xinzhai_pose",
@@ -433,24 +257,8 @@
             "muyan_11.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_11.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_11.package_status_1"
-        ],
-        [
             "xinzhai_muyan_11_interrupt_0",
             "muyan_11.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_11_Test_mode",
-            "muyan_11.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_11_POR",
-            "muyan_11.POR"
         ],
         [
             "xinzhai_nege",
@@ -469,24 +277,8 @@
             "muyan_12.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_12.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_12.package_status_1"
-        ],
-        [
             "xinzhai_muyan_12_interrupt_0",
             "muyan_12.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_12_Test_mode",
-            "muyan_12.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_12_POR",
-            "muyan_12.POR"
         ],
         [
             "xinzhai_pose",
@@ -505,24 +297,8 @@
             "muyan_13.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_13.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_13.package_status_1"
-        ],
-        [
             "xinzhai_muyan_13_interrupt_0",
             "muyan_13.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_13_Test_mode",
-            "muyan_13.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_13_POR",
-            "muyan_13.POR"
         ],
         [
             "xinzhai_nege",
@@ -541,24 +317,8 @@
             "muyan_14.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_14.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_14.package_status_1"
-        ],
-        [
             "xinzhai_muyan_14_interrupt_0",
             "muyan_14.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_14_Test_mode",
-            "muyan_14.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_14_POR",
-            "muyan_14.POR"
         ],
         [
             "xinzhai_pose",
@@ -577,24 +337,8 @@
             "muyan_15.chipID3"
         ],
         [
-            "xinzhai_pose",
-            "muyan_15.package_status_0"
-        ],
-        [
-            "xinzhai_nege",
-            "muyan_15.package_status_1"
-        ],
-        [
             "xinzhai_muyan_15_interrupt_0",
             "muyan_15.interrupt_0"
-        ],
-        [
-            "xinzhai_muyan_15_Test_mode",
-            "muyan_15.Test_mode"
-        ],
-        [
-            "xinzhai_muyan_15_POR",
-            "muyan_15.POR"
         ],
         [
             "muyan_0.jtag_tdo",
@@ -753,6 +497,14 @@
         [
             "muyan_1.s_tx_flit_vld",
             "muyan_0.m_rx_flit_vld"
+        ],
+        [
+            "muyan_1.rd4",
+            "muyan_0.rd12"
+        ],
+        [
+            "muyan_1.rd5",
+            "muyan_0.rd13"
         ]
     ],
     "3": [
@@ -835,6 +587,18 @@
         [
             "muyan_0.m_tx_flit_vld",
             "muyan_1.s_rx_vld"
+        ],
+        [
+            "muyan_0.rd0",
+            "muyan_1.rd9"
+        ],
+        [
+            "muyan_0.rd1",
+            "muyan_1.rd10"
+        ],
+        [
+            "muyan_0.rd2",
+            "muyan_1.rd11"
         ]
     ],
     "4": [
@@ -885,6 +649,14 @@
         [
             "muyan_2.s_tx_flit_vld",
             "muyan_1.m_rx_flit_vld"
+        ],
+        [
+            "muyan_2.rd4",
+            "muyan_1.rd12"
+        ],
+        [
+            "muyan_2.rd5",
+            "muyan_1.rd13"
         ]
     ],
     "5": [

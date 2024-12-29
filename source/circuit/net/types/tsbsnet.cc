@@ -5,7 +5,7 @@
 namespace kiwi::circuit {
 
     TracksToBumpsNet::TracksToBumpsNet(std::Vector<hardware::Track*> begin_tracks, std::Vector<hardware::Bump*>  end_bumps):
-        _begin_tracks{begin_tracks}, _end_bumps{end_bumps}
+        _begin_tracks{begin_tracks}, _end_bumps{end_bumps}, Net{Priority{5}}
     {
 
     }
@@ -20,8 +20,9 @@ namespace kiwi::circuit {
         return strategy.route_tracks_to_bumps_net(interposer, this);
     }
 
-    auto TracksToBumpsNet::priority() const -> Priority {
-        return {5};
+    auto TracksToBumpsNet::update_priority(float bias) -> void {
+        assert(0 <= bias && bias < 1);
+        this->_priority = Priority{this->_priority.value() + bias};
     }
 
     auto TracksToBumpsNet::coords() const -> std::Vector<hardware::Coord> {
@@ -48,5 +49,9 @@ namespace kiwi::circuit {
         for (auto bump: _end_bumps){
             bump->intersect_access_unit(accessable_cobunit);
         }
+    }
+
+    auto TracksToBumpsNet::port_number() const -> std::usize {
+        return this->_begin_tracks.size() + this->_end_bumps.size();
     }
 }

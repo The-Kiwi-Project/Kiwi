@@ -6,6 +6,7 @@
 #include <hardware/interposer.hh>
 #include <hardware/node/track.hh>
 #include <hardware/node/bump.hh>
+#include <algo/router/routeerror.hh>
 
 #include <std/integer.hh>
 #include <std/collection.hh>
@@ -29,7 +30,7 @@ namespace kiwi::algo {
     }
 
     auto MazeRouteStrategy::route_track_to_bump_net(hardware::Interposer* interposer, circuit::TrackToBumpNet* net) const -> std::usize {
-        debug::debug("Maze routing for track to bumpt net");
+        debug::debug("Maze routing for track to bump net");
         
         auto begin_track = net->begin_track();
         auto end_bump = net->end_bump();
@@ -71,7 +72,8 @@ namespace kiwi::algo {
             if (input_node->connected_track() == nullptr) {
                 begin_tracks_map = interposer->available_tracks_bump_to_track(input_node);
                 if (begin_tracks_map.empty()){
-                    debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for input node");
+                    throw RetryExpt(std::format("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for input node {}", input_node->coord()));
+                    // debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for input node");
                 }
                 begin_tracks_vec = track_map_to_track_vec(begin_tracks_map, input_node->tob()->cobunit_resources());
             }
@@ -90,7 +92,8 @@ namespace kiwi::algo {
             if (output_node->connected_track() == nullptr) {
                 end_tracks_map = interposer->available_tracks_track_to_bump(output_node);
                 if (end_tracks_map.empty()){
-                    debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for output node");
+                    throw RetryExpt(std::format("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for output node {}", output_node->coord()));
+                    // debug::exception_in("MazeRouteStrategy::route_node_to_node_net()", "No available tracks for output node");
                 }
                 end_tracks_set = track_map_to_track_set(end_tracks_map);
             }
@@ -104,7 +107,9 @@ namespace kiwi::algo {
                 }
             }
         }
-        assert(!begin_tracks_vec.empty() && !end_tracks_set.empty());   // cannot be empty given the only two types of nodes are covered 
+        if (begin_tracks_vec.empty() || end_tracks_set.empty()){
+            throw FinalError("MazeRouteStrategy::route_node_to_node_net(): no available begin/end tracks for unknown reasons");
+        }
 
         // route path
         path = this->route_path(interposer, begin_tracks_vec, end_tracks_set);
@@ -166,7 +171,9 @@ print_path(input_node, output_node, path);
             auto end_track = path.back();
 
             // Connect the TOB from end track to end_bump
-            assert(end_tracks.contains(end_track));
+            if (!end_tracks.contains(end_track)){
+                throw FinalError("MazeRouteStrategy::route_bump_to_bumps_net(): end track not in end tracks set");
+            }
 
             end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
             end_tracks.find(end_track)->second.connect();
@@ -212,7 +219,9 @@ print_path(input_node, output_node, path);
             auto end_track = path.back();
 
             // Connect the TOB from end track to end_bump
-            assert(end_tracks.contains(end_track));
+            if (!end_tracks.contains(end_track)){
+                throw FinalError("MazeRouteStrategy::route_track_to_bumps_net(): end track not in end tracks set");
+            }
             end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
             end_tracks.find(end_track)->second.connect();
 
@@ -296,7 +305,9 @@ print_path(input_node, output_node, path);
             auto path = this->route_path(interposer, begin_tracks_vec, track_map_to_track_set(end_tracks));
 
             auto end_track = path.back();
-            assert(end_tracks.contains(end_track));
+            if (!end_tracks.contains(end_track)){
+                throw FinalError("MazeRouteStrategy::route_tracks_to_bumps_net(): end track not in end tracks set");
+            }
 
             for (auto t : path) {
                 begin_tracks_vec.emplace_back(t);
@@ -404,6 +415,9 @@ print_sync_path(ptr_sync_net);
         std::usize total_nets {ptr_sync_net->btbnets().size() + ptr_sync_net->bttnets().size() + ptr_sync_net->ttbnets().size()};
         return total_nets * max_length; 
         }
+        catch (const RetryExpt& e){
+            throw e;
+        }
         catch (const std::exception& e){
             throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
         }
@@ -452,7 +466,9 @@ print_sync_path(ptr_sync_net);
                 auto cur_track = track;
                 while (true) {
                     auto prev_track_info = prev_track_infos.find(cur_track);
-                    assert(prev_track_info != prev_track_infos.end());
+                    if(prev_track_info == prev_track_infos.end()){
+                        throw FinalError("MazeRouteStrategy::search_path(): cannot find previous track");
+                    }
                     // Reach start track
                     if (!prev_track_info->second.has_value()) {
                         break;
@@ -479,7 +495,7 @@ print_sync_path(ptr_sync_net);
             }
         }
 
-        throw std::runtime_error("MazeRouteStrategy::search_path() >> path not found");
+        throw RetryExpt("MazeRouteStrategy::search_path(): path not found");
     }
 
     auto MazeRouteStrategy::route_path(
@@ -511,18 +527,11 @@ print_sync_path(ptr_sync_net);
 
         return path;
     }
+    catch (const RetryExpt& e){
+        throw e;
+    }
     catch (std::exception& e){
         throw std::runtime_error("MazeRouteStrategy::route_path() >> " + std::String(e.what()));
-    }
-
-    auto MazeRouteStrategy::route_path_with_path_len(
-        hardware::Interposer* interposer, 
-        const std::HashSet<hardware::Track*>& begin_tracks,
-        const std::HashSet<hardware::Track*>& end_tracks,
-        std::usize path_len
-    ) const -> std::Vector<hardware::Track*> {
-        using namespace hardware;
-        return {};
     }
 
     auto MazeRouteStrategy::track_map_to_track_vec(
@@ -574,7 +583,9 @@ print_sync_path(ptr_sync_net);
             std::is_same<Net, circuit::BumpToTrackNet>::value,
             "MazeRouteStrategy::sync_preroute() >> Invalid Net type"
         );
-        assert (sync_net.size() > 0);
+        if (sync_net.size() <= 0){
+            throw FinalError("MazeRouteStrategy::sync_preroute(): empty sync_net");
+        }
 
         std::Vector<hardware::Track*> begin_tracks_vec {};
         std::HashSet<hardware::Track*> end_tracks_set {};
@@ -606,7 +617,9 @@ print_sync_path(ptr_sync_net);
             }
             
             if (std::is_same<Net, circuit::BumpToBumpNet>::value){
-                assert(begin_bump->tob() != end_bump->tob());
+                if (begin_bump->tob()->coord() == end_bump->tob()->coord()){
+                    throw FinalError("MazeRouteStrategy::sync_preroute(): begin_bump_tob == end_bump_tob");
+                }
             }
 
             // set end track of Net as unoccupied
@@ -655,18 +668,18 @@ print_sync_path(ptr_sync_net);
 
             // connect begin bump / end bump
             if (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::BumpToTrackNet>::value){
-                assert (begin_bump != nullptr);
-
                 auto begin_track = path.front();
-                assert(begin_track_to_tob_map.contains(begin_track));
+                if (!begin_track_to_tob_map.contains(begin_track)){
+                    throw FinalError("MazeRouteStrategy::sync_preroute(): begin track not in begin track map");
+                }
                 begin_track_to_tob_map.find(begin_track)->second.connect();
                 begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
             }
             if (std::is_same<Net, circuit::BumpToBumpNet>::value || std::is_same<Net, circuit::TrackToBumpNet>::value){
-                assert (end_bump != nullptr);
-
                 auto end_track = path.back();
-                assert(end_track_to_tob_map.contains(end_track));
+                if (!end_track_to_tob_map.contains(end_track)){
+                    throw FinalError("MazeRouteStrategy::sync_preroute(): end track not in end track map");
+                }
                 end_track_to_tob_map.find(end_track)->second.connect();
                 end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
 
@@ -722,12 +735,14 @@ print_sync_path(ptr_sync_net);
 
         // reroute
         if (nets_to_be_rerouted.size() > 0) {
-            auto [success, ml] = _rerouter->reroute(
+            auto [success, ml] = _rerouter->bus_reroute(
                 interposer, nets_to_be_rerouted, max_length, related_end_bumps, related_maps, bump_extra_length
             );
             
             if (success){   // routing done with ml == max_length
-                assert (max_length == ml);
+                if (max_length != ml){
+                    throw FinalError("MazeRouteStrategy::sync_reroute(): max_length != ml when succeed");
+                }
                 return std::tuple<std::usize, std::usize>{true, max_length};
             }
             else{           // have longer path OR routing failed

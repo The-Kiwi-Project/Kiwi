@@ -67,13 +67,6 @@ namespace kiwi::algo {
             const std::HashSet<hardware::Track*>& end_tracks
         ) const -> std::Vector<hardware::Track*>;
 
-        auto route_path_with_path_len(
-            hardware::Interposer* interposer, 
-            const std::HashSet<hardware::Track*>& begin_tracks,
-            const std::HashSet<hardware::Track*>& end_tracks,
-            std::usize path_len
-        ) const -> std::Vector<hardware::Track*>;
-
         auto track_map_to_track_vec(
             const std::HashMap<hardware::Track*, 
             hardware::TOBConnector>& map,
