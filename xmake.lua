@@ -17,7 +17,7 @@ rule("qt.opengl")
 target("kiwi")
     set_kind("binary")
     set_targetdir("./output")
-    set_default(true)
+    set_default(false)
     add_packages("xlnt")
     add_includedirs("source", "source/global")
     add_files("source/**.cc", "source/widget/**.h", "resource/resource.qrc")
@@ -51,7 +51,7 @@ target("simpletest")
 target("regressiontest")
     set_kind("binary")
     set_targetdir("./output")
-    set_default(false)
+    set_default(true)
     add_packages("xlnt", "catch2")
     add_includedirs("source", "source/global", "test/regression_test")
     add_files("test/regression_test/**.cc")
@@ -63,22 +63,6 @@ target("regressiontest")
         "source/parse/**.cc",
         "source/serde/**.cc"
     )
-
--- target("regressiontest")
---     set_kind("binary")
---     set_targetdir("./output")
---     set_default(false)
---     add_packages("xlnt", "catch2")
---     add_includedirs("source", "source/global", "test/regression_test")
---     add_files("test/regression_test/**.cc")
---     add_files(
---         "source/algo/**.cc",
---         "source/circuit/**.cc",
---         "source/global/**.cc",
---         "source/hardware/**.cc",
---         "source/parse/**.cc",
---         "source/serde/**.cc"
---     )
 
 -- xmake project -k compile_commands
 

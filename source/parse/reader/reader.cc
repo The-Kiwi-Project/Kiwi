@@ -432,26 +432,50 @@ namespace kiwi::parse {
     }
 
     std::Vector<hardware::TrackCoord> Reader::_pose_tracks {
+        // // new tracks since 23-05-21
+        // // group1
+        // hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 10}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 19},
+        // hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 28}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 37},
+        // // group2
+        // hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 46}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 55},
+        // hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 122}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 115},
+        // // group3
+        // hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 108}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 101},
+        // hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 94}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 87}
+
+        // tracks for cpu-ai-mem experiment
         // group1
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 10}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 19},
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 28}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 37},
+        hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 1}, hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 3},
+        hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 5}, hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 7},
         // group2
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 46}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 55},
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 122}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 115},
+        hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 8}, hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 10},
+        hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 12}, hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 14},
         // group3
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 108}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 101},
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 94}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 87}
+        hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 64}, hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 66},
+        hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 69}, hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 71}
     };
         
     std::Vector<hardware::TrackCoord> Reader::_nege_tracks {
+        // // new tracks since 23-05-21
+        // // group1
+        // hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 17}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 26},
+        // hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 35}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 44},
+        // // group2
+        // hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 53}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 62},
+        // hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 98}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 105},
+        // // group3
+        // hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 91}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 84},
+        // hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 77}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 70}
+
+        // tracks for cpu-ai-mem experiment
         // group1
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 17}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 26},
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 35}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 44},
+        hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 0}, hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 2},
+        hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 4}, hardware::TrackCoord{9, 6, hardware::TrackDirection::Vertical, 6},
         // group2
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 53}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 62},
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 98}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 105},
+        hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 9}, hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 11},
+        hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 13}, hardware::TrackCoord{5, 0, hardware::TrackDirection::Horizontal, 15},
         // group3
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 91}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 84},
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 77}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 70}
+        hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 65}, hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 67},
+        hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 68}, hardware::TrackCoord{0, 4, hardware::TrackDirection::Vertical, 70}
     };
 }
