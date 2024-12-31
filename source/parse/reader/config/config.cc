@@ -5,6 +5,7 @@
 #include "./externalport.hh"
 #include "./connection.hh"
 
+#include <hardware/interposer.hh>
 #include <std/collection.hh>
 #include <std/file.hh>
 #include <debug/debug.hh>
@@ -60,6 +61,9 @@ namespace kiwi::parse {
     static auto load_external_ports_config(const std::FilePath& path, std::HashMap<std::String, ExternalPortConfig>& exports) -> void;
     static auto load_connections_config(const std::FilePath& path, std::HashMap<int, std::Vector<ConnectionConfig>>& connections) -> void;
 
+    static auto load_from_txt(const std::FilePath& path, Config& config) -> void;
+    static auto parse_txt_line(const std::String& topdie1, const std::String& topdie2, const std::Array<std::usize, 11>& numbers, Config& config) -> void;
+
     auto load_config(const std::FilePath& config_folder) -> Config 
     try {
         debug::debug("Load config");
@@ -69,11 +73,19 @@ namespace kiwi::parse {
 
         auto config = Config {};
 
-        load_interposer_config(config_folder / config_paths.interposer, config.interposer);
-        load_topdies_config(config_folder / config_paths.topdies, config.topdies);
-        load_topdie_insts_config(config_folder / config_paths.topdie_insts, config.topdie_insts);
-        load_external_ports_config(config_folder / config_paths.external_ports, config.external_ports);
-        load_connections_config(config_folder / config_paths.connections, config.connections);
+        if (config_paths.connections.filename().extension().string() == ".json"){
+            load_interposer_config(config_folder / config_paths.interposer, config.interposer);
+            load_topdies_config(config_folder / config_paths.topdies, config.topdies);
+            load_topdie_insts_config(config_folder / config_paths.topdie_insts, config.topdie_insts);
+            load_external_ports_config(config_folder / config_paths.external_ports, config.external_ports);
+            load_connections_config(config_folder / config_paths.connections, config.connections);
+        }
+        else if(config_paths.connections.filename().extension().string() == ".txt"){
+            load_from_txt(config_folder / config_paths.connections, config);
+        }
+        else{
+            debug::exception_fmt("Unspport extension '{}' for connections config", config_paths.connections.filename().extension().string());
+        }
 
         return config;
     } 
@@ -165,5 +177,109 @@ namespace kiwi::parse {
         }
     } 
     THROW_UP_WITH("Load connections config")
+
+    static auto load_from_txt(const std::FilePath& path, Config& config) -> void 
+    try {
+        debug::debug("Load from txt");
+
+        std::ifstream file(path);
+        if (!file.is_open()){
+            debug::exception_fmt("Cannot open file '{}'", path.string());
+        }
+
+        std::Array<std::usize, 11> numbers;  // input[dir, x, y, bump_x, bump_y], output[dir, x, y, bump_x, bump_y], net_tag
+        std::string line, topdie_name1, topdie_name2;
+        while (std::getline(file, line)) {
+            // skip empty line
+            if (line.find_first_not_of(" \t") == std::string::npos) {
+                continue;  
+            }
+
+            if (line[0] == '#') {
+                std::istringstream iss(line.substr(1));  
+                if (iss >> topdie_name1 >> topdie_name2) {  
+                    ;
+                } 
+                else {
+                    throw std::runtime_error(std::format("Invalie line: '{}'", line));
+                }
+
+                continue;  
+            }
+
+            // parse line
+            std::stringstream ss(line);  
+            std::usize num, pos=0;
+            while (ss >> num) {
+                numbers[pos++] = num;
+            }
+            
+            parse_txt_line(topdie_name1, topdie_name2, numbers, config);
+        }
+
+       file.close();
+    }
+    THROW_UP_WITH("Load from txt")
+
+    auto parse_txt_line(const std::String& topdie1, const std::String& topdie2, const std::Array<std::usize, 11>& numbers, Config& config) -> void
+    try{
+        const auto net_tag = numbers.back();
+        std::String input{}, output{};
+
+        auto parse_node = [&config](const std::Array<std::usize, 5>& info, std::String& node, const std::String& topdie){
+            std::Vector<std::usize> externs { 0,9,18,27,36,45,54,63,120,113,106,99,92,85,78,71 };
+            switch (info[3]){
+                case -1: node = "nege"; 
+                    break;
+                case -2: node = "pose";
+                    break;
+                case -3: {
+                    auto trackcoord = info[0] == 0?\
+                        hardware::TrackCoord(hardware::Interposer::COB_ARRAY_HEIGHT-info[1], info[2], hardware::TrackDirection::Vertical, externs[info[4]]):\
+                        hardware::TrackCoord(hardware::Interposer::COB_ARRAY_HEIGHT-info[1], info[2], hardware::TrackDirection::Horizontal, externs[info[4]]);
+                    node = std::String{
+                        "IO_"+std::to_string(info[0])+"_"+std::to_string(info[1])+\
+                        "_"+std::to_string(info[2])+"_"+std::to_string(info[4])
+                    };
+                    if (!config.external_ports.contains(node)){
+                        config.external_ports.emplace(node, ExternalPortConfig{trackcoord});
+                    }
+                    break;
+                }
+                default:{
+                    if (topdie != "cpu" && topdie != "AI" && topdie != "mem"){
+                        debug::exception_fmt("Invalid topdie '{}'", topdie);
+                    }
+
+                    auto index = info[3] + 8 * info[4];
+                    auto node_postfix = std::String{std::to_string(info[1]) + "_" + std::to_string(info[2]) + "_" + std::to_string(index)};
+                    if(!config.topdies.contains(topdie)){
+                        config.topdies.emplace(topdie, TopDieConfig{});
+                    }
+                    if (!config.topdies.at(topdie).pin_map.contains(node_postfix)){
+                        config.topdies.at(topdie).pin_map.emplace(node_postfix, index);
+                    }
+
+                    std::String topdie_inst {
+                        "Topdie_inst_" + std::to_string(info[1]) + "_" + std::to_string(info[2])
+                    };
+                    node = topdie_inst + "." + node_postfix;
+                    auto tobcoord = hardware::TOBCoord((hardware::Interposer::COB_ARRAY_HEIGHT-info[1])/2, info[2]/3);
+                    if (!config.topdie_insts.contains(topdie_inst)){
+                        config.topdie_insts.emplace(topdie_inst, TopdieInstConfig{topdie, tobcoord});
+                    }
+                    break;
+                }
+            }
+        };
+
+        parse_node({numbers[0], numbers[1], numbers[2], numbers[3], numbers[4]}, input, topdie1);
+        parse_node({numbers[5], numbers[6], numbers[7], numbers[8], numbers[9]}, output, topdie2);
+        if (!config.connections.contains(net_tag)){
+            config.connections.emplace(net_tag, std::Vector<ConnectionConfig>{});
+        }
+        config.connections.at(net_tag).emplace_back(ConnectionConfig{input, output});
+    }
+    THROW_UP_WITH("Parse txt line")
 
 }

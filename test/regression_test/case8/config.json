@@ -1,0 +1,8 @@
+{
+    "interposer": "",
+    "topdies": "",
+    "topdie_insts": "",
+    "external_ports": "",
+    "connections": "cpu_ai_mem_16.txt",
+    "reigster_adder": ""
+}

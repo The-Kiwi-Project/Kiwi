@@ -20,7 +20,7 @@ def open_workbook(input_file):
         sys.exit(-1)
 
 def trans_external_port_coord(dir, x, y, index, version):
-    port_index_array = [0,9,18,27,36,45,54,63,120,113,106,99,92,85,78,71]
+    port_index_array = [0,9,18,27,36,45,54,63,120,113,106,99,92,85,78,71]       # 23-05-21
     if version == 0:    # excel -> xl, output -> current
         dir_curr = "vert" if dir == 0 else "hori"
         x_curr = 9 - x
