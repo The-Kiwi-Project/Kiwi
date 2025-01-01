@@ -1,5 +1,5 @@
 #include "./tbsnet.hh"
-#include <hardware/node/bump.hh>
+#include <hardware/bump/bump.hh>
 
 
 
@@ -7,7 +7,8 @@ namespace kiwi::circuit {
 
     TrackToBumpsNet::TrackToBumpsNet(hardware::Track* begin_track, std::Vector<hardware::Bump*> end_bumps) :
         _begin_track{begin_track},
-        _end_bumps{std::move(end_bumps)}
+        _end_bumps{std::move(end_bumps)},
+        Net{Priority{1}}
     {
     }
 
@@ -25,8 +26,9 @@ namespace kiwi::circuit {
         return strategy.route_track_to_bumps_net(interposer, this);
     }
 
-    auto TrackToBumpsNet::priority() const -> Priority {
-        return {1};
+    auto TrackToBumpsNet::update_priority(float bias) -> void {
+        assert(0 <= bias && bias < 1);
+        this->_priority = Priority{this->_priority.value() + bias};
     }
 
     auto TrackToBumpsNet::coords() const -> std::Vector<hardware::Coord> {
@@ -48,6 +50,23 @@ namespace kiwi::circuit {
         for (auto bump: _end_bumps){
             bump->intersect_access_unit(cobunit_ids);
         }
+    }
+
+    auto TrackToBumpsNet::to_string() -> std::String {
+        auto ss = std::StringStream {};
+        ss << std::format("Begin track '{}' to End bumps '[", this->_begin_track->coord());
+        for (int i = 0; i < this->_end_bumps.size(); ++i) {
+            if (i != 0) {
+                ss << ", ";
+            }
+            ss << std::format("{}", this->_end_bumps[i]->coord());
+        }
+        ss << ']';
+        return ss.str();
+    }
+
+    auto TrackToBumpsNet::port_number() const -> std::usize {
+        return (this->_end_bumps.size() + 1);
     }
 
 }

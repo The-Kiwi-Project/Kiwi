@@ -30,12 +30,7 @@ namespace kiwi::hardware {
     }
 
     auto TrackCoord::to_string() const -> std::String {
-        // TODO Use format!
-        auto ss = std::StringStream{};
-        ss << "{ row: " << this->row << ", col: " << this->col << ", dir: " <<
-            (this->dir == TrackDirection::Vertical ? "Vert" : "Hori")
-        <<  ", index: " << this->index << " }";
-        return ss.str();
+        return std::format("{}", *this);
     }
 
 }

@@ -1,7 +1,9 @@
 #include "./tobmux.hh"
+#include "hardware/tob/tobregister.hh"
 #include <std/collection.hh>
 #include <std/integer.hh>
 #include <cassert>
+#include <std/range.hh>
 
 namespace kiwi::hardware {
 
@@ -9,7 +11,7 @@ namespace kiwi::hardware {
     TOBMuxConnector::TOBMuxConnector(
         std::usize input_index, 
         std::usize output_index, 
-        TOBMuxRegister& reg
+        TOBMuxRegister* reg
     ) :
         _input_index{input_index},
         _output_index{output_index},
@@ -18,11 +20,11 @@ namespace kiwi::hardware {
 
 
     auto TOBMuxConnector::connect() -> void {
-        this->_register.set(this->_output_index);
+        this->_register->set(this->_output_index);
     }
 
     auto TOBMuxConnector::disconnect() -> void {
-        this->_register.reset();
+        this->_register->reset();
     }
 
     ////////////////////////////////////////////////////////////////
@@ -45,7 +47,7 @@ namespace kiwi::hardware {
             connectors.emplace_back(
                 input_index,
                 output_index,
-                this->_registers[input_index]
+                &this->_registers.at(input_index)
             );
         }
 
@@ -57,13 +59,13 @@ namespace kiwi::hardware {
         for (const auto& reg : this->_registers) {
             auto res = reg.get();
             if (res.has_value()) {
-                useds[*res] = true;
+                useds.at(*res) = true;
             }
         }
 
         auto indexes = std::Vector<std::usize>{};
         for (auto i = 0; i < this->_mux_size; ++i) {
-            if (useds[i]) {
+            if (useds.at(i)) {
                 continue;
             }
             indexes.emplace_back(i);
@@ -77,7 +79,7 @@ namespace kiwi::hardware {
         std::usize index = 0;
         for (auto& reg : this->_registers) {
             if (!reg.get().has_value()) {
-                reg.set(unused_indexes[index]);
+                reg.set(unused_indexes.at(index));
                 index += 1;
             }
         }
@@ -88,8 +90,8 @@ namespace kiwi::hardware {
         return this->_registers.at(input_index).get();
     }
 
-    auto TOBMux::registerr(std::usize input_index) -> TOBMuxRegister& {
-        return this->_registers.at(input_index);
+    auto TOBMux::registerr(std::usize input_index) -> TOBMuxRegister* {
+        return &this->_registers.at(input_index);
     }
     
 }

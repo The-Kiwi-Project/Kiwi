@@ -1,6 +1,5 @@
 #pragma once
 
-#include <algo/router/reroutestrategy.hh>
 #include <hardware/interposer.hh>
 #include <std/collection.hh>
 #include <std/integer.hh>
@@ -17,6 +16,8 @@ namespace kiwi::hardware {
 
 
 namespace kiwi::algo{
+    
+    using routed_path = std::Vector<std::Tuple<kiwi::hardware::Track*, std::Option<kiwi::hardware::COBConnector>>>;
 
     class Node{
         // A track with additional attributes
@@ -65,8 +66,8 @@ namespace kiwi::algo{
             return std::make_shared<Node>(track_sptr, connector, nullptr, 0);
         }
 
-        auto nodes_trackify(std::Vector<std::Rc<Node>>& nodes) const -> RerouteStrategy::routed_path{
-            RerouteStrategy::routed_path tracks{};
+        auto nodes_trackify(std::Vector<std::Rc<Node>>& nodes) const -> routed_path{
+            routed_path tracks{};
             std::transform(nodes.begin(), nodes.end(), std::back_inserter(tracks), [](const std::Rc<Node>& node){
                 hardware::Track* new_track = new hardware::Track(*node->track().get());
                 std::Option<hardware::COBConnector>& connector {node->connector()};
@@ -76,17 +77,14 @@ namespace kiwi::algo{
         }
     };
 
-    class MazeRerouter : public RerouteStrategy{
+    class MazeRerouter{
     public:
-        auto reroute(       // reroute through pointer path_ptrs
+        auto bus_reroute(       // reroute through pointer path_ptrs
             hardware::Interposer* interposer, std::Vector<routed_path*>& path_ptrs,
             std::usize max_length, const std::Vector<std::Option<hardware::Bump*>>& end_bumps,
             std::Vector<std::HashMap<hardware::Track*, hardware::TOBConnector>*>& end_track_to_tob_maps,
             std::usize bump_length
-        ) const -> std::tuple<bool, std::usize> override;
-
-        auto path_length(const routed_path& path, bool switch_length = RerouteStrategy::_use_switch_length) const -> std::usize override;
-        auto path_length(const std::Vector<hardware::Track*>& path, bool switch_length = RerouteStrategy::_use_switch_length) const -> std::usize override;
+        ) const -> std::tuple<bool, std::usize>;
     
     private:
         auto remove_tracks(
@@ -98,8 +96,6 @@ namespace kiwi::algo{
         ) const -> std::tuple<bool, std::usize>;
         auto Manhattan_distance(const std::Rc<Node> node, const std::HashSet<hardware::Track*>& end_tracks) const -> std::usize;\
         auto check_found(const std::HashSet<hardware::Track*>& end_tracks, hardware::Track* track) const -> bool;
-        auto track_pos_to_cobs(const hardware::Track* track) const -> std::Vector<hardware::COBCoord>;
-        auto shared_cobs(const std::Vector<hardware::COBCoord>& cobs1, const std::Vector<hardware::COBCoord>& cobs2) const -> std::Vector<hardware::COBCoord>;
     
     private:    // for debug
         auto print_end_tracks(const std::HashSet<hardware::Track*>& end_tracks) const -> void{

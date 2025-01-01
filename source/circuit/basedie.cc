@@ -6,12 +6,12 @@
 namespace kiwi::circuit {
     
     auto BaseDie::add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> void {
-        auto topdie = TopDie{name, std::move(pin_map)};
+        auto topdie = std::make_unique<TopDie>(name, std::move(pin_map));
         this->_topdies.emplace(std::move(name), std::move(topdie));
     }
 
     auto BaseDie::add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> void {
-        auto topdie_inst = TopDieInstance{name, topdie, tob};
+        auto topdie_inst = std::make_unique<TopDieInstance>(name, topdie, tob);
         this->_topdie_insts.emplace(std::move(name), std::move(topdie_inst));
     }
 
@@ -24,7 +24,7 @@ namespace kiwi::circuit {
         if (res == this->_topdies.end()) {
             return std::nullopt;
         } else {
-            return &(res->second);
+            return {res->second.get()};
         }
     }
 
@@ -33,7 +33,7 @@ namespace kiwi::circuit {
         if (res == this->_topdie_insts.end()) {
             return std::nullopt;
         } else {
-            return &(res->second);
+            return {res->second.get()};
         }
     }
 

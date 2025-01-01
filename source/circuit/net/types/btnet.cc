@@ -1,12 +1,13 @@
 #include "./btnet.hh"
-#include <hardware/node/bump.hh>
+#include <hardware/bump/bump.hh>
 
 
 namespace kiwi::circuit {
 
     BumpToTrackNet::BumpToTrackNet(hardware::Bump* begin_bump, hardware::Track* end_track) :
         _begin_bump{begin_bump},
-        _end_track{end_track}
+        _end_track{end_track},
+        Net{Priority{3}}
     {
     }
 
@@ -21,8 +22,9 @@ namespace kiwi::circuit {
         return strategy.route_bump_to_track_net(interposer, this);
     }
 
-    auto BumpToTrackNet::priority() const -> Priority {
-        return {3};
+    auto BumpToTrackNet::update_priority(float bias) -> void {
+        assert(0 <= bias && bias < 1);
+        this->_priority = Priority{this->_priority.value() + bias};
     }
 
     auto BumpToTrackNet::coords() const -> std::Vector<hardware::Coord> {
@@ -37,5 +39,13 @@ namespace kiwi::circuit {
         
         std::HashSet<std::usize> cobunit_ids {id};
         _begin_bump->intersect_access_unit(cobunit_ids);
+    }
+
+    auto BumpToTrackNet::to_string() -> std::String {
+        return std::format("Begin bump: '{}' to End track '{}'", this->_begin_bump->coord(), this->_end_track->coord());
+    }
+
+    auto BumpToTrackNet::port_number() const -> std::usize {
+        return 2;
     }
 }

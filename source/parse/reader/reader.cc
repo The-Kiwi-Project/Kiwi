@@ -28,8 +28,8 @@
 #include "circuit/net/types/bbnet.hh"
 #include "circuit/net/types/btnet.hh"
 #include "circuit/net/types/tbnet.hh"
-#include "hardware/node/bump.hh"
-#include "hardware/node/track.hh"
+#include "hardware/bump/bump.hh"
+#include "hardware/track/track.hh"
 #include "std/collection.hh"
 #include "std/string.hh"
 #include "std/utility.hh"
@@ -62,6 +62,9 @@ namespace kiwi::parse {
         this->add_topdies_to_basedie();
         this->add_topdieinst_to_basedie();
         this->add_nets();
+        for (auto& n : this->_basedie->nets()) {
+            // debug::debug_fmt("{}", n->to_string());
+        }
         return { std::move(this->_interposer), std::move(this->_basedie) };
     }
     THROW_UP_WITH("Build system")
@@ -106,7 +109,7 @@ namespace kiwi::parse {
             auto& topdie = res->second;
 
             // Add into basedie
-            this->_basedie->add_topdie_inst(inst_name, &topdie, *tob);
+            this->_basedie->add_topdie_inst(inst_name, topdie.get(), *tob);
         }
     }
     THROW_UP_WITH("Add topdies inst to baesedie")
@@ -207,7 +210,7 @@ namespace kiwi::parse {
             // Create net 
             auto net = std::Box<circuit::Net>{};
             if (end_bumps.size() == 1) {
-                net = std::make_unique<circuit::TrackToBumpNet>(begin_track, end_bumps[0]);
+                net = std::make_unique<circuit::TrackToBumpNet>(begin_track, end_bumps.at(0));
             } else {
                 net = std::make_unique<circuit::TrackToBumpsNet>(begin_track, std::move(end_bumps));
             }
@@ -388,8 +391,8 @@ namespace kiwi::parse {
             if (tokens.size() != 2) {
                 debug::exception_fmt("Invalid topinst' pin name '{}'", name);
             }
-            auto topdie_inst_name = tokens[0];
-            auto pin_name = tokens[1];
+            auto topdie_inst_name = tokens.at(0);
+            auto pin_name = tokens.at(1);
 
             // Is inst exit?
             auto inst = this->_basedie->get_topdie_inst(topdie_inst_name);
@@ -429,10 +432,26 @@ namespace kiwi::parse {
     }
 
     std::Vector<hardware::TrackCoord> Reader::_pose_tracks {
-
+        // group1
+        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 10}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 19},
+        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 28}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 37},
+        // group2
+        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 46}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 55},
+        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 122}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 115},
+        // group3
+        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 108}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 101},
+        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 94}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 87}
     };
         
     std::Vector<hardware::TrackCoord> Reader::_nege_tracks {
-
+        // group1
+        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 17}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 26},
+        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 35}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 44},
+        // group2
+        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 53}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 62},
+        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 98}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 105},
+        // group3
+        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 91}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 84},
+        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 77}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 70}
     };
 }

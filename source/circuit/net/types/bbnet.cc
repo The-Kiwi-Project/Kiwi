@@ -1,13 +1,15 @@
 #include "./bbnet.hh"
-#include "debug/debug.hh"
-#include <hardware/node/bump.hh>
+#include "std/string.hh"
+#include <std/format.hh>
+#include <hardware/bump/bump.hh>
 
 
 namespace kiwi::circuit {
 
     BumpToBumpNet::BumpToBumpNet(hardware::Bump* begin_bump, hardware::Bump* end_bump) :
         _begin_bump{begin_bump},
-        _end_bump{end_bump}
+        _end_bump{end_bump},
+        Net{Priority{4}}
     {
     }
 
@@ -23,8 +25,9 @@ namespace kiwi::circuit {
         return strategy.route_bump_to_bump_net(interposer, this);
     }
 
-    auto BumpToBumpNet::priority() const -> Priority {
-        return {4};
+    auto BumpToBumpNet::update_priority(float bias) -> void {
+        assert(0 <= bias && bias < 1);
+        this->_priority = Priority{this->_priority.value() + bias};
     }
 
     auto BumpToBumpNet::coords() const -> std::Vector<hardware::Coord> {
@@ -38,6 +41,14 @@ namespace kiwi::circuit {
         }
         _begin_bump->intersect_access_unit(accessable_cobunit);
         _end_bump->intersect_access_unit(accessable_cobunit);
+    }
+
+    auto BumpToBumpNet::port_number() const -> std::usize {
+        return 2;
+    }
+
+    auto BumpToBumpNet::to_string() -> std::String {
+        return std::format("Begin bump: '{}' to End bump '{}'", this->_begin_bump->coord(), this->_end_bump->coord());
     }
 
 }

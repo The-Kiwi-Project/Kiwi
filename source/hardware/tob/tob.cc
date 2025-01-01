@@ -1,28 +1,36 @@
 #include "./tob.hh"
-#include <optional>
+#include "../coord.hh"
+#include "../bump/bump.hh"
+#include "../tob/tobcoord.hh"
+#include "../tob/tobregister.hh"
+#include "hardware/bump/bumpcoord.hh"
+
+#include <std/utility.hh>
 #include <std/collection.hh>
-#include "debug/debug.hh"
-#include "hardware/coord.hh"
-#include "hardware/node/bump.hh"
-#include "hardware/tob/tobcoord.hh"
-#include "hardware/tob/tobregister.hh"
-#include "std/utility.hh"
+#include <debug/debug.hh>
+#include <std/range.hh>
+#include <std/utility.hh>
 #include <cassert>
 
 namespace kiwi::hardware {
 
     TOBConnector::TOBConnector(
-        std::usize bump_index, std::usize track_inde,
+        std::usize bump_index, 
+        std::usize hori_index, 
+        std::usize vert_index,
+        std::usize track_inde,
         
         TOBMuxConnector bump_to_hori,
         TOBMuxConnector hori_to_vert,
         TOBMuxConnector vert_to_track,
         
-        TOBBumpDirRegister& bump_dir_register,
-        TOBTrackDirRegister& track_dir_register,
+        TOBBumpDirRegister* bump_dir_register,
+        TOBTrackDirRegister* track_dir_register,
         TOBSignalDirection signal_dir
     ) :
         _bump_index{bump_index},
+        _hori_index{hori_index},
+        _vert_index{vert_index},
 
         _track_index{track_inde},
         _bump_to_hori{bump_to_hori},
@@ -42,13 +50,13 @@ namespace kiwi::hardware {
 
         switch (this->_signal_dir) {
             case TOBSignalDirection::BumpToTrack: {
-                this->_bump_dir_register.set(TOBBumpDirection::BumpToTOB);
-                this->_track_dir_register.set(TOBTrackDirection::TOBToTrack);
+                this->_bump_dir_register->set(TOBBumpDirection::BumpToTOB);
+                this->_track_dir_register->set(TOBTrackDirection::TOBToTrack);
                 break;
             }
             case TOBSignalDirection::TrackToBump: {
-                this->_track_dir_register.set(TOBTrackDirection::TrackToTOB);
-                this->_bump_dir_register.set(TOBBumpDirection::TOBToBump);
+                this->_track_dir_register->set(TOBTrackDirection::TrackToTOB);
+                this->_bump_dir_register->set(TOBBumpDirection::TOBToBump);
                 break;
             }
             case TOBSignalDirection::DisConnected: {
@@ -63,23 +71,35 @@ namespace kiwi::hardware {
         this->_hori_to_vert.disconnect();   
         this->_vert_to_track.disconnect();
 
-        this->_bump_dir_register.reset();
-        this->_track_dir_register.reset();
+        this->_bump_dir_register->reset();
+        this->_track_dir_register->reset();
     }
 
     ///////////////////////////////////////////////////////////////
 
     TOB::TOB(TOBCoord const& coord, Coord const& coord_in_interposer) :
         _coord{coord},
-        _coord_in_interposer(coord_in_interposer),
-
-        _bump_to_hori_muxs(TOB::BUMP_TO_HORI_MUX_COUNT, TOBMux{TOB::BUMP_TO_HORI_MUX_SIZE}),
-        _hori_to_vert_muxs(TOB::HORI_TO_VERI_MUX_COUNT, TOBMux{TOB::HORI_TO_VERI_MUX_SIZE}),
-        _vert_to_track_muxs(TOB::VERI_TO_TRACK_MUX_COUNT, TOBMux{TOB::VERI_TO_TRACK_MUX_SIZE}),
-    
-        _bump_dir_registers{TOB::INDEX_SIZE},
-        _track_dir_registers{TOB::INDEX_SIZE}
+        _coord_in_interposer(coord_in_interposer)
     {
+        for (auto i : std::ranges::views::iota(0, (int)TOB::BUMP_TO_HORI_MUX_COUNT)) {
+            this->_bump_to_hori_muxs.emplace_back(std::make_unique<TOBMux>(TOB::BUMP_TO_HORI_MUX_SIZE));
+        }
+
+        for (auto i : std::ranges::views::iota(0, (int)TOB::HORI_TO_VERI_MUX_COUNT)) {
+            this->_hori_to_vert_muxs.emplace_back(std::make_unique<TOBMux>(TOB::HORI_TO_VERI_MUX_SIZE));
+        }
+
+        for (auto i : std::ranges::views::iota(0, (int)TOB::VERI_TO_TRACK_MUX_COUNT)) {
+            this->_vert_to_track_muxs.emplace_back(std::make_unique<TOBMux>(TOB::VERI_TO_TRACK_MUX_SIZE));
+        }
+
+        for (auto i : std::ranges::views::iota(0, (int)TOB::INDEX_SIZE)) {
+            this->_bump_dir_registers.emplace_back(std::make_unique<TOBBumpDirRegister>());
+        }
+
+        for (auto i : std::ranges::views::iota(0, (int)TOB::INDEX_SIZE)) {
+            this->_track_dir_registers.emplace_back(std::make_unique<TOBTrackDirRegister>());
+        }
     }
 
     TOB::TOB(std::i64 row, std::i64 col) :
@@ -103,31 +123,34 @@ namespace kiwi::hardware {
 
         auto bump_to_hori_info = TOB::bump_to_hori_mux_info(bump_index);
         
-        for (auto& bump_to_hori_cs : this->_bump_to_hori_muxs[std::get<0>(bump_to_hori_info)].available_connectors(std::get<1>(bump_to_hori_info))) {
+        for (auto& bump_to_hori_cs : this->_bump_to_hori_muxs.at(std::get<0>(bump_to_hori_info))->available_connectors(std::get<1>(bump_to_hori_info))) {
 
             auto hori_index = TOB::bump_to_hori_mux_info_and_output_to_index(bump_to_hori_info, bump_to_hori_cs.output_index());
             auto hori_to_vert_info = TOB::hori_to_vert_mux_info(hori_index);
 
-            for (auto& hori_to_vert_cs : this->_hori_to_vert_muxs[std::get<0>(hori_to_vert_info)].available_connectors(std::get<1>(hori_to_vert_info))) {
+            for (auto& hori_to_vert_cs : this->_hori_to_vert_muxs.at(std::get<0>(hori_to_vert_info))->available_connectors(std::get<1>(hori_to_vert_info))) {
                 
                 auto vert_index = TOB::hori_to_vert_mux_info_and_output_to_index(hori_to_vert_info, hori_to_vert_cs.output_index());
                 auto vert_to_track_info = TOB::vert_to_track_mux_info(vert_index);
 
-                for (auto& vert_to_track_cs : this->_vert_to_track_muxs[std::get<0>(vert_to_track_info)].available_connectors(std::get<1>(vert_to_track_info))) {
+                for (auto& vert_to_track_cs : this->_vert_to_track_muxs.at(std::get<0>(vert_to_track_info))->available_connectors(std::get<1>(vert_to_track_info))) {
                         
                     auto track_index = TOB::vert_to_track_mux_info_and_output_to_index(vert_to_track_info, vert_to_track_cs.output_index());
                     assert(track_index < TOB::INDEX_SIZE);
 
-                    auto bump_dir_reg = this->_bump_dir_registers[bump_index];
-                    auto track_dir_reg = this->_track_dir_registers[track_index];
+                    auto& bump_dir_reg = this->_bump_dir_registers.at(bump_index);
+                    auto& track_dir_reg = this->_track_dir_registers.at(track_index);
 
                     cs.emplace_back(
-                        bump_index, track_index,
+                        bump_index, 
+                        hori_index,
+                        vert_index,
+                        track_index,
                         bump_to_hori_cs,
                         hori_to_vert_cs,
                         vert_to_track_cs,
-                        bump_dir_reg,
-                        track_dir_reg,
+                        bump_dir_reg.get(),
+                        track_dir_reg.get(),
                         signal_dir
                     );
                 }
@@ -157,7 +180,7 @@ namespace kiwi::hardware {
     auto TOB::bump_index_map_hori_index(std::usize bump_index) -> std::Option<std::usize> {
         auto info = TOB::bump_to_hori_mux_info(bump_index);
         auto [mux_index, mux_inner_index] = info;
-        auto res = this->_bump_to_hori_muxs[mux_index].index_map(mux_inner_index);
+        auto res = this->_bump_to_hori_muxs.at(mux_index)->index_map(mux_inner_index);
         if (res.has_value()) {
             return { TOB::bump_to_hori_mux_info_and_output_to_index(info, *res) };
         } else {
@@ -168,7 +191,7 @@ namespace kiwi::hardware {
     auto TOB::hori_index_map_vert_index(std::usize hori_index) -> std::Option<std::usize> {
         auto info = TOB::hori_to_vert_mux_info(hori_index);
         auto [mux_index, mux_inner_index] = info;
-        auto res = this->_hori_to_vert_muxs[mux_index].index_map(mux_inner_index);
+        auto res = this->_hori_to_vert_muxs.at(mux_index)->index_map(mux_inner_index);
         if (res.has_value()) {
             return { TOB::hori_to_vert_mux_info_and_output_to_index(info, *res) };
         } else {
@@ -179,7 +202,7 @@ namespace kiwi::hardware {
     auto TOB::vert_index_map_track_index(std::usize vert_index) -> std::Option<std::usize> {
         auto info = TOB::vert_to_track_mux_info(vert_index);
         auto [mux_index, mux_inner_index] = info;
-        auto res = this->_vert_to_track_muxs[mux_index].index_map(mux_inner_index);
+        auto res = this->_vert_to_track_muxs.at(mux_index)->index_map(mux_inner_index);
         if (res.has_value()) {
             return { TOB::vert_to_track_mux_info_and_output_to_index(info, *res) };
         } else {
@@ -187,47 +210,47 @@ namespace kiwi::hardware {
         }
     }
 
-    auto TOB::bump_to_hori_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister& {
+    auto TOB::bump_to_hori_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
         assert(mux_index < TOB::BUMP_TO_HORI_MUX_COUNT);
-        return this->_bump_to_hori_muxs[mux_index].registerr(mux_inner_index);
+        return this->_bump_to_hori_muxs.at(mux_index)->registerr(mux_inner_index);
     }
 
-    auto TOB::hori_to_vert_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister& {
+    auto TOB::hori_to_vert_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
         assert(mux_index < TOB::HORI_TO_VERI_MUX_COUNT);
-        return this->_hori_to_vert_muxs[mux_index].registerr(mux_inner_index);
+        return this->_hori_to_vert_muxs.at(mux_index)->registerr(mux_inner_index);
     }
 
-    auto TOB::vert_to_track_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister& {
+    auto TOB::vert_to_track_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
         assert(mux_index < TOB::VERI_TO_TRACK_MUX_COUNT);
-        return this->_vert_to_track_muxs[mux_index].registerr(mux_inner_index);
+        return this->_vert_to_track_muxs.at(mux_index)->registerr(mux_inner_index);
     }
 
-    auto TOB::bump_to_hori_register(std::usize bump_index) -> TOBMuxRegister& {
+    auto TOB::bump_to_hori_register(std::usize bump_index) -> TOBMuxRegister* {
         auto [mux_index, mux_inner_index] = TOB::bump_to_hori_mux_info(bump_index);
         return this->bump_to_hori_register_nth(mux_index, mux_inner_index);
     }
 
-    auto TOB::hori_to_vert_register(std::usize hori_index) -> TOBMuxRegister& {
+    auto TOB::hori_to_vert_register(std::usize hori_index) -> TOBMuxRegister* {
         auto [mux_index, mux_inner_index] = TOB::hori_to_vert_mux_info(hori_index);
         return this->hori_to_vert_register_nth(mux_index, mux_inner_index);
     }
 
-    auto TOB::vert_to_track_register(std::usize vert_index) -> TOBMuxRegister& {
+    auto TOB::vert_to_track_register(std::usize vert_index) -> TOBMuxRegister* {
         auto [mux_index, mux_inner_index] = TOB::vert_to_track_mux_info(vert_index);
         return this->vert_to_track_register_nth(mux_index, mux_inner_index);
     }
 
     auto TOB::randomly_map_remain_indexes() -> void {
         for (auto& mux : this->_bump_to_hori_muxs) {
-            mux.randomly_map_remain_indexes();
+            mux->randomly_map_remain_indexes();
         }
 
         for (auto& mux : this->_hori_to_vert_muxs) {
-            mux.randomly_map_remain_indexes();
+            mux->randomly_map_remain_indexes();
         }
 
         for (auto& mux : this->_vert_to_track_muxs) {
-            mux.randomly_map_remain_indexes();
+            mux->randomly_map_remain_indexes();
         }
     }
 
@@ -235,10 +258,10 @@ namespace kiwi::hardware {
         if (bump_index >= TOB::INDEX_SIZE) {
             return std::nullopt;
         }
-        return &this->_bumps.emplace(
+        return this->_bumps.emplace(
             bump_index, 
-            Bump{this->_coord_in_interposer, bump_index, this}
-        ).first->second;
+            std::make_unique<Bump>(BumpCoord{this->_coord_in_interposer, bump_index}, this)
+        ).first->second.get();
     }
 
     auto TOB::bump_to_hori_mux_info(std::usize bump_index) -> std::Tuple<std::usize, std::usize> {
@@ -297,8 +320,8 @@ namespace kiwi::hardware {
         auto group = index / 8;
         auto gourp_posi = index % 8;
 
-        auto& mux = this->_bump_to_hori_muxs[group];
-        return mux.index_map(gourp_posi);
+        auto& mux = this->_bump_to_hori_muxs.at(group);
+        return mux->index_map(gourp_posi);
     }
 
     auto TOB::vert_mux_reg_value(std::usize index) -> std::Option<std::usize> {
@@ -307,17 +330,17 @@ namespace kiwi::hardware {
         auto group = index / 8;
         auto gourp_posi = index % 8;
 
-        auto mux = _hori_to_vert_muxs[group];
-        return mux.index_map(gourp_posi);
+        auto& mux = _hori_to_vert_muxs.at(group);
+        return mux->index_map(gourp_posi);
     } 
 
     auto TOB::track_mux_reg_value(std::usize index) -> std::usize {
         if (index >= 64)
             debug::exception_fmt("track mux index should be in the range of [0, 64]");
 
-        auto& mux = this->_vert_to_track_muxs[index];
-        auto mux_register0 = mux.registerr(0).get();
-        auto mux_register1 = mux.registerr(1).get();
+        auto& mux = this->_vert_to_track_muxs.at(index);
+        auto mux_register0 = mux->registerr(0)->get();
+        auto mux_register1 = mux->registerr(1)->get();
         if (mux_register0 == std::nullopt || mux_register1 == std::nullopt)
             throw std::runtime_error(std::format("unmapped track mux at index = {}", index));
         
@@ -332,12 +355,20 @@ namespace kiwi::hardware {
     
     auto TOB::bump_dir_reg_value(std::usize index) -> TOBBumpDirection {
         TOB::check_index(index);
-        return this->_bump_dir_registers[index].get();
+        return this->_bump_dir_registers.at(index)->get();
     }
 
     auto TOB::track_dir_reg_value(std::usize index) -> TOBTrackDirection {
         TOB::check_index(index);
-        return this->_track_dir_registers[index].get();
+        return this->_track_dir_registers.at(index)->get();
+    }
+
+    auto TOB::collect_cobunit_usage() -> void {
+        for (auto& [index, bump]: this->_bumps){
+            for (auto cobunit: bump->accessable_cobunit()){
+                this->_cobunit_resources[cobunit] += 1;
+            }
+        }
     }
 
     auto TOB::check_index(std::usize index) -> void {
