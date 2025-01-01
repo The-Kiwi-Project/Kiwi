@@ -47,7 +47,7 @@ namespace kiwi::circuit {
         return 2;
     }
 
-    auto BumpToBumpNet::to_string() -> std::String {
+    auto BumpToBumpNet::to_string() const -> std::String {
         return std::format("Begin bump: '{}' to End bump '{}'", this->_begin_bump->coord(), this->_end_bump->coord());
     }
 

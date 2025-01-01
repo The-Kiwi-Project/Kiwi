@@ -260,7 +260,7 @@ namespace kiwi::serde {
 
     /////////////////////////////////////////////////////////////////
 
-    auto Json::to_string() -> std::String {
+    auto Json::to_string() const -> std::String {
         return this->do_to_string();
     }
 

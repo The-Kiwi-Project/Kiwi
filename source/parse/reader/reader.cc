@@ -64,8 +64,8 @@ namespace kiwi::parse {
         this->add_nets();
         for (auto& n : this->_basedie->nets()) {
             // debug::debug_fmt("{}", n->to_string());
-            debug::debug_fmt("{}", n->to_string());
-            // auto a = n->to_string();
+            // debug::debug_fmt("{}", n->to_string());
+            n->to_string();
             // n->priority(); 不可以
             // n->coords();
         }

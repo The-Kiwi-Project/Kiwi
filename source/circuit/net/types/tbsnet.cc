@@ -52,7 +52,7 @@ namespace kiwi::circuit {
         }
     }
 
-    auto TrackToBumpsNet::to_string() -> std::String {
+    auto TrackToBumpsNet::to_string() const -> std::String {
         auto ss = std::StringStream {};
         ss << std::format("Begin track '{}' to End bumps '[", this->_begin_track->coord());
         for (int i = 0; i < this->_end_bumps.size(); ++i) {

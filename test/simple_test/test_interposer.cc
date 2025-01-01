@@ -1,7 +1,9 @@
 #include <std/collection.hh>
+#include "debug/debug.hh"
+#include "hardware/cob/cobcoord.hh"
 #include "hardware/tob/tob.hh"
 #include "./utilty.hh"
-#include "hardware/node/track.hh"
+#include "hardware/track/track.hh"
 #include "hardware/interposer.hh"
 
 
@@ -15,6 +17,16 @@ static void test_adjacent_tracks() {
 
     auto track2 = i.get_track(TrackCoord{0, 3, TrackDirection::Vertical, 12}).value();
     ASSERT_EQ(i.adjacent_tracks(track2).size(), 3);
+}
+
+static void test_bump_adjacent_tracks() {
+    auto i = Interposer{};
+
+    auto bump = i.get_bump(COBCoord {1, 1}, 25).value();
+    auto tracks = i.available_tracks_bump_to_track(bump);
+    for (auto& [t, c]: tracks) {
+        kiwi::debug::debug_fmt("{}", t->coord());
+    }
 }
 
 static void test_adjacent_idle_tracks1() {
@@ -103,10 +115,5 @@ static void test_get_bump() {
 }
 
 void test_interposer_main() {
-
-    test_adjacent_tracks();
-    test_adjacent_idle_tracks1();
-    test_adjacent_idle_tracks2();    
-    test_available_tracks();
-    test_get_bump();
+    test_bump_adjacent_tracks();
 }
