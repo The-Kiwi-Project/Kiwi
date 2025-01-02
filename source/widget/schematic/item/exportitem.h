@@ -27,6 +27,9 @@ namespace kiwi::widget::schematic {
         auto boundingRect() const -> QRectF override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
         
+    public: 
+        auto pin() -> PinItem* { return this->_pinietm; }
+
     private:
         PinItem* _pinietm;
         qreal _width;

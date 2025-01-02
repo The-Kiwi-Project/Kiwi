@@ -1,7 +1,8 @@
 #include "./schematicscene.h"
 #include "./item/netitem.h"
 #include "./item/pinitem.h"
-#include "./item/exportitem.hh"
+#include "./item/exportitem.h"
+#include "./item/topdieinstitem.h"
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
@@ -34,6 +35,13 @@ namespace kiwi::widget {
         auto port = new schematic::ExPortItem {name, this};
         this->addItem(port);
         return port;
+    }
+
+    auto SchematicScene::addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem* {
+        auto t = new schematic::TopDieInstanceItem{inst, this};
+        this->_topdieinstMap.insert(inst, t);
+        this->addItem(t);
+        return t;
     }
 
     auto SchematicScene::connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem* {

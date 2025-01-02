@@ -1,4 +1,4 @@
-#include "./exportitem.hh"
+#include "./exportitem.h"
 #include "qnamespace.h"
 #include "qobject.h"
 #include "qpoint.h"

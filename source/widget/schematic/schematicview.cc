@@ -2,7 +2,11 @@
 
 #include "./item/pinitem.h"
 #include "./item/topdieinstitem.h"
-#include "./item/exportitem.hh"
+#include "./item/exportitem.h"
+#include "circuit/pin/pin.hh"
+#include "qchar.h"
+#include "qdebug.h"
+#include "std/utility.hh"
 #include "widget/schematic/schematicscene.h"
 #include <QPainter>
 #include <QBrush>
@@ -34,9 +38,8 @@ namespace kiwi::widget {
         this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
         for (auto& [name, topdie] : this->_basedie->topdie_insts()) {
-            auto t = new TopDieInstanceItem{topdie.get(), this->_scene};
+            auto t = this->_scene->addTopDieInst(topdie.get());
             this->_topdieInstItems.push_back(t);
-            this->_scene->addItem(t);
         }
 
         auto spacing = 20.0;
@@ -57,18 +60,56 @@ namespace kiwi::widget {
             this->_topdieInstItems[i]->setPos(x, y);
         }
 
-        auto chip1 = this->_topdieInstItems[0];
-        auto chip2 = this->_topdieInstItems[6];
+
+        for (auto& [sync, connections] : this->_basedie->connections()) {
+            for (const auto& connection : connections) {
+                qDebug() << ">>";
+                PinItem* beginPin = nullptr;
+                PinItem* endPin = nullptr;
+
+                std::match(connection.input,
+                    [&beginPin, this](const circuit::ConnectExPort& eport) {
+                        auto eportItem = this->_scene->addExPort(QString::fromStdString(eport.name));
+                        beginPin = eportItem->pin();
+                    },
+                    [&beginPin, this](const circuit::ConnectBump& bump) {
+                        auto top = this->_scene->topdieinstMap().value(bump.inst);
+                        beginPin = top->pinitems().value(QString::fromStdString(bump.name));
+                    }
+                );
+
+                qDebug() << "output";
+                std::match(connection.output,
+                    [&endPin, this](const circuit::ConnectExPort& eport) {
+                        auto eportItem = this->_scene->addExPort(QString::fromStdString(eport.name));
+                        endPin = eportItem->pin();
+                    },
+                    [&endPin, this](const circuit::ConnectBump& bump) {
+                        auto top = this->_scene->topdieinstMap().value(bump.inst);
+                        endPin = top->pinitems().value(QString::fromStdString(bump.name));
+                    }
+                );
+
+                qDebug() << (void*)beginPin << ' ' << (void*)endPin;
+
+                this->_scene->connectPins(beginPin, endPin);
+            }
+        }
+
+        // auto chip1 = this->_topdieInstItems[0];
+        // auto chip2 = this->_topdieInstItems[6];
     
-        auto p1 = chip1->pinitems().begin().value();
-        auto p2 = chip2->pinitems().begin().value();
+        // auto p1 = chip1->pinitems().begin().value();
+        // auto p2 = chip2->pinitems().begin().value();
 
-        // auto net = p1->connectTo(p2);
-        // this->_scene->addItem(net);
-        this->_scene->connectPins(p1, p2);
+        
 
-        auto p = this->_scene->addExPort("xinzhai_outout_0");
-        p->setPos(-100, 500);
+        // // auto net = p1->connectTo(p2);
+        // // this->_scene->addItem(net);
+        // this->_scene->connectPins(p1, p2);
+
+        // auto p = this->_scene->addExPort("xinzhai_outout_0");
+        // p->setPos(-100, 500);
     }
 
     SchematicView::~SchematicView() noexcept {}
