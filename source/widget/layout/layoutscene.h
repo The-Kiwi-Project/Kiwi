@@ -3,6 +3,7 @@
 #include "qchar.h"
 #include "qgraphicsscene.h"
 #include <QGraphicsScene>
+#include <QHash>
 
 namespace kiwi::hardware {
     class TOB;
