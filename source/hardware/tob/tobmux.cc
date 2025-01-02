@@ -33,9 +33,7 @@ namespace kiwi::hardware {
         _mux_size{mux_size},
         _registers(mux_size)
     {
-
     }
-
 
     auto TOBMux::available_connectors(std::usize input_index) -> std::Vector<TOBMuxConnector> {
         if (this->_registers.at(input_index).get().has_value()) {
@@ -54,7 +52,7 @@ namespace kiwi::hardware {
         return connectors;
     }
 
-    auto TOBMux::available_output_indexes() -> std::Vector<std::usize> {
+    auto TOBMux::available_output_indexes() const -> std::Vector<std::usize> {
         auto useds = std::Vector<bool>(this->_mux_size, false);
         for (const auto& reg : this->_registers) {
             auto res = reg.get();
@@ -91,6 +89,10 @@ namespace kiwi::hardware {
     }
 
     auto TOBMux::registerr(std::usize input_index) -> TOBMuxRegister* {
+        return &this->_registers.at(input_index);
+    }
+
+    auto TOBMux::registerr(std::usize input_index) const -> const TOBMuxRegister* {
         return &this->_registers.at(input_index);
     }
     

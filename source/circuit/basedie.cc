@@ -1,7 +1,8 @@
 #include "./basedie.hh"
 #include "circuit/topdie/topdie.hh"
-#include "circuit/topdie/topdieinst.hh"
+#include "circuit/topdieinst/topdieinst.hh"
 #include "std/string.hh"
+#include <memory>
 
 namespace kiwi::circuit {
     
@@ -17,6 +18,11 @@ namespace kiwi::circuit {
 
     auto BaseDie::add_net(std::Box<Net> net) -> void {
         this->_nets.emplace_back(std::move(net));
+    }
+
+    auto BaseDie::add_connections(int sync, Connection connection) -> void {
+        auto& cnt_vec = this->_connections.emplace(sync, std::Vector<Connection>{}).first->second;
+        cnt_vec.emplace_back(std::move(connection));
     }
 
     auto BaseDie::get_topdie(std::StringView name) -> std::Option<TopDie*> {

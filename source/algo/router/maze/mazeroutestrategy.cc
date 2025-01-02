@@ -1,5 +1,6 @@
 #include "./mazeroutestrategy.hh"
 #include "./path_length.hh"
+#include "hardware/track/track.hh"
 
 #include <circuit/net/nets.hh>
 #include <hardware/interposer.hh>
@@ -317,87 +318,78 @@ print_path(input_node, output_node, path);
     }
 
     auto MazeRouteStrategy::route_sync_net(hardware::Interposer* ptr_interposer, circuit::SyncNet* ptr_sync_net) const -> std::usize
-    {
-        try{
-            // three: [bump_to_bump, track_to_bump, bump_to_track]
+    try{
+        // three: [bump_to_bump, track_to_bump, bump_to_track]
 
-            debug::debug("Maze routing for synchronized nets");
-            
-            std::Array<std::Vector<routed_path>, 3> three_paths {};  
-            std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};    
-            std::Array<std::Vector<std::HashMap<hardware::Track*,\
-                                                hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};    // connections between track and TOB
-            std::HashSet<hardware::Track*> occupied_tracks_vec {}; 
-            std::usize max_length {0};
+        debug::debug("Maze routing for synchronized nets");
+        
+        std::Array<std::Vector<routed_path>, 3> three_paths {};  
+        std::Array<std::Vector<std::Option<hardware::Bump*>>, 3> three_end_bumps {};    
+        std::Array<std::Vector<std::HashMap<hardware::Track*,\
+                                            hardware::TOBConnector>>, 3> three_end_track_to_tob_maps {};    // connections between track and TOB
+        std::HashSet<hardware::Track*> occupied_tracks_vec {}; 
+        std::usize max_length {0};
 
-            // set all begin/end tracks as occupied tracks
-            // for these cannot be used by other nets
-            if (ptr_sync_net->bttnets().size() > 0){
-                for (auto& net: ptr_sync_net->bttnets()){
-                    occupied_tracks_vec.emplace(net->end_track());
-                }
-            }
-            if (ptr_sync_net->ttbnets().size() > 0){
-                for (auto& net: ptr_sync_net->ttbnets()){
-                    occupied_tracks_vec.emplace(net->begin_track());
-                }
-            }
+        // set all begin/end tracks as occupied tracks
+        // for these cannot be used by other nets
+        for (auto& net: ptr_sync_net->bttnets()){
+            occupied_tracks_vec.emplace(net->end_track());
+        }
 
-            // the first round of routing
-            if (ptr_sync_net->btbnets().size() > 0){
-                auto current_len = sync_preroute<circuit::BumpToBumpNet>(
-                    ptr_interposer, ptr_sync_net->btbnets(),
-                    three_paths.at(0), three_end_bumps.at(0), three_end_track_to_tob_maps.at(0),
-                    occupied_tracks_vec
-                );
-                max_length = current_len > max_length ? current_len : max_length;
-            }
-            if (ptr_sync_net->ttbnets().size() > 0){
-                auto current_len = sync_preroute<circuit::TrackToBumpNet>(
-                    ptr_interposer, ptr_sync_net->ttbnets(),
-                    three_paths.at(1), three_end_bumps.at(1), three_end_track_to_tob_maps.at(1),
-                    occupied_tracks_vec
-                );
-                max_length = current_len > max_length ? current_len : max_length;
-            }
-            if (ptr_sync_net->bttnets().size() > 0){
-                auto current_len = sync_preroute<circuit::BumpToTrackNet>(
-                    ptr_interposer, ptr_sync_net->bttnets(),
-                    three_paths.at(2), three_end_bumps.at(2), three_end_track_to_tob_maps.at(2),
-                    occupied_tracks_vec
-                );
-                max_length = current_len > max_length ? current_len : max_length;
-            }
+        for (auto& net: ptr_sync_net->ttbnets()){
+            occupied_tracks_vec.emplace(net->begin_track());
+        }
 
-            // reroute for adjusting length
-            while (true){
-                debug::debug("Route BumpToBump Synchronized Net");
+        // the first round of routing
+        if (ptr_sync_net->btbnets().size() > 0){
+            auto current_len = sync_preroute<circuit::BumpToBumpNet>(
+                ptr_interposer, ptr_sync_net->btbnets(),
+                three_paths.at(0), three_end_bumps.at(0), three_end_track_to_tob_maps.at(0),
+                occupied_tracks_vec
+            );
+            max_length = current_len > max_length ? current_len : max_length;
+        }
+        if (ptr_sync_net->ttbnets().size() > 0){
+            auto current_len = sync_preroute<circuit::TrackToBumpNet>(
+                ptr_interposer, ptr_sync_net->ttbnets(),
+                three_paths.at(1), three_end_bumps.at(1), three_end_track_to_tob_maps.at(1),
+                occupied_tracks_vec
+            );
+            max_length = current_len > max_length ? current_len : max_length;
+        }
+        if (ptr_sync_net->bttnets().size() > 0){
+            auto current_len = sync_preroute<circuit::BumpToTrackNet>(
+                ptr_interposer, ptr_sync_net->bttnets(),
+                three_paths.at(2), three_end_bumps.at(2), three_end_track_to_tob_maps.at(2),
+                occupied_tracks_vec
+            );
+            max_length = current_len > max_length ? current_len : max_length;
+        }
+
+        // reroute for adjusting length
+        while (true){
+            debug::debug("Route BumpToBump Synchronized Net");
+            auto [success, ml] = sync_reroute(
+                ptr_interposer, three_paths.at(0), three_end_bumps.at(0), three_end_track_to_tob_maps.at(0),
+                2, max_length
+            );
+            if (success){
+                debug::debug("Route TrackToBump Synchronized Net");
                 auto [success, ml] = sync_reroute(
-                    ptr_interposer, three_paths.at(0), three_end_bumps.at(0), three_end_track_to_tob_maps.at(0),
-                    2, max_length
+                    ptr_interposer, three_paths.at(1), three_end_bumps.at(1), three_end_track_to_tob_maps.at(1),
+                    1, max_length
                 );
                 if (success){
-                    debug::debug("Route TrackToBump Synchronized Net");
+                    debug::debug("Route BumpToTrack Synchronized Net");
                     auto [success, ml] = sync_reroute(
-                        ptr_interposer, three_paths.at(1), three_end_bumps.at(1), three_end_track_to_tob_maps.at(1),
+                        ptr_interposer, three_paths.at(2), three_end_bumps.at(2), three_end_track_to_tob_maps.at(2),
                         1, max_length
                     );
+                    max_length = ml;
                     if (success){
-                        debug::debug("Route BumpToTrack Synchronized Net");
-                        auto [success, ml] = sync_reroute(
-                            ptr_interposer, three_paths.at(2), three_end_bumps.at(2), three_end_track_to_tob_maps.at(2),
-                            1, max_length
-                        );
-                        max_length = ml;
-                        if (success){
-                            break;      // break only when all three nets are successfully routed
-                        }
-                        else{
-                            continue;
-                        }
+                        break;      // break only when all three nets are successfully routed
                     }
                     else{
-                        max_length = ml;
                         continue;
                     }
                 }
@@ -406,18 +398,22 @@ print_path(input_node, output_node, path);
                     continue;
                 }
             }
+            else{
+                max_length = ml;
+                continue;
+            }
+        }
 //!
 print_sync_path(ptr_sync_net);
 //!
         std::usize total_nets {ptr_sync_net->btbnets().size() + ptr_sync_net->bttnets().size() + ptr_sync_net->ttbnets().size()};
         return total_nets * max_length; 
-        }
-        catch (const RetryExpt& e){
-            throw e;
-        }
-        catch (const std::exception& e){
-            throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
-        }
+    }
+    catch (const RetryExpt& e){
+        throw e;
+    }
+    catch (const std::exception& e){
+        throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
     }
 
     auto MazeRouteStrategy::check_found(
@@ -622,25 +618,17 @@ print_sync_path(ptr_sync_net);
             // set end track of Net as unoccupied
             if constexpr(std::is_same<Net, circuit::BumpToTrackNet>::value){
                 auto track = net->end_track();
-                for (auto it = occupied_tracks_vec.begin(); it != occupied_tracks_vec.end(); ){
-                    if ((*it)->coord() == track->coord()){
-                        it = occupied_tracks_vec.erase(it);
-                    }
-                    else{
-                        ++it;
-                    }
-                }
+                auto track_coord = track->coord();
+                std::erase_if(occupied_tracks_vec, [track_coord](const auto& track) {
+                    return track->coord() == track_coord;
+                });
             }
             if constexpr(std::is_same<Net, circuit::TrackToBumpNet>::value){
                 auto track = net->begin_track();
-                for (auto it = occupied_tracks_vec.begin(); it != occupied_tracks_vec.end(); ){
-                    if ((*it)->coord() == track->coord()){
-                        it = occupied_tracks_vec.erase(it);
-                    }
-                    else{
-                        ++it;
-                    }
-                }
+                auto track_coord = track->coord();
+                std::erase_if(occupied_tracks_vec, [track_coord](const auto& track) {
+                    return track->coord() == track_coord;
+                });
             }
 
             // route and connect
@@ -763,11 +751,11 @@ print_sync_path(ptr_sync_net);
                 auto begin_bump {net->begin_bump()};
                 auto end_bump {net->end_bump()};
                 auto path {begin_bump->connected_track()->track_path()};
-                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
+                debug::debug_fmt("Begin_bump: {}", begin_bump->coord());
                 for (auto& t: path){
                     debug::debug_fmt("{}", t->coord());
                 }
-                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
+                debug::debug_fmt("End_bump: {}", end_bump->coord());
             }
             debug::debug("\n");
         }

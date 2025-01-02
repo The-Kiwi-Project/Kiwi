@@ -23,7 +23,7 @@ static auto print_config(hardware::Interposer* i, circuit::BaseDie* b) -> void {
     for (auto& [name, topdie_inst] : b->topdie_insts()) {
         console::println_fmt("\tTopdie Inst {}: ", index++);
         console::println_fmt("\t\tname: {}", name);
-        console::println_fmt("\t\tcoord: {}", topdie_inst.tob()->coord());
+        console::println_fmt("\t\tcoord: {}", topdie_inst->tob()->coord());
     }
     console::println("");
 

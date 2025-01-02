@@ -32,7 +32,7 @@ namespace kiwi::hardware {
 
     public:
         COBUnit() = default;
-
+        
     public:
         auto adjacent_connectors(COBDirection from_dir, std::usize from_index) -> std::Vector<COBUnitConnector>;
         
@@ -46,6 +46,9 @@ namespace kiwi::hardware {
     public:
         auto sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> COBSwRegister*;
         auto sel_register(COBDirection dir, std::usize index) -> COBSelRegister*;
+
+        auto sw_register(COBDirection from_dir, std::usize from_index, COBDirection to_dir) const -> const COBSwRegister*;
+        auto sel_register(COBDirection dir, std::usize index) const -> const COBSelRegister*;
 
     public:
         static auto index_map(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> std::usize;

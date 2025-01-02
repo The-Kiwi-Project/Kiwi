@@ -38,17 +38,12 @@ namespace kiwi::algo {
         std::usize total_length {0};
         for (auto& net : nets) {
             try {
-                total_length += net->route(interposer, strateg);
-            } 
-            catch (const RetryExpt& err) {
-                // TODO: 改一下异常处理
-                
-            }
-            catch (const FinalError& err){
-                debug::exception_in("route_nets()", err.what());
-            }
-            catch (const std::exception& err){
-                throw std::runtime_error("route_nets() >> " + std::String(err.what()));
+                auto length = net->route(interposer, strateg);
+                total_length += length;
+                debug::debug_fmt("This length: {}", length);
+            } catch (const RouteExpt& err) {
+                // TODO How to report error
+                debug::exception_fmt("Route {} failed", static_cast<void*>(net.get()));
             }
         }
         return total_length;

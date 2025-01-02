@@ -38,7 +38,7 @@ namespace kiwi::circuit {
         virtual auto coords() const -> std::Vector<hardware::Coord> = 0;
         virtual auto check_accessable_cobunit() -> void = 0;
         virtual auto port_number() const -> std::usize = 0;
-        virtual auto to_string() -> std::String = 0;
+        virtual auto to_string() const -> std::String = 0;
 
         virtual auto priority() const -> Priority{
             return this->_priority;

@@ -3,7 +3,6 @@
 #include "../cob/cob.hh"
 #include "../track/track.hh"
 #include <cassert>
-#include <numeric>
 
 namespace kiwi::hardware {
 
