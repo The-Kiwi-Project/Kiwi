@@ -6,7 +6,7 @@
 
 #include <circuit/net/net.hh>
 #include <circuit/topdie/topdie.hh>
-#include <circuit/topdie/topdieinst.hh>
+#include <circuit/topdieinst/topdieinst.hh>
 
 #include <utility/random.hh>
 

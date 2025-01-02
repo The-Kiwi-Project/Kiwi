@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "../net.hh"
-#include "../../topdie/topdieinst.hh"
+#include "../../topdieinst/topdieinst.hh"
 #include <hardware/tob/tob.hh>
 #include <hardware/cob/cob.hh>
 #include <std/integer.hh>

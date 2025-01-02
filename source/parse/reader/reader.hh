@@ -24,15 +24,15 @@
 
 */
 
+#include "./config/config.hh"
+#include <circuit/pin/pin.hh>
+#include <circuit/topdieinst/topdieinst.hh>
+#include <hardware/track/trackcoord.hh>
+
 #include <std/memory.hh>
 #include <std/utility.hh>
 #include <std/collection.hh>
 #include <std/string.hh>
-
-#include "./config/config.hh"
-#include "circuit/topdie/topdieinst.hh"
-#include "hardware/track/trackcoord.hh"
-#include "parse/reader/config/connection.hh"
 
 namespace kiwi::hardware {
     class Interposer;
@@ -70,19 +70,21 @@ namespace kiwi::parse {
     private:
         auto add_topdies_to_basedie() -> void;
         auto add_topdieinst_to_basedie() -> void;
+        auto add_connections() -> void;
         auto add_nets() -> void;
 
     private:
-        auto build_no_sync_nets(std::Span<const ConnectionConfig> connections) -> void;
-        auto build_sync_net(std::Span<const ConnectionConfig> connections) -> void;
+        auto build_no_sync_nets(std::Span<const circuit::Connection> connections) -> void;
+        auto build_sync_net(std::Span<const circuit::Connection> connections) -> void;
         auto build_fixed_nets() -> void;
      
         using Node = std::Variant<hardware::Track*, hardware::Bump*>;
-        auto parse_connection_pin(std::StringView name) -> Node;
-        
-        static auto is_pose_pin(std::StringView name) -> bool;
-        static auto is_nege_pin(std::StringView name) -> bool;
-        static auto is_fixed_pin(std::StringView name) -> bool;
+        auto parse_connection_node(std::StringView name) -> circuit::Pin;
+        auto connection_to_node(const circuit::Pin& connection) -> Node;
+
+        static auto is_pose_pin(const circuit::Pin& pin) -> bool;
+        static auto is_nege_pin(const circuit::Pin& pin) -> bool;
+        static auto is_fixed_pin(const circuit::Pin& pin) -> bool;
 
         static std::Vector<hardware::TrackCoord> _pose_tracks;
         static std::Vector<hardware::TrackCoord> _nege_tracks;
