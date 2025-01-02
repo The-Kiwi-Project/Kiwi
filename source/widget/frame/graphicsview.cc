@@ -1,5 +1,6 @@
 #include "./graphicsview.h"
 #include "qnamespace.h"
+#include <QScrollBar>
 
 namespace kiwi::widget {
 
@@ -19,6 +20,13 @@ namespace kiwi::widget {
                 scale(scaleFactor, scaleFactor);  // 放大
             } else {
                 scale(1.0 / scaleFactor, 1.0 / scaleFactor);  // 缩小
+            }
+        } 
+        else {
+            auto vScrollBar = this->verticalScrollBar();
+            if (vScrollBar) {
+                int step = event->angleDelta().y() / 8 / 15; // 每次滚动的步进
+                vScrollBar->setValue(vScrollBar->value() - step * vScrollBar->singleStep());
             }
         }
     }
