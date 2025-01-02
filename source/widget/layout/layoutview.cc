@@ -40,7 +40,7 @@ namespace kiwi::widget {
         circuit::BaseDie* basedie,
         QWidget *parent
     ) :
-        QGraphicsView{parent},
+        GraphicsView{parent},
         _interposer{interposer},
         _basedie{basedie}
     {
@@ -130,15 +130,6 @@ namespace kiwi::widget {
     }
 
     LayoutView::~LayoutView() noexcept {}
-
-    void LayoutView::wheelEvent(QWheelEvent *event) {
-        const double scaleFactor = 1.15;
-        if (event->angleDelta().y() > 0) {
-            scale(scaleFactor, scaleFactor); // 放大
-        } else {
-            scale(1.0 / scaleFactor, 1.0 / scaleFactor); // 缩小
-        }
-    }
 
     auto LayoutView::tobPosition(const hardware::TOBCoord& coord) -> QPointF {
         return QPointF{coord.col * (TOBItem::WIDTH + TOB_INTERVAL), -coord.row * (TOBItem::HEIGHT + TOB_INTERVAL)};

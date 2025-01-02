@@ -4,8 +4,6 @@
 #include "./item/topdieinstitem.h"
 #include "./item/exportitem.h"
 #include "circuit/pin/pin.hh"
-#include "qchar.h"
-#include "qdebug.h"
 #include "std/utility.hh"
 #include "widget/schematic/schematicscene.h"
 #include <QPainter>
@@ -27,7 +25,7 @@ namespace kiwi::widget {
         circuit::BaseDie* basedie,
         QWidget *parent
     ) :
-        QGraphicsView{parent},
+        GraphicsView{parent},
         _interposer{interposer},
         _basedie{basedie}
     {
@@ -63,7 +61,6 @@ namespace kiwi::widget {
 
         for (auto& [sync, connections] : this->_basedie->connections()) {
             for (const auto& connection : connections) {
-                qDebug() << ">>";
                 PinItem* beginPin = nullptr;
                 PinItem* endPin = nullptr;
 
@@ -78,7 +75,6 @@ namespace kiwi::widget {
                     }
                 );
 
-                qDebug() << "output";
                 std::match(connection.output,
                     [&endPin, this](const circuit::ConnectExPort& eport) {
                         auto eportItem = this->_scene->addExPort(QString::fromStdString(eport.name));
@@ -90,37 +86,11 @@ namespace kiwi::widget {
                     }
                 );
 
-                qDebug() << (void*)beginPin << ' ' << (void*)endPin;
-
                 this->_scene->connectPins(beginPin, endPin);
             }
         }
-
-        // auto chip1 = this->_topdieInstItems[0];
-        // auto chip2 = this->_topdieInstItems[6];
-    
-        // auto p1 = chip1->pinitems().begin().value();
-        // auto p2 = chip2->pinitems().begin().value();
-
-        
-
-        // // auto net = p1->connectTo(p2);
-        // // this->_scene->addItem(net);
-        // this->_scene->connectPins(p1, p2);
-
-        // auto p = this->_scene->addExPort("xinzhai_outout_0");
-        // p->setPos(-100, 500);
     }
 
     SchematicView::~SchematicView() noexcept {}
-
-    void SchematicView::wheelEvent(QWheelEvent *event) {
-        const double scaleFactor = 1.15;
-        if (event->angleDelta().y() > 0) {
-            scale(scaleFactor, scaleFactor); // 放大
-        } else {
-            scale(1.0 / scaleFactor, 1.0 / scaleFactor); // 缩小
-        }
-    }
 
 }

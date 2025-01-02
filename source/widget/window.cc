@@ -105,8 +105,8 @@ namespace kiwi::widget {
         this->resize(1000, 800);
         auto layout = new QVBoxLayout{this};
         layout->setContentsMargins(10, 10, 10, 10);
-        // this->_widget = new LayoutView {i, b, this};
-        this->_widget = new SchematicView {i, b, this};
+        this->_widget = new LayoutView {i, b, this};
+        // this->_widget = new SchematicView {i, b, this};
         layout->addWidget(this->_widget);
         this->setLayout(layout);
     }

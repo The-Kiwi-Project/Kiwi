@@ -1,5 +1,6 @@
 #pragma once
 
+#include <widget/frame/graphicsview.h>
 #include <QWidget>
 #include <QGraphicsView>
 #include <std/collection.hh>
@@ -18,7 +19,7 @@ namespace kiwi::circuit {
 
 namespace kiwi::widget {
    
-    class View2DView : public QGraphicsView {
+    class View2DView : public GraphicsView {
         
         enum {
             COB_INTERVAL = 50,
@@ -31,9 +32,6 @@ namespace kiwi::widget {
             QWidget *parent = nullptr);
 
         ~View2DView() noexcept;
-
-    protected:
-        virtual void wheelEvent(QWheelEvent *event) override;
 
     protected:
         hardware::Interposer* _interposer {nullptr};

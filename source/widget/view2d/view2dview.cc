@@ -23,7 +23,7 @@ namespace kiwi::widget {
         circuit::BaseDie* basedie,
         QWidget *parent
     ) :
-        QGraphicsView{parent},
+        GraphicsView{parent},
         _interposer{interposer},
         _basedie{basedie}
     {
@@ -54,14 +54,5 @@ namespace kiwi::widget {
     }
 
     View2DView::~View2DView() noexcept {}
-
-    void View2DView::wheelEvent(QWheelEvent *event) {
-        const double scaleFactor = 1.15;
-        if (event->angleDelta().y() > 0) {
-            scale(scaleFactor, scaleFactor); // 放大
-        } else {
-            scale(1.0 / scaleFactor, 1.0 / scaleFactor); // 缩小
-        }
-    }
 
 }
