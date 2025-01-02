@@ -348,7 +348,6 @@ print_path(input_node, output_node, path);
                 occupied_tracks_vec
             );
             max_length = current_len > max_length ? current_len : max_length;
-            debug::debug_fmt("Max length: {}", max_length);
         }
         if (ptr_sync_net->ttbnets().size() > 0){
             auto current_len = sync_preroute<circuit::TrackToBumpNet>(
@@ -357,7 +356,6 @@ print_path(input_node, output_node, path);
                 occupied_tracks_vec
             );
             max_length = current_len > max_length ? current_len : max_length;
-            debug::debug_fmt("Max length: {}", max_length);
         }
         if (ptr_sync_net->bttnets().size() > 0){
             auto current_len = sync_preroute<circuit::BumpToTrackNet>(
@@ -366,7 +364,6 @@ print_path(input_node, output_node, path);
                 occupied_tracks_vec
             );
             max_length = current_len > max_length ? current_len : max_length;
-            debug::debug_fmt("Max length: {}", max_length);
         }
 
         // reroute for adjusting length
@@ -754,11 +751,11 @@ print_sync_path(ptr_sync_net);
                 auto begin_bump {net->begin_bump()};
                 auto end_bump {net->end_bump()};
                 auto path {begin_bump->connected_track()->track_path()};
-                debug::debug_fmt("Begin_bump: ({}, index={})", begin_bump->coord(), begin_bump->index());
+                debug::debug_fmt("Begin_bump: {}", begin_bump->coord());
                 for (auto& t: path){
                     debug::debug_fmt("{}", t->coord());
                 }
-                debug::debug_fmt("End_bump: ({}, index={})", end_bump->coord(), end_bump->index());
+                debug::debug_fmt("End_bump: {}", end_bump->coord());
             }
             debug::debug("\n");
         }

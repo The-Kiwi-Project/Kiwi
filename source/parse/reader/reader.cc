@@ -44,6 +44,8 @@
 #include <circuit/net/nets.hh>
 
 #include <debug/debug.hh>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility/string.hh>
 
 namespace kiwi::parse {
@@ -65,7 +67,7 @@ namespace kiwi::parse {
         for (auto& n : this->_basedie->nets()) {
             // debug::debug_fmt("{}", n->to_string());
             // debug::debug_fmt("{}", n->to_string());
-            n->to_string();
+            // n->to_string();
             // n->priority(); 不可以
             // n->coords();
         }

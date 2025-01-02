@@ -22,7 +22,7 @@ static void test_adjacent_tracks() {
 static void test_bump_adjacent_tracks() {
     auto i = Interposer{};
 
-    auto bump = i.get_bump(COBCoord {1, 1}, 25).value();
+    auto bump = i.get_bump(COBCoord {1, 3}, 33).value();
     auto tracks = i.available_tracks_bump_to_track(bump);
     for (auto& [t, c]: tracks) {
         kiwi::debug::debug_fmt("{}", t->coord());
