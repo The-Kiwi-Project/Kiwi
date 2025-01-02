@@ -9,6 +9,7 @@
 #include "./dialog/tobinfo.h"
 #include "./dialog/cobinfo.h"
 #include "./dialog/topdieinstinfo.h"
+#include "qchar.h"
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 #include <debug/debug.hh>
@@ -439,8 +440,7 @@ namespace kiwi::widget {
     }
 
     auto View3DWidget::addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void {
-        qDebug() << "Add track from " << begin << " to " << end;
-        
+        // qDebug() << "Add track from " << begin << " to " << end;
         QMatrix4x4 model;
 
         // move to the mid of two position!
