@@ -160,23 +160,31 @@ namespace kiwi::hardware {
     }
 
     auto COB::sw_register(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) -> COBSwRegister* {
+        return const_cast<COBSwRegister*>(const_cast<const COB*>(this)->sw_register(from_dir, from_cob_index, to_dir));
+    }
+
+    auto COB::sw_register(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) const -> const COBSwRegister* {
         auto [group, group_index] = cob_index_to_cobunit_info(from_dir, from_cob_index);
         auto& cob_unit = this->_cobunits.at(group);
         return cob_unit->sw_register(from_dir, group_index, to_dir);
     }
 
-    auto COB::get_sw_resgiter_value(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) -> COBSwState {
+    auto COB::get_sw_resgiter_value(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) const -> COBSwState {
         auto cob_swregister = sw_register(from_dir, from_cob_index, to_dir);
         return cob_swregister->get();
     }
 
     auto COB::sel_register(COBDirection dir, std::usize cob_index) -> COBSelRegister* {
+        return const_cast<COBSelRegister*>(const_cast<const COB*>(this)->sel_register(dir, cob_index));
+    }
+
+    auto COB::sel_register(COBDirection dir, std::usize cob_index) const -> const COBSelRegister* {
         auto [group, group_index] = cob_index_to_cobunit_info(dir, cob_index);
         auto& cob_unit = this->_cobunits.at(group);
         return cob_unit->sel_register(dir, group_index);
     }
 
-    auto COB::get_sel_resgiter_value(COBDirection dir, std::usize cob_index) -> COBSignalDirection {
+    auto COB::get_sel_resgiter_value(COBDirection dir, std::usize cob_index) const -> COBSignalDirection {
         auto cob_selregister = sel_register(dir, cob_index);
         return cob_selregister->get();
     }

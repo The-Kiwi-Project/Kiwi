@@ -45,7 +45,11 @@ namespace kiwi::circuit {
         virtual auto update_priority(float bias) -> void override;
         virtual auto coords() const -> std::Vector<hardware::Coord> override;
         virtual auto check_accessable_cobunit() -> void override;
+<<<<<<< HEAD
         virtual auto to_string() -> std::String override;
+=======
+        virtual auto to_string() const -> std::String override;
+>>>>>>> 0944b427646df683651fc02fe434c7926bef20fa
         virtual auto port_number() const -> std::usize override;
     
     public:

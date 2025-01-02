@@ -51,7 +51,8 @@ namespace kiwi::circuit {
         }
     }
 
-    auto TracksToBumpsNet::to_string() -> std::String {
+    
+    auto TracksToBumpsNet::to_string() const -> std::String {
         auto ss = std::StringStream {};
         ss << "Begin tracks '[";
         for (int i = 0; i < this->_begin_tracks.size(); ++i) {

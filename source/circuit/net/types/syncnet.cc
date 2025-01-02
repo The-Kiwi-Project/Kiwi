@@ -87,7 +87,8 @@ namespace kiwi::circuit
         }
     }
 
-    auto SyncNet::to_string() -> std::String {
+    
+    auto SyncNet::to_string() const -> std::String {
         auto ss = std::StringStream {};
         ss << "Syncnet net:\n";
         for (auto& net: _btbnets) {

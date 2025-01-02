@@ -52,7 +52,7 @@ namespace kiwi::circuit {
         }
     }
 
-    auto BumpToBumpsNet::to_string() -> std::String {
+    auto BumpToBumpsNet::to_string() const -> std::String {
         auto ss = std::StringStream {};
         ss << std::format("Begin bump '{}' to End bumps '[", this->_begin_bump->coord());
         for (int i = 0; i < this->_end_bumps.size(); ++i) {
@@ -68,5 +68,5 @@ namespace kiwi::circuit {
     auto BumpToBumpsNet::port_number() const -> std::usize {
         return (this->_end_bumps.size() + 1);
     }
-    
+        
 }

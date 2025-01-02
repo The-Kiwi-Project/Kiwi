@@ -25,26 +25,26 @@
 #include "./reader.hh"
 
 #include "./config/config.hh"
-#include "circuit/net/types/bbnet.hh"
-#include "circuit/net/types/btnet.hh"
-#include "circuit/net/types/tbnet.hh"
-#include "hardware/bump/bump.hh"
-#include "hardware/track/track.hh"
-#include "std/collection.hh"
-#include "std/string.hh"
-#include "std/utility.hh"
-#include <std/range.hh>
-#include <std/memory.hh>
-
+#include <circuit/pin/pin.hh>
+#include <circuit/net/types/bbnet.hh>
+#include <circuit/net/types/btnet.hh>
+#include <circuit/net/types/tbnet.hh>
+#include <hardware/bump/bump.hh>
+#include <hardware/track/track.hh>
 #include <hardware/interposer.hh>
 #include <hardware/tob/tob.hh>
 #include <circuit/basedie.hh>
 #include <circuit/topdie/topdie.hh>
-#include <circuit/topdie/topdieinst.hh>
+#include <circuit/topdieinst/topdieinst.hh>
 #include <circuit/net/nets.hh>
 
 #include <debug/debug.hh>
 #include <utility/string.hh>
+#include <std/collection.hh>
+#include <std/string.hh>
+#include <std/utility.hh>
+#include <std/range.hh>
+#include <std/memory.hh>
 
 namespace kiwi::parse {
 
@@ -61,6 +61,7 @@ namespace kiwi::parse {
     try {
         this->add_topdies_to_basedie();
         this->add_topdieinst_to_basedie();
+        this->add_connections();
         this->add_nets();
         for (auto& n : this->_basedie->nets()) {
             // debug::debug_fmt("{}", n->to_string());
@@ -86,6 +87,24 @@ namespace kiwi::parse {
         }
     }
     THROW_UP_WITH("Add topdies to baesedie")
+
+    auto Reader::add_connections() -> void
+    try {
+        for (auto& [sync, connections] : this->_config.connections) {
+            for (const auto& connection : connections) {
+                auto input = this->parse_connection_node(connection.input);
+                auto output = this->parse_connection_node(connection.output);
+                this->_basedie->add_connections(
+                    sync,
+                    circuit::Connection{
+                        .input = std::move(input),
+                        .output = std::move(output)
+                    }
+                );
+            }
+        }
+    }
+    THROW_UP_WITH("Add connections")
 
     auto Reader::add_topdieinst_to_basedie() -> void 
     try {
@@ -114,10 +133,10 @@ namespace kiwi::parse {
     }
     THROW_UP_WITH("Add topdies inst to baesedie")
 
-    auto Reader::add_nets() -> void 
+    auto Reader::add_nets() -> void
     try {
         build_01_ports(this->_config.ports_01);
-        for (auto& [sync, connections] : this->_config.connections) {
+        for (auto& [sync, connections] : this->_basedie->connections()) {
             if (sync == -1) {
                 this->build_no_sync_nets(connections);
             } else {
@@ -129,7 +148,7 @@ namespace kiwi::parse {
     }
     THROW_UP_WITH("Add net")
 
-    auto Reader::build_no_sync_nets(std::Span<const ConnectionConfig> connections) -> void {
+    auto Reader::build_no_sync_nets(std::Span<const circuit::Connection> connections) -> void {
         // How to deal one to mul net?
         // Build a map: start to ends
         auto track_to_bumps = std::HashMap<hardware::Track*, std::Vector<hardware::Bump*>>{};
@@ -145,7 +164,7 @@ namespace kiwi::parse {
                 debug::exception("Fixed pin as target??");
             }
 
-            auto end_node = this->parse_connection_pin(output);
+            auto end_node = this->connection_to_node(output);
 
             if (Reader::is_pose_pin(input)) {
                 // Input is 'vdd'
@@ -171,7 +190,7 @@ namespace kiwi::parse {
             } 
             else {
                 // Four case
-                auto begin_node = this->parse_connection_pin(input);
+                auto begin_node = this->connection_to_node(input);
 
                 std::match(end_node, 
                     [&](hardware::Track* end_track) {
@@ -269,7 +288,7 @@ namespace kiwi::parse {
         }
     }
 
-    auto Reader::build_sync_net(std::Span<const ConnectionConfig> connections) -> void {
+    auto Reader::build_sync_net(std::Span<const circuit::Connection> connections) -> void {
         auto btb_sync_nets = std::Vector<std::Box<circuit::BumpToBumpNet>>{};
         auto btt_sync_nets = std::Vector<std::Box<circuit::BumpToTrackNet>>{};
         auto ttb_sync_nets = std::Vector<std::Box<circuit::TrackToBumpNet>>{};
@@ -282,8 +301,8 @@ namespace kiwi::parse {
                 debug::exception("Fixed pin can't as sync");
             }
 
-            auto begin_node  = this->parse_connection_pin(input);
-            auto end_node = this->parse_connection_pin(output);
+            auto begin_node  = this->connection_to_node(input);
+            auto end_node = this->connection_to_node(output);
         
             // Each connec in sync net should has the same TOB size. 
             // We do not check this condition.... :)
@@ -374,23 +393,12 @@ namespace kiwi::parse {
         this->_nege_tracks = parse_01(ports_config.at("nege"));
     }
 
-    auto Reader::parse_connection_pin(std::StringView name) -> Reader::Node {
+    auto Reader::parse_connection_node(std::StringView name) -> circuit::Pin {
         if (std::StringView::npos == name.find('.')) {
             /// 
             /// External port: Search external ports in config, and get track object in interposer
             ///
-            auto res = this->_config.external_ports.find(std::String{name});
-            if (res == this->_config.external_ports.end()) {
-                debug::exception_fmt("No exit expoert '{}'", name);
-            }
-
-            auto& external_port = res->second;
-            auto track = this->_interposer->get_track(external_port.coord);
-            if (!track.has_value()) {
-                debug::exception_fmt("External port '{}' has an invalid track coord", name, external_port.coord);
-            } else {
-                return *track;
-            }
+            return circuit::connect_export(std::String{name});
         } 
         else {
             /// 
@@ -416,15 +424,7 @@ namespace kiwi::parse {
                 debug::exception_fmt("No exit pin name '{}' in topdie '{}'", pin_name, topdie->name());
             }
 
-            auto coord = (*inst)->tob()->coord();
-            auto index = res->second;
-
-            auto bump = this->_interposer->get_bump(coord, index);
-            if (!bump.has_value()) {
-                debug::exception_fmt("Pin '{}' has an invalid bump coord: TOBCoord '{}' with '{}'", name, coord, index);
-            }
-            this->_bump_to_topdie_inst.emplace(*bump, *inst);
-            return *bump;
+            return circuit::connect_bump(*inst, std::String{pin_name});
         }
     }
 
@@ -436,16 +436,70 @@ namespace kiwi::parse {
         return std::move(tracks);
     }
 
-    auto Reader::is_pose_pin(std::StringView name) -> bool {
-        return name.ends_with("pose");
+    auto Reader::connection_to_node(const circuit::Pin& connection) -> Node {
+        return std::match(connection,
+            [this](const circuit::ConnectExPort& eport) {
+                auto res = this->_config.external_ports.find(eport.name);
+                if (res == this->_config.external_ports.end()) {
+                    debug::exception_fmt("No exit expoert '{}'", eport.name);
+                }
+
+                auto& external_port = res->second;
+                auto track = this->_interposer->get_track(external_port.coord);
+                if (!track.has_value()) {
+                    debug::exception_fmt("External port '{}' has an invalid track coord", eport.name, external_port.coord);
+                } else {
+                    return Node{*track};
+                }
+            },
+            [this](const circuit::ConnectBump& connect_bump) {
+                /// 
+                /// Topdie inst: Search inst by name, and get bump index, and get bump object in interposer
+                ///
+                // Is pin exit?
+                auto topdie = connect_bump.inst->topdie();
+                auto res = topdie->pins_map().find(connect_bump.name);
+                if (res == topdie->pins_map().end()) {
+                    debug::exception_fmt("No exit pin name '{}' in topdie '{}'", connect_bump.name, topdie->name());
+                }
+
+                auto coord = connect_bump.inst->tob()->coord();
+                auto index = res->second;
+
+                auto bump = this->_interposer->get_bump(coord, index);
+                if (!bump.has_value()) {
+                    debug::exception_fmt("Pin '{}' has an invalid bump coord: TOBCoord '{}' with '{}'", connect_bump.name, coord, index);
+                }
+                this->_bump_to_topdie_inst.emplace(*bump, connect_bump.inst);
+                return Node{*bump};
+            }
+        );
     }
 
-    auto Reader::is_nege_pin(std::StringView name) -> bool {
-        return name.ends_with("nege");
+    auto Reader::is_pose_pin(const circuit::Pin& pin) -> bool {
+        return std::match(pin,
+            [](const circuit::ConnectExPort& eport) {
+                return eport.name.ends_with("pose");
+            },
+            [](const circuit::ConnectBump&) {
+                return false;
+            }
+        );
     }
 
-    auto Reader::is_fixed_pin(std::StringView name) -> bool {
-        return Reader::is_pose_pin(name) || Reader::is_nege_pin(name);
+    auto Reader::is_nege_pin(const circuit::Pin& pin) -> bool {
+        return std::match(pin,
+            [](const circuit::ConnectExPort& eport) {
+                return eport.name.ends_with("nege");
+            },
+            [](const circuit::ConnectBump&) {
+                return false;
+            }
+        );
+    }
+
+    auto Reader::is_fixed_pin(const circuit::Pin& pin) -> bool {
+        return Reader::is_pose_pin(pin) || Reader::is_nege_pin(pin);
     }
 
 }

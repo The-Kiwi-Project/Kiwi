@@ -35,24 +35,36 @@ namespace kiwi::debug
 
     template <typename... Args>
     auto debug_fmt(std::FormatString<Args...> fmt, Args &&... args) -> void {
+        if (!is_debug_level_enough(DebugLevel::Debug)) {
+            return;
+        }
         auto str = std::format(std::move(fmt), std::forward<Args>(args)...);
         debug(str);
     }
 
     template <typename... Args>
     auto info_fmt(std::FormatString<Args...> fmt, Args &&... args) -> void {
+        if (!is_debug_level_enough(DebugLevel::Info)) {
+            return;
+        }
         auto str = std::format(std::move(fmt), std::forward<Args>(args)...);
         info(str);
     }
 
     template <typename... Args>
     auto warning_fmt(std::FormatString<Args...> fmt, Args &&... args) -> void {
+        if (!is_debug_level_enough(DebugLevel::Warning)) {
+            return;
+        }
         auto str = std::format(std::move(fmt), std::forward<Args>(args)...);
         warning(str);
     }
 
     template <typename... Args>
     auto error_fmt(std::FormatString<Args...> fmt, Args &&... args) -> void {
+        if (!is_debug_level_enough(DebugLevel::Error)) {
+            return;
+        }
         auto str = std::format(std::move(fmt), std::forward<Args>(args)...);
         error(str);
     }
