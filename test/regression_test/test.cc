@@ -15,27 +15,29 @@ namespace kiwi::test {
 
         GIVEN("Configs, describing connections, external_ports, topdies and topdie_insts"){
             
-            // WHEN("Case 1: Muyan topdie with synchroinzed nets only"){
-            //     std::FilePath config_path{"../test/regression_test/case1"};
-            //     auto [interposer, basedie] = kiwi::parse::read_config(config_path);
-            //     auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+            WHEN("Case 1: Muyan topdie with synchroinzed nets only"){
+                kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
+                std::FilePath config_path{"../test/regression_test/case1"};
+                auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
-            //     THEN("The total length should be within a limit"){
-            //         std::ifstream golden_file(config_path / "golden.txt");
-            //         if (!golden_file.is_open()){
-            //             debug::exception_in("regression test case 1", "golden file open failure");
-            //         }
+                THEN("The total length should be within a limit"){
+                    std::ifstream golden_file(config_path / "golden.txt");
+                    if (!golden_file.is_open()){
+                        debug::exception_in("regression test case 1", "golden file open failure");
+                    }
 
-            //         std::String golden_length;
-            //         if (!(golden_file >> golden_length)) { 
-            //             debug::exception_in("regression test case 1", "golden file read failure");
-            //         }
+                    std::String golden_length;
+                    if (!(golden_file >> golden_length)) { 
+                        debug::exception_in("regression test case 1", "golden file read failure");
+                    }
 
-            //         CHECK(total_length <= std::stoi(golden_length));
-            //     }
-            // }
+                    CHECK(total_length <= std::stoi(golden_length));
+                }
+            }
 
             WHEN("Case 2: Muyan topdie with both synchroinzed and unsynchronized nets"){
+                kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
                 std::FilePath config_path{"../test/regression_test/case2"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
@@ -55,85 +57,89 @@ namespace kiwi::test {
                 }
             }
 
-            // WHEN("Case 3: Muyan topdie with unsynchronized nets only"){
-            //     std::FilePath config_path{"../test/regression_test/case3"};
-            //     auto [interposer, basedie] = kiwi::parse::read_config(config_path);
-            //     auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+            WHEN("Case 3: Muyan topdie with unsynchronized nets only"){
+                kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
+                std::FilePath config_path{"../test/regression_test/case3"};
+                auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
-            //     THEN("The total length should be within a limit"){
-            //         std::ifstream golden_file(config_path / "golden.txt");
-            //         if (!golden_file.is_open()){
-            //             debug::exception_in("regression test case 3", "golden file open failure");
-            //         }
+                THEN("The total length should be within a limit"){
+                    std::ifstream golden_file(config_path / "golden.txt");
+                    if (!golden_file.is_open()){
+                        debug::exception_in("regression test case 3", "golden file open failure");
+                    }
 
-            //         std::String golden_length;
-            //         if (!(golden_file >> golden_length)) { 
-            //             debug::exception_in("regression test case 3", "golden file read failure");
-            //         }
+                    std::String golden_length;
+                    if (!(golden_file >> golden_length)) { 
+                        debug::exception_in("regression test case 3", "golden file read failure");
+                    }
 
-            //         CHECK(total_length <= std::stoi(golden_length));
-            //     }
-            // }
+                    CHECK(total_length <= std::stoi(golden_length));
+                }
+            }
     
-            // WHEN("Case 4: A complete case with more nets & IO, including positive/negative ports"){
-            //     std::FilePath config_path{"../test/regression_test/case4"};
-            //     auto [interposer, basedie] = kiwi::parse::read_config(config_path);
-            //     auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+            WHEN("Case 4: A complete case with more nets & IO, including positive/negative ports"){
+                kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
+                std::FilePath config_path{"../test/regression_test/case4"};
+                auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
-            //     THEN("The total length should be within a limit"){
-            //         std::ifstream golden_file(config_path / "golden.txt");
-            //         if (!golden_file.is_open()){
-            //             debug::exception_in("regression test case 4", "golden file open failure");
-            //         }
+                THEN("The total length should be within a limit"){
+                    std::ifstream golden_file(config_path / "golden.txt");
+                    if (!golden_file.is_open()){
+                        debug::exception_in("regression test case 4", "golden file open failure");
+                    }
 
-            //         std::String golden_length;
-            //         if (!(golden_file >> golden_length)) { 
-            //             debug::exception_in("regression test case 4", "golden file read failure");
-            //         }
+                    std::String golden_length;
+                    if (!(golden_file >> golden_length)) { 
+                        debug::exception_in("regression test case 4", "golden file read failure");
+                    }
 
-            //         CHECK(total_length <= std::stoi(golden_length));
-            //     }
-            // }
+                    CHECK(total_length <= std::stoi(golden_length));
+                }
+            }
 
-            // WHEN("Case 5: Test repeated connections"){
-            //     std::FilePath config_path{"../test/regression_test/case5"};
-            //     auto [interposer, basedie] = kiwi::parse::read_config(config_path);
-            //     auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+            WHEN("Case 5: Test repeated connections"){
+                kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
+                std::FilePath config_path{"../test/regression_test/case5"};
+                auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
-            //     THEN("The total length should be within a limit"){
-            //         std::ifstream golden_file(config_path / "golden.txt");
-            //         if (!golden_file.is_open()){
-            //             debug::exception_in("regression test case 5", "golden file open failure");
-            //         }
+                THEN("The total length should be within a limit"){
+                    std::ifstream golden_file(config_path / "golden.txt");
+                    if (!golden_file.is_open()){
+                        debug::exception_in("regression test case 5", "golden file open failure");
+                    }
 
-            //         std::String golden_length;
-            //         if (!(golden_file >> golden_length)) { 
-            //             debug::exception_in("regression test case 5", "golden file read failure");
-            //         }
+                    std::String golden_length;
+                    if (!(golden_file >> golden_length)) { 
+                        debug::exception_in("regression test case 5", "golden file read failure");
+                    }
 
-            //         CHECK(total_length <= std::stoi(golden_length));
-            //     }
-            // }
+                    CHECK(total_length <= std::stoi(golden_length));
+                }
+            }
 
-            // WHEN("Case 6: A case with a bit more connections then case1"){
-            //     std::FilePath config_path{"../test/regression_test/case6"};
-            //     auto [interposer, basedie] = kiwi::parse::read_config(config_path);
-            //     auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+            WHEN("Case 6: A case with a bit more connections then case1"){
+                kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
+                std::FilePath config_path{"../test/regression_test/case6"};
+                auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
-            //     THEN("The total length should be within a limit"){
-            //         std::ifstream golden_file(config_path / "golden.txt");
-            //         if (!golden_file.is_open()){
-            //             debug::exception_in("regression test case 6", "golden file open failure");
-            //         }
+                THEN("The total length should be within a limit"){
+                    std::ifstream golden_file(config_path / "golden.txt");
+                    if (!golden_file.is_open()){
+                        debug::exception_in("regression test case 6", "golden file open failure");
+                    }
 
-            //         std::String golden_length;
-            //         if (!(golden_file >> golden_length)) { 
-            //             debug::exception_in("regression test case 6", "golden file read failure");
-            //         }
+                    std::String golden_length;
+                    if (!(golden_file >> golden_length)) { 
+                        debug::exception_in("regression test case 6", "golden file read failure");
+                    }
 
-            //         CHECK(total_length <= std::stoi(golden_length));
-            //     }
-            // }
+                    CHECK(total_length <= std::stoi(golden_length));
+                }
+            }
         }
     }
 
