@@ -408,13 +408,12 @@ print_sync_path(ptr_sync_net);
 //!
         std::usize total_nets {ptr_sync_net->btbnets().size() + ptr_sync_net->bttnets().size() + ptr_sync_net->ttbnets().size()};
         return total_nets * max_length; 
-        }
-        catch (const RetryExpt& e){
-            throw e;
-        }
-        catch (const std::exception& e){
-            throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
-        }
+    }
+    catch (const RetryExpt& e){
+        throw e;
+    }
+    catch (const std::exception& e){
+        throw std::runtime_error(std::format("MazeRouteStrategy::route_sync_net: {}", std::String(e.what())));
     }
 
     auto MazeRouteStrategy::check_found(

@@ -50,10 +50,11 @@ struct std::formatter<kiwi::circuit::Pin> {
                 );
             },
             [&ctx](const kiwi::circuit::ConnectBump& bump) {
+                auto inst_name = bump.inst->name();
                 return std::vformat_to(
                     ctx.out(),
                     std ::string {"{}.{}"},
-                    std ::make_format_args(bump.inst->name(), bump.name)
+                    std ::make_format_args(inst_name, bump.name)
                 );
             }
         );
