@@ -3,7 +3,7 @@
     "topdies": "",
     "topdie_insts": "",
     "external_ports": "",
-    "connections": "cpu_ai_mem_16.txt",
+    "connections": "case_CPU_8.txt",
     "reigster_adder": "",
     "ports_01" : "01_ports.json"
 }

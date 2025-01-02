@@ -1,0 +1,5 @@
+AI core test by xl
+
+
+
+!!! COB array = 9 * 13
