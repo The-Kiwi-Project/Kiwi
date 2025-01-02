@@ -13,6 +13,16 @@
 
 namespace kiwi::hardware {
 
+    struct TrackIndex {
+        explicit TrackIndex(std::usize i) : value{i} {}
+        std::usize value;
+    };
+
+    struct COBIndex {
+        explicit COBIndex(std::usize i) : value{i} {}
+        std::usize value;
+    };
+
     class COB {
     public:
         enum { 
@@ -34,14 +44,26 @@ namespace kiwi::hardware {
 
     public:
         auto sw_register(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) -> COBSwRegister*;
-        auto get_sw_resgiter_value(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) -> COBSwState;
-        
+        auto sw_register(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) const -> const COBSwRegister*;
+
         auto sel_register(COBDirection dir, std::usize cob_index) -> COBSelRegister*;
-        auto get_sel_resgiter_value(COBDirection dir, std::usize cob_index) -> COBSignalDirection;
+        auto sel_register(COBDirection dir, std::usize cob_index) const -> const COBSelRegister*;
+
+        auto get_sw_resgiter_value(COBDirection from_dir, std::usize from_cob_index, COBDirection to_dir) const -> COBSwState;
+        auto get_sel_resgiter_value(COBDirection dir, std::usize cob_index) const -> COBSignalDirection;
+
+    // public:
+    //     auto sw_register(COBDirection from_dir, TrackIndex from_index, COBDirection to_dir) -> COBSwRegister*;
+    //     auto sw_register(COBDirection from_dir, TrackIndex from_index, COBDirection to_dir) const -> const COBSwRegister*;
+
+    //     auto sel_register(COBDirection dir, TrackIndex index) -> COBSelRegister*;
+    //     auto sel_register(COBDirection dir, TrackIndex index) const -> const COBSelRegister*;
+
+    //     auto get_sw_resgiter_value(COBDirection from_dir, TrackIndex from_index, COBDirection to_dir) const -> COBSwState;
+    //     auto get_sel_resgiter_value(COBDirection dir, TrackIndex index) const -> COBSignalDirection;
 
     public:
         auto to_dir_track_coord(COBDirection dir, std::usize index) -> TrackCoord;
-        auto cobunit_by_cob_index(std::usize cob_index) -> COBUnit&;
 
     public:
         static auto track_index_map(COBDirection from_dir, std::usize from_track_index, COBDirection to_dir) -> std::usize;

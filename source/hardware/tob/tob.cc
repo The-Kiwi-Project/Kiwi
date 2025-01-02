@@ -97,7 +97,7 @@ namespace kiwi::hardware {
         return cs;
     }
 
-    auto TOB::bump_index_map_track_index(std::usize bump_index) -> std::Option<std::usize> {
+    auto TOB::bump_index_map_track_index(std::usize bump_index) const -> std::Option<std::usize> {
         auto bump_to_hori_res = this->bump_index_map_hori_index(bump_index);
         if (!bump_to_hori_res.has_value()) {
             return std::nullopt;
@@ -114,7 +114,7 @@ namespace kiwi::hardware {
         return this->vert_index_map_track_index(vert_index);
     }
 
-    auto TOB::bump_index_map_hori_index(std::usize bump_index) -> std::Option<std::usize> {
+    auto TOB::bump_index_map_hori_index(std::usize bump_index) const -> std::Option<std::usize> {
         auto info = TOB::bump_to_hori_mux_info(bump_index);
         auto [mux_index, mux_inner_index] = info;
         auto res = this->_bump_to_hori_muxs.at(mux_index)->index_map(mux_inner_index);
@@ -125,7 +125,7 @@ namespace kiwi::hardware {
         }
     }
 
-    auto TOB::hori_index_map_vert_index(std::usize hori_index) -> std::Option<std::usize> {
+    auto TOB::hori_index_map_vert_index(std::usize hori_index) const -> std::Option<std::usize> {
         auto info = TOB::hori_to_vert_mux_info(hori_index);
         auto [mux_index, mux_inner_index] = info;
         auto res = this->_hori_to_vert_muxs.at(mux_index)->index_map(mux_inner_index);
@@ -136,7 +136,7 @@ namespace kiwi::hardware {
         }
     }
 
-    auto TOB::vert_index_map_track_index(std::usize vert_index) -> std::Option<std::usize> {
+    auto TOB::vert_index_map_track_index(std::usize vert_index) const -> std::Option<std::usize> {
         auto info = TOB::vert_to_track_mux_info(vert_index);
         auto [mux_index, mux_inner_index] = info;
         auto res = this->_vert_to_track_muxs.at(mux_index)->index_map(mux_inner_index);
@@ -148,31 +148,55 @@ namespace kiwi::hardware {
     }
 
     auto TOB::bump_to_hori_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
+        return const_cast<TOBMuxRegister*>(const_cast<TOB*>(this)->bump_to_hori_register_nth(mux_index, mux_inner_index));
+    }
+
+    auto TOB::hori_to_vert_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
+        return const_cast<TOBMuxRegister*>(const_cast<TOB*>(this)->hori_to_vert_register_nth(mux_index, mux_inner_index));
+    }
+
+    auto TOB::vert_to_track_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
+        return const_cast<TOBMuxRegister*>(const_cast<TOB*>(this)->vert_to_track_register_nth(mux_index, mux_inner_index));
+    }
+
+    auto TOB::bump_to_hori_register(std::usize bump_index) -> TOBMuxRegister* {
+        return const_cast<TOBMuxRegister*>(const_cast<TOB*>(this)->bump_to_hori_register(bump_index));
+    }
+
+    auto TOB::hori_to_vert_register(std::usize hori_index) -> TOBMuxRegister* {
+        return const_cast<TOBMuxRegister*>(const_cast<TOB*>(this)->hori_to_vert_register(hori_index));
+    }
+
+    auto TOB::vert_to_track_register(std::usize vert_index) -> TOBMuxRegister* {
+        return const_cast<TOBMuxRegister*>(const_cast<TOB*>(this)->vert_to_track_register(vert_index));
+    }
+
+    auto TOB::bump_to_hori_register_nth(std::usize mux_index, std::usize mux_inner_index) const -> const TOBMuxRegister* {
         assert(mux_index < TOB::BUMP_TO_HORI_MUX_COUNT);
         return this->_bump_to_hori_muxs.at(mux_index)->registerr(mux_inner_index);
     }
 
-    auto TOB::hori_to_vert_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
+    auto TOB::hori_to_vert_register_nth(std::usize mux_index, std::usize mux_inner_index) const -> const TOBMuxRegister* {
         assert(mux_index < TOB::HORI_TO_VERI_MUX_COUNT);
         return this->_hori_to_vert_muxs.at(mux_index)->registerr(mux_inner_index);
     }
 
-    auto TOB::vert_to_track_register_nth(std::usize mux_index, std::usize mux_inner_index) -> TOBMuxRegister* {
+    auto TOB::vert_to_track_register_nth(std::usize mux_index, std::usize mux_inner_index) const -> const TOBMuxRegister* {
         assert(mux_index < TOB::VERI_TO_TRACK_MUX_COUNT);
         return this->_vert_to_track_muxs.at(mux_index)->registerr(mux_inner_index);
     }
 
-    auto TOB::bump_to_hori_register(std::usize bump_index) -> TOBMuxRegister* {
+    auto TOB::bump_to_hori_register(std::usize bump_index) const -> const TOBMuxRegister* {
         auto [mux_index, mux_inner_index] = TOB::bump_to_hori_mux_info(bump_index);
         return this->bump_to_hori_register_nth(mux_index, mux_inner_index);
     }
 
-    auto TOB::hori_to_vert_register(std::usize hori_index) -> TOBMuxRegister* {
+    auto TOB::hori_to_vert_register(std::usize hori_index) const -> const TOBMuxRegister* {
         auto [mux_index, mux_inner_index] = TOB::hori_to_vert_mux_info(hori_index);
         return this->hori_to_vert_register_nth(mux_index, mux_inner_index);
     }
 
-    auto TOB::vert_to_track_register(std::usize vert_index) -> TOBMuxRegister* {
+    auto TOB::vert_to_track_register(std::usize vert_index) const -> const TOBMuxRegister* {
         auto [mux_index, mux_inner_index] = TOB::vert_to_track_mux_info(vert_index);
         return this->vert_to_track_register_nth(mux_index, mux_inner_index);
     }
@@ -251,7 +275,7 @@ namespace kiwi::hardware {
         return mux_index + (TOB::INDEX_SIZE / 2) * output;
     }
 
-    auto TOB::hori_mux_reg_value(std::usize index) -> std::Option<std::usize> {
+    auto TOB::hori_mux_reg_value(std::usize index) const -> std::Option<std::usize> {
         TOB::check_index(index);
 
         auto group = index / 8;
@@ -261,7 +285,7 @@ namespace kiwi::hardware {
         return mux->index_map(gourp_posi);
     }
 
-    auto TOB::vert_mux_reg_value(std::usize index) -> std::Option<std::usize> {
+    auto TOB::vert_mux_reg_value(std::usize index) const -> std::Option<std::usize> {
         TOB::check_index(index);
 
         auto group = index / 8;
@@ -271,7 +295,7 @@ namespace kiwi::hardware {
         return mux->index_map(gourp_posi);
     } 
 
-    auto TOB::track_mux_reg_value(std::usize index) -> std::usize {
+    auto TOB::track_mux_reg_value(std::usize index) const -> std::usize {
         if (index >= 64)
             debug::exception_fmt("track mux index should be in the range of [0, 64]");
 
@@ -290,12 +314,12 @@ namespace kiwi::hardware {
         }
     } 
     
-    auto TOB::bump_dir_reg_value(std::usize index) -> TOBBumpDirection {
+    auto TOB::bump_dir_reg_value(std::usize index) const -> TOBBumpDirection {
         TOB::check_index(index);
         return this->_bump_dir_registers.at(index)->get();
     }
 
-    auto TOB::track_dir_reg_value(std::usize index) -> TOBTrackDirection {
+    auto TOB::track_dir_reg_value(std::usize index) const -> TOBTrackDirection {
         TOB::check_index(index);
         return this->_track_dir_registers.at(index)->get();
     }

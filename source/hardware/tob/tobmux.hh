@@ -29,7 +29,7 @@ namespace kiwi::hardware {
 
     public:
         auto available_connectors(std::usize input_index) -> std::Vector<TOBMuxConnector>;
-        auto available_output_indexes() -> std::Vector<std::usize>;
+        auto available_output_indexes() const -> std::Vector<std::usize>;
 
     public:
         auto randomly_map_remain_indexes() -> void;
@@ -37,8 +37,10 @@ namespace kiwi::hardware {
     public:
         auto index_map(std::usize input_index) const -> std::Option<std::usize>;
         auto registerr(std::usize input_index) -> TOBMuxRegister*;
-        //updated by tang, 2024-10-30
-        auto mux_size() const -> std::usize {return this->_mux_size;}
+        auto registerr(std::usize input_index) const -> const TOBMuxRegister*;
+
+    public:
+        auto mux_size() const -> std::usize { return this->_mux_size; }
     
     private:
         std::usize _mux_size;
