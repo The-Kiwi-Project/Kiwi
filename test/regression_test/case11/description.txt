@@ -1,0 +1,10 @@
+CPU MEM test by xl
+Bump - Bump 
+CPU-CPU: 8 groups of bus-nets, 16 net per bus
+MEM-MEM: 4 groups of bus-nets, 16 net per bus
+Track - Bump
+I/O->cpu, 128 nets
+0/1->cpu, 64 nets
+
+
+!!! COB array = 9 * 13

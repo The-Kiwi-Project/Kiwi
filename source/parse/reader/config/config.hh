@@ -17,6 +17,7 @@ namespace kiwi::parse {
         std::HashMap<std::String, TopdieInstConfig> topdie_insts;
         std::HashMap<std::String, ExternalPortConfig> external_ports;
         std::HashMap<int, std::Vector<ConnectionConfig>> connections;
+        std::HashMap<std::String, std::HashMap<std::String, hardware::TrackCoord>> ports_01;
     };
 
     auto load_config(const std::FilePath& config_folder) -> Config;

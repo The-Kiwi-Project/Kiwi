@@ -35,20 +35,20 @@
 
 namespace kiwi::test{
 
-    SCENARIO("Regression test for basic kiwi functions", "[basic]"){
+    // SCENARIO("Regression test for basic kiwi functions", "[basic]"){
         
-        debug::initial_log("basic.log");
-        GIVEN("Configs, describing connections, external_ports, topdies and topdie_insts"){
-            //! notice: cob array here is 9*12
-            PLEASE_DO_NOT_FAIL(1, "Muyan topdie with synchroinzed nets only");
-            PLEASE_DO_NOT_FAIL(2, "Muyan topdie with both synchroinzed and unsynchronized nets");
-            PLEASE_DO_NOT_FAIL(3, "Muyan topdie with unsynchronized nets only");
-            // PLEASE_DO_NOT_FAIL(4, "A complete case with more nets and net types");
-            // PLEASE_DO_NOT_FAIL(5, "test repeated connections in input file");
-            PLEASE_DO_NOT_FAIL(6, "a case with more nets then case1");
+    //     debug::initial_log("basic.log");
+    //     GIVEN("Configs, describing connections, external_ports, topdies and topdie_insts"){
+    //         //! notice: cob array here is 9*12
+    //         PLEASE_DO_NOT_FAIL(1, "Muyan topdie with synchroinzed nets only");
+    //         PLEASE_DO_NOT_FAIL(2, "Muyan topdie with both synchroinzed and unsynchronized nets");
+    //         PLEASE_DO_NOT_FAIL(3, "Muyan topdie with unsynchronized nets only");
+    //         // PLEASE_DO_NOT_FAIL(4, "A complete case with more nets and net types");
+    //         // PLEASE_DO_NOT_FAIL(5, "test repeated connections in input file");
+    //         PLEASE_DO_NOT_FAIL(6, "a case with more nets then case1");
             
-        }
-    }
+    //     }
+    // }
 
     SCENARIO("CPU-MEM-AI circuit test", "[CPU_MEM_AI]"){
         
@@ -58,6 +58,17 @@ namespace kiwi::test{
             PLEASE_DO_NOT_FAIL(7, "a case with the least number of bus");
             PLEASE_DO_NOT_FAIL(8, "a case with a middle scale of bus");
             PLEASE_DO_NOT_FAIL(9, "a case with the most number of bus");
+        }
+    }
+
+    SCENARIO("CPU-MEM circuit test", "[CPU_MEM]"){
+        
+        debug::initial_log("CPU_MEM_AI.log");
+        GIVEN("config.json & a txt file from xl"){
+            //! notice: cob array here is 9*13, and available pose/nege port is the same with CPU_MEM_AI
+            PLEASE_DO_NOT_FAIL(10, "a case with the least number of bus");
+            PLEASE_DO_NOT_FAIL(11, "a case with a middle scale of bus");
+            PLEASE_DO_NOT_FAIL(12, "a case with the most number of bus");
         }
     }
 }

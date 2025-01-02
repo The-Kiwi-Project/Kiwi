@@ -1,0 +1,7 @@
+AI core test by xl
+16 groups, each:
+16 Bump-Bump sync nets + 32 unsync_net(Bump-Bump & Track-Bump)
+
+
+
+!!! COB array = 9 * 13

@@ -22,6 +22,7 @@ namespace kiwi::parse {
         std::FilePath topdie_insts;
         std::FilePath external_ports;
         std::FilePath connections;
+        std::FilePath ports_01;
     };
 
 }
@@ -32,6 +33,7 @@ DESERIALIZE_STRUCT(kiwi::parse::ConfigFilepaths,
     DE_FILED(topdie_insts)
     DE_FILED(external_ports)
     DE_FILED(connections)
+    DE_FILED(ports_01)
 )
 
 template <class ConnectionConfig>
@@ -60,6 +62,7 @@ namespace kiwi::parse {
     static auto load_topdie_insts_config(const std::FilePath& path, std::HashMap<std::String, TopdieInstConfig>& topdie_insts) -> void;
     static auto load_external_ports_config(const std::FilePath& path, std::HashMap<std::String, ExternalPortConfig>& exports) -> void;
     static auto load_connections_config(const std::FilePath& path, std::HashMap<int, std::Vector<ConnectionConfig>>& connections) -> void;
+    static auto load_ports_01_config(const std::FilePath& path, std::HashMap<std::String, std::HashMap<std::String, hardware::TrackCoord>>& ports_01) -> void;
 
     static auto load_from_txt(const std::FilePath& path, Config& config) -> void;
     static auto parse_txt_line(const std::String& topdie1, const std::String& topdie2, const std::Array<std::usize, 11>& numbers, Config& config) -> void;
@@ -73,6 +76,7 @@ namespace kiwi::parse {
 
         auto config = Config {};
 
+        load_ports_01_config(config_folder / config_paths.ports_01, config.ports_01);
         if (config_paths.connections.filename().extension().string() == ".json"){
             load_interposer_config(config_folder / config_paths.interposer, config.interposer);
             load_topdies_config(config_folder / config_paths.topdies, config.topdies);
@@ -228,6 +232,9 @@ namespace kiwi::parse {
 
         auto parse_node = [&config](const std::Array<std::usize, 5>& info, std::String& node, const std::String& topdie){
             std::Vector<std::usize> externs { 0,9,18,27,36,45,54,63,120,113,106,99,92,85,78,71 };
+            if (topdie != "cpu" && topdie != "AI" && topdie != "mem" && topdie != "extIO" && topdie != "0/1"){
+                debug::exception_fmt("Invalid topdie_name '{}'", topdie);
+            }
             switch (info[3]){
                 case -1: node = "nege"; 
                     break;
@@ -247,10 +254,6 @@ namespace kiwi::parse {
                     break;
                 }
                 default:{
-                    if (topdie != "cpu" && topdie != "AI" && topdie != "mem"){
-                        debug::exception_fmt("Invalid topdie '{}'", topdie);
-                    }
-
                     auto index = info[3] + 8 * info[4];
                     auto node_postfix = std::String{std::to_string(info[1]) + "_" + std::to_string(info[2]) + "_" + std::to_string(index)};
                     if(!config.topdies.contains(topdie)){
@@ -281,5 +284,20 @@ namespace kiwi::parse {
         config.connections.at(net_tag).emplace_back(ConnectionConfig{input, output});
     }
     THROW_UP_WITH("Parse txt line")
+
+    auto load_ports_01_config(const std::FilePath& path, std::HashMap<std::String, std::HashMap<std::String, hardware::TrackCoord>>& ports_01) -> void
+    try {
+        debug::debug("Load 0/1 ports config");
+        
+        auto extension = path.filename().extension().string();
+        if (extension == ".json") {
+            serde::deserialize(serde::Json::load_from(path), ports_01);
+        } else if (extension == ".xlsx") {
+            debug::unimplement("Load 0/1 ports excel");
+        } else {
+            debug::exception_fmt("Unspport extension '{}' for 0/1 ports config", extension);
+        }
+    }
+    THROW_UP_WITH("Load 0/1 ports config")
 
 }
