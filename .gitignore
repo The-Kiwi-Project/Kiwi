@@ -18,3 +18,5 @@ output
 
 **/__pycache/
 schedule*
+
+/test/EDA_case
