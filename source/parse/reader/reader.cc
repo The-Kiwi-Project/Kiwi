@@ -64,13 +64,6 @@ namespace kiwi::parse {
         this->add_topdies_to_basedie();
         this->add_topdieinst_to_basedie();
         this->add_nets();
-        for (auto& n : this->_basedie->nets()) {
-            // debug::debug_fmt("{}", n->to_string());
-            // debug::debug_fmt("{}", n->to_string());
-            // n->to_string();
-            // n->priority(); 不可以
-            // n->coords();
-        }
         return { std::move(this->_interposer), std::move(this->_basedie) };
     }
     THROW_UP_WITH("Build system")
