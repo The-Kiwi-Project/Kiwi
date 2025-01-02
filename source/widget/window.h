@@ -1,19 +1,33 @@
 #pragma once
 
 #include <QMainWindow>
-#include "./base/framelesswindow.h"
-#include "./base/sidebar.h"
-#include "./page/welcomepage.h"
-#include "./page/workpage.h"
-#include "./page/aboutpage.h"
+#include "./frame/page/welcomepage.h"
+#include "./frame/page/workpage.h"
+#include "./frame/page/aboutpage.h"
+
+#include "./frame/base/framelesswindow.h"
+#include "./frame/base/sidebar.h"
+#include "qwidget.h"
+
+
+namespace kiwi::hardware {
+    class Interposer;
+}
+
+namespace kiwi::circuit {
+    class BaseDie;
+}
 
 namespace kiwi::widget {
+
+    class View2DWidget;
+    class View3DWidget;
 
     class Window : public FramelessWindow {
         Q_OBJECT
 
     public:
-        Window(QWidget *parent = nullptr);
+        Window(hardware::Interposer* i, circuit::BaseDie* b, QWidget *parent = nullptr);
         ~Window();
 
     private:
@@ -31,6 +45,18 @@ namespace kiwi::widget {
         WelcomePage* _welcomePage = nullptr;
         WorkPage* _workPage = nullptr;
         AboutPage* _aboutPage = nullptr;
+    };
+
+    class SWindow : public QWidget 
+    {
+        Q_OBJECT
+
+    public:
+        SWindow(hardware::Interposer* i, circuit::BaseDie* b, QWidget *parent = nullptr);
+        ~SWindow();
+
+    private:
+        QWidget* _widget {nullptr};
     };
 
 }

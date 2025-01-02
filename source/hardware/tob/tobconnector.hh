@@ -32,6 +32,8 @@ namespace kiwi::hardware {
         auto disconnect() -> void;
 
         auto bump_index() const -> std::usize { return this->_bump_index; }
+        auto hori_index() const -> std::usize { return this->_hori_index; }
+        auto vert_index() const -> std::usize { return this->_vert_index; }
         auto track_index() const -> std::usize { return this->_track_index; }
         auto single_direction() const -> TOBSignalDirection { return this->_signal_dir; }
 
