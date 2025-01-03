@@ -4,11 +4,16 @@
         <file>shader/axis.vert</file>
         <file>shader/cube.frag</file>
         <file>shader/cube.vert</file>
+        <file>shader/frame.frag</file>
+        <file>shader/frame.vert</file>
+        <file>shader/track.frag</file>
+        <file>shader/track.vert</file>
     </qresource>
     <qresource prefix="/texture">
         <file>texture/cob.jpg</file>
         <file>texture/channel.jpg</file>
         <file>texture/tob.jpg</file>
+        <file>texture/topdie.jpg</file>
     </qresource>
     <qresource prefix="/image">
         <file>image/icon/list.png</file>

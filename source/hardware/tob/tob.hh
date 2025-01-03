@@ -3,6 +3,7 @@
 #include "./tobmux.hh"
 #include "./tobconnector.hh"
 #include "./tobsigdir.hh"
+#include "hardware/coord.hh"
 #include "std/memory.hh"
 
 #include <std/collection.hh>
@@ -92,6 +93,7 @@ namespace kiwi::hardware {
 
     public:
         auto coord() const -> TOBCoord const& { return this->_coord; }
+        auto coord_in_interposer() const -> Coord const& { return this->_coord_in_interposer; }
     
     private:
         static auto check_index(std::usize index) -> void;
