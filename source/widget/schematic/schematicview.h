@@ -2,6 +2,7 @@
 
 #include "./item/topdieinstitem.h"
 #include "./item/pinitem.h"
+#include "qglobal.h"
 
 #include <widget/frame/graphicsview.h>
 #include <QWidget>
@@ -37,12 +38,17 @@ namespace kiwi::widget {
         ~SchematicView() noexcept;
 
     protected:
+        void drawBackground(QPainter* painter, const QRectF& rect) override;
+
+    protected:
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie* _basedie {nullptr};
 
         SchematicScene* _scene {nullptr};
 
         QVector<schematic::TopDieInstanceItem*> _topdieInstItems {};
+
+        qreal _gridSize{20};
     };
 
 }

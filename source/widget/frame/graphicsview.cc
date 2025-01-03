@@ -13,6 +13,29 @@ namespace kiwi::widget {
         this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     }
 
+    void GraphicsView::adjustSceneRect() {
+        if (this->items().isEmpty()) {
+            this->setSceneRect(0, 0, 1000, 1000); // 如果没有 Item，设置一个默认大小
+            return;
+        }
+
+        qreal minX = std::numeric_limits<qreal>::max();
+        qreal minY = std::numeric_limits<qreal>::max();
+        qreal maxX = std::numeric_limits<qreal>::lowest();
+        qreal maxY = std::numeric_limits<qreal>::lowest();
+
+        for (QGraphicsItem* item : this->items()) {
+            QRectF itemBounds = item->sceneBoundingRect(); // 获取 Item 在场景中的边界
+            minX = std::min(minX, itemBounds.left());
+            minY = std::min(minY, itemBounds.top());
+            maxX = std::max(maxX, itemBounds.right());
+            maxY = std::max(maxY, itemBounds.bottom());
+        }
+
+        qreal margin = 300;
+        this->setSceneRect(minX - margin, minY - margin, (maxX - minX) + 2 * margin, (maxY - minY) + 2 * margin);
+    }
+
     void GraphicsView::wheelEvent(QWheelEvent* event) {
         if (event->modifiers() & Qt::ControlModifier) {
             const double scaleFactor = 1.15;

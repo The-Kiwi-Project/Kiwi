@@ -20,10 +20,11 @@ namespace kiwi::widget::schematic {
     const QColor TopDieInstanceItem::COLOR = Qt::lightGray;;
 
     TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene):
+        GridItem{},
         _topdieinst{topdieinst},
         _scene{scene}
     {
-        this->setFlags(ItemIsMovable);
+        this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
 
         // Dive pinsize to four size:
         auto pinmap = this->_topdieinst->topdie()->pins_map();

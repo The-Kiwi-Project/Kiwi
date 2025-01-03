@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qcolor.h"
 #include "qobject.h"
 #include "qpoint.h"
 #include <QGraphicsLineItem>
@@ -50,7 +51,7 @@ namespace kiwi::widget::schematic {
         NetItem* _netitem;
     };
 
-    class NetItem : public QGraphicsLineItem {
+    class NetItem : public QGraphicsItem {
     public:
         static const     QColor COLOR;
         static const     QColor HOVER_COLOR;
@@ -65,7 +66,13 @@ namespace kiwi::widget::schematic {
         void updateLine();
         void updateEndPoint(const QPointF& point);
 
+    public:
+        void setLine(const QPointF& begin, const QPointF& end);
+
     protected:
+        auto boundingRect() const -> QRectF override;
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+
         void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
@@ -78,6 +85,10 @@ namespace kiwi::widget::schematic {
     protected:
         NetPointItem* _beginPoint {nullptr};
         NetPointItem* _endPoint {nullptr};
+
+        QPointF _begin;
+        QPointF _end;
+
     };
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./griditem.h"
 #include "./pinitem.h"
 #include "qchar.h"
 #include "qglobal.h"
@@ -16,10 +17,13 @@ namespace kiwi::widget {
 
 namespace kiwi::widget::schematic {
 
-    class TopDieInstanceItem : public QGraphicsItem {
+    class TopDieInstanceItem : public GridItem {
     public:
-        static constexpr qreal PIN_INTERVAL = 20.;
-        static constexpr qreal SPACE_LENGTH = 70.;
+        static constexpr int PIN_INTERVAL_SIZE = 1;
+        static constexpr int SPACE_LENGTH_SIZE = 4;
+
+        static constexpr qreal PIN_INTERVAL = GridItem::gridLength(PIN_INTERVAL_SIZE);
+        static constexpr qreal SPACE_LENGTH = GridItem::gridLength(SPACE_LENGTH_SIZE);
         static constexpr qreal NAME_CHAR_HEIGHT = 20.;
         static constexpr qreal NAME_CHAR_WIDTH = 10.;
 

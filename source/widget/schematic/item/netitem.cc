@@ -107,7 +107,7 @@ namespace kiwi::widget::schematic {
     const QColor NetItem::HOVER_COLOR = Qt::red;
 
     NetItem::NetItem(NetPointItem* beginPoint, NetPointItem* endPoint):
-        QGraphicsLineItem{},
+        QGraphicsItem{},
         _beginPoint{beginPoint},
         _endPoint{endPoint}
     {
@@ -119,33 +119,63 @@ namespace kiwi::widget::schematic {
     }
 
     NetItem::NetItem(NetPointItem* beginPoint) :
-        QGraphicsLineItem{},
+        QGraphicsItem{},
         _beginPoint{beginPoint}
     {
         this->_beginPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
-        this->setLine(QLineF(this->_beginPoint->scenePos(), this->_beginPoint->scenePos()));
+        this->setLine(this->_beginPoint->scenePos(), this->_beginPoint->scenePos());
     }
 
     void NetItem::updateEndPoint(const QPointF& point) {
-        this->setLine(QLineF(this->_beginPoint->scenePos(), point));
+        this->setLine(this->_beginPoint->scenePos(), point);
     }
 
     void NetItem::updateLine() {
         if (this->_beginPoint == nullptr || this->_endPoint == nullptr) {
             return;
         }
-        this->setLine(QLineF(this->_beginPoint->scenePos(), this->_endPoint->scenePos()));
+        this->setLine(this->_beginPoint->scenePos(), this->_endPoint->scenePos());
+    }
+
+    auto NetItem::boundingRect() const -> QRectF {
+        QRectF rect = QRectF(this->_begin, this->_end).normalized();
+        const qreal penWidth = 2.0;
+        rect.adjust(-penWidth, -penWidth, penWidth, penWidth);
+        return rect;
+    }
+
+    void NetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+        QPen pen(Qt::black, 2);
+        painter->setPen(pen);
+
+        QPainterPath path;
+        path.moveTo(this->_begin);
+        if (this->_begin.x() == this->_end.x() || this->_begin.y() == this->_end.y()) {
+            path.lineTo(this->_end); // 单一方向
+        } else {
+            QPointF mid(this->_end.x(), this->_begin.y());
+            path.lineTo(mid);  // 水平转折点
+            path.lineTo(this->_end);
+        }
+        painter->drawPath(path);
+    }
+
+    void NetItem::setLine(const QPointF& begin, const QPointF& end) {
+        this->prepareGeometryChange();
+        this->_begin = begin;
+        this->_end = end;
+        this->update();
     }
     
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-        this->setPen(QPen{HOVER_COLOR, HOVER_WIDTH});
-        QGraphicsLineItem::hoverEnterEvent(event);
+        // this->setPen(QPen{HOVER_COLOR, HOVER_WIDTH});
+        QGraphicsItem::hoverEnterEvent(event);
     }
 
     void NetItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-        this->setPen(QPen{COLOR, WIDTH});
-        QGraphicsLineItem::hoverLeaveEvent(event);
+        // this->setPen(QPen{COLOR, WIDTH});
+        QGraphicsItem::hoverLeaveEvent(event);
     }
 
 }

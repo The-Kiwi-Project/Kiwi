@@ -1,7 +1,7 @@
 #include "./exportitem.h"
 #include "qnamespace.h"
 #include "qobject.h"
-#include "qpoint.h"
+#include "widget/schematic/item/griditem.h"
 #include "widget/schematic/item/pinitem.h"
 
 namespace kiwi::widget::schematic {
@@ -9,12 +9,12 @@ namespace kiwi::widget::schematic {
     const QColor ExPortItem::COLOR = Qt::lightGray;
 
     ExPortItem::ExPortItem(const QString name, SchematicScene* scene) : 
-        QGraphicsItem{},
+        GridItem{},
         _pinietm{},
-        _width{PIN_SIDE_INTERVAL + PinItem::NAME_INTERVAL + name.size() * PinItem::CHAR_WIDTH_ + PIN_SIDE_INTERVAL}
+        _width{GridItem::snapToGrid(PIN_SIDE_INTERVAL + PinItem::NAME_INTERVAL + name.size() * PinItem::CHAR_WIDTH_ + PIN_SIDE_INTERVAL)}
     {
         this->_pinietm = new PinItem{name, QPointF{0, 0}, PinSide::Left, scene, this};
-        this->setFlags(ItemIsMovable);
+        this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
     }
 
     auto ExPortItem::boundingRect() const -> QRectF {

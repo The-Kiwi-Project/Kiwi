@@ -58,7 +58,6 @@ namespace kiwi::widget {
             this->_topdieInstItems[i]->setPos(x, y);
         }
 
-
         for (auto& [sync, connections] : this->_basedie->connections()) {
             for (const auto& connection : connections) {
                 PinItem* beginPin = nullptr;
@@ -89,8 +88,30 @@ namespace kiwi::widget {
                 this->_scene->connectPins(beginPin, endPin);
             }
         }
+
+        // this->setSceneRect(0, 0, 10000, 10000); // 设置场景为 10000x10000 的区域
+        this->adjustSceneRect();
     }
 
     SchematicView::~SchematicView() noexcept {}
 
+    void SchematicView::drawBackground(QPainter* painter, const QRectF& rect) {
+        QGraphicsView::drawBackground(painter, rect);
+
+        // 设置网格线颜色
+        QPen gridPen(Qt::lightGray);
+        gridPen.setWidth(1);
+        painter->setPen(gridPen);
+
+        // 绘制水平和垂直网格线
+        qreal left = std::floor(rect.left() / this->_gridSize) * this->_gridSize;
+        qreal top = std::floor(rect.top() / this->_gridSize) * this->_gridSize;
+
+        for (qreal x = left; x < rect.right(); x += this->_gridSize) {
+            painter->drawLine(QPointF(x, rect.top()), QPointF(x, rect.bottom()));
+        }
+        for (qreal y = top; y < rect.bottom(); y += this->_gridSize) {
+            painter->drawLine(QPointF(rect.left(), y), QPointF(rect.right(), y));
+        }
+    }
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./griditem.h"
 #include "./pinitem.h"
 #include <QColor>
 #include <QGraphicsItem>
@@ -11,11 +12,14 @@ namespace kiwi::widget {
 
 namespace kiwi::widget::schematic {
 
-    class ExPortItem : public QGraphicsItem {
+    class ExPortItem : public GridItem {
     public:
-        static constexpr qreal WIDTH  = 50.;
-        static constexpr qreal HEIGHT = 50.;
-        static constexpr qreal PIN_SIDE_INTERVAL = HEIGHT / 2.;
+        static constexpr int WIDTH_SIZE = 2;
+        static constexpr int HEIGHT_SIZE = 2;
+    
+        static constexpr qreal WIDTH  = GridItem::gridLength(WIDTH_SIZE);
+        static constexpr qreal HEIGHT = GridItem::gridLength(HEIGHT_SIZE);
+        static constexpr qreal PIN_SIDE_INTERVAL = HEIGHT / 2;
         static const     QColor COLOR;
 
         static_assert(HEIGHT > PinItem::CHAR_HEIGHT);
