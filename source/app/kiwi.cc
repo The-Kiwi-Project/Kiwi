@@ -43,8 +43,11 @@ namespace kiwi {
         console::print_with_color("\t-h, --help                  ", Color::Cyan);
         console::println("Print help");
 
-        console::print_with_color("\t-v, --version               ", Color::Cyan);
+        console::print_with_color("\t-V, --version               ", Color::Cyan);
         console::println("Print version info and exit");
+
+        console::print_with_color("\t-v, --verbose               ", Color::Cyan);
+        console::println("Print lots of verbose information for users.");
     }
 
     auto print_verion() -> void {

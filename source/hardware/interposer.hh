@@ -66,6 +66,13 @@ namespace kiwi::hardware {
 
     private:
         auto static check_track_coord(const TrackCoord& coord) -> bool;
+
+    public:
+        auto cobs() -> const std::HashMap<TOBCoord, std::Box<COB>>& 
+        { return this->_cobs; }
+
+        auto tobs() -> const std::HashMap<TOBCoord, std::Box<TOB>>& 
+        { return this->_tobs; }
     
     private:
         // Maybe, just array...
