@@ -284,7 +284,7 @@ namespace kiwi::widget {
     auto View2DView::tobPosition(const hardware::COBCoord& coord) -> QPointF {
         return QPointF {
             coord.col * (view2d::COBItem::CORE_WIDTH + COB_WIDTH_INTERVAL), 
-            -(coord.row + 0.5) * (view2d::COBItem::CORE_WIDTH + COB_HEIGHT_INTERVAL)
+            -(coord.row - 0.5) * (view2d::COBItem::CORE_WIDTH + COB_HEIGHT_INTERVAL)
         };
     }
 

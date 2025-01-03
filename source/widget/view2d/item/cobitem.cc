@@ -39,7 +39,7 @@ namespace kiwi::widget::view2d {
     }
 
     auto COBItem::boundingRect() const -> QRectF {
-        return QRectF(-CORE_WIDTH / 2., -CORE_WIDTH / 2., CORE_WIDTH, CORE_WIDTH);
+        return QRectF(-WIDTH / 2., -WIDTH / 2., WIDTH, WIDTH);
     }
     
     void COBItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
