@@ -1,5 +1,8 @@
 #include "./netitem.h"
 #include "./pinitem.h"
+#include "debug/debug.hh"
+#include "qdebug.h"
+#include "qglobal.h"
 #include "qnamespace.h"
 #include "qobject.h"
 #include "qpoint.h"
@@ -20,7 +23,7 @@ namespace kiwi::widget::schematic {
     {
         this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
         this->setBrush(COLOR);
-        this->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsGeometryChanges);
+        this->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsScenePositionChanges);
         this->setAcceptHoverEvents(true);
 
         this->linkToPin(connectedPin);
@@ -44,12 +47,10 @@ namespace kiwi::widget::schematic {
 
     void NetPointItem::updatePos() {
         this->setPos(this->_connectedPin->scenePos());
+        this->_netitem->updatePositionFrom(this);
     }
 
     QVariant NetPointItem::itemChange(GraphicsItemChange change, const QVariant& value) {
-        if (change == GraphicsItemChange::ItemPositionChange && this->scene()) {
-            this->_netitem->updateLine();
-        }
         return QGraphicsEllipseItem::itemChange(change, value);
     }
 
@@ -128,7 +129,6 @@ namespace kiwi::widget::schematic {
     }
 
     void NetItem::updateEndPoint(const QPointF& point) {
-        // this->setLine(this->_beginPoint->scenePos(), point);
         if (this->_tempPoint.has_value()) {
             auto tempPoint = *this->_tempPoint;
             auto lastPoint = this->_points.back();
@@ -178,11 +178,106 @@ namespace kiwi::widget::schematic {
         this->setLine(this->_beginPoint->scenePos(), this->_endPoint->scenePos());
     }
 
+    void NetItem::updatePositionFrom(NetPointItem* pointItem) {
+        if (pointItem == this->_beginPoint) {
+            this->updateBeginPosition(pointItem->scenePos());
+        } else if (pointItem == this->_endPoint) {
+            this->updateEndPosition(pointItem->scenePos());
+        } else {
+            debug::unreachable();
+        }
+    }
+
+    void NetItem::updateBeginPosition(const QPointF& pos) {
+        this->prepareGeometryChange();
+
+        this->update();
+    }
+
+    void NetItem::updateEndPosition(const QPointF& pos) {
+        this->prepareGeometryChange();
+
+        if (this->_points.size() == 2) {
+            auto beginPos = this->_points[0];
+            auto endPos = this->_points[1];
+            
+            if (beginPos == endPos) {
+                debug::exception("The netitem has the same begin and end position");
+            }
+            else if (beginPos.x() == endPos.x()) {
+                if (pos == endPos) {
+
+                }
+                else if (pos.x() == endPos.x()) {
+                    this->_points[1] = pos;
+                }
+                else if (pos.y() == endPos.y()) {
+                    this->_points.push_back(pos);
+                }
+            }
+            else if (beginPos.y() == endPos.y()) {
+                if (pos == endPos) {
+
+                }
+                else if (pos.x() == endPos.x()) {
+                    this->_points.push_back(pos);
+                }
+                else if (pos.y() == endPos.y()) {
+                    this->_points[1] = pos;
+                }
+            } 
+            else {
+                debug::exception("The netitem has unparall points");
+            }
+        }
+        else {
+            auto endIter = this->_points.rbegin();
+            auto lastIter = endIter + 1;
+
+            auto endPos = *endIter;
+            auto lastPos = *lastIter;
+            auto isHoverLine = endPos.y() == lastPos.y();
+
+            if (endPos == pos) {
+
+            } 
+            else if (isHoverLine) {
+                if (pos.y() == endPos.y()) {
+                    *endIter = pos;
+                } 
+                else {
+                    *endIter = pos;
+                    lastIter->setY(pos.y());
+                }
+            }
+            else {
+                if (pos.x() == endPos.x()) {
+                    *endIter = pos;
+                } 
+                else {
+                    *endIter = pos;
+                    lastIter->setX(pos.x());
+                }
+            }
+        }
+
+        this->_path = QPainterPath{};
+        if (!this->_points.isEmpty()) {
+            this->_path.moveTo(this->_points[0]);
+            for (int i = 1; i < this->_points.size(); ++i) {
+                this->_path.lineTo(this->_points[i]);
+            }
+        }
+
+        this->update();
+    }
+
     auto NetItem::boundingRect() const -> QRectF {
         return this->_path.boundingRect().adjusted(-2, -2, 2, 2);
     }
 
     void NetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+        qDebug() << "paint" << this->_path;
         QPen pen(Qt::black, 2);
         painter->setPen(pen);
         painter->drawPath(this->_path);
@@ -210,7 +305,7 @@ namespace kiwi::widget::schematic {
     void NetItem::updatePath() {
         this->prepareGeometryChange();
 
-        this->_path = QPainterPath();
+        this->_path = QPainterPath{};
         if (!this->_points.isEmpty()) {
             this->_path.moveTo(this->_points[0]);
             for (int i = 1; i < this->_points.size(); ++i) {
