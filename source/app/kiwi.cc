@@ -83,6 +83,10 @@ namespace kiwi {
             return std::nullopt;
         };
 
+        if (argument_index("-v", "--verbose").has_value()) {
+            debug::set_debug_level(debug::DebugLevel::Debug);
+        }
+
         if (argument_index("-g", "--gui").has_value()) {
             if (arguments[0] != "-g" && arguments[0] != "--gui") {
                 debug::warning_fmt("Use gui model but indicate input config '{}', it will be ignored", arguments[0]);
@@ -92,7 +96,7 @@ namespace kiwi {
         else if (arguments[0] == "-h" || arguments[0] == "--help") {
             print_help();
         }
-        else if (arguments[0] == "-v" || arguments[0] == "--version") {
+        else if (arguments[0] == "-V" || arguments[0] == "--version") {
             print_verion();
         }
         else {

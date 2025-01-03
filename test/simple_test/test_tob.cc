@@ -2,6 +2,7 @@
 #include "./utilty.hh"
 #include "hardware/tob/tobmux.hh"
 #include "hardware/tob/tob.hh"
+#include <hardware/bump/bump.hh>
 
 using namespace kiwi::hardware;
 
@@ -15,7 +16,7 @@ static void test_tob_mux_available_output_indexes() {
         ASSERT_EQ(res[i], v1[i]);
     }
 
-    tobmux.registerr(0).set(7);
+    tobmux.registerr(0)->set(7);
     std::usize v2[] = {0, 1, 2, 3, 4, 5, 6};
     res = tobmux.available_output_indexes();
     ASSERT_EQ(res.size(), 7);
@@ -23,7 +24,7 @@ static void test_tob_mux_available_output_indexes() {
         ASSERT_EQ(res[i], v2[i]);
     }
 
-    tobmux.registerr(0).set(3);
+    tobmux.registerr(0)->set(3);
     std::usize v3[] = {0, 1, 2, 4, 5, 6, 7};
     res = tobmux.available_output_indexes();
     ASSERT_EQ(res.size(), 7);
@@ -70,10 +71,10 @@ static void test_randomly_map_remain_indexes() {
         ASSERT(!tobmux.index_map(i).has_value());
     }
 
-    tobmux.registerr(0).set(6);
+    tobmux.registerr(0)->set(6);
     ASSERT(tobmux.index_map(0).has_value());
 
-    tobmux.registerr(1).set(3);
+    tobmux.registerr(1)->set(3);
     ASSERT(tobmux.index_map(1).has_value());
 
     tobmux.randomly_map_remain_indexes();

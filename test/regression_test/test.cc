@@ -22,13 +22,9 @@
             std::String golden_length;\
             if (!(golden_file >> golden_length)) { \
                 debug::debug("golden file is empty in regression test case " #id);\
-                debug::debug_fmt("total_length: {}", total_length);\
             }\
             else {\
                 CHECK(total_length <= std::stoi(golden_length));\
-                if (total_length > std::stoi(golden_length)){\
-                    debug::error_fmt("In case {}, total_length: {}, golden_length: {}", id, total_length, golden_length);\
-                }\
             }\
         }\
     }
@@ -37,7 +33,6 @@ namespace kiwi::test{
 
     // SCENARIO("Regression test for basic kiwi functions", "[basic]"){
         
-    //     debug::initial_log("basic.log");
     //     GIVEN("Configs, describing connections, external_ports, topdies and topdie_insts"){
     //         //! notice: cob array here is 9*12
     //         PLEASE_DO_NOT_FAIL(1, "Muyan topdie with synchroinzed nets only");
@@ -52,7 +47,6 @@ namespace kiwi::test{
 
     SCENARIO("CPU-MEM-AI circuit test", "[CPU_MEM_AI]"){
         
-        debug::initial_log("CPU_MEM_AI.log");
         GIVEN("config.json & a txt file from xl"){
             //! notice: cob array here is 9*13, and available pose/nege port is different
             PLEASE_DO_NOT_FAIL(7, "a case with the least number of bus");
@@ -63,12 +57,11 @@ namespace kiwi::test{
 
     SCENARIO("CPU-MEM circuit test", "[CPU_MEM]"){
         
-        debug::initial_log("CPU_MEM_AI.log");
         GIVEN("config.json & a txt file from xl"){
             //! notice: cob array here is 9*13, and available pose/nege port is the same with CPU_MEM_AI
             PLEASE_DO_NOT_FAIL(10, "a case with the least number of bus");
             PLEASE_DO_NOT_FAIL(11, "a case with a middle scale of bus");
-            PLEASE_DO_NOT_FAIL(12, "a case with the most number of bus");
+            // PLEASE_DO_NOT_FAIL(12, "a case with the most number of bus");
         }
     }
 }

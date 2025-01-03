@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "../net.hh"
-#include "../../topdie/topdieinst.hh"
+#include "../../topdieinst/topdieinst.hh"
 #include <hardware/tob/tob.hh>
 #include <hardware/cob/cob.hh>
 #include <std/integer.hh>
@@ -28,7 +28,7 @@ namespace kiwi::circuit {
         virtual auto update_priority(float bias) -> void override;
         virtual auto coords() const -> std::Vector<hardware::Coord> override;
         virtual auto check_accessable_cobunit() -> void override;
-        virtual auto to_string() -> std::String override;
+        virtual auto to_string() const -> std::String override;
         virtual auto port_number() const -> std::usize override;
 
         auto begin_bump() const -> hardware::Bump* { return this->_begin_bump; }

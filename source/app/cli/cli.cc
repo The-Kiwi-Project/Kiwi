@@ -23,11 +23,9 @@ debug::initial_log("./debug.log");
 //!
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);
 
-        auto length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
-//!
-debug::debug_fmt("Total length of the route: {}", length);
-//!
-        
+        auto l = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+        debug::info_fmt("Length: '{}'", l);
+
         interposer->randomly_map_remain_indexes();
 
         parse::write_control_bits(

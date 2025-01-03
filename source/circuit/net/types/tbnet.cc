@@ -41,7 +41,8 @@ namespace kiwi::circuit {
         _end_bump->intersect_access_unit(cobunit_ids);
     }
 
-    auto TrackToBumpNet::to_string() -> std::String {
+    
+    auto TrackToBumpNet::to_string() const -> std::String {
         return std::format("Begin track: '{}' to End bump '{}'", this->_begin_track->coord(), this->_end_bump->coord());
     }
 

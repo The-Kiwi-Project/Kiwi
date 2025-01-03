@@ -11,7 +11,7 @@
 
 namespace kiwi::debug {
 
-    static auto debug_level = DebugLevel::Debug;
+    static auto debug_level = DebugLevel::Info;
 
     static auto debug_level_to_number(DebugLevel level) -> std::i64 {
         switch (level) {
@@ -37,21 +37,33 @@ namespace kiwi::debug {
     }
 
     auto debug(std::StringView message) -> void {
+        if (!is_debug_level_enough(DebugLevel::Debug)) {
+            return;
+        }
         console::debug(message);
         log::debug(message);
     }
 
     auto info(std::StringView message) -> void {
+        if (!is_debug_level_enough(DebugLevel::Info)) {
+            return;
+        }
         console::info(message);
         log::info(message);
     }
 
     auto warning(std::StringView message) -> void {
+        if (!is_debug_level_enough(DebugLevel::Warning)) {
+            return;
+        }
         console::warning(message);
         log::warning(message);
     }
 
     auto error(std::StringView message) -> void {
+        if (!is_debug_level_enough(DebugLevel::Error)) {
+            return;
+        }
         console::error(message);
         log::error(message);
     }

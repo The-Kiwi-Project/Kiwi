@@ -77,7 +77,7 @@ namespace kiwi::serde {
         auto push(Json json) -> void;
 
     public:
-        auto to_string() -> std::String;
+        auto to_string() const -> std::String;
         auto type() const noexcept -> JsonType;
 
     public:
