@@ -43,9 +43,8 @@ Options：
 - `-o, --output <OUTPUT_PATH>`：指定输出 controlbit 文件路径
 - `-g, --gui`：使用 GUI 模式
 - `-h, --help`：打印帮助信息
-- `-v, --version`：打印版本信息
-
-
+- `-V, --version`：打印版本信息
+- `-v, --verbose`: 输出 Debug 信息
 
 
 ## 测试
