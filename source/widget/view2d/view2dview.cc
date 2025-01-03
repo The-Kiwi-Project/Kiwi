@@ -5,7 +5,6 @@
 #include "qglobal.h"
 #include "qgraphicsitem.h"
 #include "qgraphicsscene.h"
-#include "qline.h"
 #include "qobject.h"
 
 #include "./item/cobitem.h"
@@ -221,7 +220,7 @@ namespace kiwi::widget {
     }
 
     void View2DView::addTrack(const QPointF& begin, const QPointF& end) {
-        this->_scene->addLine(QLineF{begin, end});
+        this->_scene->addNet(begin, end);
     }
 
     auto View2DView::trackPositions(const hardware::TrackCoord& coord) -> std::Tuple<QPointF, QPointF> {
@@ -241,10 +240,10 @@ namespace kiwi::widget {
                 auto y = 
                     leftCOBPos.y() + 
                     view2d::COBItem::TRANFORM_LENGTH / 2 - 
-                    coord.index * ((qreal)COBItem::TRANFORM_LENGTH / (qreal)hardware::COB::INDEX_SIZE);
+                    coord.index * ((qreal)COBItem::TRANFORM_LENGTH / (qreal)(hardware::COB::INDEX_SIZE + 1));
 
-                auto leftX = leftCOBPos.x() + (COBItem::CORE_WIDTH + COBItem::TRANFORM_WIDTH) / 2.;
-                auto righX = rightCOBPos.x() - (COBItem::CORE_WIDTH + COBItem::TRANFORM_WIDTH) / 2.;
+                auto leftX = leftCOBPos.x() + (COBItem::CORE_WIDTH / 2 + COBItem::TRANFORM_WIDTH);
+                auto righX = rightCOBPos.x() - (COBItem::CORE_WIDTH / 2 + COBItem::TRANFORM_WIDTH);
 
                 return std::Tuple<QPointF, QPointF>{QPointF{leftX, y}, QPointF{righX, y}};
             }
@@ -264,12 +263,12 @@ namespace kiwi::widget {
                 auto x = 
                     upCOBPos.x() -
                     view2d::COBItem::TRANFORM_LENGTH / 2 +
-                    coord.index * ((qreal)COBItem::TRANFORM_LENGTH / (qreal)hardware::COB::INDEX_SIZE);
+                    coord.index * ((qreal)COBItem::TRANFORM_LENGTH / (qreal)(hardware::COB::INDEX_SIZE + 1));
 
-                auto upY = upCOBPos.y() + (COBItem::CORE_WIDTH + COBItem::TRANFORM_WIDTH) / 2.;
-                auto downY = downCOBPos.y() - (COBItem::CORE_WIDTH + COBItem::TRANFORM_WIDTH) / 2.;
+                auto upY = upCOBPos.y() + (COBItem::CORE_WIDTH / 2. + COBItem::TRANFORM_WIDTH);
+                auto downY = downCOBPos.y() - (COBItem::CORE_WIDTH / 2. + COBItem::TRANFORM_WIDTH);
 
-                return std::Tuple<QPointF, QPointF>{QPointF{x, upY}, QPointF{x, downY}};
+                return std::Tuple<QPointF, QPointF>{QPointF{x, downY}, QPointF{x, upY}};
             }
         }
         debug::unreachable();

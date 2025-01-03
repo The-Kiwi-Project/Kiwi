@@ -1,6 +1,7 @@
 #include "./view2dscene.hh"
 #include "./item/cobitem.h"
 #include "./item/tobitem.h"
+#include "widget/view2d/item/netitem.h"
 #include <hardware/bump/bump.hh>
 #include <QGraphicsScene>
 
@@ -23,4 +24,10 @@ namespace kiwi::widget {
         return item;
     }
 
+    auto View2DScene::addNet(const QPointF& begin, const QPointF& end) -> view2d::NetItem* {
+        auto item = new view2d::NetItem{begin, end};
+        this->addItem(item);
+        return item;
+    }
+    
 }
