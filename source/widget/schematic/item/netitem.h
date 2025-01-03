@@ -3,6 +3,7 @@
 #include "qcolor.h"
 #include "qobject.h"
 #include "qpoint.h"
+#include "std/utility.hh"
 #include <QGraphicsLineItem>
 #include <QPen>
 #include <QDebug>
@@ -65,6 +66,7 @@ namespace kiwi::widget::schematic {
     public:
         void updateLine();
         void updateEndPoint(const QPointF& point);
+        void addPoint(const QPointF& point);
 
     public:
         void setLine(const QPointF& begin, const QPointF& end);
@@ -82,13 +84,17 @@ namespace kiwi::widget::schematic {
 
         void setEndPoint(NetPointItem* point) { this->_endPoint = point; }
 
+    private:
+        void updatePath();
+
     protected:
         NetPointItem* _beginPoint {nullptr};
         NetPointItem* _endPoint {nullptr};
 
-        QPointF _begin;
+        QVector<QPointF> _points;
+        QPainterPath _path;
+        std::Option<QPointF> _tempPoint;
         QPointF _end;
-
     };
 
 }

@@ -2,6 +2,7 @@
 #include "./pinitem.h"
 #include "qnamespace.h"
 #include "qobject.h"
+#include "qpoint.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
@@ -113,7 +114,6 @@ namespace kiwi::widget::schematic {
     {
         this->_beginPoint->setNetItem(this);
         this->_endPoint->setNetItem(this);
-
         this->setAcceptHoverEvents(true);
         this->updateLine();
     }
@@ -128,7 +128,47 @@ namespace kiwi::widget::schematic {
     }
 
     void NetItem::updateEndPoint(const QPointF& point) {
-        this->setLine(this->_beginPoint->scenePos(), point);
+        // this->setLine(this->_beginPoint->scenePos(), point);
+        if (this->_tempPoint.has_value()) {
+            auto tempPoint = *this->_tempPoint;
+            auto lastPoint = this->_points.back();
+            auto isHoverLine = (lastPoint.y() == tempPoint.y());
+
+            if (tempPoint == point) {
+                this->_tempPoint.reset();
+            }
+            else if (tempPoint.x() != point.x() && tempPoint.y() != point.y()) {
+                if (isHoverLine) {
+                    this->_tempPoint = QPointF{point.x(), tempPoint.y()};
+                } else {
+                    this->_tempPoint = QPointF{tempPoint.x(), point.y()};
+                }
+            }
+        }
+        else {
+            auto lastPoint = this->_points.back();
+            if (lastPoint == point) {
+                
+            }
+            else if (lastPoint.x() == point.x() || lastPoint.y() == point.y()) {
+
+            } else {
+                if (lastPoint != this->_end) {
+                    this->_tempPoint = this->_end;
+                }
+            }
+        }
+
+        this->_end = point;
+        this->updatePath();
+    }
+
+    void NetItem::addPoint(const QPointF& point) {
+        if (this->_tempPoint.has_value()) {
+            this->_points.push_back(*this->_tempPoint);
+            this->_tempPoint.reset();
+        }
+        this->_points.push_back(point);
     }
 
     void NetItem::updateLine() {
@@ -139,35 +179,52 @@ namespace kiwi::widget::schematic {
     }
 
     auto NetItem::boundingRect() const -> QRectF {
-        QRectF rect = QRectF(this->_begin, this->_end).normalized();
-        const qreal penWidth = 2.0;
-        rect.adjust(-penWidth, -penWidth, penWidth, penWidth);
-        return rect;
+        return this->_path.boundingRect().adjusted(-2, -2, 2, 2);
     }
 
     void NetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
         QPen pen(Qt::black, 2);
         painter->setPen(pen);
-
-        QPainterPath path;
-        path.moveTo(this->_begin);
-        if (this->_begin.x() == this->_end.x() || this->_begin.y() == this->_end.y()) {
-            path.lineTo(this->_end); // 单一方向
-        } else {
-            QPointF mid(this->_end.x(), this->_begin.y());
-            path.lineTo(mid);  // 水平转折点
-            path.lineTo(this->_end);
-        }
-        painter->drawPath(path);
+        painter->drawPath(this->_path);
     }
 
     void NetItem::setLine(const QPointF& begin, const QPointF& end) {
         this->prepareGeometryChange();
-        this->_begin = begin;
+
+        this->_path.clear();
+        this->_path.moveTo(begin);
+        if (begin.x() == end.x() || begin.y() == end.y()) {
+            this->_path.lineTo(end); // 单一方向
+        } else {
+            QPointF mid(end.x(), begin.y());
+            this->_path.lineTo(mid);  // 水平转折点
+            this->_path.lineTo(end);
+        }
+
+        this->_points.push_back(begin);
         this->_end = end;
+
         this->update();
     }
     
+    void NetItem::updatePath() {
+        this->prepareGeometryChange();
+
+        this->_path = QPainterPath();
+        if (!this->_points.isEmpty()) {
+            this->_path.moveTo(this->_points[0]);
+            for (int i = 1; i < this->_points.size(); ++i) {
+                this->_path.lineTo(this->_points[i]);
+            }
+        }
+        if (this->_tempPoint.has_value()) {
+            this->_path.lineTo(*this->_tempPoint);
+        }
+        this->_path.lineTo(this->_end);
+
+        this->update();
+    }
+
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
         // this->setPen(QPen{HOVER_COLOR, HOVER_WIDTH});
         QGraphicsItem::hoverEnterEvent(event);

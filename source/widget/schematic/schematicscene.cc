@@ -3,6 +3,8 @@
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
+#include "qnamespace.h"
+#include "widget/schematic/item/griditem.h"
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
@@ -14,9 +16,27 @@ namespace kiwi::widget {
 
     void SchematicScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
         if (this->_floatingNet != nullptr) {
-            this->_floatingNet->updateEndPoint(event->scenePos());
+            auto gridPos = schematic::GridItem::snapToGrid(event->scenePos());
+            this->_floatingNet->updateEndPoint(gridPos);
         }
         QGraphicsScene::mouseMoveEvent(event);
+    }
+
+    void SchematicScene::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+        if (this->_floatingNet != nullptr) {
+            if (event->button() & Qt::LeftButton) {
+                auto gridPos = schematic::GridItem::snapToGrid(event->scenePos());
+                this->_floatingNet->addPoint(gridPos);
+            }
+            else if (event->button() & Qt::RightButton) {
+                this->_floatingNet->beginPoint()->unlinkPin();
+                this->items().removeOne(this->_floatingNet);
+                delete this->_floatingNet->beginPoint();
+                delete this->_floatingNet;
+                this->_floatingNet = nullptr;
+            }
+        }
+        QGraphicsScene::mousePressEvent(event);
     }
 
     auto SchematicScene::addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem* {
@@ -57,7 +77,8 @@ namespace kiwi::widget {
             endPoint->setNetItem(this->_floatingNet);
 
             this->_floatingNet = nullptr;
-        } else {
+        } 
+        else {
             auto beginPoint = this->addNetPoint(pin);
         
             this->_floatingNet = new schematic::NetItem {beginPoint};

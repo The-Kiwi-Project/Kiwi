@@ -3,8 +3,6 @@
 #include "./item/pinitem.h"
 #include "./item/topdieinstitem.h"
 #include "./item/exportitem.h"
-#include "circuit/pin/pin.hh"
-#include "std/utility.hh"
 #include "widget/schematic/schematicscene.h"
 #include <QPainter>
 #include <QBrush>
@@ -53,43 +51,42 @@ namespace kiwi::widget {
             int col = i % cols;
 
             int x = startX + col * (this->_topdieInstItems[i]->width() + spacing);
-            int y = startY + row * (this->_topdieInstItems[i]->width() + spacing);
+            int y = startY + row * (this->_topdieInstItems[i]->height() + spacing);
 
             this->_topdieInstItems[i]->setPos(x, y);
         }
 
-        for (auto& [sync, connections] : this->_basedie->connections()) {
-            for (const auto& connection : connections) {
-                PinItem* beginPin = nullptr;
-                PinItem* endPin = nullptr;
+        // for (auto& [sync, connections] : this->_basedie->connections()) {
+        //     for (const auto& connection : connections) {
+        //         PinItem* beginPin = nullptr;
+        //         PinItem* endPin = nullptr;
 
-                std::match(connection.input,
-                    [&beginPin, this](const circuit::ConnectExPort& eport) {
-                        auto eportItem = this->_scene->addExPort(QString::fromStdString(eport.name));
-                        beginPin = eportItem->pin();
-                    },
-                    [&beginPin, this](const circuit::ConnectBump& bump) {
-                        auto top = this->_scene->topdieinstMap().value(bump.inst);
-                        beginPin = top->pinitems().value(QString::fromStdString(bump.name));
-                    }
-                );
+        //         std::match(connection.input,
+        //             [&beginPin, this](const circuit::ConnectExPort& eport) {
+        //                 auto eportItem = this->_scene->addExPort(QString::fromStdString(eport.name));
+        //                 beginPin = eportItem->pin();
+        //             },
+        //             [&beginPin, this](const circuit::ConnectBump& bump) {
+        //                 auto top = this->_scene->topdieinstMap().value(bump.inst);
+        //                 beginPin = top->pinitems().value(QString::fromStdString(bump.name));
+        //             }
+        //         );
 
-                std::match(connection.output,
-                    [&endPin, this](const circuit::ConnectExPort& eport) {
-                        auto eportItem = this->_scene->addExPort(QString::fromStdString(eport.name));
-                        endPin = eportItem->pin();
-                    },
-                    [&endPin, this](const circuit::ConnectBump& bump) {
-                        auto top = this->_scene->topdieinstMap().value(bump.inst);
-                        endPin = top->pinitems().value(QString::fromStdString(bump.name));
-                    }
-                );
+        //         std::match(connection.output,
+        //             [&endPin, this](const circuit::ConnectExPort& eport) {
+        //                 auto eportItem = this->_scene->addExPort(QString::fromStdString(eport.name));
+        //                 endPin = eportItem->pin();
+        //             },
+        //             [&endPin, this](const circuit::ConnectBump& bump) {
+        //                 auto top = this->_scene->topdieinstMap().value(bump.inst);
+        //                 endPin = top->pinitems().value(QString::fromStdString(bump.name));
+        //             }
+        //         );
 
-                this->_scene->connectPins(beginPin, endPin);
-            }
-        }
+        //         this->_scene->connectPins(beginPin, endPin);
+        //     }
+        // }
 
-        // this->setSceneRect(0, 0, 10000, 10000); // 设置场景为 10000x10000 的区域
         this->adjustSceneRect();
     }
 

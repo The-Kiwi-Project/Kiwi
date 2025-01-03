@@ -25,6 +25,7 @@ namespace kiwi::widget {
 
     protected:
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+        void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
     public:
         auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;

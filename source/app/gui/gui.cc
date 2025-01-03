@@ -25,8 +25,8 @@ namespace kiwi {
         auto [interposer, basedie] 
             = kiwi::parse::read_config("../test/regression_test/case2");
     
-        algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
-        interposer->randomly_map_remain_indexes();
+        // algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+        // interposer->randomly_map_remain_indexes();
 
         QApplication app(argc, argv);
         auto w = widget::SWindow{interposer.get(), basedie.get()};
