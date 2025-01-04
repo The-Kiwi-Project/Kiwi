@@ -1,5 +1,7 @@
 #pragma once
 
+#include "qcolor.h"
+#include "qgraphicssceneevent.h"
 #include <std/utility.hh>
 #include <QGraphicsLineItem>
 #include <QPen>
@@ -30,31 +32,37 @@ namespace kiwi::widget::schematic {
     private:
         void updateBeginPosition(const QPointF& pos);
         void updateEndPosition(const QPointF& pos);
+        void updatePath();
 
     public:
         void setLine(const QPointF& begin, const QPointF& end);
 
     protected:
         auto boundingRect() const -> QRectF override;
+        auto shape() const -> QPainterPath override;
         void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
         void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
+
     public:
         auto beginPoint() const -> NetPointItem* { return this->_beginPoint; }
         auto endPoint() const -> NetPointItem* { return this->_endPoint; }
-
-        auto isFloating() const -> bool {
-            return this->_beginPoint == nullptr || this->_endPoint == nullptr;
-        }
-
         void setEndPoint(NetPointItem* point) { this->_endPoint = point; }
 
-    private:
-        void updatePath();
+        auto isSyncNet() const -> bool;
+        auto sync() const -> int;
+        void setSync(int sync);
+        
+        auto isFloating() const -> bool;
 
     protected:
+        QColor _color {COLOR};
+        qreal _width {WIDTH};
+        int _sync {};
+
         NetPointItem* _beginPoint {nullptr};
         NetPointItem* _endPoint {nullptr};
 

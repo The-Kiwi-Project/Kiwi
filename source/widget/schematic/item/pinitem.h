@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qchar.h"
 #include "qglobal.h"
 #include "qvariant.h"
 #include "qvector.h"
@@ -23,6 +24,7 @@ namespace kiwi::widget::schematic {
 
     class NetItem;
     class NetPointItem;
+    class TopDieInstanceItem;
 
     class PinItem : public QGraphicsItem {
     public:
@@ -40,8 +42,12 @@ namespace kiwi::widget::schematic {
     
     public:
         PinItem(
-            const QString &name, QPointF position, PinSide side, 
-            SchematicScene* scene, QGraphicsItem *parent = nullptr
+            const QString &name, 
+            QPointF position, 
+            PinSide side, 
+            SchematicScene* scene, 
+            TopDieInstanceItem* topdie = nullptr,
+            QGraphicsItem *parent = nullptr
         );
 
     public:        
@@ -54,6 +60,11 @@ namespace kiwi::widget::schematic {
         void mousePressEvent(QGraphicsSceneMouseEvent*) override;
         void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
+
+    public:
+        auto isExportPin() const -> bool;
+        auto isTopdieInstPin() const -> bool;
+        auto toString() const -> QString;
 
     public: 
         auto name() const -> const QString& { return this->_name; }
@@ -70,14 +81,13 @@ namespace kiwi::widget::schematic {
     private:
         QString _name;
         PinSide _side;
+        TopDieInstanceItem* _topdieinst;
+        SchematicScene* _scene;
 
         qreal _raduis {PIN_RADIUS};
-
-        QVector<NetPointItem*> _connectedNetPoints {};
-
         bool _hovered {false};
 
-        SchematicScene* _scene;
+        QVector<NetPointItem*> _connectedNetPoints {};
     };
 
 

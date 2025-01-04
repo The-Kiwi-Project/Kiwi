@@ -13,7 +13,7 @@ namespace kiwi::widget::schematic {
         _pinietm{},
         _width{GridItem::snapToGrid(PIN_SIDE_INTERVAL + PinItem::NAME_INTERVAL + name.size() * PinItem::CHAR_WIDTH_ + PIN_SIDE_INTERVAL)}
     {
-        this->_pinietm = new PinItem{name, QPointF{0, 0}, PinSide::Left, scene, this};
+        this->_pinietm = new PinItem{name, QPointF{0, 0}, PinSide::Left, scene, nullptr, this};
         this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
     }
 

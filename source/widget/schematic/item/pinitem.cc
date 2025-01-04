@@ -6,6 +6,7 @@
 #include "qpoint.h"
 #include "./netitem.h"
 #include "./netpointitem.h"
+#include "./topdieinstitem.h"
 #include "../schematicscene.h"
 #include <QGraphicsSceneMouseEvent>
 
@@ -17,14 +18,18 @@ namespace kiwi::widget::schematic {
     const QColor PinItem::HOVERED_COLOR = Qt::red;
 
     PinItem::PinItem(
-        const QString &name, QPointF position, PinSide side, 
-        SchematicScene* scene, QGraphicsItem *parent
+        const QString &name, 
+        QPointF position, 
+        PinSide side, 
+        SchematicScene* scene,
+        TopDieInstanceItem* topdie,
+        QGraphicsItem *parent
     )
         : QGraphicsItem(parent), 
-        _name{name}, 
+        _name{name},
         _side{side},
-        _hovered{false},
-        _scene{scene}
+        _scene{scene},
+        _topdieinst{topdie}
     {
         this->setPos(position);
         this->setAcceptHoverEvents(true);
@@ -95,6 +100,21 @@ namespace kiwi::widget::schematic {
                 break;
             }
         }
+    }
+
+    auto PinItem::isExportPin() const -> bool {
+        return this->_topdieinst == nullptr;
+    }
+
+    auto PinItem::isTopdieInstPin() const -> bool {
+        return !this->isExportPin();
+    }
+
+    auto PinItem::toString() const -> QString {
+        if (this->_topdieinst) {
+            return QString{"%1.%2"}.arg(this->_topdieinst->name()).arg(this->_name);
+        }
+        return this->_name;
     }
 
     auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {

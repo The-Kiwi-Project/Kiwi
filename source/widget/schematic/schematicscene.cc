@@ -36,6 +36,7 @@ namespace kiwi::widget {
                 this->_floatingNet = nullptr;
             }
         }
+        
         QGraphicsScene::mousePressEvent(event);
     }
 

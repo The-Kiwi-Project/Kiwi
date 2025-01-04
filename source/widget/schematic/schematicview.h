@@ -33,6 +33,7 @@ namespace kiwi::widget {
         explicit SchematicView(
             hardware::Interposer* interposer, 
             circuit::BaseDie* basedie,
+            SchematicScene* scene,
             QWidget *parent = nullptr);
 
         ~SchematicView() noexcept;

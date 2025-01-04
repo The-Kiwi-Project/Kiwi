@@ -1,8 +1,5 @@
 #pragma once
 
-#include "qchar.h"
-#include "qgraphicsscene.h"
-#include "qhash.h"
 #include <QGraphicsScene>
 
 namespace kiwi::circuit {
@@ -20,8 +17,13 @@ namespace kiwi::widget {
     }
 
     class SchematicScene : public QGraphicsScene {
+        Q_OBJECT
+        
     public:
         SchematicScene();
+
+    signals:
+        void infoWidgetChanged(QWidget* widet);
 
     protected:
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;

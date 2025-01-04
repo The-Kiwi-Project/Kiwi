@@ -6,6 +6,8 @@
 #include "qnamespace.h"
 #include "qobject.h"
 #include "qpoint.h"
+#include "widget/schematic/info/netinfowidget.h"
+#include "widget/schematic/schematicscene.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
@@ -33,6 +35,8 @@ namespace kiwi::widget::schematic {
         _beginPoint{beginPoint},
         _endPoint{nullptr}
     {
+        this->_color = HOVER_COLOR;
+        this->_width = HOVER_WIDTH;
         this->_beginPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
         this->setLine(this->_beginPoint->scenePos(), this->_beginPoint->scenePos());
@@ -297,14 +301,11 @@ namespace kiwi::widget::schematic {
         this->update();
     }
 
-    auto NetItem::boundingRect() const -> QRectF {
-        return this->_path.boundingRect().adjusted(-2, -2, 2, 2);
-    }
-
-    void NetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-        QPen pen(Qt::black, 2);
-        painter->setPen(pen);
-        painter->drawPath(this->_path);
+    void NetItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+        if (!this->isFloating()) {
+            auto widget = new NetInfoWidget{this};
+            dynamic_cast<SchematicScene*>(this->scene())->infoWidgetChanged(widget);
+        }
     }
 
     void NetItem::setLine(const QPointF& begin, const QPointF& end) {
@@ -344,14 +345,53 @@ namespace kiwi::widget::schematic {
         this->update();
     }
 
+    auto NetItem::boundingRect() const -> QRectF {
+        return this->_path.boundingRect().adjusted(-2, -2, 2, 2);
+    }
+
+    auto NetItem::shape() const -> QPainterPath {
+        // 创建一个路径，设置宽度为 2，用于鼠标事件检测
+        QPainterPathStroker stroker;
+        stroker.setWidth(4); // 可点击区域的宽度
+        return stroker.createStroke(_path);
+    }
+    
+    void NetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
+        QPen pen(this->_color, this->_width);
+        painter->setPen(pen);
+        painter->drawPath(this->_path);
+    }
+
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-        // this->setPen(QPen{HOVER_COLOR, HOVER_WIDTH});
+        if (!this->isFloating()) {
+            this->_color = HOVER_COLOR;
+            this->_width = HOVER_WIDTH;
+        }
         QGraphicsItem::hoverEnterEvent(event);
     }
 
     void NetItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-        // this->setPen(QPen{COLOR, WIDTH});
+        if (!this->isFloating()) {
+            this->_color = COLOR;
+            this->_width = WIDTH;
+        }
         QGraphicsItem::hoverLeaveEvent(event);
+    }
+
+    auto NetItem::isFloating() const -> bool {
+        return this->_beginPoint == nullptr || this->_endPoint == nullptr;
+    }
+
+    auto NetItem::isSyncNet() const -> bool {
+        return this->_sync != -1;
+    }
+
+    auto NetItem::sync() const -> int {
+        return this->_sync;
+    }
+
+    void NetItem::setSync(int sync) {
+        this->_sync = sync;
     }
 
 }

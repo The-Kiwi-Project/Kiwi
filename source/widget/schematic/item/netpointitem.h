@@ -42,6 +42,9 @@ namespace kiwi::widget::schematic {
         void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
 
+    public:
+        auto connectedPin() const -> PinItem* { return this->_connectedPin; }
+
     private:
         bool _dragging {false};
         PinItem* _connectedPin {nullptr};

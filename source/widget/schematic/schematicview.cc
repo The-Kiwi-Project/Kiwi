@@ -21,13 +21,15 @@ namespace kiwi::widget {
     SchematicView::SchematicView(
         hardware::Interposer* interposer, 
         circuit::BaseDie* basedie,
+        SchematicScene* scene,
         QWidget *parent
     ) :
         GraphicsView{parent},
         _interposer{interposer},
-        _basedie{basedie}
+        _basedie{basedie},
+        _scene{scene}
     {
-        this->_scene = new SchematicScene {};
+        // this->_scene = new SchematicScene {};
         this->setScene(this->_scene);
         this->setDragMode(QGraphicsView::RubberBandDrag);
         this->setInteractive(true);

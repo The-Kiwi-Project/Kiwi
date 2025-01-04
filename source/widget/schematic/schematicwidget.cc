@@ -1,10 +1,13 @@
 #include "./schematicwidget.h"
+#include "./schematicscene.h"
 #include "./schematicview.h"
+#include "qboxlayout.h"
 #include "qnamespace.h"
 #include "qsplitter.h"
 #include "qwidget.h"
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QLineEdit>
 
 namespace kiwi::widget {
 
@@ -13,33 +16,42 @@ namespace kiwi::widget {
         _interposer{interposer},
         _basedie{basedie}
     {
+        this->_scene = new SchematicScene{};
+        QVBoxLayout* layout = new QVBoxLayout(this);
+        layout->setContentsMargins(10, 10, 10, 10);
+
         auto splitter = new QSplitter{Qt::Horizontal, this};
+        layout->addWidget(splitter);
 
         this->_topdieLibWidget = new QWidget{};
         this->_topdieLibWidget->setMinimumWidth(200);
         this->_topdieLibWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-        this->_view = new SchematicView {interposer, basedie};
+        this->_view = new SchematicView {interposer, basedie, this->_scene};
         this->_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        this->_messageWidget = new QWidget{};
-        this->_messageWidget->setMinimumWidth(200);
-        this->_messageWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-
+        this->_infoContainerWidget = new QWidget{};
+        this->_infoContainerWidget->setMinimumWidth(200);
+        this->_infoContainerWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        this->_infoContainerWidget->setStyleSheet("background-color: lightgray;");
+        auto infoLayout = new QVBoxLayout {this->_infoContainerWidget};
+        infoLayout->addStretch();
 
         splitter->addWidget(this->_topdieLibWidget);
         splitter->addWidget(this->_view);
-        splitter->addWidget(this->_messageWidget);
-
-        // splitter->setStretchFactor(0, 1); // 左侧占比
-        // splitter->setStretchFactor(1, 2); // 中间占比
-        // splitter->setStretchFactor(2, 1); // 右侧占比
-        QVBoxLayout* layout = new QVBoxLayout(this);
-        layout->addWidget(splitter); // 将 QSplitter 添加到布局
-        layout->setContentsMargins(0, 0, 0, 0); // 去掉内边距
+        splitter->addWidget(this->_infoContainerWidget);
     
         this->setWindowTitle("Schematic Editor");
         this->resize(1000, 800);
+
+        QObject::connect(this->_scene, &SchematicScene::infoWidgetChanged, [this, infoLayout] (QWidget* widget) {
+            if (this->_infoWidget) {
+                infoLayout->removeWidget(this->_infoWidget);
+                delete this->_infoWidget;
+            }
+            infoLayout->insertWidget(0, widget);
+            this->_infoWidget = widget;
+        });
     }
 
 }
