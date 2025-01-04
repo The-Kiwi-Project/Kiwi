@@ -201,10 +201,7 @@ namespace kiwi::widget::schematic {
             auto beginPos = this->_points[0];
             auto endPos = this->_points[1];
             
-            if (beginPos == endPos) {
-                debug::exception("The netitem has the same begin and end position");
-            }
-            else if (beginPos.x() == endPos.x()) {
+            if (beginPos.x() == endPos.x()) {
                 if (pos == endPos) {
 
                 }
@@ -242,6 +239,10 @@ namespace kiwi::widget::schematic {
 
             } 
             else if (isHoverLine) {
+                // if (pos == lastPos) {
+                //     this->_points.pop_back();
+                // }
+                // else 
                 if (pos.y() == endPos.y()) {
                     *endIter = pos;
                 } 
@@ -251,6 +252,10 @@ namespace kiwi::widget::schematic {
                 }
             }
             else {
+                // if (pos == lastPos) {
+                //     this->_points.pop_back();
+                // }
+                // else 
                 if (pos.x() == endPos.x()) {
                     *endIter = pos;
                 } 
@@ -277,7 +282,6 @@ namespace kiwi::widget::schematic {
     }
 
     void NetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-        qDebug() << "paint" << this->_path;
         QPen pen(Qt::black, 2);
         painter->setPen(pen);
         painter->drawPath(this->_path);
