@@ -1,10 +1,11 @@
 #include "window.h"
 #include "./view3d/view3dwidget.h"
 #include "./view2d/view2dview.h"
-#include "./schematic/schematicview.h"
 #include "./layout/layoutview.h"
-#include "widget/layout/layoutview.h"
-#include "widget/schematic/schematicview.h"
+#include "./layout/layoutview.h"
+#include "./schematic/schematicview.h"
+#include "./schematic/schematicwidget.h"
+
 
 #include <QDebug>
 #include <QResizeEvent>
@@ -108,7 +109,7 @@ namespace kiwi::widget {
         // this->_widget = new View3DWidget {i, b, this};
         // this->_widget = new View2DView {i, b, this};
         // this->_widget = new LayoutView {i, b, this};
-        this->_widget = new SchematicView {i, b, this};
+        this->_widget = new SchematicWidget {i, b, this};
         layout->addWidget(this->_widget);
         this->setLayout(layout);
     }
