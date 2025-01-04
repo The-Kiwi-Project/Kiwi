@@ -75,6 +75,7 @@ namespace kiwi::widget {
         if (this->_floatingNet != nullptr) {
             auto endPoint = this->addNetPoint(pin);
             this->_floatingNet->setEndPoint(endPoint);
+            this->_floatingNet->resetPaint();
             endPoint->setNetItem(this->_floatingNet);
 
             this->_floatingNet = nullptr;

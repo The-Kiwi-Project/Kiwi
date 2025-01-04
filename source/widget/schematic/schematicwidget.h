@@ -2,6 +2,8 @@
 
 #include "qwidget.h"
 #include <QWidget>
+#include <QStackedWidget>
+#include <QSplitter>
 
 namespace kiwi::hardware {
     class Interposer;
@@ -23,16 +25,19 @@ namespace kiwi::widget {
             circuit::BaseDie* basedie,
             QWidget *parent = nullptr);
 
+    private:
+        void initTopdieLibWidget();
+        void initSchematicView(hardware::Interposer* interposer, circuit::BaseDie* basedie);
+        void initInfoWidget();
+
     protected:
-        QWidget*       _topdieLibWidget {nullptr};
-        SchematicView* _view {nullptr};
-        QWidget*       _infoContainerWidget {nullptr};
+        QSplitter* _splitter {nullptr};
+
+        SchematicView*  _view {nullptr};  
         SchematicScene* _scene {nullptr};
 
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie*     _basedie {nullptr};
-
-        QWidget* _infoWidget {nullptr};
     };
 
 }

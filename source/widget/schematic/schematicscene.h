@@ -24,6 +24,7 @@ namespace kiwi::widget {
 
     signals:
         void infoWidgetChanged(QWidget* widet);
+        void netSelected(schematic::NetItem* net);
 
     protected:
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;

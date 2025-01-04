@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qcolor.h"
+#include "qglobal.h"
 #include "qgraphicssceneevent.h"
 #include <std/utility.hh>
 #include <QGraphicsLineItem>
@@ -14,10 +15,10 @@ namespace kiwi::widget::schematic {
 
     class NetItem : public QGraphicsItem {
     public:
-        static const     QColor COLOR;
+        static const     QColor DEFAULT_COLOR;
+        static constexpr qreal  DEFAULT_WIDTH = 2;
+
         static const     QColor HOVER_COLOR;
-        static constexpr qreal  WIDTH = 2;
-        static constexpr qreal  HOVER_WIDTH = 3;
         
     public:
         NetItem(NetPointItem* beginPoint, NetPointItem* endPoint);
@@ -52,16 +53,27 @@ namespace kiwi::widget::schematic {
         auto endPoint() const -> NetPointItem* { return this->_endPoint; }
         void setEndPoint(NetPointItem* point) { this->_endPoint = point; }
 
-        auto isSyncNet() const -> bool;
-        auto sync() const -> int;
-        void setSync(int sync);
+        auto color() const -> const QColor& { return this->_color; }
+        auto setColor(const QColor& color) { this->_color = color; this->_paintColor = color; }
+
+        auto width() const -> qreal { return this->_width; }
+        auto setWidth(qreal width) { this->_width = width; this->_paintWidth = width; }
+
+        auto isSyncNet() const -> bool { return this->_sync == -1; }
+        auto sync() const -> int { return this->_sync; }
+        void setSync(int sync) { this->_sync = sync; }
         
+        void resetPaint();
         auto isFloating() const -> bool;
 
     protected:
-        QColor _color {COLOR};
-        qreal _width {WIDTH};
-        int _sync {};
+        QColor _paintColor {DEFAULT_COLOR};
+        qreal  _paintWidth {DEFAULT_WIDTH};
+        
+        QColor _color {DEFAULT_COLOR};
+        qreal  _width {DEFAULT_WIDTH};
+
+        int _sync {-1};
 
         NetPointItem* _beginPoint {nullptr};
         NetPointItem* _endPoint {nullptr};

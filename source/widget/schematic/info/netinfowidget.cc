@@ -2,6 +2,9 @@
 #include "../item/netitem.h"
 #include "../item/netpointitem.h"
 #include "../item/pinitem.h"
+#include "qspinbox.h"
+#include <widget/frame/colorpickbutton.h>
+#include <debug/debug.hh>
 
 #include <QLabel>
 #include <QComboBox>
@@ -12,9 +15,8 @@
 
 namespace kiwi::widget::schematic {
 
-    NetInfoWidget::NetInfoWidget(NetItem* net, QWidget* parent) : 
-        QWidget{parent},
-        _net{net}
+    NetInfoWidget::NetInfoWidget(QWidget* parent) : 
+        QWidget{parent}
     {
         this->setStyleSheet("background-color: white;");
         auto layout = new QGridLayout{this};
@@ -24,49 +26,84 @@ namespace kiwi::widget::schematic {
         layout->addWidget(titleLabel, 0, 0, 1, 2);
 
         // Begin
-        auto beginPoint = this->_net->beginPoint();
-        auto beginPin = beginPoint->connectedPin();
         layout->addWidget(new QLabel {"Begin ", this}, 1, 0);
-        auto beginLabel = new QLabel {beginPin->toString(), this};
-        beginLabel->setStyleSheet(
+        this->_beginPinLabel = new QLabel {"", this};
+        this->_beginPinLabel->setStyleSheet(
             "border-radius: 5px;"        // 圆角半径
-            "padding: 10px;"             // 内边距
+            "padding: 5px;"             // 内边距
             "border: 1px solid #A9A9A9;" // 边框
         );
-
-        layout->addWidget(beginLabel, 1, 1);
+        layout->addWidget(this->_beginPinLabel, 1, 1);
 
         // End
-        auto endPoint = this->_net->endPoint();
-        auto endPin = endPoint->connectedPin();
         layout->addWidget(new QLabel {"End   ", this}, 2, 0);
-        auto endLabel = new QLabel {endPin->toString(), this};
-        endLabel->setStyleSheet(
+        this->_endPinLabel = new QLabel {"", this};
+        this->_endPinLabel->setStyleSheet(
             "border-radius: 5px;"        // 圆角半径
-            "padding: 10px;"             // 内边距
+            "padding: 5px;"             // 内边距
             "border: 1px solid #A9A9A9;" // 边框
         );
-        layout->addWidget(endLabel, 2, 1);
+        layout->addWidget(this->_endPinLabel, 2, 1);
 
         // Sync
         layout->addWidget(new QLabel {"Sync  ", this}, 3, 0);
-        auto syncSpinBox = new QSpinBox{this};
-        syncSpinBox->setMinimum(-1);
-        syncSpinBox->setMaximum(32);
-        syncSpinBox->setValue(this->_net->sync());
-        layout->addWidget(syncSpinBox, 3, 1);
+        this->_syncSpinBox = new QSpinBox{this};
+        this->_syncSpinBox->setMinimum(-1);
+        this->_syncSpinBox->setMaximum(32);
+        this->_syncSpinBox->setMinimumHeight(30);
+        layout->addWidget(this->_syncSpinBox, 3, 1);
 
-        // Color 
+        // Color
+        layout->addWidget(new QLabel {"Color ", this}, 4, 0);
+        this->_colorButton = new ColorPickerButton {this};
+        this->_colorButton->setMinimumHeight(30);
+        layout->addWidget(this->_colorButton, 4, 1);
 
         // Width
 
-        layout->setColumnStretch(0, 1);
-        layout->setColumnStretch(1, 2);
 
-        layout->setColumnMinimumWidth(0, 50);  // 第一列最小宽度为 100px
-        layout->setColumnStretch(0, 0);         // 第一列不参与伸缩
+        layout->setColumnMinimumWidth(0, 50);
+        layout->setColumnStretch(0, 0);
+
+        connect(this->_colorButton, &ColorPickerButton::colorChanged, this, &NetInfoWidget::colorChanged);
+        connect(this->_syncSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &NetInfoWidget::syncChanged);
+    }
+
+    void NetInfoWidget::loadNet(NetItem* net) {
+        this->_net = net;
+        if (this->_net == nullptr) {
+            debug::exception("Load a empty net into NetInfoWidget");
+        }
+
+        auto beginPoint = this->_net->beginPoint();
+        auto beginPin = beginPoint->connectedPin();
+        this->_beginPinLabel->setText(beginPin->toString());
+
+        auto endPoint = this->_net->endPoint();
+        auto endPin = endPoint->connectedPin();
+        this->_endPinLabel->setText(endPin->toString());
+
+        this->_syncSpinBox->setValue(this->_net->sync());
+
+        this->_colorButton->setColor(this->_net->color());
+    }
+
+    void NetInfoWidget::syncChanged(int sync) {
+        if (this->_net == nullptr) {
+            debug::exception("Change sync for nullptr net");
+        }
+
+        this->_net->setSync(sync);
+        this->_net->update();
+    }
         
-        this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    void NetInfoWidget::colorChanged(const QColor& color) {
+        if (this->_net == nullptr) {
+            debug::exception("Change color for nullptr net");
+        }
+
+        this->_net->setColor(color);
+        this->_net->update();
     }
 
 }

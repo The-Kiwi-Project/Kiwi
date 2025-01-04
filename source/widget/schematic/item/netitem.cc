@@ -16,7 +16,7 @@
 
 namespace kiwi::widget::schematic {
 
-    const QColor NetItem::COLOR = Qt::black;
+    const QColor NetItem::DEFAULT_COLOR = Qt::black;
     const QColor NetItem::HOVER_COLOR = Qt::red;
 
     NetItem::NetItem(NetPointItem* beginPoint, NetPointItem* endPoint):
@@ -35,8 +35,12 @@ namespace kiwi::widget::schematic {
         _beginPoint{beginPoint},
         _endPoint{nullptr}
     {
-        this->_color = HOVER_COLOR;
-        this->_width = HOVER_WIDTH;
+        this->_paintColor = HOVER_COLOR;
+        this->_paintWidth = DEFAULT_WIDTH + 1;
+
+        this->_color = DEFAULT_COLOR;
+        this->_width = DEFAULT_WIDTH;
+        
         this->_beginPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
         this->setLine(this->_beginPoint->scenePos(), this->_beginPoint->scenePos());
@@ -303,8 +307,7 @@ namespace kiwi::widget::schematic {
 
     void NetItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
         if (!this->isFloating()) {
-            auto widget = new NetInfoWidget{this};
-            dynamic_cast<SchematicScene*>(this->scene())->infoWidgetChanged(widget);
+            dynamic_cast<SchematicScene*>(this->scene())->netSelected(this);
         }
     }
 
@@ -350,48 +353,42 @@ namespace kiwi::widget::schematic {
     }
 
     auto NetItem::shape() const -> QPainterPath {
-        // 创建一个路径，设置宽度为 2，用于鼠标事件检测
         QPainterPathStroker stroker;
-        stroker.setWidth(4); // 可点击区域的宽度
+        stroker.setWidth(4);
         return stroker.createStroke(_path);
     }
     
     void NetItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-        QPen pen(this->_color, this->_width);
+        QPen pen(this->_paintColor, this->_paintWidth);
         painter->setPen(pen);
         painter->drawPath(this->_path);
     }
 
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
         if (!this->isFloating()) {
-            this->_color = HOVER_COLOR;
-            this->_width = HOVER_WIDTH;
+            this->_paintColor = HOVER_COLOR;
+            this->_paintWidth = this->_width + 1;
         }
         QGraphicsItem::hoverEnterEvent(event);
     }
 
     void NetItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
         if (!this->isFloating()) {
-            this->_color = COLOR;
-            this->_width = WIDTH;
+            this->_paintColor = this->_color;
+            this->_paintWidth = this->_width;
         }
         QGraphicsItem::hoverLeaveEvent(event);
     }
 
+    void NetItem::resetPaint() {
+        this->prepareGeometryChange();
+        this->_paintColor = this->_color;
+        this->_paintWidth = this->_width;
+        this->update();
+    }
+
     auto NetItem::isFloating() const -> bool {
         return this->_beginPoint == nullptr || this->_endPoint == nullptr;
-    }
-
-    auto NetItem::isSyncNet() const -> bool {
-        return this->_sync != -1;
-    }
-
-    auto NetItem::sync() const -> int {
-        return this->_sync;
-    }
-
-    void NetItem::setSync(int sync) {
-        this->_sync = sync;
     }
 
 }
