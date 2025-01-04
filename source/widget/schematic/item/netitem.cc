@@ -47,11 +47,17 @@ namespace kiwi::widget::schematic {
 
     void NetPointItem::updatePos() {
         this->setPos(this->_connectedPin->scenePos());
-        this->_netitem->updatePositionFrom(this);
     }
 
     QVariant NetPointItem::itemChange(GraphicsItemChange change, const QVariant& value) {
-        return QGraphicsEllipseItem::itemChange(change, value);
+        auto v = QGraphicsEllipseItem::itemChange(change, value);
+        if (change == GraphicsItemChange::ItemPositionChange && this->_netitem != nullptr) {
+            if (this->_netitem->isFloating()) {
+                return v;
+            }
+            this->_netitem->updatePositionFrom(this, v.toPointF());
+        }
+        return v;
     }
 
     void NetPointItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
@@ -121,7 +127,8 @@ namespace kiwi::widget::schematic {
 
     NetItem::NetItem(NetPointItem* beginPoint) :
         QGraphicsItem{},
-        _beginPoint{beginPoint}
+        _beginPoint{beginPoint},
+        _endPoint{nullptr}
     {
         this->_beginPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
@@ -178,11 +185,15 @@ namespace kiwi::widget::schematic {
         this->setLine(this->_beginPoint->scenePos(), this->_endPoint->scenePos());
     }
 
-    void NetItem::updatePositionFrom(NetPointItem* pointItem) {
+    void NetItem::updatePositionFrom(NetPointItem* pointItem, const QPointF& pos) {
+        if (this->_beginPoint == nullptr || this->_endPoint == nullptr) {
+            return;
+        }
+
         if (pointItem == this->_beginPoint) {
-            this->updateBeginPosition(pointItem->scenePos());
+            this->updateBeginPosition(pos);
         } else if (pointItem == this->_endPoint) {
-            this->updateEndPosition(pointItem->scenePos());
+            this->updateEndPosition(pos);
         } else {
             debug::unreachable();
         }

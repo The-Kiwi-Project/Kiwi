@@ -49,7 +49,7 @@ namespace kiwi::widget::schematic {
     private:
         bool _dragging {false};
         PinItem* _connectedPin {nullptr};
-        NetItem* _netitem;
+        NetItem* _netitem {nullptr};
     };
 
     class NetItem : public QGraphicsItem {
@@ -65,7 +65,7 @@ namespace kiwi::widget::schematic {
 
     public:
         void updateLine();
-        void updatePositionFrom(NetPointItem* pointItem);
+        void updatePositionFrom(NetPointItem* pointItem, const QPointF& pos);
         void updateEndPoint(const QPointF& point);
         void addPoint(const QPointF& point);
 
@@ -86,6 +86,10 @@ namespace kiwi::widget::schematic {
     public:
         auto beginPoint() const -> NetPointItem* { return this->_beginPoint; }
         auto endPoint() const -> NetPointItem* { return this->_endPoint; }
+
+        auto isFloating() const -> bool {
+            return this->_beginPoint == nullptr || this->_endPoint == nullptr;
+        }
 
         void setEndPoint(NetPointItem* point) { this->_endPoint = point; }
 

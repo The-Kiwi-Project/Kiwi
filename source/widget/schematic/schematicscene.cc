@@ -3,6 +3,7 @@
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
+#include "qglobal.h"
 #include "qnamespace.h"
 #include "widget/schematic/item/griditem.h"
 #include <QGraphicsSceneMouseEvent>
@@ -80,7 +81,7 @@ namespace kiwi::widget {
         } 
         else {
             auto beginPoint = this->addNetPoint(pin);
-        
+            
             this->_floatingNet = new schematic::NetItem {beginPoint};
             this->addItem(this->_floatingNet);
         }
