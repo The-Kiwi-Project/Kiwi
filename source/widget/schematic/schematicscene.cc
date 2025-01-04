@@ -1,10 +1,9 @@
 #include "./schematicscene.h"
 #include "./item/netitem.h"
+#include "./item/netpointitem.h"
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
-#include "qglobal.h"
-#include "qnamespace.h"
 #include "widget/schematic/item/griditem.h"
 #include <QGraphicsSceneMouseEvent>
 

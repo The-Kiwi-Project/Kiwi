@@ -1,7 +1,7 @@
 #include "./netitem.h"
+#include "./netpointitem.h"
 #include "./pinitem.h"
 #include "debug/debug.hh"
-#include "qdebug.h"
 #include "qglobal.h"
 #include "qnamespace.h"
 #include "qobject.h"
@@ -13,103 +13,6 @@
 #include <QDebug>
 
 namespace kiwi::widget::schematic {
-
-    const QColor NetPointItem::COLOR = Qt::blue;
-    const QColor NetPointItem::HOVER_COLOR = Qt::red;
-
-    NetPointItem::NetPointItem(PinItem* connectedPin, QGraphicsItem* parent): 
-        QGraphicsEllipseItem{parent}, 
-        _connectedPin{connectedPin}
-    {
-        this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
-        this->setBrush(COLOR);
-        this->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsScenePositionChanges);
-        this->setAcceptHoverEvents(true);
-
-        this->linkToPin(connectedPin);
-        this->setZValue(10);
-    }
- 
-    void NetPointItem::linkToPin(PinItem* pin) {
-        if (pin != nullptr) {
-            this->_connectedPin = pin;
-            this->setPos(pin->scenePos());
-            pin->addConnectedPoint(this); 
-        }
-    }
-
-    auto NetPointItem::unlinkPin() -> PinItem* {
-        auto pin = this->_connectedPin;
-        this->_connectedPin = nullptr;
-        pin->removeConnectedPoint(this);
-        return pin;
-    }
-
-    void NetPointItem::updatePos() {
-        this->setPos(this->_connectedPin->scenePos());
-    }
-
-    QVariant NetPointItem::itemChange(GraphicsItemChange change, const QVariant& value) {
-        auto v = QGraphicsEllipseItem::itemChange(change, value);
-        if (change == GraphicsItemChange::ItemPositionChange && this->_netitem != nullptr) {
-            if (this->_netitem->isFloating()) {
-                return v;
-            }
-            this->_netitem->updatePositionFrom(this, v.toPointF());
-        }
-        return v;
-    }
-
-    void NetPointItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(HOVER_COLOR, 3)); 
-        QGraphicsEllipseItem::hoverEnterEvent(event);
-    }
-
-    void NetPointItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-        setPen(QPen(COLOR, 2));
-        QGraphicsEllipseItem::hoverLeaveEvent(event);
-    }
-
-    void NetPointItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-        if (event->button() == Qt::LeftButton) {
-            this->_dragging = true;
-            this->setRect(-MOVING_RADIUS, -MOVING_RADIUS, MOVING_DIAMETER, MOVING_DIAMETER);
-        }
-        QGraphicsEllipseItem::mousePressEvent(event);
-    }
-
-    void NetPointItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
-        QGraphicsEllipseItem::mouseMoveEvent(event);
-    }
-
-    void NetPointItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
-        if (this->_dragging) {
-            auto pin = this->_connectedPin;
-            auto items = this->scene()->items(event->scenePos());
-            for (auto* item : items) {
-                if (item->type() == PinItem::Type) {
-                    pin = dynamic_cast<PinItem*>(item);
-                    break;
-                }
-            }
-
-            if (this->_connectedPin != nullptr) {
-                this->unlinkPin();
-            }
-            this->linkToPin(pin);
-            this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
-
-            this->_dragging = false;
-        }
-
-        QGraphicsEllipseItem::mouseReleaseEvent(event);
-    }
-
-    void NetPointItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
-        event->ignore(); 
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
 
     const QColor NetItem::COLOR = Qt::black;
     const QColor NetItem::HOVER_COLOR = Qt::red;
@@ -175,6 +78,16 @@ namespace kiwi::widget::schematic {
             this->_points.push_back(*this->_tempPoint);
             this->_tempPoint.reset();
         }
+
+        if (this->_points.size() >= 2) {
+            auto end = this->_points.rbegin();
+            auto lastEnd = end + 1;
+
+            if (end->y() == lastEnd->y() && point.y() == end->y() ||
+                end->x() == lastEnd->x() && point.x() == end->x()) {
+                this->_points.pop_back();
+            }
+        }
         this->_points.push_back(point);
     }
 
@@ -217,7 +130,11 @@ namespace kiwi::widget::schematic {
                     *endIter = pos;
                 }
                 else if (pos.y() == endPos.y()) {
-                    this->_points.push_front(pos);
+                    if (endPos.y() == beginPos.y()) {
+                        this->_points.front() = pos;
+                    } else {
+                        this->_points.push_front(pos);
+                    }
                 }
             }
             else if (beginPos.y() == endPos.y()) {
@@ -225,7 +142,11 @@ namespace kiwi::widget::schematic {
 
                 }
                 else if (pos.x() == endPos.x()) {
-                    this->_points.push_front(pos);
+                    if (endPos.x() == beginPos.x()) {
+                        this->_points.front() = pos;
+                    } else {
+                        this->_points.push_front(pos);
+                    }
                 }
                 else if (pos.y() == endPos.y()) {
                     *endIter = pos;
@@ -300,7 +221,11 @@ namespace kiwi::widget::schematic {
                     this->_points[1] = pos;
                 }
                 else if (pos.y() == endPos.y()) {
-                    this->_points.push_back(pos);
+                    if (endPos.y() == beginPos.y()) {
+                        this->_points.back() = pos;
+                    } else {
+                        this->_points.push_back(pos);
+                    }
                 }
             }
             else if (beginPos.y() == endPos.y()) {
@@ -308,7 +233,11 @@ namespace kiwi::widget::schematic {
 
                 }
                 else if (pos.x() == endPos.x()) {
-                    this->_points.push_back(pos);
+                    if (endPos.x() == beginPos.x()) {
+                        this->_points.back() = pos;
+                    } else {
+                        this->_points.push_back(pos);
+                    }
                 }
                 else if (pos.y() == endPos.y()) {
                     this->_points[1] = pos;

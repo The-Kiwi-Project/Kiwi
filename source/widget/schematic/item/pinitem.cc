@@ -5,6 +5,7 @@
 #include "qobject.h"
 #include "qpoint.h"
 #include "./netitem.h"
+#include "./netpointitem.h"
 #include "../schematicscene.h"
 #include <QGraphicsSceneMouseEvent>
 
