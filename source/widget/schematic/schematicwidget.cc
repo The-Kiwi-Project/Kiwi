@@ -64,6 +64,10 @@ namespace kiwi::widget {
         auto infoContainer = new QStackedWidget {infoWidget};
         infoContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
+        // View 
+        auto viewinfoWidget = new schematic::ViewInfoWidget {this->_view, infoContainer};
+        infoContainer->addWidget(viewinfoWidget);
+
         // Net info
         auto netinfoWidget = new schematic::NetInfoWidget {infoContainer};
         infoContainer->addWidget(netinfoWidget);
@@ -72,10 +76,6 @@ namespace kiwi::widget {
         auto tpdinfoWidget = new schematic::TopdieInstInfoWidget {infoContainer};
         infoContainer->addWidget(tpdinfoWidget);
 
-        // View 
-        auto viewinfoWidget = new schematic::ViewInfoWidget {infoContainer};
-        infoContainer->addWidget(viewinfoWidget);
-
         infoLayout->addWidget(infoContainer, 0);
         infoLayout->addStretch(1);
 
@@ -83,6 +83,11 @@ namespace kiwi::widget {
     
         this->setWindowTitle("Schematic Editor");
         this->resize(1000, 800);
+
+        QObject::connect(this->_scene, &SchematicScene::viewSelected, [viewinfoWidget, infoContainer] () {
+            qDebug () << "Switch View info";
+            infoContainer->setCurrentWidget(viewinfoWidget);
+        });
 
         QObject::connect(this->_scene, &SchematicScene::netSelected, [netinfoWidget, infoContainer] (schematic::NetItem* net) {
             qDebug () << "Switch Net info";
@@ -94,11 +99,6 @@ namespace kiwi::widget {
             qDebug () << "Switch Topdie info";
             tpdinfoWidget->loadInst(inst);
             infoContainer->setCurrentWidget(tpdinfoWidget);
-        });
-
-        QObject::connect(this->_scene, &SchematicScene::viewSelected, [viewinfoWidget, infoContainer] () {
-            qDebug () << "Switch View info";
-            infoContainer->setCurrentWidget(viewinfoWidget);
         });
     }
 

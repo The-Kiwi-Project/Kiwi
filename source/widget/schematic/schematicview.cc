@@ -3,6 +3,8 @@
 #include "./item/pinitem.h"
 #include "./item/topdieinstitem.h"
 #include "./item/exportitem.h"
+#include "qglobal.h"
+#include "qnamespace.h"
 #include "widget/schematic/schematicscene.h"
 #include <QPainter>
 #include <QBrush>
@@ -29,6 +31,8 @@ namespace kiwi::widget {
         _basedie{basedie},
         _scene{scene}
     {
+        this->setBackColor(Qt::white);
+
         // this->_scene = new SchematicScene {};
         this->setScene(this->_scene);
         this->setDragMode(QGraphicsView::RubberBandDrag);
@@ -97,20 +101,26 @@ namespace kiwi::widget {
     void SchematicView::drawBackground(QPainter* painter, const QRectF& rect) {
         QGraphicsView::drawBackground(painter, rect);
 
-        // 设置网格线颜色
-        QPen gridPen(Qt::lightGray);
-        gridPen.setWidth(1);
-        painter->setPen(gridPen);
+        if (this->gridVisible()) {
+            auto gridPen = QPen{this->gridColor()};
+            gridPen.setWidth(1);
+            painter->setPen(gridPen);
 
-        // 绘制水平和垂直网格线
-        qreal left = std::floor(rect.left() / this->_gridSize) * this->_gridSize;
-        qreal top = std::floor(rect.top() / this->_gridSize) * this->_gridSize;
+            qreal left = std::floor(rect.left() / this->gridSize()) * this->gridSize();
+            qreal top = std::floor(rect.top() / this->gridSize()) * this->gridSize();
 
-        for (qreal x = left; x < rect.right(); x += this->_gridSize) {
-            painter->drawLine(QPointF(x, rect.top()), QPointF(x, rect.bottom()));
+            for (qreal x = left; x < rect.right(); x += this->gridSize()) {
+                painter->drawLine(QPointF(x, rect.top()), QPointF(x, rect.bottom()));
+            }
+            for (qreal y = top; y < rect.bottom(); y += this->gridSize()) {
+                painter->drawLine(QPointF(rect.left(), y), QPointF(rect.right(), y));
+            }
         }
-        for (qreal y = top; y < rect.bottom(); y += this->_gridSize) {
-            painter->drawLine(QPointF(rect.left(), y), QPointF(rect.right(), y));
-        }
+    }
+
+    // MARK: Why??? call update can't update
+    void SchematicView::updateBack() {
+        this->setBackColor(this->backColor());
+        this->update();
     }
 }

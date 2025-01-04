@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QGroupBox>
 
 class QLabel;
 class QSpinBox;
@@ -13,7 +13,7 @@ namespace kiwi::widget::schematic {
 
     class TopDieInstanceItem;
 
-    class TopdieInstInfoWidget : public QWidget {
+    class TopdieInstInfoWidget : public QGroupBox {
     public:
         TopdieInstInfoWidget(QWidget* parent = nullptr);
 

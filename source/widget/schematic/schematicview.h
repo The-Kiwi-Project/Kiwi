@@ -2,7 +2,9 @@
 
 #include "./item/topdieinstitem.h"
 #include "./item/pinitem.h"
+#include "qcolor.h"
 #include "qglobal.h"
+#include "qnamespace.h"
 
 #include <widget/frame/graphicsview.h>
 #include <QWidget>
@@ -41,6 +43,20 @@ namespace kiwi::widget {
     protected:
         void drawBackground(QPainter* painter, const QRectF& rect) override;
 
+    public:
+        void updateBack();
+
+    public:
+        auto backColor() const -> const QColor& { return this->backgroundBrush().color(); }
+        auto gridVisible() const -> bool { return this->_gridVisible; }
+        auto gridColor() const -> const QColor& { return this->_gridColor; }
+        auto gridSize() const -> qreal { return this->_gridSize; }
+
+        void setBackColor(const QColor& color) { this->setBackgroundBrush(color); }
+        void setGridVisible(bool visible) { this->_gridVisible = visible; }
+        void setGridColor(const QColor& color) { this->_gridColor = color; }
+        void setGridSize(qreal size) { this->_gridSize = size; }
+
     protected:
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie* _basedie {nullptr};
@@ -49,7 +65,9 @@ namespace kiwi::widget {
 
         QVector<schematic::TopDieInstanceItem*> _topdieInstItems {};
 
-        qreal _gridSize{20};
+        bool _gridVisible {true};
+        QColor _gridColor {Qt::lightGray};
+        qreal _gridSize {20};
     };
 
 }

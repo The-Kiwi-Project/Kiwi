@@ -6,8 +6,9 @@
 namespace kiwi::widget::schematic {
 
     TopdieInstInfoWidget::TopdieInstInfoWidget(QWidget* parent) :
-        QWidget{parent}
+        QGroupBox{"TopDieInst Infomation", parent}
     {
+        
     }
 
     void TopdieInstInfoWidget::loadInst(TopDieInstanceItem* inst) {

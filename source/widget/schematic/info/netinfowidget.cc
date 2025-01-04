@@ -16,51 +16,48 @@
 namespace kiwi::widget::schematic {
 
     NetInfoWidget::NetInfoWidget(QWidget* parent) : 
-        QWidget{parent}
+        QGroupBox{"Net Infomation", parent}
     {
         this->setStyleSheet("background-color: white;");
         auto layout = new QGridLayout{this};
         layout->setSpacing(10);
         
-        auto titleLabel = new QLabel {"Net Infomation", this};
-        layout->addWidget(titleLabel, 0, 0, 1, 2);
-
         // Begin
-        layout->addWidget(new QLabel {"Begin ", this}, 1, 0);
+        layout->addWidget(new QLabel {"Begin ", this}, 0, 0);
         this->_beginPinLabel = new QLabel {"", this};
         this->_beginPinLabel->setStyleSheet(
             "border-radius: 5px;"        // 圆角半径
             "padding: 5px;"             // 内边距
             "border: 1px solid #A9A9A9;" // 边框
         );
-        layout->addWidget(this->_beginPinLabel, 1, 1);
+        layout->addWidget(this->_beginPinLabel, 0, 1);
 
         // End
-        layout->addWidget(new QLabel {"End   ", this}, 2, 0);
+        layout->addWidget(new QLabel {"End   ", this}, 1, 0);
         this->_endPinLabel = new QLabel {"", this};
         this->_endPinLabel->setStyleSheet(
             "border-radius: 5px;"        // 圆角半径
             "padding: 5px;"             // 内边距
             "border: 1px solid #A9A9A9;" // 边框
         );
-        layout->addWidget(this->_endPinLabel, 2, 1);
+        layout->addWidget(this->_endPinLabel, 1, 1);
 
         // Sync
-        layout->addWidget(new QLabel {"Sync  ", this}, 3, 0);
+        layout->addWidget(new QLabel {"Sync  ", this}, 2, 0);
         this->_syncSpinBox = new QSpinBox{this};
         this->_syncSpinBox->setMinimum(-1);
         this->_syncSpinBox->setMaximum(32);
         this->_syncSpinBox->setMinimumHeight(30);
-        layout->addWidget(this->_syncSpinBox, 3, 1);
+        layout->addWidget(this->_syncSpinBox, 2, 1);
 
         // Color
-        layout->addWidget(new QLabel {"Color ", this}, 4, 0);
+        layout->addWidget(new QLabel {"Color ", this}, 3, 0);
         this->_colorButton = new ColorPickerButton {this};
         this->_colorButton->setMinimumHeight(30);
-        layout->addWidget(this->_colorButton, 4, 1);
+        layout->addWidget(this->_colorButton, 3, 1);
 
         // Width
-
+        
 
         layout->setColumnMinimumWidth(0, 50);
         layout->setColumnStretch(0, 0);
