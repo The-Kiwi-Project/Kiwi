@@ -191,6 +191,86 @@ namespace kiwi::widget::schematic {
     void NetItem::updateBeginPosition(const QPointF& pos) {
         this->prepareGeometryChange();
 
+        if (this->_points.size() == 2) {
+            auto beginIter = this->_points.rbegin();
+            auto endIter = beginIter + 1;
+
+            auto beginPos = *beginIter;
+            auto endPos = *endIter;
+            
+            if (beginPos.x() == endPos.x()) {
+                if (pos == endPos) {
+
+                }
+                else if (pos.x() == endPos.x()) {
+                    *endIter = pos;
+                }
+                else if (pos.y() == endPos.y()) {
+                    this->_points.push_front(pos);
+                }
+            }
+            else if (beginPos.y() == endPos.y()) {
+                if (pos == endPos) {
+
+                }
+                else if (pos.x() == endPos.x()) {
+                    this->_points.push_front(pos);
+                }
+                else if (pos.y() == endPos.y()) {
+                    *endIter = pos;
+                }
+            } 
+            else {
+                debug::exception("The netitem has unparall points");
+            }
+        }
+        else {
+            auto endIter = this->_points.begin();
+            auto lastIter = endIter + 1;
+
+            auto endPos = *endIter;
+            auto lastPos = *lastIter;
+            auto isHoverLine = endPos.y() == lastPos.y();
+
+            if (endPos == pos) {
+
+            } 
+            else if (isHoverLine) {
+                // if (pos == lastPos) {
+                //     this->_points.pop_back();
+                // }
+                // else 
+                if (pos.y() == endPos.y()) {
+                    *endIter = pos;
+                } 
+                else {
+                    *endIter = pos;
+                    lastIter->setY(pos.y());
+                }
+            }
+            else {
+                // if (pos == lastPos) {
+                //     this->_points.pop_back();
+                // }
+                // else 
+                if (pos.x() == endPos.x()) {
+                    *endIter = pos;
+                } 
+                else {
+                    *endIter = pos;
+                    lastIter->setX(pos.x());
+                }
+            }
+        }
+
+        this->_path = QPainterPath{};
+        if (!this->_points.isEmpty()) {
+            this->_path.moveTo(this->_points[0]);
+            for (int i = 1; i < this->_points.size(); ++i) {
+                this->_path.lineTo(this->_points[i]);
+            }
+        }
+
         this->update();
     }
 
