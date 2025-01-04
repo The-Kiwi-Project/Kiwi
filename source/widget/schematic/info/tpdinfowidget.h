@@ -4,6 +4,7 @@
 
 class QLabel;
 class QSpinBox;
+class QTableView;
 
 namespace kiwi::widget {
     class ColorPickerButton;
@@ -22,6 +23,9 @@ namespace kiwi::widget::schematic {
 
     protected:
         TopDieInstanceItem* _inst {nullptr};
+
+        QLabel* _nameLabel {nullptr};
+        QTableView* _pinMapView {nullptr};
         
     };
 

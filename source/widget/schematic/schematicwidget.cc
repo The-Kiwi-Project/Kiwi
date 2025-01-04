@@ -56,7 +56,7 @@ namespace kiwi::widget {
     void SchematicWidget::initInfoWidget() {
         auto infoWidget = new QWidget {this->_splitter};
         infoWidget->setStyleSheet("background-color: lightgray;");
-        infoWidget->setMinimumWidth(200);
+        infoWidget->setMinimumWidth(250);
 
         auto infoLayout = new QVBoxLayout {};
         infoWidget->setLayout(infoLayout);
