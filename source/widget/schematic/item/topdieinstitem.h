@@ -29,10 +29,15 @@ namespace kiwi::widget::schematic {
 
         static const     QColor COLOR;
 
+        enum { Type = UserType + 4 };
+        int type() const override { return Type; }
+
     public:
         TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene);
 
-        QRectF boundingRect() const override;
+        
+    protected:
+        auto boundingRect() const -> QRectF override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 
     protected:

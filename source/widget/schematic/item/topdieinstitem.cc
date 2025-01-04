@@ -1,5 +1,6 @@
 #include "./topdieinstitem.h"
 #include "./pinitem.h"
+#include "../schematicscene.h"
 #include "qchar.h"
 #include "qnamespace.h"
 #include "qpoint.h"

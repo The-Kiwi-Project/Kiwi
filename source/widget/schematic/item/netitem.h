@@ -19,6 +19,9 @@ namespace kiwi::widget::schematic {
         static constexpr qreal  DEFAULT_WIDTH = 2;
 
         static const     QColor HOVER_COLOR;
+
+        enum { Type = UserType + 3 };
+        int type() const override { return Type; }
         
     public:
         NetItem(NetPointItem* beginPoint, NetPointItem* endPoint);
@@ -45,8 +48,6 @@ namespace kiwi::widget::schematic {
 
         void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
-
-        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
     public:
         auto beginPoint() const -> NetPointItem* { return this->_beginPoint; }

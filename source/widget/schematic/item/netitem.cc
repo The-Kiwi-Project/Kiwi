@@ -305,12 +305,6 @@ namespace kiwi::widget::schematic {
         this->update();
     }
 
-    void NetItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
-        if (!this->isFloating()) {
-            dynamic_cast<SchematicScene*>(this->scene())->netSelected(this);
-        }
-    }
-
     void NetItem::setLine(const QPointF& begin, const QPointF& end) {
         this->prepareGeometryChange();
 

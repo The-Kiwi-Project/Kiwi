@@ -2,13 +2,18 @@
 #include "./schematicscene.h"
 #include "./schematicview.h"
 #include "qboxlayout.h"
+#include "qglobal.h"
 #include "qlayoutitem.h"
 #include "qnamespace.h"
+#include "qobject.h"
 #include "qsplitter.h"
 #include "qstackedwidget.h"
 #include "qwidget.h"
 #include "widget/schematic/info/netinfowidget.h"
+#include "widget/schematic/info/tpdinfowidget.h"
+#include "widget/schematic/info/viewinfowidget.h"
 #include "widget/schematic/item/netitem.h"
+#include "widget/schematic/item/topdieinstitem.h"
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -59,8 +64,17 @@ namespace kiwi::widget {
         auto infoContainer = new QStackedWidget {infoWidget};
         infoContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
+        // Net info
         auto netinfoWidget = new schematic::NetInfoWidget {infoContainer};
         infoContainer->addWidget(netinfoWidget);
+
+        // TopDie inst
+        auto tpdinfoWidget = new schematic::TopdieInstInfoWidget {infoContainer};
+        infoContainer->addWidget(tpdinfoWidget);
+
+        // View 
+        auto viewinfoWidget = new schematic::ViewInfoWidget {infoContainer};
+        infoContainer->addWidget(viewinfoWidget);
 
         infoLayout->addWidget(infoContainer, 0);
         infoLayout->addStretch(1);
@@ -71,8 +85,20 @@ namespace kiwi::widget {
         this->resize(1000, 800);
 
         QObject::connect(this->_scene, &SchematicScene::netSelected, [netinfoWidget, infoContainer] (schematic::NetItem* net) {
+            qDebug () << "Switch Net info";
             netinfoWidget->loadNet(net);
             infoContainer->setCurrentWidget(netinfoWidget);
+        });
+
+        QObject::connect(this->_scene, &SchematicScene::topdieInstSelected, [tpdinfoWidget, infoContainer] (schematic::TopDieInstanceItem* inst) {
+            qDebug () << "Switch Topdie info";
+            tpdinfoWidget->loadInst(inst);
+            infoContainer->setCurrentWidget(tpdinfoWidget);
+        });
+
+        QObject::connect(this->_scene, &SchematicScene::viewSelected, [viewinfoWidget, infoContainer] () {
+            qDebug () << "Switch View info";
+            infoContainer->setCurrentWidget(viewinfoWidget);
         });
     }
 

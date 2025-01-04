@@ -4,10 +4,14 @@
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
+#include "qobjectdefs.h"
 #include "widget/schematic/item/griditem.h"
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
+
+    static_assert((int)schematic::NetItem::Type != (int)schematic::PinItem::Type);
+    static_assert((int)schematic::NetItem::Type != (int)schematic::TopDieInstanceItem::Type);
 
     SchematicScene::SchematicScene() :
         QGraphicsScene{}
@@ -38,6 +42,23 @@ namespace kiwi::widget {
         }
         
         QGraphicsScene::mousePressEvent(event);
+    }
+
+    void SchematicScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+        QGraphicsItem *item = itemAt(event->scenePos(), QTransform());
+        if (!item) {
+            emit this->viewSelected();
+        }
+        else {
+            if (item->type() == schematic::NetItem::Type) {
+                emit this->netSelected(dynamic_cast<schematic::NetItem*>(item));
+            }
+            else if (item->type() == schematic::TopDieInstanceItem::Type) {
+                emit this->topdieInstSelected(dynamic_cast<schematic::TopDieInstanceItem*>(item));
+            }
+        }
+
+        QGraphicsScene::mouseDoubleClickEvent(event);
     }
 
     auto SchematicScene::addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem* {

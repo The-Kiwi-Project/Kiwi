@@ -23,12 +23,14 @@ namespace kiwi::widget {
         SchematicScene();
 
     signals:
-        void infoWidgetChanged(QWidget* widet);
         void netSelected(schematic::NetItem* net);
+        void topdieInstSelected(schematic::TopDieInstanceItem* topdieinst);
+        void viewSelected();
 
     protected:
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
         void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
     public:
         auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;
