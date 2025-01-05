@@ -61,44 +61,39 @@ namespace kiwi::widget {
         auto infoLayout = new QVBoxLayout {};
         infoWidget->setLayout(infoLayout);
     
-        auto infoContainer = new QStackedWidget {infoWidget};
-        infoContainer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        auto stackedWidget = new QStackedWidget {infoWidget};
+        stackedWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
         // View 
-        auto viewinfoWidget = new schematic::ViewInfoWidget {this->_view, infoContainer};
-        infoContainer->addWidget(viewinfoWidget);
+        auto viewinfoWidget = new schematic::ViewInfoWidget {this->_view, stackedWidget};
+        stackedWidget->addWidget(viewinfoWidget);
 
         // Net info
-        auto netinfoWidget = new schematic::NetInfoWidget {infoContainer};
-        infoContainer->addWidget(netinfoWidget);
+        auto netinfoWidget = new schematic::NetInfoWidget {stackedWidget};
+        stackedWidget->addWidget(netinfoWidget);
 
         // TopDie inst
-        auto tpdinfoWidget = new schematic::TopdieInstInfoWidget {infoContainer};
-        infoContainer->addWidget(tpdinfoWidget);
+        auto tpdinfoWidget = new schematic::TopdieInstInfoWidget {stackedWidget};
+        stackedWidget->addWidget(tpdinfoWidget);
 
-        infoLayout->addWidget(infoContainer, 0);
-        infoLayout->addStretch(1);
-
+        infoLayout->addWidget(stackedWidget);
         this->_splitter->addWidget(infoWidget);
     
         this->setWindowTitle("Schematic Editor");
         this->resize(1000, 800);
 
-        QObject::connect(this->_scene, &SchematicScene::viewSelected, [viewinfoWidget, infoContainer] () {
-            qDebug () << "Switch View info";
-            infoContainer->setCurrentWidget(viewinfoWidget);
+        QObject::connect(this->_scene, &SchematicScene::viewSelected, [viewinfoWidget, stackedWidget] () {
+            stackedWidget->setCurrentWidget(viewinfoWidget);
         });
 
-        QObject::connect(this->_scene, &SchematicScene::netSelected, [netinfoWidget, infoContainer] (schematic::NetItem* net) {
-            qDebug () << "Switch Net info";
+        QObject::connect(this->_scene, &SchematicScene::netSelected, [netinfoWidget, stackedWidget] (schematic::NetItem* net) {
             netinfoWidget->loadNet(net);
-            infoContainer->setCurrentWidget(netinfoWidget);
+            stackedWidget->setCurrentWidget(netinfoWidget);
         });
 
-        QObject::connect(this->_scene, &SchematicScene::topdieInstSelected, [tpdinfoWidget, infoContainer] (schematic::TopDieInstanceItem* inst) {
-            qDebug () << "Switch Topdie info";
+        QObject::connect(this->_scene, &SchematicScene::topdieInstSelected, [tpdinfoWidget, stackedWidget] (schematic::TopDieInstanceItem* inst) {
             tpdinfoWidget->loadInst(inst);
-            infoContainer->setCurrentWidget(tpdinfoWidget);
+            stackedWidget->setCurrentWidget(tpdinfoWidget);
         });
     }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QGroupBox>
+#include <QWidget>
 
 class QLabel;
 class QSpinBox;
@@ -12,7 +12,7 @@ namespace kiwi::widget {
 
 namespace kiwi::widget::schematic {
 
-    class ViewInfoWidget : public QGroupBox {
+    class ViewInfoWidget : public QWidget {
     public:
         ViewInfoWidget(SchematicView* view, QWidget* parent = nullptr);
 

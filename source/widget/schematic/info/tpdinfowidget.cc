@@ -1,6 +1,7 @@
 #include "./tpdinfowidget.h"
 #include "../item/topdieinstitem.h"
 #include <circuit/topdieinst/topdieinst.hh>
+#include "qgroupbox.h"
 #include "qtableview.h"
 #include "qwidget.h"
 
@@ -21,15 +22,21 @@ namespace kiwi::widget::schematic {
     constexpr int MIN_HEIGHT = 30;
 
     TopdieInstInfoWidget::TopdieInstInfoWidget(QWidget* parent) :
-        QGroupBox{"TopDieInst Infomation", parent}
+        QWidget{parent}
     {
-        this->setStyleSheet("background-color: white;");
-        auto layout = new QGridLayout{this};
+        auto thisLayout = new QVBoxLayout {this};
+        auto widget = new QGroupBox {"TopDieInst Infomation", this};
+        widget->setStyleSheet("background-color: white;");
+        thisLayout->setMargin(0);
+        thisLayout->addWidget(widget);
+        thisLayout->addStretch();
+
+        auto layout = new QGridLayout{widget};
         layout->setSpacing(10);
 
         // Name
-        layout->addWidget(new QLabel {"Begin ", this}, 0, 0);
-        this->_nameLabel = new QLabel {"", this};
+        layout->addWidget(new QLabel {"Begin ", widget}, 0, 0);
+        this->_nameLabel = new QLabel {"", widget};
         this->_nameLabel->setStyleSheet(
             "border-radius: 5px;"        // 圆角半径
             "padding: 5px;"             // 内边距
@@ -38,10 +45,10 @@ namespace kiwi::widget::schematic {
         layout->addWidget(this->_nameLabel, 0, 1);
 
         // IO Map
-        auto label = new QLabel {"Pin Map ", this};
+        auto label = new QLabel {"Pin Map ", widget};
         label->setMinimumHeight(MIN_HEIGHT);
         layout->addWidget(label, 1, 0, 1, 2);
-        this->_pinMapView = new QTableView {this};
+        this->_pinMapView = new QTableView {widget};
         this->_pinMapView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         layout->addWidget(this->_pinMapView, 2, 0, 1, 2);
 

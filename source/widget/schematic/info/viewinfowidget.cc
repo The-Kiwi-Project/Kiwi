@@ -18,6 +18,7 @@
 #include <QGridLayout>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QGroupBox>
 
 namespace kiwi::widget::schematic {
 
@@ -25,40 +26,46 @@ namespace kiwi::widget::schematic {
 
     ViewInfoWidget::ViewInfoWidget(SchematicView* view, QWidget* parent) :
         _view{view},
-        QGroupBox{"View Infomation", parent}
+        QWidget{parent}
     {   
         if (this->_view == nullptr) {
             debug::exception("Nullptr view");
         }
 
-        this->setStyleSheet("background-color: white;");
-        auto layout = new QGridLayout{this};
+        auto thisLayout = new QVBoxLayout {this};
+        auto widget = new QGroupBox {"View Infomation", this};
+        widget->setStyleSheet("background-color: white;");
+        thisLayout->setMargin(0);
+        thisLayout->addWidget(widget);
+        thisLayout->addStretch();
+
+        auto layout = new QGridLayout{widget};
         layout->setSpacing(10);
         
         // Back color
-        layout->addWidget(new QLabel {"Back Color", this}, 0, 0);
-        auto backColorButton = new ColorPickerButton {this};
+        layout->addWidget(new QLabel {"Back Color", widget}, 0, 0);
+        auto backColorButton = new ColorPickerButton {widget};
         backColorButton->setMinimumHeight(MIN_HEIGHT);
         backColorButton->setColor(this->_view->backColor());
         layout->addWidget(backColorButton, 0, 1);
 
         // Grid view
-        layout->addWidget(new QLabel {"Grid Visible", this}, 1, 0);
-        auto gridVisibleCheckBox = new QCheckBox {this};
+        layout->addWidget(new QLabel {"Grid Visible", widget}, 1, 0);
+        auto gridVisibleCheckBox = new QCheckBox {widget};
         gridVisibleCheckBox->setMinimumHeight(MIN_HEIGHT);
         gridVisibleCheckBox->setChecked(this->_view->gridVisible());
         layout->addWidget(gridVisibleCheckBox, 1, 1);
 
         // Grid color
-        layout->addWidget(new QLabel {"Grid Color", this}, 2, 0);
-        auto gridColorButton = new ColorPickerButton {this};
+        layout->addWidget(new QLabel {"Grid Color", widget}, 2, 0);
+        auto gridColorButton = new ColorPickerButton {widget};
         gridColorButton->setMinimumHeight(MIN_HEIGHT);
         gridColorButton->setColor(this->_view->gridColor());
         layout->addWidget(gridColorButton, 2, 1);
 
         // Grid size
-        layout->addWidget(new QLabel {"Grid Size", this}, 3, 0);
-        auto gridSizeEdit = new QLineEdit {this};
+        layout->addWidget(new QLabel {"Grid Size", widget}, 3, 0);
+        auto gridSizeEdit = new QLineEdit {widget};
         auto validator = new QIntValidator(GridItem::GRID_SIZE, 100, gridSizeEdit);
         gridSizeEdit->setValidator(validator);
         gridSizeEdit->setMinimumHeight(MIN_HEIGHT);
