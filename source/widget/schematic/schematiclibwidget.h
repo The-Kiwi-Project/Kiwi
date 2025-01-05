@@ -21,6 +21,7 @@ namespace kiwi::widget {
 
     signals:
         void initialTopDieInst(circuit::TopDie* topdie);
+        void addExport();
 
     public:
         void onLoadTopDieClicked();

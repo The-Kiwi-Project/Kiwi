@@ -23,6 +23,9 @@ namespace kiwi::widget::schematic {
         static const     QColor COLOR;
 
         static_assert(HEIGHT > PinItem::CHAR_HEIGHT);
+
+        enum { Type = UserType + 5 };
+        int type() const override { return Type; }
         
     public:
         ExPortItem(const QString name, SchematicScene* scene);

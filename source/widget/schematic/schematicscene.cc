@@ -73,6 +73,9 @@ namespace kiwi::widget {
             else if (item->type() == schematic::TopDieInstanceItem::Type) {
                 emit this->topdieInstSelected(dynamic_cast<schematic::TopDieInstanceItem*>(item));
             }
+            else if (item->type() == schematic::ExPortItem::Type) {
+                emit this->exportSelected(dynamic_cast<schematic::ExPortItem*>(item));
+            }
         }
 
         QGraphicsScene::mouseDoubleClickEvent(event);

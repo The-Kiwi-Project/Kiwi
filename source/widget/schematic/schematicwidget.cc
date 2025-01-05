@@ -10,9 +10,11 @@
 #include "qsplitter.h"
 #include "qstackedwidget.h"
 #include "qwidget.h"
+#include "widget/schematic/info/exportwidget.h"
 #include "widget/schematic/info/netinfowidget.h"
 #include "widget/schematic/info/tpdinfowidget.h"
 #include "widget/schematic/info/viewinfowidget.h"
+#include "widget/schematic/item/exportitem.h"
 #include "widget/schematic/item/netitem.h"
 #include "widget/schematic/item/topdieinstitem.h"
 #include "widget/schematic/schematiclibwidget.h"
@@ -81,6 +83,10 @@ namespace kiwi::widget {
         auto tpdinfoWidget = new schematic::TopdieInstInfoWidget {stackedWidget};
         stackedWidget->addWidget(tpdinfoWidget);
 
+        // Export inst
+        auto exportWidget = new schematic::ExPortItemInfoWidget {stackedWidget};
+        stackedWidget->addWidget(exportWidget);
+
         infoLayout->addWidget(stackedWidget);
         this->_splitter->addWidget(infoWidget);
     
@@ -94,6 +100,11 @@ namespace kiwi::widget {
         QObject::connect(this->_scene, &SchematicScene::netSelected, [netinfoWidget, stackedWidget] (schematic::NetItem* net) {
             netinfoWidget->loadNet(net);
             stackedWidget->setCurrentWidget(netinfoWidget);
+        });
+
+        QObject::connect(this->_scene, &SchematicScene::exportSelected, [exportWidget, stackedWidget] (schematic::ExPortItem* eport) {
+            exportWidget->loadExPort(eport);
+            stackedWidget->setCurrentWidget(exportWidget);
         });
 
         QObject::connect(this->_scene, &SchematicScene::topdieInstSelected, [tpdinfoWidget, stackedWidget] (schematic::TopDieInstanceItem* inst) {

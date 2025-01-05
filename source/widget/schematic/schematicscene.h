@@ -27,6 +27,7 @@ namespace kiwi::widget {
     signals:
         void netSelected(schematic::NetItem* net);
         void topdieInstSelected(schematic::TopDieInstanceItem* topdieinst);
+        void exportSelected(schematic::ExPortItem* eport);
         void viewSelected();
 
     protected:

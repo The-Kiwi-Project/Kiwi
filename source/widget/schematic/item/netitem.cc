@@ -24,10 +24,30 @@ namespace kiwi::widget::schematic {
         _beginPoint{beginPoint},
         _endPoint{endPoint}
     {
+        qDebug() << "xx";
         this->_beginPoint->setNetItem(this);
         this->_endPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
-        this->updateLine();
+        // this->updateLine();
+
+        auto begin = beginPoint->scenePos();
+        auto end = endPoint->scenePos();
+
+        this->_path.moveTo(begin);
+        this->_points.push_back(begin);
+
+        if (begin.x() == end.x() || begin.y() == end.y()) {
+            this->_path.lineTo(end);
+
+            this->_points.push_back(end);
+        } else {
+            QPointF mid(end.x(), begin.y());
+            this->_path.lineTo(mid);
+            this->_path.lineTo(end);
+
+            this->_points.push_back(mid);
+            this->_points.push_back(end);
+        }
     }
 
     NetItem::NetItem(NetPointItem* beginPoint) :

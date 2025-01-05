@@ -2,6 +2,7 @@
 #include "./pinitem.h"
 #include "../schematicscene.h"
 #include "qchar.h"
+#include "qcolor.h"
 #include "qnamespace.h"
 #include "qpoint.h"
 #include "qregion.h"
@@ -18,7 +19,8 @@
 
 namespace kiwi::widget::schematic {
     
-    const QColor TopDieInstanceItem::COLOR = Qt::lightGray;;
+    // const QColor TopDieInstanceItem::COLOR = Qt::lightGray;
+    const QColor TopDieInstanceItem::COLOR = QColor::fromRgb(200, 200, 200, 100);
 
     TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene):
         GridItem{},

@@ -33,18 +33,17 @@ namespace kiwi::widget {
 
         auto searchEdit = new QLineEdit {this};
 
-        auto buttonWidget = new QWidget {this};
-        auto buttonLayout = new QHBoxLayout {buttonWidget};
-        auto loadTopDieButton = new QPushButton {"+", buttonWidget};
-        auto loadTopDiesButton = new QPushButton {"++", buttonWidget};
-        buttonLayout->addWidget(loadTopDieButton);
-        buttonLayout->addWidget(loadTopDiesButton);
+        auto loadTopDieButton = new QPushButton {"Load TopDie", this};
+        auto loadTopDiesButton = new QPushButton {"Load TopDies", this};
+        auto addExportButton = new QPushButton {"Add Export", this};
 
         auto libraryScrollArea = new QScrollArea {this};
         libraryScrollArea->setWidgetResizable(true);
 
         thisLayout->addWidget(searchEdit);
-        thisLayout->addWidget(buttonWidget);
+        thisLayout->addWidget(loadTopDieButton);
+        thisLayout->addWidget(loadTopDiesButton);
+        thisLayout->addWidget(addExportButton);
         thisLayout->addWidget(libraryScrollArea);
         
         auto libraryWidget = new QWidget;
