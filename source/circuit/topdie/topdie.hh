@@ -4,12 +4,12 @@
 #include <std/integer.hh>
 #include <std/collection.hh>
 #include <std/string.hh>
+#include <parse/reader/config/config.hh>
 
 namespace kiwi::circuit {
 
     class TopDie {
     public:
-        TopDie();
         TopDie(std::String name, std::HashMap<std::String, std::usize> pins_map);
     
     public:

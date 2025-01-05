@@ -14,6 +14,7 @@
 #include "widget/schematic/info/viewinfowidget.h"
 #include "widget/schematic/item/netitem.h"
 #include "widget/schematic/item/topdieinstitem.h"
+#include "widget/schematic/schematiclibwidget.h"
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -39,7 +40,7 @@ namespace kiwi::widget {
     }
 
     void SchematicWidget::initTopdieLibWidget() {
-        auto topdieLibWidget = new QWidget{this->_splitter};
+        auto topdieLibWidget = new SchematicLibWidget {this->_basedie, this->_splitter};
         topdieLibWidget->setMinimumWidth(200);
         topdieLibWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
@@ -55,7 +56,6 @@ namespace kiwi::widget {
 
     void SchematicWidget::initInfoWidget() {
         auto infoWidget = new QWidget {this->_splitter};
-        infoWidget->setStyleSheet("background-color: lightgray;");
         infoWidget->setMinimumWidth(250);
 
         auto infoLayout = new QVBoxLayout {};

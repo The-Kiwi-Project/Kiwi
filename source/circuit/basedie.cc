@@ -2,18 +2,26 @@
 #include "circuit/topdie/topdie.hh"
 #include "circuit/topdieinst/topdieinst.hh"
 #include "std/string.hh"
-#include <memory>
+#include <debug/debug.hh>
 
 namespace kiwi::circuit {
     
-    auto BaseDie::add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> void {
+    auto BaseDie::add_topdie(const std::String& name, std::HashMap<std::String, std::usize> pin_map) -> TopDie* {
         auto topdie = std::make_unique<TopDie>(name, std::move(pin_map));
-        this->_topdies.emplace(std::move(name), std::move(topdie));
+        auto res = this->_topdies.emplace(name, std::move(topdie));
+        if (res.second == false) {
+            debug::exception_fmt("Topdie '{}' already exit!", name);
+        }
+        return res.first->second.get();
     }
 
-    auto BaseDie::add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> void {
+    auto BaseDie::add_topdie_inst(const std::String& name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance* {
         auto topdie_inst = std::make_unique<TopDieInstance>(name, topdie, tob);
-        this->_topdie_insts.emplace(std::move(name), std::move(topdie_inst));
+        auto res = this->_topdie_insts.emplace(name, std::move(topdie_inst));
+        if (res.second == false) {
+            debug::exception_fmt("Topdie Instance '{}' already exit!", name);
+        }
+        return res.first->second.get();
     }
 
     auto BaseDie::add_net(std::Box<Net> net) -> void {

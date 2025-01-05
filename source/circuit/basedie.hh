@@ -14,8 +14,8 @@ namespace kiwi::circuit {
 
     class BaseDie {
     public:
-        auto add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> void;
-        auto add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> void;
+        auto add_topdie(const std::String& name, std::HashMap<std::String, std::usize> pin_map) -> TopDie*;
+        auto add_topdie_inst(const std::String& name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance*;
         auto add_net(std::Box<Net>) -> void;
         auto add_connections(int sync, Connection connection) -> void;
 
