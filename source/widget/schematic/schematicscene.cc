@@ -4,16 +4,21 @@
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
-#include "qobjectdefs.h"
+#include "circuit/topdieinst/topdieinst.hh"
+#include <circuit/basedie.hh>
+#include "qchar.h"
+#include "qnamespace.h"
 #include "widget/schematic/item/griditem.h"
 #include <QGraphicsSceneMouseEvent>
+#include <format>
 
 namespace kiwi::widget {
 
     static_assert((int)schematic::NetItem::Type != (int)schematic::PinItem::Type);
     static_assert((int)schematic::NetItem::Type != (int)schematic::TopDieInstanceItem::Type);
 
-    SchematicScene::SchematicScene() :
+    SchematicScene::SchematicScene(circuit::BaseDie* basedie) :
+        _basedie{basedie},
         QGraphicsScene{}
     {
     }
@@ -22,6 +27,10 @@ namespace kiwi::widget {
         if (this->_floatingNet != nullptr) {
             auto gridPos = schematic::GridItem::snapToGrid(event->scenePos());
             this->_floatingNet->updateEndPoint(gridPos);
+        }
+        if (this->_floatingTopdDieInst != nullptr) {
+            auto gridPos = schematic::GridItem::snapToGrid(event->scenePos());
+            this->_floatingTopdDieInst->setPos(gridPos);
         }
         QGraphicsScene::mouseMoveEvent(event);
     }
@@ -38,6 +47,14 @@ namespace kiwi::widget {
                 delete this->_floatingNet->beginPoint();
                 delete this->_floatingNet;
                 this->_floatingNet = nullptr;
+            }
+        }
+        if (this->_floatingTopdDieInst != nullptr) {
+            if (event->button() & Qt::LeftButton) {
+                this->placeFloatingTopdDieInst();
+            }
+            else if (event->button() & Qt::RightButton) {
+                this->cleanFloatingTopdDieInst();
             }
         }
         
@@ -109,4 +126,35 @@ namespace kiwi::widget {
         }
     }
 
+    void SchematicScene::handleInitialTopDie(circuit::TopDie* topdie) {
+        // Get name!
+        auto size = 0;
+        for (const auto& [name, inst] : this->_basedie->topdie_insts()) {
+            if (inst->topdie() == topdie) {
+                size += 1;
+            }
+        }
+
+        auto instName = std::format("{}_{}", topdie->name(), size);
+        auto topdieInst = this->_basedie->add_topdie_inst(instName, topdie, nullptr);
+        auto topdieInstItem = this->addTopDieInst(topdieInst);
+
+        if (this->_floatingTopdDieInst != nullptr) {
+            this->cleanFloatingTopdDieInst();
+        }
+
+        this->_floatingTopdDieInst = topdieInstItem;
+    }
+
+    void SchematicScene::cleanFloatingTopdDieInst() {
+        assert(this->_floatingTopdDieInst != nullptr);
+        this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->topdieInst()->name());
+        this->removeItem(this->_floatingTopdDieInst);
+        this->_floatingTopdDieInst = nullptr;
+    }
+
+    void SchematicScene::placeFloatingTopdDieInst() {
+        assert(this->_floatingTopdDieInst != nullptr);
+        this->_floatingTopdDieInst = nullptr;
+    }
 }

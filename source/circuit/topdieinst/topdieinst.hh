@@ -23,7 +23,7 @@ namespace kiwi::circuit {
         auto add_net(Net* net) -> void;
         
     public:
-        auto name() const -> std::StringView { return this->_name; }
+        auto name() const -> const std::String& { return this->_name; }
         auto topdie() const -> TopDie* { return this->_topdie; }
         auto tob() const -> hardware::TOB* { return this->_tob; }
         auto nets() const -> const std::Vector<Net*> { return this->_nets; }

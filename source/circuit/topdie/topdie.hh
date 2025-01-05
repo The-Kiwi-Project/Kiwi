@@ -16,7 +16,7 @@ namespace kiwi::circuit {
         auto get_bump_index(std::String pin_name) -> std::Option<std::usize>;
 
     public:
-        auto name() const -> std::StringView { return this->_name; }
+        auto name() const -> const std::String& { return this->_name; }
         auto pins_map() const -> const std::HashMap<std::String, std::usize>& { return this->_pins_map; }
 
     private:

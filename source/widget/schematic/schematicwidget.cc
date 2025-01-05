@@ -1,6 +1,7 @@
 #include "./schematicwidget.h"
 #include "./schematicscene.h"
 #include "./schematicview.h"
+#include "circuit/topdie/topdie.hh"
 #include "qboxlayout.h"
 #include "qglobal.h"
 #include "qlayoutitem.h"
@@ -26,7 +27,7 @@ namespace kiwi::widget {
         _interposer{interposer},
         _basedie{basedie}
     {
-        this->_scene = new SchematicScene{};
+        this->_scene = new SchematicScene{this->_basedie};
 
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setContentsMargins(10, 10, 10, 10);
@@ -45,6 +46,10 @@ namespace kiwi::widget {
         topdieLibWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
         this->_splitter->addWidget(topdieLibWidget);
+
+        QObject::connect(topdieLibWidget, &SchematicLibWidget::initialTopDieInst, [this] (circuit::TopDie* topdie) {
+            this->_scene->handleInitialTopDie(topdie);
+        });
     }
 
     void SchematicWidget::initSchematicView(hardware::Interposer* interposer, circuit::BaseDie* basedie) {

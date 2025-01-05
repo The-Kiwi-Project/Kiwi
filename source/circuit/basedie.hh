@@ -19,6 +19,8 @@ namespace kiwi::circuit {
         auto add_net(std::Box<Net>) -> void;
         auto add_connections(int sync, Connection connection) -> void;
 
+        auto remove_topdie_inst(const std::String& name) -> bool;
+
         auto get_topdie(std::StringView name) -> std::Option<TopDie*>;
         auto get_topdie_inst(std::StringView name) -> std::Option<TopDieInstance*>;
 

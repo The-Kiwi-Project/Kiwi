@@ -33,6 +33,10 @@ namespace kiwi::circuit {
         cnt_vec.emplace_back(std::move(connection));
     }
 
+    auto BaseDie::remove_topdie_inst(const std::String& name) -> bool {
+        return this->_topdie_insts.erase(name);
+    }
+
     auto BaseDie::get_topdie(std::StringView name) -> std::Option<TopDie*> {
         auto res = this->_topdies.find(std::String{name});
         if (res == this->_topdies.end()) {

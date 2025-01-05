@@ -145,6 +145,7 @@ namespace kiwi::widget {
         this->_libraryLayout->insertWidget(0, button); 
 
         connect(button, &QPushButton::clicked, [this, topdie] () {
+            
             emit this->initialTopDieInst(topdie);
         });
     }
