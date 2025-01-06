@@ -1,7 +1,6 @@
 #include "./schematicwidget.h"
 #include "./schematicscene.h"
 #include "./schematicview.h"
-#include "circuit/topdie/topdie.hh"
 #include "qboxlayout.h"
 #include "qglobal.h"
 #include "qlayoutitem.h"
@@ -49,9 +48,13 @@ namespace kiwi::widget {
 
         this->_splitter->addWidget(topdieLibWidget);
 
-        QObject::connect(topdieLibWidget, &SchematicLibWidget::initialTopDieInst, [this] (circuit::TopDie* topdie) {
-            this->_scene->handleInitialTopDie(topdie);
-        });
+        QObject::connect(
+            topdieLibWidget, &SchematicLibWidget::initialTopDieInst, 
+            this->_scene, &SchematicScene::handleInitialTopDie);
+
+        QObject::connect(
+            topdieLibWidget, &SchematicLibWidget::addExport, 
+            this->_scene, &SchematicScene::handleAddExport);
     }
 
     void SchematicWidget::initSchematicView(hardware::Interposer* interposer, circuit::BaseDie* basedie) {

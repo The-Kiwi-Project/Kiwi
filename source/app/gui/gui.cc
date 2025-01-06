@@ -30,7 +30,7 @@ namespace kiwi {
         // interposer->randomly_map_remain_indexes();
 
         QApplication app(argc, argv);
-        auto w = widget::SchematicWidget{interposer.get(), basedie.get()};
+        auto w = widget::SWindow{interposer.get(), basedie.get()};
         w.show();
         return app.exec();
     }

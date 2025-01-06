@@ -108,8 +108,8 @@ namespace kiwi::widget {
         layout->setContentsMargins(10, 10, 10, 10);
         // this->_widget = new View3DWidget {i, b, this};
         // this->_widget = new View2DView {i, b, this};
-        // this->_widget = new LayoutView {i, b, this};
-        this->_widget = new SchematicWidget {i, b, this};
+        this->_widget = new LayoutView {i, b, this};
+        // this->_widget = new SchematicWidget {i, b, this};
         layout->addWidget(this->_widget);
         this->setLayout(layout);
     }

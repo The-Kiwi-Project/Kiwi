@@ -24,7 +24,6 @@ namespace kiwi::widget::schematic {
         _beginPoint{beginPoint},
         _endPoint{endPoint}
     {
-        qDebug() << "xx";
         this->_beginPoint->setNetItem(this);
         this->_endPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);

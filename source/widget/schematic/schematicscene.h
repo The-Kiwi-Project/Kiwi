@@ -45,6 +45,7 @@ namespace kiwi::widget {
         auto connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem*;
         void headleCreateNet(schematic::PinItem* pin, QGraphicsSceneMouseEvent* event);
         void handleInitialTopDie(circuit::TopDie* topdie);
+        void handleAddExport();
 
     public:
         auto topdieinstMap() -> QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*>& 
@@ -54,11 +55,15 @@ namespace kiwi::widget {
         void placeFloatingTopdDieInst();
         void cleanFloatingTopdDieInst();
 
+        void placeFloatingExPort();
+        void cleanFloatingExPort();
+
     protected:
         circuit::BaseDie* _basedie;
 
         schematic::NetItem* _floatingNet {nullptr};
         schematic::TopDieInstanceItem* _floatingTopdDieInst {nullptr};
+        schematic::ExPortItem* _floatingExPort {nullptr};
 
         QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
     };

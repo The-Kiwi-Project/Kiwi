@@ -57,6 +57,7 @@ namespace kiwi::widget {
             this->addTopDie(topdie.get());
         }
 
+        connect(addExportButton, &QPushButton::clicked, this, &SchematicLibWidget::addExport);
         connect(loadTopDieButton, &QPushButton::clicked, this, &SchematicLibWidget::onLoadTopDieClicked);
         connect(loadTopDiesButton, &QPushButton::clicked, this, &SchematicLibWidget::onLoadTopDiesClicked);
     }

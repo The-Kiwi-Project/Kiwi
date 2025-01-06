@@ -32,6 +32,10 @@ namespace kiwi::widget {
             auto gridPos = schematic::GridItem::snapToGrid(event->scenePos());
             this->_floatingTopdDieInst->setPos(gridPos);
         }
+        if (this->_floatingExPort != nullptr) {
+            auto gridPos = schematic::GridItem::snapToGrid(event->scenePos());
+            this->_floatingExPort->setPos(gridPos);
+        }
         QGraphicsScene::mouseMoveEvent(event);
     }
 
@@ -49,6 +53,7 @@ namespace kiwi::widget {
                 this->_floatingNet = nullptr;
             }
         }
+
         if (this->_floatingTopdDieInst != nullptr) {
             if (event->button() & Qt::LeftButton) {
                 this->placeFloatingTopdDieInst();
@@ -58,6 +63,15 @@ namespace kiwi::widget {
             }
         }
         
+        if (this->_floatingExPort != nullptr) {
+            if (event->button() & Qt::LeftButton) {
+                this->placeFloatingExPort();
+            }
+            else if (event->button() & Qt::RightButton) {
+                this->cleanFloatingExPort();
+            }
+        }
+
         QGraphicsScene::mousePressEvent(event);
     }
 
@@ -149,6 +163,22 @@ namespace kiwi::widget {
         this->_floatingTopdDieInst = topdieInstItem;
     }
 
+    void SchematicScene::handleAddExport() {
+        // MARK rename
+        auto eport = this->addExPort("export");
+        
+        if (this->_floatingExPort != nullptr) {
+            this->cleanFloatingExPort();
+        }
+
+        this->_floatingExPort = eport;
+    }
+
+    void SchematicScene::placeFloatingTopdDieInst() {
+        assert(this->_floatingTopdDieInst != nullptr);
+        this->_floatingTopdDieInst = nullptr;
+    }
+
     void SchematicScene::cleanFloatingTopdDieInst() {
         assert(this->_floatingTopdDieInst != nullptr);
         this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->topdieInst()->name());
@@ -156,8 +186,15 @@ namespace kiwi::widget {
         this->_floatingTopdDieInst = nullptr;
     }
 
-    void SchematicScene::placeFloatingTopdDieInst() {
-        assert(this->_floatingTopdDieInst != nullptr);
-        this->_floatingTopdDieInst = nullptr;
+    void SchematicScene::placeFloatingExPort() {
+        assert(this->_floatingExPort != nullptr);
+        this->_floatingExPort = nullptr;
     }
+
+    void SchematicScene::cleanFloatingExPort() {
+        assert(this->_floatingExPort != nullptr);
+        this->removeItem(this->_floatingExPort);
+        this->_floatingExPort = nullptr;
+    }
+
 }
