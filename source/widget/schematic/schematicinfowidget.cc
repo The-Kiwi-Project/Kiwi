@@ -47,6 +47,16 @@ namespace kiwi::widget {
         // Export inst
         this->_eportInfoWidget = new schematic::ExPortItemInfoWidget {this};
         this->addWidget(this->_eportInfoWidget);
+
+        connect(this->_eportInfoWidget, &schematic::ExPortItemInfoWidget::exportRename, [this](schematic::ExPortItem* eport, const QString& name) {
+            this->_basedie->external_port_rename(eport->exPort(), name.toStdString());
+            eport->setName(name);
+        });
+
+        connect(this->_eportInfoWidget, &schematic::ExPortItemInfoWidget::exportSetCoord, [this](schematic::ExPortItem* eport, hardware::TrackCoord& coord) {
+            this->_basedie->external_port_set_coord(eport->exPort(), coord);
+        });
+
     }
 
     void SchematicInfoWidget::showExPortInfoWidget(schematic::ExPortItem* eport) {

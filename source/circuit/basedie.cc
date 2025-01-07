@@ -124,6 +124,10 @@ namespace kiwi::circuit {
         }
     }
 
+    void BaseDie::external_port_set_coord(ExternalPort* eport, const hardware::TrackCoord& coord) {
+        eport->set_coord(coord);
+    }
+
     void BaseDie::connection_set_input(Connection* connection, Pin input) {
         connection->set_input(std::move(input));
     }

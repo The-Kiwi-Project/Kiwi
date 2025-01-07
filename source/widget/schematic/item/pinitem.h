@@ -68,6 +68,7 @@ namespace kiwi::widget::schematic {
 
     public: 
         auto name() const -> const QString& { return this->_name; }
+        void setName(const QString& name) { this->_name = name; }
 
         void addConnectedPoint(NetPointItem* point) 
         { this->_connectedNetPoints.push_back(point); }

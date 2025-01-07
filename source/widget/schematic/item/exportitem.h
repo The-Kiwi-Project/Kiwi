@@ -2,6 +2,7 @@
 
 #include "./griditem.h"
 #include "./pinitem.h"
+#include "qchar.h"
 #include <QColor>
 #include <QGraphicsItem>
 #include <QPainter>
@@ -35,7 +36,11 @@ namespace kiwi::widget::schematic {
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
         
     public: 
-        auto pin() -> PinItem* { return this->_pinietm; }
+        auto name() const -> const QString& { return this->_pinietm->name(); }
+        void setName(const QString& name) { this->_pinietm->setName(name); }
+
+        auto exPort() const -> circuit::ExternalPort* { return this->_eport; }
+        auto pin() const -> PinItem* { return this->_pinietm; }
 
     private:
         PinItem* _pinietm;

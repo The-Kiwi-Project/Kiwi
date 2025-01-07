@@ -60,12 +60,23 @@ namespace kiwi::circuit {
         auto default_external_port_name() -> std::String;
 
     public:
-        auto topdies() const -> const std::HashMap<std::StringView, std::Box<TopDie>>& { return this->_topdies; }
-        auto connections() const -> const std::HashMap<int, std::Vector<std::Box<Connection>>>& { return this->_connections; };        
-        auto topdie_insts() const -> const std::HashMap<std::StringView, std::Box<TopDieInstance>>& { return this->_topdie_insts; }
+        auto topdies() const -> const std::HashMap<std::StringView, std::Box<TopDie>>& 
+        { return this->_topdies; }
+        
+        auto topdie_insts() const -> const std::HashMap<std::StringView, std::Box<TopDieInstance>>& 
+        { return this->_topdie_insts; }
+        
+        auto external_ports() const -> const std::HashMap<std::StringView, std::Box<ExternalPort>>&
+        { return this->_external_ports; }
 
-        auto nets() -> std::Vector<std::Box<Net>>& { return this->_nets; }
-        auto nets() const -> std::Span<const std::Box<Net>> { return this->_nets; }
+        auto connections() const -> const std::HashMap<int, std::Vector<std::Box<Connection>>>& 
+        { return this->_connections; }
+
+        auto nets() -> std::Vector<std::Box<Net>>& 
+        { return this->_nets; }
+
+        auto nets() const -> std::Span<const std::Box<Net>> 
+        { return this->_nets; }
 
     private:
         std::HashMap<std::StringView, std::Box<TopDie>> _topdies {};
