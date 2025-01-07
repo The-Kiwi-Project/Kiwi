@@ -50,6 +50,8 @@ namespace kiwi::widget::schematic {
         auto pinitems() const -> const QMap<QString, PinItem*>& { return this->_pinitems; }
         auto topdieInst() const -> circuit::TopDieInstance* { return this->_topdieinst; }
 
+        void setName(const QString& name) { this->_name = name; }
+
     protected:
         QString _name {};
         qreal _width {};

@@ -1,22 +1,13 @@
 #include "./schematicwidget.h"
 #include "./schematicscene.h"
 #include "./schematicview.h"
-#include "qboxlayout.h"
-#include "qglobal.h"
-#include "qlayoutitem.h"
-#include "qnamespace.h"
-#include "qobject.h"
-#include "qsplitter.h"
-#include "qstackedwidget.h"
-#include "qwidget.h"
-#include "widget/schematic/info/exportwidget.h"
-#include "widget/schematic/info/netinfowidget.h"
-#include "widget/schematic/info/tpdinfowidget.h"
-#include "widget/schematic/info/viewinfowidget.h"
+#include "./schematicinfowidget.h"
+#include "./schematiclibwidget.h"
+
 #include "widget/schematic/item/exportitem.h"
 #include "widget/schematic/item/netitem.h"
 #include "widget/schematic/item/topdieinstitem.h"
-#include "widget/schematic/schematiclibwidget.h"
+
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -39,21 +30,24 @@ namespace kiwi::widget {
         this->initTopdieLibWidget();
         this->initSchematicView(interposer, basedie);
         this->initInfoWidget();
+
+        this->setWindowTitle("Schematic Editor");
+        this->resize(1000, 800);
     }
 
     void SchematicWidget::initTopdieLibWidget() {
-        auto topdieLibWidget = new SchematicLibWidget {this->_basedie, this->_splitter};
-        topdieLibWidget->setMinimumWidth(200);
-        topdieLibWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        this->_libWidget = new SchematicLibWidget {this->_basedie, this->_splitter};
+        this->_libWidget->setMinimumWidth(200);
+        this->_libWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-        this->_splitter->addWidget(topdieLibWidget);
+        this->_splitter->addWidget(this->_libWidget);
 
         QObject::connect(
-            topdieLibWidget, &SchematicLibWidget::initialTopDieInst, 
+            this->_libWidget, &SchematicLibWidget::initialTopDieInst, 
             this->_scene, &SchematicScene::handleInitialTopDie);
 
         QObject::connect(
-            topdieLibWidget, &SchematicLibWidget::addExport, 
+            this->_libWidget, &SchematicLibWidget::addExport, 
             this->_scene, &SchematicScene::handleAddExport);
     }
 
@@ -65,55 +59,27 @@ namespace kiwi::widget {
     }
 
     void SchematicWidget::initInfoWidget() {
-        auto infoWidget = new QWidget {this->_splitter};
-        infoWidget->setMinimumWidth(250);
+        this->_infoWidget = new SchematicInfoWidget{this->_basedie, this->_view, this->_splitter};
+        this->_infoWidget->setMinimumWidth(250);
+        this->_infoWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
-        auto infoLayout = new QVBoxLayout {};
-        infoWidget->setLayout(infoLayout);
-    
-        auto stackedWidget = new QStackedWidget {infoWidget};
-        stackedWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        this->_splitter->addWidget(this->_infoWidget);
 
-        // View 
-        auto viewinfoWidget = new schematic::ViewInfoWidget {this->_view, stackedWidget};
-        stackedWidget->addWidget(viewinfoWidget);
+        QObject::connect(
+            this->_scene, &SchematicScene::viewSelected, 
+            this->_infoWidget, &SchematicInfoWidget::showViewInfo);
 
-        // Net info
-        auto netinfoWidget = new schematic::NetInfoWidget {stackedWidget};
-        stackedWidget->addWidget(netinfoWidget);
+        QObject::connect(
+            this->_scene, &SchematicScene::netSelected, 
+            this->_infoWidget, &SchematicInfoWidget::showNetInfoWidget);
 
-        // TopDie inst
-        auto tpdinfoWidget = new schematic::TopdieInstInfoWidget {stackedWidget};
-        stackedWidget->addWidget(tpdinfoWidget);
+        QObject::connect(
+            this->_scene, &SchematicScene::exportSelected, 
+            this->_infoWidget, &SchematicInfoWidget::showExPortInfoWidget);
 
-        // Export inst
-        auto exportWidget = new schematic::ExPortItemInfoWidget {stackedWidget};
-        stackedWidget->addWidget(exportWidget);
-
-        infoLayout->addWidget(stackedWidget);
-        this->_splitter->addWidget(infoWidget);
-    
-        this->setWindowTitle("Schematic Editor");
-        this->resize(1000, 800);
-
-        QObject::connect(this->_scene, &SchematicScene::viewSelected, [viewinfoWidget, stackedWidget] () {
-            stackedWidget->setCurrentWidget(viewinfoWidget);
-        });
-
-        QObject::connect(this->_scene, &SchematicScene::netSelected, [netinfoWidget, stackedWidget] (schematic::NetItem* net) {
-            netinfoWidget->loadNet(net);
-            stackedWidget->setCurrentWidget(netinfoWidget);
-        });
-
-        QObject::connect(this->_scene, &SchematicScene::exportSelected, [exportWidget, stackedWidget] (schematic::ExPortItem* eport) {
-            exportWidget->loadExPort(eport);
-            stackedWidget->setCurrentWidget(exportWidget);
-        });
-
-        QObject::connect(this->_scene, &SchematicScene::topdieInstSelected, [tpdinfoWidget, stackedWidget] (schematic::TopDieInstanceItem* inst) {
-            tpdinfoWidget->loadInst(inst);
-            stackedWidget->setCurrentWidget(tpdinfoWidget);
-        });
+        QObject::connect(
+            this->_scene, &SchematicScene::topdieInstSelected, 
+            this->_infoWidget, &SchematicInfoWidget::showTopDieInstInfoWidget);
     }
 
 }

@@ -98,7 +98,9 @@ namespace kiwi::circuit {
         return false;
     }
 
-    void BaseDie::rename_topdie_inst(std::StringView old_name, std::String new_name) {
+    void BaseDie::topdie_inst_rename(TopDieInstance* inst, std::String new_name) {
+        auto old_name = inst->name();
+        
         auto node = this->_topdie_insts.extract(old_name);
         if (!node) {
             debug::exception_fmt("Topdie Instance '{}' not exit!", old_name);
@@ -109,7 +111,9 @@ namespace kiwi::circuit {
         }
     }
 
-    void BaseDie::rename_external_port(std::StringView old_name, std::String new_name) {
+    void BaseDie::external_port_rename(ExternalPort* eport, std::String new_name) {
+        auto old_name = eport->name();
+
         auto node = this->_external_ports.extract(old_name);
         if (!node) {
             debug::exception_fmt("Topdie Instance '{}' not exit!", old_name);

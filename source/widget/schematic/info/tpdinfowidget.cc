@@ -1,9 +1,9 @@
 #include "./tpdinfowidget.h"
 #include "../item/topdieinstitem.h"
+#include <cassert>
 #include <circuit/topdieinst/topdieinst.hh>
-#include "qgroupbox.h"
-#include "qtableview.h"
-#include "qwidget.h"
+#include "qchar.h"
+#include "widget/frame/lineeditwithbutton.h"
 
 #include <debug/debug.hh>
 
@@ -16,12 +16,13 @@
 #include <QGridLayout>
 #include <QStandardItemModel>
 #include <QHeaderView>
+#include <QGroupBox>
 
 namespace kiwi::widget::schematic {
 
     constexpr int MIN_HEIGHT = 30;
 
-    TopdieInstInfoWidget::TopdieInstInfoWidget(QWidget* parent) :
+    TopDieInstInfoWidget::TopDieInstInfoWidget(QWidget* parent) :
         QWidget{parent}
     {
         auto thisLayout = new QVBoxLayout {this};
@@ -36,13 +37,9 @@ namespace kiwi::widget::schematic {
 
         // Name
         layout->addWidget(new QLabel {"Begin ", widget}, 0, 0);
-        this->_nameLabel = new QLabel {"", widget};
-        this->_nameLabel->setStyleSheet(
-            "border-radius: 5px;"        // 圆角半径
-            "padding: 5px;"             // 内边距
-            "border: 1px solid #A9A9A9;" // 边框
-        );
-        layout->addWidget(this->_nameLabel, 0, 1);
+        this->_nameEdit = new LineEditWithButton {widget};
+        this->_nameEdit->setMinimumHeight(MIN_HEIGHT);
+        layout->addWidget(this->_nameEdit, 0, 1);
 
         // IO Map
         auto label = new QLabel {"Pin Map ", widget};
@@ -54,15 +51,20 @@ namespace kiwi::widget::schematic {
 
         layout->setColumnMinimumWidth(0, 50);
         layout->setColumnStretch(0, 0);
+
+        connect(this->_nameEdit, &LineEditWithButton::textConfirmed, [this] (const QString& name) {
+            assert(this->_inst != nullptr);
+            this->topDieInstRename(this->_inst, name);
+        });
     }
 
-    void TopdieInstInfoWidget::loadInst(TopDieInstanceItem* inst) {
+    void TopDieInstInfoWidget::loadInst(TopDieInstanceItem* inst) {
         this->_inst = inst;
         if (this->_inst == nullptr) {
-            debug::exception("Load a empty net into TopdieInstInfoWidget");
+            debug::exception("Load a empty net into TopDieInstInfoWidget");
         }
 
-        this->_nameLabel->setText(this->_inst->name());
+        this->_nameEdit->setText(this->_inst->name());
 
         // Create model
         const auto& pinmap = this->_inst->topdieInst()->topdie()->pins_map();

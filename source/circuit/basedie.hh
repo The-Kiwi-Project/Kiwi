@@ -38,9 +38,6 @@ namespace kiwi::circuit {
         auto remove_connection(Connection*) -> bool;
 
     public:
-        void rename_topdie_inst(std::StringView old_name, std::String new_name);
-        void rename_external_port(std::StringView old_name, std::String new_name);
-
         void topdie_inst_rename(TopDieInstance* inst, std::String new_name);
 
         void external_port_rename(ExternalPort* eport, std::String new_name);

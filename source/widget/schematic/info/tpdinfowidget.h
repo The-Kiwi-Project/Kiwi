@@ -1,5 +1,7 @@
 #pragma once
 
+#include "qchar.h"
+#include "qobjectdefs.h"
 #include <QWidget>
 
 class QLabel;
@@ -8,15 +10,21 @@ class QTableView;
 
 namespace kiwi::widget {
     class ColorPickerButton;
+    class LineEditWithButton;
 }
 
 namespace kiwi::widget::schematic {
 
     class TopDieInstanceItem;
 
-    class TopdieInstInfoWidget : public QWidget {
+    class TopDieInstInfoWidget : public QWidget {
+        Q_OBJECT
+
     public:
-        TopdieInstInfoWidget(QWidget* parent = nullptr);
+        TopDieInstInfoWidget(QWidget* parent = nullptr);
+
+    signals:
+        void topDieInstRename(TopDieInstanceItem* inst, const QString& name);
 
     public:
         void loadInst(TopDieInstanceItem* inst);
@@ -24,7 +32,7 @@ namespace kiwi::widget::schematic {
     protected:
         TopDieInstanceItem* _inst {nullptr};
 
-        QLabel* _nameLabel {nullptr};
+        LineEditWithButton*_nameEdit {nullptr};
         QTableView* _pinMapView {nullptr};
         
     };
