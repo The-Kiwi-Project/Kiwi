@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cassert>
 #include <debug/debug.hh>
+#include <format>
 #include <memory>
 #include <utility>
 
@@ -24,14 +25,26 @@ namespace kiwi::circuit {
         return res.first->second.get();
     }
 
+    auto BaseDie::add_topdie_inst(TopDie* topdie, hardware::TOB* tob) -> TopDieInstance* {
+        auto name = this->default_topdie_inst_name(topdie);
+        return this->add_topdie_inst(std::move(name), topdie, tob);
+    }
+
     auto BaseDie::add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance* {
-        auto topdie_inst = std::make_unique<TopDieInstance>(std::move(name), topdie, tob);
+        auto p = new TopDieInstance{std::move(name), topdie, tob};
+        auto topdie_inst = std::Box<TopDieInstance>(p);
+
         auto res = this->_topdie_insts.emplace(topdie_inst->name_view(), nullptr);
         if (res.second == false) {
             debug::exception_fmt("Topdie Instance '{}' already exit!", topdie_inst->name());
         }
         res.first->second = std::move(topdie_inst);
         return res.first->second.get();
+    }
+
+    auto BaseDie::add_external_port(const hardware::TrackCoord& coord) -> ExternalPort* {
+        auto name = this->default_external_port_name();
+        return this->add_external_port(std::move(name), coord);
     }
 
     auto BaseDie::add_external_port(std::String name, const hardware::TrackCoord& coord) -> ExternalPort* {
@@ -167,6 +180,30 @@ namespace kiwi::circuit {
         } else {
             return {res->second.get()};
         }
+    }
+
+    auto BaseDie::default_topdie_inst_name(TopDie* topdie) -> std::String {
+        auto size = 0;
+        for (const auto& [name, inst] : this->_topdie_insts) {
+            if (topdie == inst->topdie()) {
+                size += 1;
+            }
+        }
+
+        auto name = std::format("{}_{}", topdie->name(), size);
+        while (this->_topdie_insts.contains(name)) {
+            name.push_back('_');
+        }
+
+        return name;
+    }
+
+    auto BaseDie::default_external_port_name() -> std::String {
+        auto name = std::format("externl_port_{}", this->_external_ports.size());
+        while (this->_external_ports.contains(name)) {
+            name.push_back('_');
+        }
+        return name;
     }
 
     BaseDie::~BaseDie() noexcept = default;

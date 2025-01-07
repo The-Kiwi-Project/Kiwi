@@ -22,7 +22,9 @@ namespace kiwi::circuit {
     public:
         auto add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> TopDie*;
         auto add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance*;
+        auto add_topdie_inst(TopDie* topdie, hardware::TOB* tob) -> TopDieInstance*;
         auto add_external_port(std::String name, const hardware::TrackCoord& coord) -> ExternalPort*;
+        auto add_external_port(const hardware::TrackCoord& coord) -> ExternalPort*;
         auto add_connection(int sync, Pin input, Pin output) -> Connection*;
 
         auto add_net(std::Box<Net>) -> void;
@@ -55,6 +57,10 @@ namespace kiwi::circuit {
         auto get_topdie(std::StringView name) -> std::Option<TopDie*>;
         auto get_topdie_inst(std::StringView name) -> std::Option<TopDieInstance*>;
         auto get_external_port(std::StringView name) -> std::Option<ExternalPort*>;
+
+    private:
+        auto default_topdie_inst_name(TopDie* topdie) -> std::String;
+        auto default_external_port_name() -> std::String;
 
     public:
         auto topdies() const -> const std::HashMap<std::StringView, std::Box<TopDie>>& { return this->_topdies; }

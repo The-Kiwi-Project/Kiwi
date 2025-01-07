@@ -6,8 +6,8 @@
 #include <QGraphicsItem>
 #include <QPainter>
 
-namespace kiwi::widget {
-   class SchematicScene;
+namespace kiwi::circuit {
+    class ExternalPort;
 }
 
 namespace kiwi::widget::schematic {
@@ -28,7 +28,7 @@ namespace kiwi::widget::schematic {
         int type() const override { return Type; }
         
     public:
-        ExPortItem(const QString name, SchematicScene* scene);
+        ExPortItem(circuit::ExternalPort* eport, SchematicScene* scene);
 
     protected:
         auto boundingRect() const -> QRectF override;
@@ -39,6 +39,7 @@ namespace kiwi::widget::schematic {
 
     private:
         PinItem* _pinietm;
+        circuit::ExternalPort* _eport;
         qreal _width;
     };
 

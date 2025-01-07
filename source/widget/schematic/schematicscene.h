@@ -5,6 +5,7 @@
 namespace kiwi::circuit {
     class TopDieInstance;
     class TopDie;
+    class ExternalPort;
     class BaseDie;
 }
 
@@ -38,7 +39,7 @@ namespace kiwi::widget {
     public:
         auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;
         auto addNet(schematic::NetPointItem* beginPoint, schematic::NetPointItem* endPoint) -> schematic::NetItem*;
-        auto addExPort(const QString& name) -> schematic::ExPortItem*;
+        auto addExPort(circuit::ExternalPort*) -> schematic::ExPortItem*;
         auto addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem*;
 
     public:

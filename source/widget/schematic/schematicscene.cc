@@ -6,11 +6,9 @@
 #include "./item/topdieinstitem.h"
 #include "circuit/topdieinst/topdieinst.hh"
 #include <circuit/basedie.hh>
-#include "qchar.h"
 #include "qnamespace.h"
 #include "widget/schematic/item/griditem.h"
 #include <QGraphicsSceneMouseEvent>
-#include <format>
 
 namespace kiwi::widget {
 
@@ -107,8 +105,8 @@ namespace kiwi::widget {
         return net;
     }
 
-    auto SchematicScene::addExPort(const QString& name) -> schematic::ExPortItem* {
-        auto port = new schematic::ExPortItem {name, this};
+    auto SchematicScene::addExPort(circuit::ExternalPort* eport) -> schematic::ExPortItem* {
+        auto port = new schematic::ExPortItem {eport, this};
         this->addItem(port);
         return port;
     }
@@ -144,16 +142,7 @@ namespace kiwi::widget {
     }
 
     void SchematicScene::handleInitialTopDie(circuit::TopDie* topdie) {
-        // Get name!
-        auto size = 0;
-        for (const auto& [name, inst] : this->_basedie->topdie_insts()) {
-            if (inst->topdie() == topdie) {
-                size += 1;
-            }
-        }
-
-        auto instName = std::format("{}_{}", topdie->name(), size);
-        auto topdieInst = this->_basedie->add_topdie_inst(instName, topdie, nullptr);
+        auto topdieInst = this->_basedie->add_topdie_inst(topdie, nullptr);
         auto topdieInstItem = this->addTopDieInst(topdieInst);
 
         if (this->_floatingTopdDieInst != nullptr) {
@@ -165,13 +154,14 @@ namespace kiwi::widget {
 
     void SchematicScene::handleAddExport() {
         // MARK rename
-        auto eport = this->addExPort("export");
-        
+        auto eport = this->_basedie->add_external_port({});
+        auto eportItem = this->addExPort(eport);
+
         if (this->_floatingExPort != nullptr) {
             this->cleanFloatingExPort();
         }
 
-        this->_floatingExPort = eport;
+        this->_floatingExPort = eportItem;
     }
 
     void SchematicScene::placeFloatingTopdDieInst() {
