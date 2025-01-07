@@ -25,7 +25,7 @@
 */
 
 #include "./config/config.hh"
-#include <circuit/pin/pin.hh>
+#include <circuit/connection/connection.hh>
 #include <circuit/topdieinst/topdieinst.hh>
 #include <hardware/track/trackcoord.hh>
 
@@ -74,8 +74,8 @@ namespace kiwi::parse {
         auto add_nets() -> void;
 
     private:
-        auto build_no_sync_nets(std::Span<const circuit::Connection> connections) -> void;
-        auto build_sync_net(std::Span<const circuit::Connection> connections) -> void;
+        auto build_no_sync_nets(std::Span<const std::Box<circuit::Connection>> connections) -> void;
+        auto build_sync_net(std::Span<const std::Box<circuit::Connection>> connections) -> void;
         auto build_fixed_nets() -> void;
      
         using Node = std::Variant<hardware::Track*, hardware::Bump*>;

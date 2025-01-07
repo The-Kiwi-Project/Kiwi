@@ -2,7 +2,7 @@
 #include "./layoutscene.h"
 
 #include "./item/topdieinstitem.h"
-#include "circuit/pin/pin.hh"
+#include "circuit/connection/connection.hh"
 #include "hardware/tob/tobcoord.hh"
 #include "qbrush.h"
 #include "qcolor.h"
@@ -98,7 +98,7 @@ namespace kiwi::widget {
                 layout::PinItem* beginPin, *endPin;
                 bool cont = false;
 
-                std::match(connection.input,
+                std::match(connection->input(),
                     [this, &cont](const circuit::ConnectExPort& eport) {
                         cont = true;
                     },
@@ -109,7 +109,7 @@ namespace kiwi::widget {
                     }
                 );
 
-                std::match(connection.output,
+                std::match(connection->output(),
                     [this, &cont](const circuit::ConnectExPort& eport) {
                         cont = true;
                     },

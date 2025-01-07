@@ -21,12 +21,6 @@ namespace kiwi::circuit {
 
     auto connect_export(std::String name) -> Pin;
     auto connect_bump(TopDieInstance* inst, std::String name) -> Pin;
-
-    struct Connection {
-        Pin input;
-        Pin output;
-    };
-
 }
 
 template <>

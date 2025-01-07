@@ -25,7 +25,6 @@
 #include "./reader.hh"
 
 #include "./config/config.hh"
-#include <circuit/pin/pin.hh>
 #include <circuit/net/types/bbnet.hh>
 #include <circuit/net/types/btnet.hh>
 #include <circuit/net/types/tbnet.hh>
@@ -91,12 +90,10 @@ namespace kiwi::parse {
             for (const auto& connection : connections) {
                 auto input = this->parse_connection_node(connection.input);
                 auto output = this->parse_connection_node(connection.output);
-                this->_basedie->add_connections(
+                this->_basedie->add_connection(
                     sync,
-                    circuit::Connection{
-                        .input = std::move(input),
-                        .output = std::move(output)
-                    }
+                    std::move(input),
+                    std::move(output)
                 );
             }
         }
@@ -144,7 +141,7 @@ namespace kiwi::parse {
     }
     THROW_UP_WITH("Add net")
 
-    auto Reader::build_no_sync_nets(std::Span<const circuit::Connection> connections) -> void {
+    auto Reader::build_no_sync_nets(std::Span<const std::Box<circuit::Connection>> connections) -> void {
         // How to deal one to mul net?
         // Build a map: start to ends
         auto track_to_bumps = std::HashMap<hardware::Track*, std::Vector<hardware::Bump*>>{};
@@ -153,8 +150,8 @@ namespace kiwi::parse {
 
         // Loop for each connection...
         for (auto& connection : connections) {
-            auto& input = connection.input;
-            auto& output = connection.output;
+            auto& input = connection->input();
+            auto& output = connection->output();
 
             if (Reader::is_fixed_pin(output)) {
                 debug::exception("Fixed pin as target??");
@@ -284,14 +281,14 @@ namespace kiwi::parse {
         }
     }
 
-    auto Reader::build_sync_net(std::Span<const circuit::Connection> connections) -> void {
+    auto Reader::build_sync_net(std::Span<const std::Box<circuit::Connection>> connections) -> void {
         auto btb_sync_nets = std::Vector<std::Box<circuit::BumpToBumpNet>>{};
         auto btt_sync_nets = std::Vector<std::Box<circuit::BumpToTrackNet>>{};
         auto ttb_sync_nets = std::Vector<std::Box<circuit::TrackToBumpNet>>{};
 
         for (auto& connection : connections) {
-            auto& input = connection.input;
-            auto& output = connection.output;
+            auto& input = connection->input();
+            auto& output = connection->output();
 
             if (Reader::is_fixed_pin(input) || Reader::is_fixed_pin(output)) {
                 debug::exception("Fixed pin can't as sync");

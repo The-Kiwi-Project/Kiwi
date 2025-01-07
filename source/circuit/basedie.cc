@@ -1,10 +1,16 @@
 #include "./basedie.hh"
+#include "circuit/connection/connection.hh"
 #include "circuit/export/export.hh"
 #include "circuit/topdie/topdie.hh"
 #include "circuit/topdieinst/topdieinst.hh"
+#include "std/collection.hh"
+#include "std/memory.hh"
 #include "std/string.hh"
+#include <algorithm>
+#include <cassert>
 #include <debug/debug.hh>
 #include <memory>
+#include <utility>
 
 namespace kiwi::circuit {
     
@@ -29,7 +35,9 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::add_external_port(std::String name, const hardware::TrackCoord& coord) -> ExternalPort* {
-        auto external_port = std::make_unique<ExternalPort>(std::move(name), coord);
+        auto p = new ExternalPort{std::move(name), coord};
+        auto external_port = std::Box<ExternalPort>{p};
+
         auto res = this->_external_ports.emplace(external_port->name_view(), nullptr);
         if (res.second == false) {
             debug::exception_fmt("External port '{}' already exit!", external_port->name());
@@ -38,13 +46,18 @@ namespace kiwi::circuit {
         return res.first->second.get();
     }
 
-    auto BaseDie::add_net(std::Box<Net> net) -> void {
-        this->_nets.emplace_back(std::move(net));
+    auto BaseDie::add_connection(int sync, Pin input, Pin output) -> Connection* {
+        auto p = new Connection{sync, std::move(input), std::move(output)};
+        auto connection = std::Box<Connection>{p};
+        
+        auto res = this->_connections.emplace(sync, std::Vector<std::Box<Connection>>{});
+        assert(res.first->first = sync);
+        auto& iter = res.first->second.emplace_back(std::move(connection));
+        return iter.get();
     }
 
-    auto BaseDie::add_connections(int sync, Connection connection) -> void {
-        auto& cnt_vec = this->_connections.emplace(sync, std::Vector<Connection>{}).first->second;
-        cnt_vec.emplace_back(std::move(connection));
+    auto BaseDie::add_net(std::Box<Net> net) -> void {
+        this->_nets.emplace_back(std::move(net));
     }
 
     auto BaseDie::remove_topdie_inst(std::StringView name) -> bool {
@@ -53,6 +66,23 @@ namespace kiwi::circuit {
 
     auto BaseDie::remove_external_port(std::StringView name) -> bool {
         return this->_external_ports.erase(name);
+    }
+
+    auto BaseDie::remove_connection(Connection* connection) -> bool {
+        auto& connections = this->_connections.at(connection->sync());
+        auto s = std::remove_if(connections.begin(), connections.end(), [connection] (auto& c) {
+            return c.get() == connection;
+        });
+
+        auto iter = std::remove_if(connections.begin(), connections.end(), [connection] (auto& c) {
+            return c.get() == connection;
+        });
+
+        if (iter != connections.end()) {
+            connections.erase(iter, connections.end());
+            return true;
+        }
+        return false;
     }
 
     void BaseDie::rename_topdie_inst(std::StringView old_name, std::String new_name) {
@@ -75,6 +105,41 @@ namespace kiwi::circuit {
             eport->set_name(std::move(new_name));
             this->_external_ports.emplace(eport->name_view(), std::move(eport));
         }
+    }
+
+    void BaseDie::connection_set_input(Connection* connection, Pin input) {
+        connection->set_input(std::move(input));
+    }
+
+    void BaseDie::connection_set_output(Connection* connection, Pin output) {
+        connection->set_output(std::move(output));
+    }
+
+    void BaseDie::connection_set_sync(Connection* connection, int sync) {
+        if (connection->sync() == sync) {
+            return;
+        } 
+
+        auto& old_group = this->_connections.at(connection->sync());
+        
+        auto removed_connection = std::Box<Connection>{nullptr};
+        auto iter = std::remove_if(old_group.begin(), old_group.end(), [&removed_connection, connection] (std::Box<Connection>& c) {
+            if (c.get() == connection) {
+                removed_connection = std::move(c);
+                return true;
+            }
+            return false;
+        });
+
+        if (removed_connection.get() != nullptr) {
+            assert(remove_connection.get == connection);
+            auto& new_group = this->_connections.emplace(sync, std::Vector<std::Box<Connection>>{}).first->second;
+            new_group.emplace_back(std::move(removed_connection));
+            connection->set_sync(sync);
+            old_group.erase(iter, old_group.end());
+        }
+
+        debug::exception("Connection no in this basedie!");
     }
 
     auto BaseDie::get_topdie(std::StringView name) -> std::Option<TopDie*> {
@@ -104,4 +169,5 @@ namespace kiwi::circuit {
         }
     }
 
+    BaseDie::~BaseDie() noexcept = default;
 }
