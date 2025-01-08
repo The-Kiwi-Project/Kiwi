@@ -124,7 +124,8 @@ namespace kiwi::widget::schematic {
         ) : (
             circuit::Pin::connect_bump(
                 dynamic_cast<TopDieInstanceItem*>(this->parentItem())->topdieInst(),
-                this->name().toStdString())
+                this->name().toStdString()
+            )
         );
 
         return circuitPin;

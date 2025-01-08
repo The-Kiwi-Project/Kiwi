@@ -42,10 +42,10 @@ namespace kiwi::widget {
     public:
         auto addExPort(circuit::ExternalPort*) -> schematic::ExPortItem*;
         auto addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem*;
-        auto connectPins(schematic::PinItem* begin, schematic::PinItem* end, int sync = -1) -> schematic::NetItem*;
-
+        auto addNet(circuit::Connection* connection) -> schematic::NetItem*;
+        
+    private:
         auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;
-        auto addNet(circuit::Connection* connection, schematic::NetPointItem* beginPoint, schematic::NetPointItem* endPoint) -> schematic::NetItem*;
 
     public:
         /*

@@ -7,6 +7,7 @@
 #include "./item/topdieinstitem.h"
 #include "./item/griditem.h"
 
+#include <circuit/connection/connection.hh>
 #include <circuit/topdieinst/topdieinst.hh>
 #include <circuit/basedie.hh>
 #include <debug/debug.hh>
@@ -94,11 +95,7 @@ namespace kiwi::widget {
     void SchematicScene::initialNetItems() {
         for (auto& [sync, connections] : this->_basedie->connections()) {
             for (const auto& connection : connections) {
-                auto beginPin = this->circuitPinToPinItem(connection->input());
-                auto endPin = this->circuitPinToPinItem(connection->output());
-                this->connectPins(beginPin, endPin, connection->sync());
-                qDebug() << beginPin;
-                qDebug() << endPin;
+                this->addNet(connection.get());
             }
         }
     }
@@ -181,16 +178,6 @@ namespace kiwi::widget {
         return point;
     }
 
-    auto SchematicScene::addNet(
-        circuit::Connection* connection, 
-        schematic::NetPointItem* beginPoint, 
-        schematic::NetPointItem* endPoint) -> schematic::NetItem* 
-    {    
-        auto net = new schematic::NetItem {connection, beginPoint, endPoint};
-        this->addItem(net);
-        return net;
-    }
-
     auto SchematicScene::addExPort(circuit::ExternalPort* eport) -> schematic::ExPortItem* {
         auto item = new schematic::ExPortItem {eport};
         this->_exportMap.insert(eport, item);
@@ -205,14 +192,17 @@ namespace kiwi::widget {
         return item;
     }
 
-    auto SchematicScene::connectPins(schematic::PinItem* begin, schematic::PinItem* end, int sync) -> schematic::NetItem* {
-        auto beginPoint = this->addNetPoint(begin);
-        auto endPoint = this->addNetPoint(end);
+    auto SchematicScene::addNet(circuit::Connection* connection) -> schematic::NetItem* {
+        auto beginPin = this->circuitPinToPinItem(connection->input());
+        auto endPin = this->circuitPinToPinItem(connection->output());
 
-        auto connection = 
-            this->_basedie->add_connection(sync, begin->toCircuitPin(), end->toCircuitPin());
-        
-        return this->addNet(connection, beginPoint, endPoint);
+        auto beginPoint = this->addNetPoint(beginPin);
+        auto endPoint = this->addNetPoint(endPin);
+
+        auto item = new schematic::NetItem {connection, beginPoint, endPoint};
+        this->addItem(item);
+
+        return item;
     }
 
     auto SchematicScene::circuitPinToPinItem(const circuit::Pin& pin) -> schematic::PinItem* {
@@ -266,7 +256,6 @@ namespace kiwi::widget {
     }
 
     void SchematicScene::handleAddExport() {
-        // MARK rename
         auto eport = this->_basedie->add_external_port({});
         auto eportItem = this->addExPort(eport);
 
