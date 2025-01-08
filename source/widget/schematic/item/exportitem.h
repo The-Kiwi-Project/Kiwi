@@ -25,11 +25,11 @@ namespace kiwi::widget::schematic {
 
         static_assert(HEIGHT > PinItem::CHAR_HEIGHT);
 
-        enum { Type = UserType + 5 };
+        enum { Type = UserType + 2 };
         int type() const override { return Type; }
         
     public:
-        ExPortItem(circuit::ExternalPort* eport, SchematicScene* scene);
+        ExPortItem(circuit::ExternalPort* eport);
 
     protected:
         auto boundingRect() const -> QRectF override;

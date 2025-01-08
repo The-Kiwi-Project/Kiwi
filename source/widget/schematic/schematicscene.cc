@@ -11,9 +11,29 @@
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
+    
+    template <int A, int B, int... Rest>
+    struct AllUnique {
+        static constexpr bool value = (A != B) && AllUnique<A, Rest...>::value && AllUnique<B, Rest...>::value;
+    };
 
-    static_assert((int)schematic::NetItem::Type != (int)schematic::PinItem::Type);
-    static_assert((int)schematic::NetItem::Type != (int)schematic::TopDieInstanceItem::Type);
+    template <int A, int B>
+    struct AllUnique<A, B> {
+        static constexpr bool value = (A != B);
+    };
+
+    template <int... Values>
+    constexpr void checkAllUnique() {
+        static_assert(AllUnique<Values...>::value, "Constants must be unique!");
+    }
+
+    static_assert(AllUnique<
+        (int)schematic::NetItem::Type,
+        (int)schematic::PinItem::Type,
+        (int)schematic::TopDieInstanceItem::Type,
+        (int)schematic::NetPointItem::Type,
+        (int)schematic::ExPortItem::Type
+    >::value);
 
     SchematicScene::SchematicScene(circuit::BaseDie* basedie) :
         _basedie{basedie},
@@ -110,7 +130,7 @@ namespace kiwi::widget {
     }
 
     auto SchematicScene::addExPort(circuit::ExternalPort* eport) -> schematic::ExPortItem* {
-        auto port = new schematic::ExPortItem {eport, this};
+        auto port = new schematic::ExPortItem {eport};
         this->addItem(port);
         return port;
     }

@@ -48,7 +48,7 @@ namespace kiwi::algo {
                 debug::exception("Fixed pin as target??");
             }
 
-            auto end_node = this->connection_to_node(output);
+            auto end_node = this->pin_to_node(output);
 
             if (NetBuilder::is_pose_pin(input)) {
                 // Input is 'vdd'
@@ -74,7 +74,7 @@ namespace kiwi::algo {
             } 
             else {
                 // Four case
-                auto begin_node = this->connection_to_node(input);
+                auto begin_node = this->pin_to_node(input);
 
                 std::match(end_node, 
                     [&](hardware::Track* end_track) {
@@ -185,8 +185,8 @@ namespace kiwi::algo {
                 debug::exception("Fixed pin can't as sync");
             }
 
-            auto begin_node  = this->connection_to_node(input);
-            auto end_node = this->connection_to_node(output);
+            auto begin_node  = this->pin_to_node(input);
+            auto end_node = this->pin_to_node(output);
         
             // Each connec in sync net should has the same TOB size. 
             // We do not check this condition.... :)
@@ -269,18 +269,13 @@ namespace kiwi::algo {
         }
     }
 
-    auto NetBuilder::connection_to_node(const circuit::Pin& connection) -> Node {
-        return std::match(connection,
+    auto NetBuilder::pin_to_node(const circuit::Pin& pin) -> Node {
+        return std::match(pin.connected_point(),
             [this](const circuit::ConnectExPort& eport) {
-                auto res = this->_basedie->get_external_port(eport.name);
-                if (!res.has_value()) {
-                    debug::exception_fmt("No exit expoert '{}'", eport.name);
-                }
-
-                auto& external_port = *res;
+                auto& external_port = eport.port;
                 auto track = this->_interposer->get_track(external_port->coord());
                 if (!track.has_value()) {
-                    debug::exception_fmt("External port '{}' has an invalid track coord", eport.name, external_port->coord());
+                    debug::exception_fmt("External port '{}' has an invalid track coord", external_port->name(), external_port->coord());
                 } else {
                     return Node{*track};
                 }
@@ -310,9 +305,9 @@ namespace kiwi::algo {
     }
 
     auto NetBuilder::is_pose_pin(const circuit::Pin& pin) -> bool {
-        return std::match(pin,
+        return std::match(pin.connected_point(),
             [](const circuit::ConnectExPort& eport) {
-                return eport.name.ends_with("pose");
+                return eport.port->name().ends_with("pose");
             },
             [](const circuit::ConnectBump&) {
                 return false;
@@ -321,9 +316,9 @@ namespace kiwi::algo {
     }
 
     auto NetBuilder::is_nege_pin(const circuit::Pin& pin) -> bool {
-        return std::match(pin,
+        return std::match(pin.connected_point(),
             [](const circuit::ConnectExPort& eport) {
-                return eport.name.ends_with("nege");
+                return eport.port->name().ends_with("nege");
             },
             [](const circuit::ConnectBump&) {
                 return false;

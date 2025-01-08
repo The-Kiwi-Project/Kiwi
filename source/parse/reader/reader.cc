@@ -25,6 +25,7 @@
 #include "./reader.hh"
 
 #include "./config/config.hh"
+#include "circuit/connection/pin.hh"
 #include <hardware/bump/bump.hh>
 #include <hardware/track/track.hh>
 #include <hardware/interposer.hh>
@@ -137,7 +138,11 @@ namespace kiwi::parse {
             /// 
             /// External port: Search external ports in config, and get track object in interposer
             ///
-            return circuit::connect_export(std::String{name});
+            auto eport = this->_basedie->get_external_port(name);
+            if (!eport.has_value()) {
+                debug::exception_fmt("No exit external port '{}' in basedie", name);
+            }
+            return circuit::Pin::connect_export(*eport);
         } 
         else {
             /// 
@@ -153,7 +158,7 @@ namespace kiwi::parse {
             // Is inst exit?
             auto inst = this->_basedie->get_topdie_inst(topdie_inst_name);
             if (!inst.has_value()) {
-                debug::exception_fmt("No exit topdie insta '{}'", topdie_inst_name);
+                debug::exception_fmt("No exit topdie inst '{}'", topdie_inst_name);
             }
 
             // Is pin exit?
@@ -162,8 +167,8 @@ namespace kiwi::parse {
             if (res == topdie->pins_map().end()) {
                 debug::exception_fmt("No exit pin name '{}' in topdie '{}'", pin_name, topdie->name());
             }
-
-            return circuit::connect_bump(*inst, std::String{pin_name});
+            
+            return circuit::Pin::connect_bump(*inst, std::String{pin_name});
         }
     }
 

@@ -98,7 +98,7 @@ namespace kiwi::widget {
                 layout::PinItem* beginPin, *endPin;
                 bool cont = false;
 
-                std::match(connection->input(),
+                std::match(connection->input().connected_point(),
                     [this, &cont](const circuit::ConnectExPort& eport) {
                         cont = true;
                     },
@@ -109,7 +109,7 @@ namespace kiwi::widget {
                     }
                 );
 
-                std::match(connection->output(),
+                std::match(connection->output().connected_point(),
                     [this, &cont](const circuit::ConnectExPort& eport) {
                         cont = true;
                     },

@@ -29,7 +29,7 @@ namespace kiwi::widget::schematic {
 
         static const     QColor COLOR;
 
-        enum { Type = UserType + 4 };
+        enum { Type = UserType + 6 };
         int type() const override { return Type; }
 
     public:

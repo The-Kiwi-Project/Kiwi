@@ -19,6 +19,9 @@ namespace kiwi::widget::schematic {
         static const     QColor COLOR;
         static const     QColor HOVER_COLOR;
     
+        enum { Type = UserType + 4 };
+        int type() const override { return Type; }
+
     public:
         NetPointItem(PinItem* connectedPin, QGraphicsItem* parent = nullptr);
 

@@ -3,6 +3,7 @@
 #include "../item/netpointitem.h"
 #include "../item/pinitem.h"
 #include "qboxlayout.h"
+#include "qdebug.h"
 #include "qgroupbox.h"
 #include "qspinbox.h"
 #include "qwidget.h"

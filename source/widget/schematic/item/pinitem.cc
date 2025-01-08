@@ -8,7 +8,9 @@
 #include "./netpointitem.h"
 #include "./topdieinstitem.h"
 #include "../schematicscene.h"
+#include "./exportitem.h"
 #include <QGraphicsSceneMouseEvent>
+#include <cassert>
 
 namespace kiwi::widget::schematic {
 
@@ -21,15 +23,11 @@ namespace kiwi::widget::schematic {
         const QString &name, 
         QPointF position, 
         PinSide side, 
-        SchematicScene* scene,
-        TopDieInstanceItem* topdie,
         QGraphicsItem *parent
     )
         : QGraphicsItem(parent), 
         _name{name},
-        _side{side},
-        _scene{scene},
-        _topdieinst{topdie}
+        _side{side}
     {
         this->setPos(position);
         this->setAcceptHoverEvents(true);
@@ -103,7 +101,7 @@ namespace kiwi::widget::schematic {
     }
 
     auto PinItem::isExportPin() const -> bool {
-        return this->_topdieinst == nullptr;
+        return this->parentItem()->type() == ExPortItem::Type;
     }
 
     auto PinItem::isTopdieInstPin() const -> bool {
@@ -111,18 +109,21 @@ namespace kiwi::widget::schematic {
     }
 
     auto PinItem::toString() const -> QString {
-        if (this->_topdieinst) {
-            return QString{"%1.%2"}.arg(this->_topdieinst->name()).arg(this->_name);
+        if (this->isTopdieInstPin()) {
+            return QString{"%1.%2"}.arg(this->topdieInstItem()->name()).arg(this->_name);
         }
         return this->_name;
     }
 
     auto PinItem::toCircuitPin() const -> circuit::Pin {
+        assert(this->parentItem() != nullptr);
         auto circuitPin = this->isExportPin() ? (
-            circuit::connect_export(this->name().toStdString())
+            circuit::Pin::connect_export(
+                dynamic_cast<ExPortItem*>(this->parentItem())->exPort()
+            )
         ) : (
-            circuit::connect_bump(
-                this->topDieInstanceItem()->topdieInst(), 
+            circuit::Pin::connect_bump(
+                dynamic_cast<TopDieInstanceItem*>(this->parentItem())->topdieInst(),
                 this->name().toStdString())
         );
 
@@ -139,7 +140,7 @@ namespace kiwi::widget::schematic {
     }
 
     void PinItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-        this->_scene->headleCreateNet(this, event);
+        dynamic_cast<SchematicScene*>(this->scene())->headleCreateNet(this, event);
         QGraphicsItem::mousePressEvent(event);
     }
 
@@ -153,6 +154,16 @@ namespace kiwi::widget::schematic {
         this->_hovered = false;
         this->update();
         QGraphicsItem::hoverLeaveEvent(event);
+    }
+
+    auto PinItem::exportItem() const -> ExPortItem* {
+        assert(this->parentItem() != nullptr);
+        return dynamic_cast<ExPortItem*>(this->parentItem());
+    }
+
+    auto PinItem::topdieInstItem() const -> TopDieInstanceItem* {
+        assert(this->parentItem() != nullptr);
+        return dynamic_cast<TopDieInstanceItem*>(this->parentItem());   
     }
 
 }

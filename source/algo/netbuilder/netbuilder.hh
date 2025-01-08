@@ -2,7 +2,6 @@
 #pragma once
 
 #include <hardware/track/trackcoord.hh>
-#include <circuit/connection/pin.hh>
 
 #include <std/collection.hh>
 #include <std/memory.hh>
@@ -20,6 +19,7 @@ namespace kiwi::circuit {
     class Net;
     class Connection;
     class TopDieInstance;
+    class Pin;
 }
 
 namespace kiwi::algo {
@@ -37,7 +37,7 @@ namespace kiwi::algo {
         auto build_fixed_nets() -> void;
      
         using Node = std::Variant<hardware::Track*, hardware::Bump*>;
-        auto connection_to_node(const circuit::Pin& connection) -> Node;
+        auto pin_to_node(const circuit::Pin& pin) -> Node;
 
         static auto is_pose_pin(const circuit::Pin& pin) -> bool;
         static auto is_nege_pin(const circuit::Pin& pin) -> bool;

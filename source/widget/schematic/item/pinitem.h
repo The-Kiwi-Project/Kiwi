@@ -22,6 +22,7 @@ namespace kiwi::widget::schematic {
     class NetItem;
     class NetPointItem;
     class TopDieInstanceItem;
+    class ExPortItem;
 
     class PinItem : public QGraphicsItem {
     public:
@@ -34,7 +35,7 @@ namespace kiwi::widget::schematic {
         static const    QColor COLOR;
         static const    QColor HOVERED_COLOR;
 
-        enum { Type = UserType + 2 };
+        enum { Type = UserType + 5 };
         int type() const override { return Type; }
     
     public:
@@ -42,8 +43,6 @@ namespace kiwi::widget::schematic {
             const QString &name, 
             QPointF position, 
             PinSide side, 
-            SchematicScene* scene, 
-            TopDieInstanceItem* topdie = nullptr,
             QGraphicsItem *parent = nullptr
         );
 
@@ -53,7 +52,6 @@ namespace kiwi::widget::schematic {
         auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
 
     protected:
-        // void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
         void mousePressEvent(QGraphicsSceneMouseEvent*) override;
         void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
@@ -74,17 +72,16 @@ namespace kiwi::widget::schematic {
         void removeConnectedPoint(NetPointItem* point)
         { this->_connectedNetPoints.removeOne(point); }
 
-        auto topDieInstanceItem() const -> TopDieInstanceItem* 
-        { return this->_topdieinst; }
-
         void setRaduis(qreal radius) { this->_raduis = radius; }
         void resetRaduis() { this->_raduis = PIN_RADIUS; }
 
     private:
+        auto exportItem() const -> ExPortItem*;
+        auto topdieInstItem() const -> TopDieInstanceItem*;
+
+    private:
         QString _name;
         PinSide _side;
-        TopDieInstanceItem* _topdieinst;
-        SchematicScene* _scene;
 
         qreal _raduis {PIN_RADIUS};
         bool _hovered {false};

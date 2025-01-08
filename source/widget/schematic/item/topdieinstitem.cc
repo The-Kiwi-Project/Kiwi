@@ -114,7 +114,7 @@ namespace kiwi::widget::schematic {
             int x = horizontal ? static_cast<int>(pos + x_offset) : x_offset;
             int y = horizontal ? y_offset : static_cast<int>(pos + y_offset);
 
-            auto *pin = new PinItem {*iter, QPointF(x, y), side, this->_scene, this, this};
+            auto *pin = new PinItem {*iter, QPointF(x, y), side, this};
             this->_pinitems.insert(*iter, pin);
         }
     }

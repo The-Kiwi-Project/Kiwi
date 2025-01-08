@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../topdieinst/topdieinst.hh"
+#include <circuit/topdieinst/topdieinst.hh>
+#include <circuit/export/export.hh>
 
 #include <std/string.hh>
 #include <std/utility.hh>
@@ -9,7 +10,7 @@
 namespace kiwi::circuit {
 
     struct ConnectExPort {
-        std::String name;
+        ExternalPort* port;
     };
 
     struct ConnectBump {
@@ -17,10 +18,22 @@ namespace kiwi::circuit {
         std::String name;
     };
 
-    using Pin = std::Variant<ConnectExPort, ConnectBump>;
+    using ConnectedPoint = std::Variant<ConnectExPort, ConnectBump>;
 
-    auto connect_export(std::String name) -> Pin;
-    auto connect_bump(TopDieInstance* inst, std::String name) -> Pin;
+    class Pin {
+    public:
+        static auto connect_export(ExternalPort* port) -> Pin; 
+        static auto connect_bump(TopDieInstance* inst, std::String name) -> Pin;
+
+    public:
+        auto connected_point() const -> const ConnectedPoint & 
+        { return this->_point; }
+
+    private:
+        Pin(ConnectedPoint point);
+        ConnectedPoint _point;
+    };
+
 }
 
 template <>
@@ -35,12 +48,12 @@ struct std::formatter<kiwi::circuit::Pin> {
     }
     template<typename FormatContext>
     constexpr auto format(const kiwi::circuit::Pin& pin, FormatContext& ctx) const {
-        return std::match(pin, 
+        return std::match(pin.connected_point(), 
             [&ctx](const kiwi::circuit::ConnectExPort& eport) {
                 return std::vformat_to(
                     ctx.out(),
                     std ::string {"{}"},
-                    std ::make_format_args(eport.name)
+                    std ::make_format_args(eport.port->name())
                 );
             },
             [&ctx](const kiwi::circuit::ConnectBump& bump) {
