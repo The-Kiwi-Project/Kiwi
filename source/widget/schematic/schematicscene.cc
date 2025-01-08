@@ -1,13 +1,15 @@
 #include "./schematicscene.h"
+
 #include "./item/netitem.h"
 #include "./item/netpointitem.h"
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
-#include "circuit/topdieinst/topdieinst.hh"
+#include "./item/griditem.h"
+
+#include <circuit/topdieinst/topdieinst.hh>
 #include <circuit/basedie.hh>
-#include "qnamespace.h"
-#include "widget/schematic/item/griditem.h"
+#include <debug/debug.hh>
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
@@ -39,6 +41,66 @@ namespace kiwi::widget {
         _basedie{basedie},
         QGraphicsScene{}
     {
+        this->initialSceneItems();
+    }
+
+    void SchematicScene::initialSceneItems() {
+        this->initialTopDieInstItems();
+        this->initialExPortItems();
+        this->initialNetItems();
+    }
+
+    void SchematicScene::initialTopDieInstItems() {
+        // Load all topdie inst!
+        for (auto& [name, topdie] : this->_basedie->topdie_insts()) {
+            auto t = this->addTopDieInst(topdie.get());
+        }
+
+        auto spacing = schematic::GridItem::GRID_SIZE;
+
+        int cols = std::ceil(std::sqrt(this->_topdieinstMap.size()));
+        int rows = std::ceil(static_cast<double>(this->_topdieinstMap.size()) / cols);
+
+        int startX = spacing;
+        int startY = spacing;
+
+        auto i = 0;
+        for (auto& topdieInstItems : this->_topdieinstMap) {
+            int row = i / cols;
+            int col = i % cols;
+
+            int x = startX + col * (topdieInstItems->width() + spacing);
+            int y = startY + row * (topdieInstItems->height() + spacing);
+
+            topdieInstItems->setPos(x, y);
+
+            i += 1;
+        }
+    }
+
+    void SchematicScene::initialExPortItems() {
+        auto i = 0;
+        for (auto& [name, eport] : this->_basedie->external_ports()) {
+            auto p = this->addExPort(eport.get());
+            p->setPos(QPointF{
+                -20. * schematic::GridItem::GRID_SIZE, 
+                i * (schematic::ExPortItem::HEIGHT + schematic::GridItem::GRID_SIZE)
+            });
+
+            i += 1;
+        }
+    }
+
+    void SchematicScene::initialNetItems() {
+        for (auto& [sync, connections] : this->_basedie->connections()) {
+            for (const auto& connection : connections) {
+                auto beginPin = this->circuitPinToPinItem(connection->input());
+                auto endPin = this->circuitPinToPinItem(connection->output());
+                this->connectPins(beginPin, endPin, connection->sync());
+                qDebug() << beginPin;
+                qDebug() << endPin;
+            }
+        }
     }
 
     void SchematicScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
@@ -130,16 +192,17 @@ namespace kiwi::widget {
     }
 
     auto SchematicScene::addExPort(circuit::ExternalPort* eport) -> schematic::ExPortItem* {
-        auto port = new schematic::ExPortItem {eport};
-        this->addItem(port);
-        return port;
+        auto item = new schematic::ExPortItem {eport};
+        this->_exportMap.insert(eport, item);
+        this->addItem(item);
+        return item;
     }
 
     auto SchematicScene::addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem* {
-        auto t = new schematic::TopDieInstanceItem{inst, this};
-        this->_topdieinstMap.insert(inst, t);
-        this->addItem(t);
-        return t;
+        auto item = new schematic::TopDieInstanceItem{inst};
+        this->_topdieinstMap.insert(inst, item);
+        this->addItem(item);
+        return item;
     }
 
     auto SchematicScene::connectPins(schematic::PinItem* begin, schematic::PinItem* end, int sync) -> schematic::NetItem* {
@@ -150,6 +213,19 @@ namespace kiwi::widget {
             this->_basedie->add_connection(sync, begin->toCircuitPin(), end->toCircuitPin());
         
         return this->addNet(connection, beginPoint, endPoint);
+    }
+
+    auto SchematicScene::circuitPinToPinItem(const circuit::Pin& pin) -> schematic::PinItem* {
+        return std::match(pin.connected_point(),
+            [this](const circuit::ConnectExPort& eport) -> schematic::PinItem* {
+                auto eportItem = this->_exportMap.value(eport.port);
+                return eportItem->pin();
+            },
+            [this](const circuit::ConnectBump& bump) -> schematic::PinItem* {
+                auto top = this->_topdieinstMap.value(bump.inst);
+                return top->pinitems().value(QString::fromStdString(bump.name));
+            }
+        );
     }
 
     void SchematicScene::headleCreateNet(schematic::PinItem* pin, QGraphicsSceneMouseEvent* event) {

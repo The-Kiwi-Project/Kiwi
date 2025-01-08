@@ -19,13 +19,11 @@
 
 namespace kiwi::widget::schematic {
     
-    // const QColor TopDieInstanceItem::COLOR = Qt::lightGray;
     const QColor TopDieInstanceItem::COLOR = QColor::fromRgb(200, 200, 200, 100);
 
-    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene):
+    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst):
         GridItem{},
-        _topdieinst{topdieinst},
-        _scene{scene}
+        _topdieinst{topdieinst}
     {
         this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
 

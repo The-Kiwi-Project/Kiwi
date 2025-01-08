@@ -1,7 +1,6 @@
 #pragma once
 
-#include "circuit/connection/connection.hh"
-#include "circuit/connection/pin.hh"
+#include "qhash.h"
 #include <QGraphicsScene>
 
 namespace kiwi::circuit {
@@ -9,6 +8,8 @@ namespace kiwi::circuit {
     class TopDie;
     class ExternalPort;
     class BaseDie;
+    class Connection;
+    class Pin;
 }
 
 namespace kiwi::widget {
@@ -47,6 +48,12 @@ namespace kiwi::widget {
         auto addNet(circuit::Connection* connection, schematic::NetPointItem* beginPoint, schematic::NetPointItem* endPoint) -> schematic::NetItem*;
 
     public:
+        /*
+            Load all item from the basedie!
+        */
+        void initialSceneItems();
+
+    public:
         void headleCreateNet(schematic::PinItem* pin, QGraphicsSceneMouseEvent* event);
         void handleInitialTopDie(circuit::TopDie* topdie);
         void handleAddExport();
@@ -54,6 +61,14 @@ namespace kiwi::widget {
     public:
         auto topdieinstMap() -> QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*>& 
         { return this->_topdieinstMap; }
+
+    private:
+        void initialTopDieInstItems();
+        void initialExPortItems();
+        void initialNetItems();
+
+    private:
+        auto circuitPinToPinItem(const circuit::Pin& pin) -> schematic::PinItem*;
 
     private:
         void placeFloatingTopdDieInst();
@@ -65,11 +80,13 @@ namespace kiwi::widget {
     protected:
         circuit::BaseDie* _basedie;
 
+        QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
+        QHash<circuit::ExternalPort*, schematic::ExPortItem*> _exportMap;
+
+        // Temp var 
         schematic::NetItem* _floatingNet {nullptr};
         schematic::TopDieInstanceItem* _floatingTopdDieInst {nullptr};
         schematic::ExPortItem* _floatingExPort {nullptr};
-
-        QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
     };
 
 }

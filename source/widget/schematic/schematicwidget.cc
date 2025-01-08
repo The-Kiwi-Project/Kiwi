@@ -4,9 +4,9 @@
 #include "./schematicinfowidget.h"
 #include "./schematiclibwidget.h"
 
-#include "widget/schematic/item/exportitem.h"
-#include "widget/schematic/item/netitem.h"
-#include "widget/schematic/item/topdieinstitem.h"
+#include "./item/topdieinstitem.h"
+#include "./item/netitem.h"
+#include "./item/exportitem.h"
 
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -52,7 +52,8 @@ namespace kiwi::widget {
     }
 
     void SchematicWidget::initSchematicView(hardware::Interposer* interposer, circuit::BaseDie* basedie) {
-        this->_view = new SchematicView {interposer, basedie, this->_scene};
+        this->_view = new SchematicView {interposer, basedie};
+        this->_view->setScene(this->_scene);
         this->_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         this->_splitter->addWidget(this->_view);

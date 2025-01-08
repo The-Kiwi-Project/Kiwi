@@ -31,7 +31,7 @@ namespace kiwi::circuit {
 
     private:
         Pin(ConnectedPoint point);
-        ConnectedPoint _point;
+        ConnectedPoint _point {};
     };
 
 }

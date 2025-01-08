@@ -33,7 +33,7 @@ namespace kiwi::widget::schematic {
         int type() const override { return Type; }
 
     public:
-        TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene);
+        TopDieInstanceItem(circuit::TopDieInstance* topdieinst);
 
         
     protected:
@@ -59,7 +59,6 @@ namespace kiwi::widget::schematic {
 
         circuit::TopDieInstance* _topdieinst {nullptr};
         QMap<QString, PinItem*> _pinitems {};
-        SchematicScene* const _scene {};
     };
 
 
