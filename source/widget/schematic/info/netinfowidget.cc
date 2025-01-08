@@ -7,6 +7,7 @@
 #include "qspinbox.h"
 #include "qwidget.h"
 #include <widget/frame/colorpickbutton.h>
+#include <circuit/connection/connection.hh>
 #include <debug/debug.hh>
 
 #include <QLabel>
@@ -66,13 +67,14 @@ namespace kiwi::widget::schematic {
         layout->addWidget(this->_colorButton, 3, 1);
 
         // Width
-
-
         layout->setColumnMinimumWidth(0, 50);
         layout->setColumnStretch(0, 0);
 
         connect(this->_colorButton, &ColorPickerButton::colorChanged, this, &NetInfoWidget::colorChanged);
-        connect(this->_syncSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &NetInfoWidget::syncChanged);
+        connect(this->_syncSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this] (int sync) {
+            assert(this->_ent != nullptr);
+            emit this->syncChanged(this->_net, sync);
+        });
     }
 
     void NetInfoWidget::loadNet(NetItem* net) {
@@ -89,18 +91,9 @@ namespace kiwi::widget::schematic {
         auto endPin = endPoint->connectedPin();
         this->_endPinLabel->setText(endPin->toString());
 
-        this->_syncSpinBox->setValue(this->_net->sync());
+        this->_syncSpinBox->setValue(this->_net->connection()->sync());
 
         this->_colorButton->setColor(this->_net->color());
-    }
-
-    void NetInfoWidget::syncChanged(int sync) {
-        if (this->_net == nullptr) {
-            debug::exception("Change sync for nullptr net");
-        }
-
-        this->_net->setSync(sync);
-        this->_net->update();
     }
         
     void NetInfoWidget::colorChanged(const QColor& color) {

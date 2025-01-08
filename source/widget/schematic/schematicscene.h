@@ -1,5 +1,7 @@
 #pragma once
 
+#include "circuit/connection/connection.hh"
+#include "circuit/connection/pin.hh"
 #include <QGraphicsScene>
 
 namespace kiwi::circuit {
@@ -37,13 +39,14 @@ namespace kiwi::widget {
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
     public:
-        auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;
-        auto addNet(schematic::NetPointItem* beginPoint, schematic::NetPointItem* endPoint) -> schematic::NetItem*;
         auto addExPort(circuit::ExternalPort*) -> schematic::ExPortItem*;
         auto addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem*;
+        auto connectPins(schematic::PinItem* begin, schematic::PinItem* end, int sync = -1) -> schematic::NetItem*;
+
+        auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;
+        auto addNet(circuit::Connection* connection, schematic::NetPointItem* beginPoint, schematic::NetPointItem* endPoint) -> schematic::NetItem*;
 
     public:
-        auto connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem*;
         void headleCreateNet(schematic::PinItem* pin, QGraphicsSceneMouseEvent* event);
         void handleInitialTopDie(circuit::TopDie* topdie);
         void handleAddExport();
@@ -53,6 +56,8 @@ namespace kiwi::widget {
         { return this->_topdieinstMap; }
 
     private:
+        auto getCircuitPin(schematic::PinItem* pin) -> circuit::Pin;
+
         void placeFloatingTopdDieInst();
         void cleanFloatingTopdDieInst();
 

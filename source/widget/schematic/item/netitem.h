@@ -8,6 +8,10 @@
 #include <QPen>
 #include <QDebug>
 
+namespace kiwi::circuit {
+    class Connection;
+}
+
 namespace kiwi::widget::schematic {
 
     class PinItem;
@@ -24,7 +28,7 @@ namespace kiwi::widget::schematic {
         int type() const override { return Type; }
         
     public:
-        NetItem(NetPointItem* beginPoint, NetPointItem* endPoint);
+        NetItem(circuit::Connection* connection, NetPointItem* beginPoint, NetPointItem* endPoint);
         NetItem(NetPointItem* beginPoint);
 
     public:
@@ -53,6 +57,8 @@ namespace kiwi::widget::schematic {
         auto beginPoint() const -> NetPointItem* { return this->_beginPoint; }
         auto endPoint() const -> NetPointItem* { return this->_endPoint; }
         void setEndPoint(NetPointItem* point) { this->_endPoint = point; }
+        void setConnection(circuit::Connection* connection) { this->_connection = connection; }
+        auto connection() const -> circuit::Connection* { return this->_connection; }
 
         auto color() const -> const QColor& { return this->_color; }
         auto setColor(const QColor& color) { this->_color = color; this->_paintColor = color; }
@@ -60,24 +66,20 @@ namespace kiwi::widget::schematic {
         auto width() const -> qreal { return this->_width; }
         auto setWidth(qreal width) { this->_width = width; this->_paintWidth = width; }
 
-        auto isSyncNet() const -> bool { return this->_sync == -1; }
-        auto sync() const -> int { return this->_sync; }
-        void setSync(int sync) { this->_sync = sync; }
-        
         void resetPaint();
         auto isFloating() const -> bool;
 
     protected:
+        circuit::Connection* _connection {nullptr};
+
+        NetPointItem* _beginPoint {nullptr};
+        NetPointItem* _endPoint {nullptr};
+
         QColor _paintColor {DEFAULT_COLOR};
         qreal  _paintWidth {DEFAULT_WIDTH};
         
         QColor _color {DEFAULT_COLOR};
         qreal  _width {DEFAULT_WIDTH};
-
-        int _sync {-1};
-
-        NetPointItem* _beginPoint {nullptr};
-        NetPointItem* _endPoint {nullptr};
 
         QVector<QPointF> _points;
         QPainterPath _path;

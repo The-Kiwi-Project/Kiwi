@@ -19,15 +19,15 @@ namespace kiwi::widget::schematic {
     const QColor NetItem::DEFAULT_COLOR = Qt::black;
     const QColor NetItem::HOVER_COLOR = Qt::red;
 
-    NetItem::NetItem(NetPointItem* beginPoint, NetPointItem* endPoint):
+    NetItem::NetItem(circuit::Connection* connection, NetPointItem* beginPoint, NetPointItem* endPoint):
         QGraphicsItem{},
+        _connection{connection},
         _beginPoint{beginPoint},
         _endPoint{endPoint}
     {
         this->_beginPoint->setNetItem(this);
         this->_endPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
-        // this->updateLine();
 
         auto begin = beginPoint->scenePos();
         auto end = endPoint->scenePos();
@@ -51,6 +51,7 @@ namespace kiwi::widget::schematic {
 
     NetItem::NetItem(NetPointItem* beginPoint) :
         QGraphicsItem{},
+        _connection{nullptr},
         _beginPoint{beginPoint},
         _endPoint{nullptr}
     {

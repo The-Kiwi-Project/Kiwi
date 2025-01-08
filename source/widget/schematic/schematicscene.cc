@@ -4,6 +4,7 @@
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
+#include "circuit/connection/pin.hh"
 #include "circuit/topdieinst/topdieinst.hh"
 #include <circuit/basedie.hh>
 #include "qnamespace.h"
@@ -99,8 +100,12 @@ namespace kiwi::widget {
         return point;
     }
 
-    auto SchematicScene::addNet(schematic::NetPointItem* beginPoint, schematic::NetPointItem* endPoint) -> schematic::NetItem* {
-        auto net = new schematic::NetItem {beginPoint, endPoint};
+    auto SchematicScene::addNet(
+        circuit::Connection* connection, 
+        schematic::NetPointItem* beginPoint, 
+        schematic::NetPointItem* endPoint) -> schematic::NetItem* 
+    {    
+        auto net = new schematic::NetItem {connection, beginPoint, endPoint};
         this->addItem(net);
         return net;
     }
@@ -118,16 +123,29 @@ namespace kiwi::widget {
         return t;
     }
 
-    auto SchematicScene::connectPins(schematic::PinItem* begin, schematic::PinItem* end) -> schematic::NetItem* {
+    auto SchematicScene::connectPins(schematic::PinItem* begin, schematic::PinItem* end, int sync) -> schematic::NetItem* {
         auto beginPoint = this->addNetPoint(begin);
         auto endPoint = this->addNetPoint(end);
-        return this->addNet(beginPoint, endPoint);
+
+        auto connection = 
+            this->_basedie->add_connection(sync, this->getCircuitPin(begin), this->getCircuitPin(end));
+        
+        return this->addNet(connection, beginPoint, endPoint);
     }
 
     void SchematicScene::headleCreateNet(schematic::PinItem* pin, QGraphicsSceneMouseEvent* event) {
         if (this->_floatingNet != nullptr) {
             auto endPoint = this->addNetPoint(pin);
+            
+            auto connection = this->_basedie->add_connection(
+                -1, 
+                this->getCircuitPin(this->_floatingNet->beginPoint()->connectedPin()), 
+                this->getCircuitPin(endPoint->connectedPin())
+            );
+
+            this->_floatingNet->setConnection(connection);
             this->_floatingNet->setEndPoint(endPoint);
+
             this->_floatingNet->resetPaint();
             endPoint->setNetItem(this->_floatingNet);
 
@@ -185,6 +203,18 @@ namespace kiwi::widget {
         assert(this->_floatingExPort != nullptr);
         this->removeItem(this->_floatingExPort);
         this->_floatingExPort = nullptr;
+    }
+
+    auto SchematicScene::getCircuitPin(schematic::PinItem* pin) -> circuit::Pin {
+        auto circuitPin = pin->isExportPin() ? (
+            circuit::connect_export(pin->name().toStdString())
+        ) : (
+            circuit::connect_bump(
+                pin->topDieInstanceItem()->topdieInst(), 
+                pin->name().toStdString())
+        );
+
+        return circuitPin;
     }
 
 }

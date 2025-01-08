@@ -159,8 +159,9 @@ namespace kiwi::circuit {
             connection->set_sync(sync);
             old_group.erase(iter, old_group.end());
         }
-
-        debug::exception("Connection no in this basedie!");
+        else {
+            debug::exception("Connection no in this basedie!");
+        }
     }
 
     auto BaseDie::get_topdie(std::StringView name) -> std::Option<TopDie*> {

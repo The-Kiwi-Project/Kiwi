@@ -76,6 +76,9 @@ namespace kiwi::widget::schematic {
         void removeConnectedPoint(NetPointItem* point)
         { this->_connectedNetPoints.removeOne(point); }
 
+        auto topDieInstanceItem() const -> TopDieInstanceItem* 
+        { return this->_topdieinst; }
+
         void setRaduis(qreal radius) { this->_raduis = radius; }
         void resetRaduis() { this->_raduis = PIN_RADIUS; }
 
