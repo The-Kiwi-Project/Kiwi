@@ -101,7 +101,7 @@ namespace kiwi::widget::schematic {
     }
 
     auto PinItem::isExportPin() const -> bool {
-        return this->parentItem()->type() == ExPortItem::Type;
+        return this->parentItem()->type() == ExternalPortItem::Type;
     }
 
     auto PinItem::isTopdieInstPin() const -> bool {
@@ -119,7 +119,7 @@ namespace kiwi::widget::schematic {
         assert(this->parentItem() != nullptr);
         auto circuitPin = this->isExportPin() ? (
             circuit::Pin::connect_export(
-                dynamic_cast<ExPortItem*>(this->parentItem())->exPort()
+                dynamic_cast<ExternalPortItem*>(this->parentItem())->exPort()
             )
         ) : (
             circuit::Pin::connect_bump(
@@ -157,9 +157,9 @@ namespace kiwi::widget::schematic {
         QGraphicsItem::hoverLeaveEvent(event);
     }
 
-    auto PinItem::exportItem() const -> ExPortItem* {
+    auto PinItem::exportItem() const -> ExternalPortItem* {
         assert(this->parentItem() != nullptr);
-        return dynamic_cast<ExPortItem*>(this->parentItem());
+        return dynamic_cast<ExternalPortItem*>(this->parentItem());
     }
 
     auto PinItem::topdieInstItem() const -> TopDieInstanceItem* {

@@ -19,7 +19,7 @@ namespace kiwi::widget {
         class NetItem;
         class PinItem;
         class TopDieInstanceItem;
-        class ExPortItem;
+        class ExternalPortItem;
     }
 
     class SchematicScene : public QGraphicsScene {
@@ -31,7 +31,7 @@ namespace kiwi::widget {
     signals:
         void netSelected(schematic::NetItem* net);
         void topdieInstSelected(schematic::TopDieInstanceItem* topdieinst);
-        void exportSelected(schematic::ExPortItem* eport);
+        void exportSelected(schematic::ExternalPortItem* eport);
         void viewSelected();
 
     protected:
@@ -40,7 +40,7 @@ namespace kiwi::widget {
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
     public:
-        auto addExPort(circuit::ExternalPort*) -> schematic::ExPortItem*;
+        auto addExPort(circuit::ExternalPort*) -> schematic::ExternalPortItem*;
         auto addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem*;
         auto addNet(circuit::Connection* connection) -> schematic::NetItem*;
         
@@ -64,7 +64,7 @@ namespace kiwi::widget {
 
     private:
         void initialTopDieInstItems();
-        void initialExPortItems();
+        void initialExternalPortItems();
         void initialNetItems();
 
     private:
@@ -81,12 +81,12 @@ namespace kiwi::widget {
         circuit::BaseDie* _basedie;
 
         QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
-        QHash<circuit::ExternalPort*, schematic::ExPortItem*> _exportMap;
+        QHash<circuit::ExternalPort*, schematic::ExternalPortItem*> _exportMap;
 
         // Temp var 
         schematic::NetItem* _floatingNet {nullptr};
         schematic::TopDieInstanceItem* _floatingTopdDieInst {nullptr};
-        schematic::ExPortItem* _floatingExPort {nullptr};
+        schematic::ExternalPortItem* _floatingExPort {nullptr};
     };
 
 }

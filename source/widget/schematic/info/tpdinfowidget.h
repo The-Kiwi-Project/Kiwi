@@ -17,11 +17,11 @@ namespace kiwi::widget::schematic {
 
     class TopDieInstanceItem;
 
-    class TopDieInstInfoWidget : public QWidget {
+    class TopDieInstanceInfoWidget : public QWidget {
         Q_OBJECT
 
     public:
-        TopDieInstInfoWidget(QWidget* parent = nullptr);
+        TopDieInstanceInfoWidget(QWidget* parent = nullptr);
 
     signals:
         void topDieInstRename(TopDieInstanceItem* inst, const QString& name);

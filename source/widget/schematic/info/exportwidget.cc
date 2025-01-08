@@ -27,7 +27,7 @@ namespace kiwi::widget::schematic {
 
     constexpr int MIN_HEIGHT = 30;
 
-    ExPortItemInfoWidget::ExPortItemInfoWidget(QWidget* parent) :
+    ExternalPortInfoWidget::ExternalPortInfoWidget(QWidget* parent) :
         QWidget{parent}
     {
         auto thisLayout = new QVBoxLayout {this};
@@ -95,7 +95,7 @@ namespace kiwi::widget::schematic {
         });
     }
 
-    void ExPortItemInfoWidget::loadExPort(ExPortItem* eport) {
+    void ExternalPortInfoWidget::loadExPort(ExternalPortItem* eport) {
         this->_eport = eport;
         if (this->_eport == nullptr) {
             debug::exception("Load a empty externl port into ExPortInfoWidget");

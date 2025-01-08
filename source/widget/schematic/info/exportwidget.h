@@ -16,23 +16,23 @@ namespace kiwi::widget {
 
 namespace kiwi::widget::schematic {
 
-    class ExPortItem;
+    class ExternalPortItem;
 
-    class ExPortItemInfoWidget : public QWidget {
+    class ExternalPortInfoWidget : public QWidget {
         Q_OBJECT
 
     public:
-        ExPortItemInfoWidget(QWidget* parent = nullptr);
+        ExternalPortInfoWidget(QWidget* parent = nullptr);
 
     signals:
-        void exportRename(ExPortItem* eport, const QString& name);
-        void exportSetCoord(ExPortItem* eport, hardware::TrackCoord& coord);
+        void exportRename(ExternalPortItem* eport, const QString& name);
+        void exportSetCoord(ExternalPortItem* eport, hardware::TrackCoord& coord);
 
     public:
-        void loadExPort(ExPortItem* eport);
+        void loadExPort(ExternalPortItem* eport);
 
     protected:
-        ExPortItem* _eport {nullptr};
+        ExternalPortItem* _eport {nullptr};
 
         LineEditWithButton* _nameEdit {nullptr};
         

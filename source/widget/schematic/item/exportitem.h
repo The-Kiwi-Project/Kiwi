@@ -13,7 +13,7 @@ namespace kiwi::circuit {
 
 namespace kiwi::widget::schematic {
 
-    class ExPortItem : public GridItem {
+    class ExternalPortItem : public GridItem {
     public:
         static constexpr int WIDTH_SIZE = 2;
         static constexpr int HEIGHT_SIZE = 2;
@@ -29,7 +29,7 @@ namespace kiwi::widget::schematic {
         int type() const override { return Type; }
         
     public:
-        ExPortItem(circuit::ExternalPort* eport);
+        ExternalPortItem(circuit::ExternalPort* eport);
 
     protected:
         auto boundingRect() const -> QRectF override;

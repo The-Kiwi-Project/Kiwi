@@ -22,7 +22,7 @@ namespace kiwi::widget::schematic {
 
     constexpr int MIN_HEIGHT = 30;
 
-    TopDieInstInfoWidget::TopDieInstInfoWidget(QWidget* parent) :
+    TopDieInstanceInfoWidget::TopDieInstanceInfoWidget(QWidget* parent) :
         QWidget{parent}
     {
         auto thisLayout = new QVBoxLayout {this};
@@ -58,10 +58,10 @@ namespace kiwi::widget::schematic {
         });
     }
 
-    void TopDieInstInfoWidget::loadInst(TopDieInstanceItem* inst) {
+    void TopDieInstanceInfoWidget::loadInst(TopDieInstanceItem* inst) {
         this->_inst = inst;
         if (this->_inst == nullptr) {
-            debug::exception("Load a empty net into TopDieInstInfoWidget");
+            debug::exception("Load a empty net into TopDieInstanceInfoWidget");
         }
 
         this->_nameEdit->setText(this->_inst->name());

@@ -35,7 +35,7 @@ namespace kiwi::widget {
         (int)schematic::PinItem::Type,
         (int)schematic::TopDieInstanceItem::Type,
         (int)schematic::NetPointItem::Type,
-        (int)schematic::ExPortItem::Type
+        (int)schematic::ExternalPortItem::Type
     >::value);
 
     SchematicScene::SchematicScene(circuit::BaseDie* basedie) :
@@ -47,7 +47,7 @@ namespace kiwi::widget {
 
     void SchematicScene::initialSceneItems() {
         this->initialTopDieInstItems();
-        this->initialExPortItems();
+        this->initialExternalPortItems();
         this->initialNetItems();
     }
 
@@ -79,13 +79,13 @@ namespace kiwi::widget {
         }
     }
 
-    void SchematicScene::initialExPortItems() {
+    void SchematicScene::initialExternalPortItems() {
         auto i = 0;
         for (auto& [name, eport] : this->_basedie->external_ports()) {
             auto p = this->addExPort(eport.get());
             p->setPos(QPointF{
                 -20. * schematic::GridItem::GRID_SIZE, 
-                i * (schematic::ExPortItem::HEIGHT + schematic::GridItem::GRID_SIZE)
+                i * (schematic::ExternalPortItem::HEIGHT + schematic::GridItem::GRID_SIZE)
             });
 
             i += 1;
@@ -164,8 +164,8 @@ namespace kiwi::widget {
             else if (item->type() == schematic::TopDieInstanceItem::Type) {
                 emit this->topdieInstSelected(dynamic_cast<schematic::TopDieInstanceItem*>(item));
             }
-            else if (item->type() == schematic::ExPortItem::Type) {
-                emit this->exportSelected(dynamic_cast<schematic::ExPortItem*>(item));
+            else if (item->type() == schematic::ExternalPortItem::Type) {
+                emit this->exportSelected(dynamic_cast<schematic::ExternalPortItem*>(item));
             }
         }
 
@@ -178,8 +178,8 @@ namespace kiwi::widget {
         return point;
     }
 
-    auto SchematicScene::addExPort(circuit::ExternalPort* eport) -> schematic::ExPortItem* {
-        auto item = new schematic::ExPortItem {eport};
+    auto SchematicScene::addExPort(circuit::ExternalPort* eport) -> schematic::ExternalPortItem* {
+        auto item = new schematic::ExternalPortItem {eport};
         this->_exportMap.insert(eport, item);
         this->addItem(item);
         return item;

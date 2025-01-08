@@ -6,9 +6,9 @@
 
 namespace kiwi::widget::schematic {
     
-    const QColor ExPortItem::COLOR = QColor::fromRgb(200, 200, 200, 100);
+    const QColor ExternalPortItem::COLOR = QColor::fromRgb(200, 200, 200, 100);
 
-    ExPortItem::ExPortItem(circuit::ExternalPort* eport) : 
+    ExternalPortItem::ExternalPortItem(circuit::ExternalPort* eport) : 
         GridItem{},
         _eport{eport},
         _pinietm{nullptr},
@@ -21,11 +21,11 @@ namespace kiwi::widget::schematic {
         this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
     }
 
-    auto ExPortItem::boundingRect() const -> QRectF {
+    auto ExternalPortItem::boundingRect() const -> QRectF {
         return QRectF {-PIN_SIDE_INTERVAL, -HEIGHT / 2., this->_width, HEIGHT};
     }
 
-    void ExPortItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
+    void ExternalPortItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
         painter->setBrush(COLOR);
         painter->drawRect(this->boundingRect());
     }

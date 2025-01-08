@@ -9,12 +9,12 @@ namespace kiwi::circuit {
 namespace kiwi::widget {
 
     namespace schematic {
-        class ExPortItemInfoWidget;
+        class ExternalPortInfoWidget;
         class NetInfoWidget;
-        class TopDieInstInfoWidget;
+        class TopDieInstanceInfoWidget;
         class ViewInfoWidget;
 
-        class ExPortItem;
+        class ExternalPortItem;
         class NetItem;
         class TopDieInstanceItem;
     }
@@ -28,17 +28,17 @@ namespace kiwi::widget {
         SchematicInfoWidget(circuit::BaseDie* basedie, SchematicView* view, QWidget* parent = nullptr);
         
     public:
-        void showExPortInfoWidget(schematic::ExPortItem*);
+        void showExPortInfoWidget(schematic::ExternalPortItem*);
         void showNetInfoWidget(schematic::NetItem*);
-        void showTopDieInstInfoWidget(schematic::TopDieInstanceItem*);
+        void showTopDieInstanceInfoWidget(schematic::TopDieInstanceItem*);
         void showViewInfo();
 
     private:
         circuit::BaseDie* _basedie {nullptr};
 
-        schematic::ExPortItemInfoWidget* _eportInfoWidget {nullptr};
+        schematic::ExternalPortInfoWidget* _eportInfoWidget {nullptr};
         schematic::NetInfoWidget* _netInfoWidget {nullptr};
-        schematic::TopDieInstInfoWidget* _topdieInstInfoWidget {nullptr};
+        schematic::TopDieInstanceInfoWidget* _topdieInstInfoWidget {nullptr};
         schematic::ViewInfoWidget* _viewInfoWidget {nullptr};
     };
 

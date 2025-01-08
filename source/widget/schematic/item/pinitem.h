@@ -22,7 +22,7 @@ namespace kiwi::widget::schematic {
     class NetItem;
     class NetPointItem;
     class TopDieInstanceItem;
-    class ExPortItem;
+    class ExternalPortItem;
 
     class PinItem : public QGraphicsItem {
     public:
@@ -76,7 +76,7 @@ namespace kiwi::widget::schematic {
         void resetRaduis() { this->_raduis = PIN_RADIUS; }
 
     private:
-        auto exportItem() const -> ExPortItem*;
+        auto exportItem() const -> ExternalPortItem*;
         auto topdieInstItem() const -> TopDieInstanceItem*;
 
     private:

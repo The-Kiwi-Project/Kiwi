@@ -80,7 +80,7 @@ namespace kiwi::widget {
 
         QObject::connect(
             this->_scene, &SchematicScene::topdieInstSelected, 
-            this->_infoWidget, &SchematicInfoWidget::showTopDieInstInfoWidget);
+            this->_infoWidget, &SchematicInfoWidget::showTopDieInstanceInfoWidget);
     }
 
 }

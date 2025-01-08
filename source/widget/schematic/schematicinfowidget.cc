@@ -40,30 +40,30 @@ namespace kiwi::widget {
         });
 
         // TopDie inst
-        this->_topdieInstInfoWidget = new schematic::TopDieInstInfoWidget {this};
+        this->_topdieInstInfoWidget = new schematic::TopDieInstanceInfoWidget {this};
         this->addWidget(this->_topdieInstInfoWidget);
 
-        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstInfoWidget::topDieInstRename, [this](schematic::TopDieInstanceItem* inst, const QString& name){
+        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::topDieInstRename, [this](schematic::TopDieInstanceItem* inst, const QString& name){
             this->_basedie->topdie_inst_rename(inst->topdieInst(), name.toStdString());
             inst->setName(name);
         });
 
         // Export inst
-        this->_eportInfoWidget = new schematic::ExPortItemInfoWidget {this};
+        this->_eportInfoWidget = new schematic::ExternalPortInfoWidget {this};
         this->addWidget(this->_eportInfoWidget);
 
-        connect(this->_eportInfoWidget, &schematic::ExPortItemInfoWidget::exportRename, [this](schematic::ExPortItem* eport, const QString& name) {
+        connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::exportRename, [this](schematic::ExternalPortItem* eport, const QString& name) {
             this->_basedie->external_port_rename(eport->exPort(), name.toStdString());
             eport->setName(name);
         });
 
-        connect(this->_eportInfoWidget, &schematic::ExPortItemInfoWidget::exportSetCoord, [this](schematic::ExPortItem* eport, hardware::TrackCoord& coord) {
+        connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::exportSetCoord, [this](schematic::ExternalPortItem* eport, hardware::TrackCoord& coord) {
             this->_basedie->external_port_set_coord(eport->exPort(), coord);
         });
 
     }
 
-    void SchematicInfoWidget::showExPortInfoWidget(schematic::ExPortItem* eport) {
+    void SchematicInfoWidget::showExPortInfoWidget(schematic::ExternalPortItem* eport) {
         this->setCurrentWidget(this->_eportInfoWidget);
         this->_eportInfoWidget->loadExPort(eport);
     }
@@ -73,7 +73,7 @@ namespace kiwi::widget {
         this->_netInfoWidget->loadNet(net);
     }
 
-    void SchematicInfoWidget::showTopDieInstInfoWidget(schematic::TopDieInstanceItem* inst) {
+    void SchematicInfoWidget::showTopDieInstanceInfoWidget(schematic::TopDieInstanceItem* inst) {
         this->setCurrentWidget(this->_topdieInstInfoWidget);
         this->_topdieInstInfoWidget->loadInst(inst);
     }
