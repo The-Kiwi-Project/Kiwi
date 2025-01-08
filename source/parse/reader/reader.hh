@@ -70,34 +70,15 @@ namespace kiwi::parse {
     private:
         auto add_topdies_to_basedie() -> void;
         auto add_topdieinst_to_basedie() -> void;
-        auto add_connections() -> void;
-        auto add_nets() -> void;
+        auto add_external_ports_to_basedie() -> void;
+        auto add_connections_to_basedie() -> void;
 
-    private:
-        auto build_no_sync_nets(std::Span<const std::Box<circuit::Connection>> connections) -> void;
-        auto build_sync_net(std::Span<const std::Box<circuit::Connection>> connections) -> void;
-        auto build_fixed_nets() -> void;
-     
-        using Node = std::Variant<hardware::Track*, hardware::Bump*>;
-        auto parse_connection_node(std::StringView name) -> circuit::Pin;
-        auto connection_to_node(const circuit::Pin& connection) -> Node;
-
-        static auto is_pose_pin(const circuit::Pin& pin) -> bool;
-        static auto is_nege_pin(const circuit::Pin& pin) -> bool;
-        static auto is_fixed_pin(const circuit::Pin& pin) -> bool;
-
-        static std::Vector<hardware::TrackCoord> _pose_tracks;
-        static std::Vector<hardware::TrackCoord> _nege_tracks;
+        auto parse_connection_pin(std::StringView name) -> circuit::Pin;
         
     private:
         const Config& _config;
         std::Box<hardware::Interposer> _interposer; 
         std::Box<circuit::BaseDie> _basedie;
-
-        // Temp var while build!
-        std::Vector<hardware::Bump*> _bumps_with_pose {};
-        std::Vector<hardware::Bump*> _bumps_with_nege {};
-        std::HashMap<hardware::Bump*, circuit::TopDieInstance*> _bump_to_topdie_inst {};
     };
 
 }

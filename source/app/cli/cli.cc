@@ -1,4 +1,5 @@
 #include "./cli.hh"
+#include "algo/netbuilder/netbuilder.hh"
 
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
@@ -23,6 +24,7 @@ debug::initial_log("./debug.log");
 //!
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);
 
+        algo::NetBuilder{basedie.get(), interposer.get()}.build();
         auto l = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
         debug::info_fmt("Length: '{}'", l);
 

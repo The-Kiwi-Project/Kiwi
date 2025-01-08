@@ -3,8 +3,8 @@
 #include "./connection/connection.hh"
 #include "./topdie/topdie.hh"
 #include "./topdieinst/topdieinst.hh"
-#include "circuit/export/export.hh"
-#include "hardware/track/trackcoord.hh"
+#include "./export/export.hh"
+#include <hardware/track/trackcoord.hh>
 
 #include <std/utility.hh>
 #include <std/memory.hh>
