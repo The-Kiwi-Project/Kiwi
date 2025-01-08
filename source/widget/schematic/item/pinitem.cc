@@ -117,6 +117,18 @@ namespace kiwi::widget::schematic {
         return this->_name;
     }
 
+    auto PinItem::toCircuitPin() const -> circuit::Pin {
+        auto circuitPin = this->isExportPin() ? (
+            circuit::connect_export(this->name().toStdString())
+        ) : (
+            circuit::connect_bump(
+                this->topDieInstanceItem()->topdieInst(), 
+                this->name().toStdString())
+        );
+
+        return circuitPin;
+    }
+
     auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {
         if (change == QGraphicsItem::ItemScenePositionHasChanged) {
             for (auto point : this->_connectedNetPoints) {

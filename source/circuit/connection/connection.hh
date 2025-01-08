@@ -12,8 +12,6 @@ namespace kiwi::circuit {
     private:
         Connection(int sync, Pin input, Pin output);
 
-        void set_input(Pin input) { this->_input = std::move(input); } 
-        void set_output(Pin output) { this->_input = std::move(output); }
         void set_sync(int sync) { this->_sync = sync; }
 
     public:
@@ -21,6 +19,9 @@ namespace kiwi::circuit {
         auto input() const -> const Pin& { return this->_input; }
         auto output() const -> const Pin& { return this->_output; }
     
+        void set_input(Pin input) { this->_input = std::move(input); } 
+        void set_output(Pin output) { this->_input = std::move(output); }
+
     private:
         int _sync;
         Pin _input;

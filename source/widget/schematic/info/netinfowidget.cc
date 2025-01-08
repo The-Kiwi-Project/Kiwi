@@ -73,7 +73,7 @@ namespace kiwi::widget::schematic {
         connect(this->_colorButton, &ColorPickerButton::colorChanged, this, &NetInfoWidget::colorChanged);
         connect(this->_syncSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this] (int sync) {
             assert(this->_ent != nullptr);
-            emit this->syncChanged(this->_net, sync);
+            emit this->connectionSyncChanged(this->_net, sync);
         });
     }
 

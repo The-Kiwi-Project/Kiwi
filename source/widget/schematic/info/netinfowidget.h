@@ -24,7 +24,7 @@ namespace kiwi::widget::schematic {
         void loadNet(NetItem* net);
 
     signals:
-        void syncChanged(NetItem* net, int sync);
+        void connectionSyncChanged(NetItem* net, int sync);
 
     private:
         void colorChanged(const QColor& color);

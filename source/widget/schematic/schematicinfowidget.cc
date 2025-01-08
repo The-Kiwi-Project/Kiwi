@@ -35,7 +35,7 @@ namespace kiwi::widget {
         this->_netInfoWidget = new schematic::NetInfoWidget {this};
         this->addWidget(this->_netInfoWidget);
 
-        connect(this->_netInfoWidget, &schematic::NetInfoWidget::syncChanged, [this] (schematic::NetItem* net, int sync) {
+        connect(this->_netInfoWidget, &schematic::NetInfoWidget::connectionSyncChanged, [this] (schematic::NetItem* net, int sync) {
             this->_basedie->connection_set_sync(net->connection(), sync);
         });
 

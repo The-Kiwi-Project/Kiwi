@@ -1,13 +1,10 @@
 #pragma once
 
-#include "qchar.h"
-#include "qglobal.h"
-#include "qvariant.h"
-#include "qvector.h"
 #include <QColor>
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QDebug>
+#include <circuit/connection/pin.hh>
 
 namespace kiwi::widget {
    class SchematicScene;
@@ -65,6 +62,7 @@ namespace kiwi::widget::schematic {
         auto isExportPin() const -> bool;
         auto isTopdieInstPin() const -> bool;
         auto toString() const -> QString;
+        auto toCircuitPin() const -> circuit::Pin;
 
     public: 
         auto name() const -> const QString& { return this->_name; }

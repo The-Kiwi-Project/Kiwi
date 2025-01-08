@@ -4,7 +4,6 @@
 #include "./item/pinitem.h"
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
-#include "circuit/connection/pin.hh"
 #include "circuit/topdieinst/topdieinst.hh"
 #include <circuit/basedie.hh>
 #include "qnamespace.h"
@@ -128,7 +127,7 @@ namespace kiwi::widget {
         auto endPoint = this->addNetPoint(end);
 
         auto connection = 
-            this->_basedie->add_connection(sync, this->getCircuitPin(begin), this->getCircuitPin(end));
+            this->_basedie->add_connection(sync, begin->toCircuitPin(), end->toCircuitPin());
         
         return this->addNet(connection, beginPoint, endPoint);
     }
@@ -139,8 +138,8 @@ namespace kiwi::widget {
             
             auto connection = this->_basedie->add_connection(
                 -1, 
-                this->getCircuitPin(this->_floatingNet->beginPoint()->connectedPin()), 
-                this->getCircuitPin(endPoint->connectedPin())
+                this->_floatingNet->beginPoint()->connectedPin()->toCircuitPin(),
+                endPoint->connectedPin()->toCircuitPin()
             );
 
             this->_floatingNet->setConnection(connection);
@@ -203,18 +202,6 @@ namespace kiwi::widget {
         assert(this->_floatingExPort != nullptr);
         this->removeItem(this->_floatingExPort);
         this->_floatingExPort = nullptr;
-    }
-
-    auto SchematicScene::getCircuitPin(schematic::PinItem* pin) -> circuit::Pin {
-        auto circuitPin = pin->isExportPin() ? (
-            circuit::connect_export(pin->name().toStdString())
-        ) : (
-            circuit::connect_bump(
-                pin->topDieInstanceItem()->topdieInst(), 
-                pin->name().toStdString())
-        );
-
-        return circuitPin;
     }
 
 }

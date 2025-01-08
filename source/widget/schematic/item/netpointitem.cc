@@ -31,7 +31,7 @@ namespace kiwi::widget::schematic {
         if (pin != nullptr) {
             this->_connectedPin = pin;
             this->setPos(pin->scenePos());
-            pin->addConnectedPoint(this); 
+            pin->addConnectedPoint(this);        
         }
     }
 

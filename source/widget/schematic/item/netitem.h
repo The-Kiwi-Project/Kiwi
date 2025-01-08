@@ -37,9 +37,13 @@ namespace kiwi::widget::schematic {
         void updateEndPoint(const QPointF& point);
         void addPoint(const QPointF& point);
 
+        void updateConnectPin(NetPointItem* point);
+
     private:
         void updateBeginPosition(const QPointF& pos);
         void updateEndPosition(const QPointF& pos);
+        void updateBeginPin(PinItem* pin);
+        void updateEndPin(PinItem* pin);
         void updatePath();
 
     public:

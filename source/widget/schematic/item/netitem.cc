@@ -8,6 +8,7 @@
 #include "qpoint.h"
 #include "widget/schematic/info/netinfowidget.h"
 #include "widget/schematic/schematicscene.h"
+#include <circuit/connection/connection.hh>
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
@@ -133,8 +134,10 @@ namespace kiwi::widget::schematic {
 
         if (pointItem == this->_beginPoint) {
             this->updateBeginPosition(pos);
+            this->updateBeginPin(pointItem->connectedPin());
         } else if (pointItem == this->_endPoint) {
             this->updateEndPosition(pos);
+            this->updateEndPin(pointItem->connectedPin());
         } else {
             debug::unreachable();
         }
@@ -323,6 +326,14 @@ namespace kiwi::widget::schematic {
         }
 
         this->update();
+    }
+
+    void NetItem::updateBeginPin(PinItem* pin) {
+        this->_connection->set_input(pin->toCircuitPin());
+    }
+
+    void NetItem::updateEndPin(PinItem* pin) {
+        this->_connection->set_output(pin->toCircuitPin());
     }
 
     void NetItem::setLine(const QPointF& begin, const QPointF& end) {

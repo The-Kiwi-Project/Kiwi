@@ -56,8 +56,6 @@ namespace kiwi::widget {
         { return this->_topdieinstMap; }
 
     private:
-        auto getCircuitPin(schematic::PinItem* pin) -> circuit::Pin;
-
         void placeFloatingTopdDieInst();
         void cleanFloatingTopdDieInst();
 
