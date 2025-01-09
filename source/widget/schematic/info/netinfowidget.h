@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qcolor.h"
 #include "qobjectdefs.h"
 #include <QWidget>
 
@@ -24,7 +25,9 @@ namespace kiwi::widget::schematic {
         void loadNet(NetItem* net);
 
     signals:
-        void connectionSyncChanged(NetItem* net, int sync);
+        void netSyncChanged(NetItem* net, int sync);
+        // void netColorChanged(const QColor& color);
+        // void netWidthChanged(qreal width);
         void removeNet(NetItem* net);
 
     private:

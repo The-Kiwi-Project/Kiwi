@@ -27,7 +27,7 @@ namespace kiwi::widget::layout {
 
     public:
         void setTopDieInst(TopDieInstItem* topdieinst);
-        void removeTopDieInst();
+        void removeTopDieInstance();
         bool hasTopDieInst() const;
         void highlight(bool active);
 

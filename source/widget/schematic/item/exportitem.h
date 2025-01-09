@@ -36,15 +36,24 @@ namespace kiwi::widget::schematic {
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
         
     public: 
-        auto name() const -> const QString& { return this->_pinietm->name(); }
-        void setName(const QString& name) { this->_pinietm->setName(name); }
+        auto name() const -> const QString& 
+        { return this->_pin->name(); }
+        
+        void setName(const QString& name) 
+        { this->_pin->setName(name); }
 
-        auto exPort() const -> circuit::ExternalPort* { return this->_eport; }
-        auto pin() const -> PinItem* { return this->_pinietm; }
+        auto pin() const -> PinItem* 
+        { return this->_pin; }
+
+        auto unwrap() const -> circuit::ExternalPort* { 
+            assert(this->_externalPort != nullptr);
+            return this->_externalPort;
+        }
 
     private:
-        PinItem* _pinietm;
-        circuit::ExternalPort* _eport;
+        circuit::ExternalPort* _externalPort;
+        PinItem* _pin;
+
         qreal _width;
     };
 

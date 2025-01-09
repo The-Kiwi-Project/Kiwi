@@ -25,12 +25,12 @@ namespace kiwi::widget::schematic {
         ExternalPortInfoWidget(QWidget* parent = nullptr);
 
     signals:
-        void exportRename(ExternalPortItem* eport, const QString& name);
-        void exportSetCoord(ExternalPortItem* eport, hardware::TrackCoord& coord);
-        void removeExPort(ExternalPortItem* eport);
+        void externalPortRename(ExternalPortItem* eport, const QString& name);
+        void externalPortSetCoord(ExternalPortItem* eport, hardware::TrackCoord& coord);
+        void removeExternalPort(ExternalPortItem* eport);
 
     public:
-        void loadExPort(ExternalPortItem* eport);
+        void loadExternalPort(ExternalPortItem* eport);
 
     protected:
         ExternalPortItem* _eport {nullptr};

@@ -3,6 +3,7 @@
 #include "qcolor.h"
 #include "qglobal.h"
 #include "qgraphicssceneevent.h"
+#include <cassert>
 #include <std/utility.hh>
 #include <QGraphicsLineItem>
 #include <QPen>
@@ -58,20 +59,38 @@ namespace kiwi::widget::schematic {
         void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     public:
-        auto beginPoint() const -> NetPointItem* { return this->_beginPoint; }
-        auto endPoint() const -> NetPointItem* { return this->_endPoint; }
-        void setEndPoint(NetPointItem* point) { this->_endPoint = point; }
-        void setConnection(circuit::Connection* connection) { this->_connection = connection; }
-        auto connection() const -> circuit::Connection* { return this->_connection; }
+        auto beginPoint() const -> NetPointItem* 
+        { return this->_beginPoint; }
+        
+        auto endPoint() const -> NetPointItem* 
+        { return this->_endPoint; }
+        
+        void setEndPoint(NetPointItem* point) 
+        { this->_endPoint = point; }
+        
+        auto color() const -> const QColor& 
+        { return this->_color; }
+        
+        void setColor(const QColor& color)
+        { this->_color = color; this->_paintColor = color; }
 
-        auto color() const -> const QColor& { return this->_color; }
-        auto setColor(const QColor& color) { this->_color = color; this->_paintColor = color; }
+        auto width() const -> qreal 
+        { return this->_width; }
 
-        auto width() const -> qreal { return this->_width; }
-        auto setWidth(qreal width) { this->_width = width; this->_paintWidth = width; }
+        auto setWidth(qreal width) 
+        { this->_width = width; this->_paintWidth = width; }
 
         void resetPaint();
         auto isFloating() const -> bool;
+
+    public:
+        void wrap(circuit::Connection* connection) 
+        { this->_connection = connection; }
+
+        auto unwrap() const -> circuit::Connection* {
+            assert(this->_connection != nullptr);
+            return this->_connection;
+        }
 
     protected:
         circuit::Connection* _connection {nullptr};

@@ -47,8 +47,8 @@ namespace kiwi::widget {
         auto addNet(circuit::Connection* connection) -> schematic::NetItem*;
 
     public:
-        void removeExPort(schematic::ExternalPortItem* eport);
-        void removeTopDieInst(schematic::TopDieInstanceItem* inst);
+        void removeExternalPort(schematic::ExternalPortItem* eport);
+        void removeTopDieInstance(schematic::TopDieInstanceItem* inst);
         void removeNet(schematic::NetItem* net);
         
     private:

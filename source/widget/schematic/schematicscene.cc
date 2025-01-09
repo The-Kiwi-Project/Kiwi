@@ -6,9 +6,6 @@
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
 #include "./item/griditem.h"
-#include "qdebug.h"
-#include "qglobal.h"
-#include "qvector.h"
 
 #include <cassert>
 #include <circuit/connection/connection.hh>
@@ -209,7 +206,7 @@ namespace kiwi::widget {
         return item;
     }
 
-    void SchematicScene::removeExPort(schematic::ExternalPortItem* eport) {
+    void SchematicScene::removeExternalPort(schematic::ExternalPortItem* eport) {
         assert(eport != nullptr);
         // debug::debug_fmt("Remove external port '{}'", eport->exPort()->name());
 
@@ -224,17 +221,17 @@ namespace kiwi::widget {
 
         delete pinItem;
 
-        this->_exportMap.remove(eport->exPort());
+        this->_exportMap.remove(eport->unwrap());
         this->removeItem(eport);
 
         delete eport;
     }
 
-    void SchematicScene::removeTopDieInst(schematic::TopDieInstanceItem* inst) {
+    void SchematicScene::removeTopDieInstance(schematic::TopDieInstanceItem* inst) {
         assert(inst != nullptr);
         // debug::debug_fmt("Remove topdie instance '{}'", inst->topdieInst()->name());
 
-        for (auto pinItem : inst->pinItems()) {
+        for (auto pinItem : inst->pins()) {
             for (auto point : pinItem->connectedPoints()) {
                 assert(point != nullptr);
                 assert(point->netItem() != nullptr);
@@ -243,7 +240,7 @@ namespace kiwi::widget {
             delete pinItem;
         }
 
-        this->_topdieinstMap.remove(inst->topdieInst());
+        this->_topdieinstMap.remove(inst->unwrap());
         this->removeItem(inst);
 
         delete inst;
@@ -283,7 +280,7 @@ namespace kiwi::widget {
             },
             [this](const circuit::ConnectBump& bump) -> schematic::PinItem* {
                 auto top = this->_topdieinstMap.value(bump.inst);
-                return top->pinItems().value(QString::fromStdString(bump.name));
+                return top->pins().value(QString::fromStdString(bump.name));
             }
         );
     }
@@ -298,7 +295,7 @@ namespace kiwi::widget {
                 endPoint->connectedPin()->toCircuitPin()
             );
 
-            this->_floatingNet->setConnection(connection);
+            this->_floatingNet->wrap(connection);
             this->_floatingNet->setEndPoint(endPoint);
 
             this->_floatingNet->resetPaint();
@@ -344,7 +341,7 @@ namespace kiwi::widget {
 
     void SchematicScene::cleanFloatingTopdDieInst() {
         assert(this->_floatingTopdDieInst != nullptr);
-        this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->topdieInst()->name());
+        this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->unwrap()->name());
         this->removeItem(this->_floatingTopdDieInst);
         this->_floatingTopdDieInst = nullptr;
     }

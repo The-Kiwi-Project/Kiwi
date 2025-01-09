@@ -44,11 +44,19 @@ namespace kiwi::widget::schematic {
         void createPins(int n, qreal side_length, qreal x_offset, qreal y_offset, QVector<QString>::iterator& iter, PinSide side);
     
     public: 
-        auto name() const -> const QString { return this->_name; }
-        auto width() const -> qreal { return this->_width; }
-        auto height() const -> qreal { return this->_height; }
-        auto pinItems() const -> const QMap<QString, PinItem*>& { return this->_pinitems; }
-        auto topdieInst() const -> circuit::TopDieInstance* { return this->_topdieinst; }
+        auto name() const -> const QString 
+        { return this->_name; }
+        
+        auto width() const -> qreal 
+        { return this->_width; }
+        
+        auto height() const -> qreal 
+        { return this->_height; }
+
+        auto pins() const -> const QMap<QString, PinItem*>& 
+        { return this->_pins; }
+
+        auto unwrap() const -> circuit::TopDieInstance* { return this->_topdieinstance; }
 
         void setName(const QString& name) { this->_name = name; }
 
@@ -57,8 +65,8 @@ namespace kiwi::widget::schematic {
         qreal _width {};
         qreal _height {};
 
-        circuit::TopDieInstance* _topdieinst {nullptr};
-        QMap<QString, PinItem*> _pinitems {};
+        circuit::TopDieInstance* _topdieinstance {nullptr};
+        QMap<QString, PinItem*> _pins {};
     };
 
 

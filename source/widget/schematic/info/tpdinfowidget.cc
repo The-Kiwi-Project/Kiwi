@@ -52,7 +52,7 @@ namespace kiwi::widget::schematic {
 
         connect(this->_nameEdit, &LineEditWithButton::textConfirmed, [this] (const QString& name) {
             assert(this->_inst != nullptr);
-            this->topDieInstRename(this->_inst, name);
+            this->topdieInstanceRename(this->_inst, name);
         });
 
         // Remove
@@ -69,7 +69,7 @@ namespace kiwi::widget::schematic {
         
             if (response == QMessageBox::Yes) {
                 assert(this->_inst != nullptr);
-                emit this->removeTopDieInst(this->_inst);
+                emit this->removeTopDieInstance(this->_inst);
             }
         });
     
@@ -77,7 +77,7 @@ namespace kiwi::widget::schematic {
         layout->setColumnStretch(0, 0);
     }
 
-    void TopDieInstanceInfoWidget::loadInst(TopDieInstanceItem* inst) {
+    void TopDieInstanceInfoWidget::loadTopDieInstance(TopDieInstanceItem* inst) {
         this->_inst = inst;
         if (this->_inst == nullptr) {
             debug::exception("Load a empty net into TopDieInstanceInfoWidget");
@@ -86,7 +86,7 @@ namespace kiwi::widget::schematic {
         this->_nameEdit->setText(this->_inst->name());
 
         // Create model
-        const auto& pinmap = this->_inst->topdieInst()->topdie()->pins_map();
+        const auto& pinmap = this->_inst->unwrap()->topdie()->pins_map();
         auto pinMapModel = new QStandardItemModel {static_cast<int>(pinmap.size()), 2};
         
         // Init header

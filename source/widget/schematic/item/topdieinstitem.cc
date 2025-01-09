@@ -23,12 +23,12 @@ namespace kiwi::widget::schematic {
 
     TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst):
         GridItem{},
-        _topdieinst{topdieinst}
+        _topdieinstance{topdieinst}
     {
         this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
 
         // Dive pinsize to four size:
-        auto pinmap = this->_topdieinst->topdie()->pins_map();
+        auto pinmap = this->_topdieinstance->topdie()->pins_map();
         auto pinnames = QVector<QString>{};
         for (const auto& [name, _] : pinmap) {
             pinnames.push_back(QString::fromStdString(name));
@@ -113,7 +113,7 @@ namespace kiwi::widget::schematic {
             int y = horizontal ? y_offset : static_cast<int>(pos + y_offset);
 
             auto *pin = new PinItem {*iter, QPointF(x, y), side, this};
-            this->_pinitems.insert(*iter, pin);
+            this->_pins.insert(*iter, pin);
         }
     }
 

@@ -49,7 +49,7 @@ namespace kiwi::widget::schematic {
 
         connect(this->_nameEdit, &LineEditWithButton::textConfirmed, [this] (const QString& name) {
             assert(this->_eport == nullptr);
-            emit this->exportRename(this->_eport, name);
+            emit this->externalPortRename(this->_eport, name);
         });
 
         // Coord
@@ -92,7 +92,7 @@ namespace kiwi::widget::schematic {
                 this->_dirComboBox->currentIndex() == 0 ? hardware::TrackDirection::Horizontal : hardware::TrackDirection::Vertical,
                 static_cast<std::usize>(this->_indexSpinBox->value())
             };
-            emit this->exportSetCoord(this->_eport, coord);
+            emit this->externalPortSetCoord(this->_eport, coord);
         });
 
         // Delete
@@ -108,12 +108,12 @@ namespace kiwi::widget::schematic {
         
             if (response == QMessageBox::Yes) {
                 assert(this->_eport != nullptr);
-                this->removeExPort(this->_eport);
+                this->removeExternalPort(this->_eport);
             }
         });
     }
 
-    void ExternalPortInfoWidget::loadExPort(ExternalPortItem* eport) {
+    void ExternalPortInfoWidget::loadExternalPort(ExternalPortItem* eport) {
         this->_eport = eport;
         if (this->_eport == nullptr) {
             debug::exception("Load a empty externl port into ExPortInfoWidget");
@@ -121,11 +121,11 @@ namespace kiwi::widget::schematic {
 
         this->_nameEdit->setText(eport->pin()->name());
 
-        this->_rowSpinBox->setValue(eport->exPort()->coord().row);
-        this->_colSpinBox->setValue(eport->exPort()->coord().col);
+        this->_rowSpinBox->setValue(eport->unwrap()->coord().row);
+        this->_colSpinBox->setValue(eport->unwrap()->coord().col);
         this->_dirComboBox->setCurrentIndex(
-            eport->exPort()->coord().dir == hardware::TrackDirection::Horizontal ? 0 : 1
+            eport->unwrap()->coord().dir == hardware::TrackDirection::Horizontal ? 0 : 1
         );
-        this->_indexSpinBox->setValue(eport->exPort()->coord().index);
+        this->_indexSpinBox->setValue(eport->unwrap()->coord().index);
     }
 }

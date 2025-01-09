@@ -10,12 +10,12 @@ namespace kiwi::widget::schematic {
 
     ExternalPortItem::ExternalPortItem(circuit::ExternalPort* eport) : 
         GridItem{},
-        _eport{eport},
-        _pinietm{nullptr},
+        _externalPort{eport},
+        _pin{nullptr},
         _width{0}
     {
         auto name = QString::fromStdString(eport->name());
-        this->_pinietm = new PinItem{name, QPointF{0, 0}, PinSide::Left, this};
+        this->_pin = new PinItem{name, QPointF{0, 0}, PinSide::Left, this};
         this->_width = GridItem::snapToGrid(PIN_SIDE_INTERVAL + PinItem::NAME_INTERVAL + name.size() * PinItem::CHAR_WIDTH_ + PIN_SIDE_INTERVAL);
 
         this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);

@@ -26,6 +26,9 @@ namespace kiwi::circuit {
         static auto connect_bump(TopDieInstance* inst, std::String name) -> Pin;
 
     public:
+        auto is_external_port_pin() const -> bool;
+        auto is_topdie_instance_pin() const -> bool;
+
         auto connected_point() const -> const ConnectedPoint & 
         { return this->_point; }
 

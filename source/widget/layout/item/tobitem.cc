@@ -21,7 +21,7 @@ namespace kiwi::widget::layout {
         this->updateAppearance();
     }
 
-    void TOBItem::removeTopDieInst() {
+    void TOBItem::removeTopDieInstance() {
         this->_topdieInstItem = nullptr;
         this->updateAppearance();
     }

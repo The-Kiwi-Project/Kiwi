@@ -57,8 +57,8 @@ namespace kiwi::widget::schematic {
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
 
     public:
-        auto isExportPin() const -> bool;
-        auto isTopdieInstPin() const -> bool;
+        auto isExternalPortPin() const -> bool;
+        auto isTopDieInstancePin() const -> bool;
         auto toString() const -> QString;
         auto toCircuitPin() const -> circuit::Pin;
 
@@ -79,8 +79,8 @@ namespace kiwi::widget::schematic {
         void resetRaduis() { this->_raduis = PIN_RADIUS; }
 
     public:
-        auto exportItem() const -> ExternalPortItem*;
-        auto topdieInstItem() const -> TopDieInstanceItem*;
+        auto parentExternalPort() const -> ExternalPortItem*;
+        auto parentTopDieInstance() const -> TopDieInstanceItem*;
 
     private:
         QString _name;

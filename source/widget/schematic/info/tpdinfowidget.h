@@ -24,11 +24,11 @@ namespace kiwi::widget::schematic {
         TopDieInstanceInfoWidget(QWidget* parent = nullptr);
 
     signals:
-        void topDieInstRename(TopDieInstanceItem* inst, const QString& name);
-        void removeTopDieInst(TopDieInstanceItem* inst);
+        void topdieInstanceRename(TopDieInstanceItem* inst, const QString& name);
+        void removeTopDieInstance(TopDieInstanceItem* inst);
 
     public:
-        void loadInst(TopDieInstanceItem* inst);
+        void loadTopDieInstance(TopDieInstanceItem* inst);
 
     protected:
         TopDieInstanceItem* _inst {nullptr};

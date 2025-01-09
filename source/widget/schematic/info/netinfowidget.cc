@@ -71,7 +71,7 @@ namespace kiwi::widget::schematic {
         connect(this->_colorButton, &ColorPickerButton::colorChanged, this, &NetInfoWidget::colorChanged);
         connect(this->_syncSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this] (int sync) {
             assert(this->_net != nullptr);
-            emit this->connectionSyncChanged(this->_net, sync);
+            emit this->netSyncChanged(this->_net, sync);
         });
 
         // Remove        
@@ -110,7 +110,7 @@ namespace kiwi::widget::schematic {
         auto endPin = endPoint->connectedPin();
         this->_endPinLabel->setText(endPin->toString());
 
-        this->_syncSpinBox->setValue(this->_net->connection()->sync());
+        this->_syncSpinBox->setValue(this->_net->unwrap()->sync());
 
         this->_colorButton->setColor(this->_net->color());
     }

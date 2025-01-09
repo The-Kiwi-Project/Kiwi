@@ -100,30 +100,30 @@ namespace kiwi::widget::schematic {
         }
     }
 
-    auto PinItem::isExportPin() const -> bool {
+    auto PinItem::isExternalPortPin() const -> bool {
         return this->parentItem()->type() == ExternalPortItem::Type;
     }
 
-    auto PinItem::isTopdieInstPin() const -> bool {
-        return !this->isExportPin();
+    auto PinItem::isTopDieInstancePin() const -> bool {
+        return !this->isExternalPortPin();
     }
 
     auto PinItem::toString() const -> QString {
-        if (this->isTopdieInstPin()) {
-            return QString{"%1.%2"}.arg(this->topdieInstItem()->name()).arg(this->_name);
+        if (this->isTopDieInstancePin()) {
+            return QString{"%1.%2"}.arg(this->parentTopDieInstance()->name()).arg(this->_name);
         }
         return this->_name;
     }
 
     auto PinItem::toCircuitPin() const -> circuit::Pin {
         assert(this->parentItem() != nullptr);
-        auto circuitPin = this->isExportPin() ? (
+        auto circuitPin = this->isExternalPortPin() ? (
             circuit::Pin::connect_export(
-                dynamic_cast<ExternalPortItem*>(this->parentItem())->exPort()
+                this->parentExternalPort()->unwrap()
             )
         ) : (
             circuit::Pin::connect_bump(
-                dynamic_cast<TopDieInstanceItem*>(this->parentItem())->topdieInst(),
+                this->parentTopDieInstance()->unwrap(),
                 this->name().toStdString()
             )
         );
@@ -157,12 +157,12 @@ namespace kiwi::widget::schematic {
         QGraphicsItem::hoverLeaveEvent(event);
     }
 
-    auto PinItem::exportItem() const -> ExternalPortItem* {
+    auto PinItem::parentExternalPort() const -> ExternalPortItem* {
         assert(this->parentItem() != nullptr);
         return dynamic_cast<ExternalPortItem*>(this->parentItem());
     }
 
-    auto PinItem::topdieInstItem() const -> TopDieInstanceItem* {
+    auto PinItem::parentTopDieInstance() const -> TopDieInstanceItem* {
         assert(this->parentItem() != nullptr);
         return dynamic_cast<TopDieInstanceItem*>(this->parentItem());   
     }
