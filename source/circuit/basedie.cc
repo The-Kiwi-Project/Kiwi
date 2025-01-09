@@ -104,23 +104,11 @@ namespace kiwi::circuit {
         // Remove all topdie 
         for (auto& [sync, connections] : this->_connections) {
             auto iter = std::remove_if(connections.begin(), connections.end(), [topdie_inst_ptr](std::Box<Connection>& c) -> bool {
-                auto is_input = std::match(c->input().connected_point(),
-                    [](const ConnectExPort& _) -> bool {
-                        return false;
-                    },
-                    [topdie_inst_ptr](const ConnectBump& bump) -> bool {
-                        return bump.inst == topdie_inst_ptr;
-                    }
-                );
+                auto& input_pin = c->input_pin();
+                auto is_input = input_pin.is_bump() && input_pin.to_connect_bump().inst == topdie_inst_ptr;
 
-                auto is_output = std::match(c->output().connected_point(),
-                    [](const ConnectExPort& _) -> bool {
-                        return false;
-                    },
-                    [topdie_inst_ptr](const ConnectBump& bump) -> bool {
-                        return bump.inst == topdie_inst_ptr;
-                    }
-                );
+                auto& output_pin = c->output_pin();
+                auto is_output = output_pin.is_bump() && output_pin.to_connect_bump().inst == topdie_inst_ptr;
 
                 if (is_input || is_output) {
                     debug::debug_fmt("Remove net '{}'", *c);
@@ -160,24 +148,12 @@ namespace kiwi::circuit {
             }
 
             auto iter = std::remove_if(connections.begin(), connections.end(), [port_ptr](const std::Box<Connection>& c) -> bool {
-                auto is_input = std::match(c->input().connected_point(),
-                    [port_ptr](const ConnectExPort& cep) -> bool {
-                        return cep.port == port_ptr;
-                    },
-                    [](const ConnectBump& cep) -> bool {
-                        return false;
-                    }
-                );
+                auto& input_pin = c->input_pin();
+                auto is_input = input_pin.is_external_port() && input_pin.to_connect_export().port == port_ptr;
 
-                auto is_output = std::match(c->output().connected_point(),
-                    [port_ptr](const ConnectExPort& cep) -> bool {
-                        return cep.port == port_ptr;
-                    },
-                    [](const ConnectBump& cep) -> bool {
-                        return false;
-                    }
-                );
-
+                auto& output_pin = c->output_pin();
+                auto is_output = output_pin.is_external_port() && output_pin.to_connect_export().port == port_ptr;
+                
                 if (is_input || is_output) {
                     debug::debug_fmt("Remove net '{}'", *c);
                     return true;

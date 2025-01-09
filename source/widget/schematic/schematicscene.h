@@ -91,6 +91,9 @@ namespace kiwi::widget {
         QHash<circuit::ExternalPort*, schematic::ExternalPortItem*> _exportMap;
         QSet<schematic::NetItem*> _nets;
 
+        schematic::PinItem* _vddPinItem;
+        schematic::PinItem* _gndPinItem;
+
         // Temp var 
         schematic::NetItem* _floatingNet {nullptr};
         schematic::TopDieInstanceItem* _floatingTopdDieInst {nullptr};

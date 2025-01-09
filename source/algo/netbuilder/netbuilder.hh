@@ -40,10 +40,6 @@ namespace kiwi::algo {
      
         using Node = std::Variant<hardware::Track*, hardware::Bump*>;
         auto pin_to_node(const circuit::Pin& pin) -> Node;
-
-        static auto is_pose_pin(const circuit::Pin& pin) -> bool;
-        static auto is_nege_pin(const circuit::Pin& pin) -> bool;
-        static auto is_fixed_pin(const circuit::Pin& pin) -> bool;
     
         static std::Vector<hardware::TrackCoord> _pose_tracks;
         static std::Vector<hardware::TrackCoord> _nege_tracks;

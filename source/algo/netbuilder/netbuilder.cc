@@ -45,16 +45,16 @@ namespace kiwi::algo {
 
         // Loop for each connection...
         for (auto& connection : connections) {
-            auto& input = connection->input();
-            auto& output = connection->output();
+            auto& input = connection->input_pin();
+            auto& output = connection->output_pin();
 
-            if (NetBuilder::is_fixed_pin(output)) {
+            if (output.is_fixed()) {
                 debug::exception("Fixed pin as target??");
             }
 
             auto end_node = this->pin_to_node(output);
 
-            if (NetBuilder::is_pose_pin(input)) {
+            if (input.is_vdd()) {
                 // Input is 'vdd'
                 std::match(end_node, 
                     [&](hardware::Track* track) {
@@ -65,7 +65,7 @@ namespace kiwi::algo {
                     }
                 );
             } 
-            else if (NetBuilder::is_nege_pin(input)) {
+            else if (input.is_gnd()) {
                 // Input is 'gnd'
                 std::match(end_node, 
                     [&](hardware::Track* track) {
@@ -182,10 +182,10 @@ namespace kiwi::algo {
         auto ttb_sync_nets = std::Vector<std::Box<circuit::TrackToBumpNet>>{};
 
         for (auto& connection : connections) {
-            auto& input = connection->input();
-            auto& output = connection->output();
+            auto& input = connection->input_pin();
+            auto& output = connection->output_pin();
 
-            if (NetBuilder::is_fixed_pin(input) || NetBuilder::is_fixed_pin(output)) {
+            if (input.is_fixed() || output.is_fixed()) {
                 debug::exception("Fixed pin can't as sync");
             }
 
@@ -274,64 +274,39 @@ namespace kiwi::algo {
     }
 
     auto NetBuilder::pin_to_node(const circuit::Pin& pin) -> Node {
-        return std::match(pin.connected_point(),
-            [this](const circuit::ConnectExPort& eport) {
-                auto& external_port = eport.port;
-                auto track = this->_interposer->get_track(external_port->coord());
-                if (!track.has_value()) {
-                    debug::exception_fmt("External port '{}' has an invalid track coord", external_port->name(), external_port->coord());
-                } else {
-                    return Node{*track};
-                }
-            },
-            [this](const circuit::ConnectBump& connect_bump) {
-                /// 
-                /// Topdie inst: Search inst by name, and get bump index, and get bump object in interposer
-                ///
-                // Is pin exit?
-                auto topdie = connect_bump.inst->topdie();
-                auto res = topdie->pins_map().find(connect_bump.name);
-                if (res == topdie->pins_map().end()) {
-                    debug::exception_fmt("No exit pin name '{}' in topdie '{}'", connect_bump.name, topdie->name());
-                }
-
-                auto coord = connect_bump.inst->tob()->coord();
-                auto index = res->second;
-
-                auto bump = this->_interposer->get_bump(coord, index);
-                if (!bump.has_value()) {
-                    debug::exception_fmt("Pin '{}' has an invalid bump coord: TOBCoord '{}' with '{}'", connect_bump.name, coord, index);
-                }
-                this->_bump_to_topdie_inst.emplace(*bump, connect_bump.inst);
-                return Node{*bump};
+        if (pin.is_external_port()) {
+            const auto external_port = pin.to_connect_export().port;
+            auto track = this->_interposer->get_track(external_port->coord());
+            if (!track.has_value()) {
+                debug::exception_fmt("External port '{}' has an invalid track coord", external_port->name(), external_port->coord());
+            } else {
+                return Node{*track};
             }
-        );
-    }
-
-    auto NetBuilder::is_pose_pin(const circuit::Pin& pin) -> bool {
-        return std::match(pin.connected_point(),
-            [](const circuit::ConnectExPort& eport) {
-                return eport.port->name().ends_with("pose");
-            },
-            [](const circuit::ConnectBump&) {
-                return false;
+        }
+        else if (pin.is_bump()) {
+            /// 
+            /// Topdie inst: Search inst by name, and get bump index, and get bump object in interposer
+            ///
+            // Is pin exit?
+            auto& connect_bump = pin.to_connect_bump();
+            auto topdie = connect_bump.inst->topdie(); 
+            auto res = topdie->pins_map().find(connect_bump.name);
+            if (res == topdie->pins_map().end()) {
+                debug::exception_fmt("No exit pin name '{}' in topdie '{}'", connect_bump.name, topdie->name());
             }
-        );
-    }
 
-    auto NetBuilder::is_nege_pin(const circuit::Pin& pin) -> bool {
-        return std::match(pin.connected_point(),
-            [](const circuit::ConnectExPort& eport) {
-                return eport.port->name().ends_with("nege");
-            },
-            [](const circuit::ConnectBump&) {
-                return false;
+            auto coord = connect_bump.inst->tob()->coord();
+            auto index = res->second;
+
+            auto bump = this->_interposer->get_bump(coord, index);
+            if (!bump.has_value()) {
+                debug::exception_fmt("Pin '{}' has an invalid bump coord: TOBCoord '{}' with '{}'", connect_bump.name, coord, index);
             }
-        );
-    }
-
-    auto NetBuilder::is_fixed_pin(const circuit::Pin& pin) -> bool {
-        return NetBuilder::is_pose_pin(pin) || NetBuilder::is_nege_pin(pin);
+            this->_bump_to_topdie_inst.emplace(*bump, connect_bump.inst);
+            return Node{*bump};
+        }
+        
+        debug::unreachable();
     }
 
     std::Vector<hardware::TrackCoord> NetBuilder::_pose_tracks {

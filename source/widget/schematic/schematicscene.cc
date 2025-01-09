@@ -6,6 +6,7 @@
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
 #include "./item/griditem.h"
+#include "circuit/connection/pin.hh"
 
 #include <cassert>
 #include <circuit/connection/connection.hh>
@@ -193,8 +194,8 @@ namespace kiwi::widget {
     }
 
     auto SchematicScene::addNet(circuit::Connection* connection) -> schematic::NetItem* {
-        auto beginPin = this->circuitPinToPinItem(connection->input());
-        auto endPin = this->circuitPinToPinItem(connection->output());
+        auto beginPin = this->circuitPinToPinItem(connection->input_pin());
+        auto endPin = this->circuitPinToPinItem(connection->output_pin());
 
         auto beginPoint = this->addNetPoint(beginPin);
         auto endPoint = this->addNetPoint(endPin);
@@ -274,6 +275,12 @@ namespace kiwi::widget {
 
     auto SchematicScene::circuitPinToPinItem(const circuit::Pin& pin) -> schematic::PinItem* {
         return std::match(pin.connected_point(),
+            [this](const circuit::ConnectVDD& _) -> schematic::PinItem* {
+                return this->_vddPinItem;
+            },
+            [this](const circuit::ConnectGND& _) -> schematic::PinItem* {
+                return this->_vddPinItem;
+            },
             [this](const circuit::ConnectExPort& eport) -> schematic::PinItem* {
                 auto eportItem = this->_exportMap.value(eport.port);
                 return eportItem->pin();

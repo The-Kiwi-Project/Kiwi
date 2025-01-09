@@ -134,7 +134,13 @@ namespace kiwi::parse {
     THROW_UP_WITH("Add connections")
 
     auto Reader::parse_connection_pin(std::StringView name) -> circuit::Pin {
-        if (std::StringView::npos == name.find('.')) {
+        if (name.ends_with("pose")) {
+            return circuit::Pin::connect_vdd();
+        } 
+        else if (name.ends_with("nege")) {
+            return circuit::Pin::connect_gnd();
+        }
+        else if (std::StringView::npos == name.find('.')) {
             /// 
             /// External port: Search external ports in config, and get track object in interposer
             ///

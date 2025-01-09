@@ -17,8 +17,8 @@ namespace kiwi::circuit {
 
     public:
         auto sync() const -> int { return this->_sync; }
-        auto input() const -> const Pin& { return this->_input; }
-        auto output() const -> const Pin& { return this->_output; }
+        auto input_pin() const -> const Pin& { return this->_input; }
+        auto output_pin() const -> const Pin& { return this->_output; }
     
         void set_input(Pin input) { this->_input = std::move(input); } 
         void set_output(Pin output) { this->_input = std::move(output); }
@@ -43,6 +43,6 @@ struct std::formatter<kiwi::circuit::Connection> {
     }
     template<typename FormatContext>
     constexpr auto format(const kiwi::circuit::Connection& c, FormatContext& ctx) const {
-        return std::vformat_to(ctx.out(), "[{} => {}]", std ::make_format_args(c.input(), c.output()));
+        return std::vformat_to(ctx.out(), "[{} => {}]", std ::make_format_args(c.input_pin(), c.output_pin()));
     }
 };

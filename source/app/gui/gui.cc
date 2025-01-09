@@ -24,7 +24,7 @@ namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
         auto [interposer, basedie] 
-            = kiwi::parse::read_config("..test/config/case3");
+            = kiwi::parse::read_config("../test/config/case3");
     
         // algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
         // interposer->randomly_map_remain_indexes();
