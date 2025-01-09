@@ -73,7 +73,7 @@ namespace kiwi::circuit {
         auto connection = std::Box<Connection>{p};
         
         auto res = this->_connections.emplace(sync, std::Vector<std::Box<Connection>>{});
-        assert(res.first->first = sync);
+        assert(res.first->first == sync);
         auto& iter = res.first->second.emplace_back(std::move(connection));
         return iter.get();
     }
@@ -243,7 +243,7 @@ namespace kiwi::circuit {
     }
 
     void BaseDie::external_port_rename(ExternalPort* eport, std::String new_name) {
-        assert(eport != nullopt);
+        assert(eport != nullptr);
         this->external_port_rename(eport->name_view(), std::move(new_name));
     }
 
@@ -338,7 +338,6 @@ namespace kiwi::circuit {
         });
 
         if (removed_connection.get() != nullptr) {
-            assert(remove_connection.get == connection);
             auto& new_group = this->_connections.emplace(sync, std::Vector<std::Box<Connection>>{}).first->second;
             new_group.emplace_back(std::move(removed_connection));
             connection->set_sync(sync);

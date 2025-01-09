@@ -28,7 +28,6 @@ namespace kiwi::widget::schematic {
         auto thisLayout = new QVBoxLayout {this};
         auto widget = new QGroupBox {"Net Infomation", this};
         widget->setStyleSheet("background-color: white;");
-        thisLayout->setMargin(0);
         thisLayout->addWidget(widget);
         thisLayout->addStretch();
 

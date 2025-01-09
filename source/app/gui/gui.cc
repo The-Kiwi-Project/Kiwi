@@ -29,7 +29,8 @@ namespace kiwi {
         // algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
         // interposer->randomly_map_remain_indexes();
 
-        QApplication app(argc, argv);
+        auto app = QApplication{argc, argv};
+        app.setStyle("Fusion");
         auto w = widget::SchematicWidget{interposer.get(), basedie.get()};
         w.show();
         return app.exec();

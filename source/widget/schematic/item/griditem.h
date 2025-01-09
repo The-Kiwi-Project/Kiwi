@@ -13,18 +13,22 @@ namespace kiwi::widget::schematic {
     public:
         static constexpr qreal GRID_SIZE = 20.;
 
-        static constexpr auto snapToGrid(const QPointF& point) -> QPointF {
-            qreal x = std::round(point.x() / GRID_SIZE) * GRID_SIZE;
-            qreal y = std::round(point.y() / GRID_SIZE) * GRID_SIZE;
-            return QPointF(x, y);
+        static constexpr auto round(qreal value) -> qreal {
+            return (value > 0.0) ? std::floor(value + 0.5) : std::ceil(value - 0.5);
         }
 
         static constexpr auto snapToGrid(qreal x) -> qreal {
-            return std::round(x / GRID_SIZE) * GRID_SIZE;
+            return round(x / GRID_SIZE) * GRID_SIZE;
         }
 
         static constexpr auto gridLength(int size) -> qreal {
             return size * GRID_SIZE;
+        }
+
+        static auto snapToGrid(const QPointF& point) -> QPointF {
+            qreal x = std::round(point.x() / GRID_SIZE) * GRID_SIZE;
+            qreal y = std::round(point.y() / GRID_SIZE) * GRID_SIZE;
+            return QPointF(x, y);
         }
 
     public:
