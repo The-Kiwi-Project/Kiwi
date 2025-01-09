@@ -96,7 +96,7 @@ namespace kiwi::widget::schematic {
         });
 
         // Delete
-        auto deleteButton = new QPushButton {"Delete", widget};
+        auto deleteButton = new QPushButton {"Remove", widget};
         deleteButton->setMinimumHeight(MIN_HEIGHT);
         layout->addWidget(deleteButton, 6, 0, 1, 2);
         connect(deleteButton, &QPushButton::clicked, [this] () {

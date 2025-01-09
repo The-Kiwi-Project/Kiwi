@@ -31,8 +31,6 @@ namespace kiwi::widget {
         this->setDragMode(QGraphicsView::RubberBandDrag);
         this->setInteractive(true);
         this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-
-        this->adjustSceneRect();
     }
 
     SchematicView::~SchematicView() noexcept {}

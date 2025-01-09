@@ -55,6 +55,7 @@ namespace kiwi::widget {
         this->_view = new SchematicView {interposer, basedie};
         this->_view->setScene(this->_scene);
         this->_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        this->_view->adjustSceneRect();
 
         this->_splitter->addWidget(this->_view);
     }

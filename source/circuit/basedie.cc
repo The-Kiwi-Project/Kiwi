@@ -122,7 +122,11 @@ namespace kiwi::circuit {
                     }
                 );
 
-                return is_input || is_output;
+                if (is_input || is_output) {
+                    debug::debug_fmt("Remove net '{}'", *c);
+                    return true;
+                }
+                return false;
             });
 
             connections.erase(iter, connections.end());
@@ -151,7 +155,11 @@ namespace kiwi::circuit {
         
         // Remove all connection in with this external_port!
         for (auto& [sync, connections] : this->_connections) {
-            auto iter = std::remove_if(connections.begin(), connections.end(), [port_ptr](std::Box<Connection>& c) -> bool {
+            for (auto i = connections.begin(); i != connections.end(); ++i) {
+                debug::debug_fmt("B connection '{}'", *(i->get()));
+            }
+
+            auto iter = std::remove_if(connections.begin(), connections.end(), [port_ptr](const std::Box<Connection>& c) -> bool {
                 auto is_input = std::match(c->input().connected_point(),
                     [port_ptr](const ConnectExPort& cep) -> bool {
                         return cep.port == port_ptr;
@@ -170,11 +178,15 @@ namespace kiwi::circuit {
                     }
                 );
 
-                return is_input || is_output;
+                if (is_input || is_output) {
+                    debug::debug_fmt("Remove net '{}'", *c);
+                    return true;
+                }
+                return false;
             });
 
-            connections.erase(iter, connections.end());
-        }
+            connections.erase(iter, connections.end());    
+        } 
 
         return true;
     }

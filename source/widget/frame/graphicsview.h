@@ -14,7 +14,7 @@ namespace kiwi::widget {
     public:
         explicit GraphicsView(QWidget* parent = nullptr);
 
-    protected:
+    public:
         void adjustSceneRect();
 
     protected:

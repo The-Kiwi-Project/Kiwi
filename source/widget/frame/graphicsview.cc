@@ -32,7 +32,7 @@ namespace kiwi::widget {
             maxY = std::max(maxY, itemBounds.bottom());
         }
 
-        qreal margin = 300;
+        qreal margin = 3000;
         this->setSceneRect(minX - margin, minY - margin, (maxX - minX) + 2 * margin, (maxY - minY) + 2 * margin);
     }
 

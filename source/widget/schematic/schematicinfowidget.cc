@@ -1,8 +1,4 @@
 #include "./schematicinfowidget.h"
-#include "qstackedwidget.h"
-#include "qwidget.h"
-
-#include <circuit/basedie.hh>
 
 #include "./info/exportwidget.h"
 #include "./info/netinfowidget.h"
@@ -16,6 +12,7 @@
 #include "std/exception.hh"
 
 #include <debug/debug.hh>
+#include <circuit/basedie.hh>
 
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -119,6 +116,7 @@ namespace kiwi::widget {
     void SchematicInfoWidget::removeExternalPort(ExternalPortItem* eport) try {
         this->_basedie->remove_external_port(eport->unwrap());
         this->_scene->removeExternalPort(eport);
+        this->showViewInfo();
     }
     QMESSAGEBOX_REPORT_EXCEPTION("Remove External Port Coord Failed")
 
@@ -138,6 +136,7 @@ namespace kiwi::widget {
     void SchematicInfoWidget::removeNet(NetItem* net) {
         this->_basedie->remove_connection(net->unwrap());
         this->_scene->removeNet(net);
+        this->showViewInfo();
     }
 
     void SchematicInfoWidget::topdieInstanceRename(TopDieInstanceItem* inst, const QString& name) try {
@@ -149,6 +148,7 @@ namespace kiwi::widget {
     void SchematicInfoWidget::removeTopDieInstance(TopDieInstanceItem* inst) try {
         this->_basedie->remove_topdie_inst(inst->unwrap());
         this->_scene->removeTopDieInstance(inst);
+        this->showViewInfo();
     }
     QMESSAGEBOX_REPORT_EXCEPTION("Remove TopDie Filed")
 
