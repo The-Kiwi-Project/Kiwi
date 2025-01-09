@@ -13,6 +13,7 @@
 #include "./item/topdieinstitem.h"
 #include "./item/topdieinstitem.h"
 #include "./schematicscene.h"
+#include "std/exception.hh"
 
 #include <debug/debug.hh>
 
@@ -20,8 +21,11 @@
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QStackedWidget>
+#include <QMessageBox>
 
 namespace kiwi::widget {
+
+    using namespace schematic;
 
     SchematicInfoWidget::SchematicInfoWidget(
         circuit::BaseDie* basedie, 
@@ -43,74 +47,47 @@ namespace kiwi::widget {
     }
 
     void SchematicInfoWidget::createViewInfoWidget() {
-        this->_viewInfoWidget = new schematic::ViewInfoWidget {this->_view, this};
+        this->_viewInfoWidget = new ViewInfoWidget {this->_view, this};
         this->addWidget(this->_viewInfoWidget);
     }
 
     void SchematicInfoWidget::createExternalPortInfoWidget() {
-        this->_eportInfoWidget = new schematic::ExternalPortInfoWidget {this};
+        this->_eportInfoWidget = new ExternalPortInfoWidget {this};
         this->addWidget(this->_eportInfoWidget);
 
-        connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::externalPortRename, [this](schematic::ExternalPortItem* eport, const QString& name) {
-            this->_basedie->external_port_rename(eport->unwrap(), name.toStdString());
-            eport->setName(name);
-        });
-
-        connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::externalPortSetCoord, [this](schematic::ExternalPortItem* eport, hardware::TrackCoord& coord) {
-            this->_basedie->external_port_set_coord(eport->unwrap(), coord);
-        });
-
-        connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::removeExternalPort, [this] (schematic::ExternalPortItem* eport) {
-            this->_basedie->remove_external_port(eport->unwrap());
-            this->_scene->removeExternalPort(eport);
-        });
+        connect(this->_eportInfoWidget, &ExternalPortInfoWidget::externalPortRename, this, &SchematicInfoWidget::externalPortRename);
+        connect(this->_eportInfoWidget, &ExternalPortInfoWidget::externalPortSetCoord, this, &SchematicInfoWidget::externalPortSetCoord);
+        connect(this->_eportInfoWidget, &ExternalPortInfoWidget::removeExternalPort, this,&SchematicInfoWidget::removeExternalPort);
     }
 
     void SchematicInfoWidget::createNetInfoWidget() {
-        this->_netInfoWidget = new schematic::NetInfoWidget {this};
+        this->_netInfoWidget = new NetInfoWidget {this};
         this->addWidget(this->_netInfoWidget);
 
-        connect(this->_netInfoWidget, &schematic::NetInfoWidget::netSyncChanged, [this] (schematic::NetItem* net, int sync) {
-            this->_basedie->connection_set_sync(net->unwrap(), sync);
-        });
-
-        connect(this->_netInfoWidget, &schematic::NetInfoWidget::netColorChanged, [this] (schematic::NetItem* net, const QColor& color) {
-            net->setColor(color);
-            net->update();
-        });
-
-        connect(this->_netInfoWidget, &schematic::NetInfoWidget::removeNet, [this] (schematic::NetItem* net) {
-            this->_basedie->remove_connection(net->unwrap());
-            this->_scene->removeNet(net);
-        });
+        connect(this->_netInfoWidget, &NetInfoWidget::netSyncChanged, this,&SchematicInfoWidget::netSyncChanged);
+        connect(this->_netInfoWidget, &NetInfoWidget::netColorChanged, this,&SchematicInfoWidget::netColorChanged);
+        connect(this->_netInfoWidget, &NetInfoWidget::removeNet, this,&SchematicInfoWidget::removeNet);
     }
 
     void SchematicInfoWidget::createTopDieInstanceInfoWidget() {
-        this->_topdieInstInfoWidget = new schematic::TopDieInstanceInfoWidget {this};
+        this->_topdieInstInfoWidget = new TopDieInstanceInfoWidget {this};
         this->addWidget(this->_topdieInstInfoWidget);
 
-        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::topdieInstanceRename, [this](schematic::TopDieInstanceItem* inst, const QString& name){
-            this->_basedie->topdie_inst_rename(inst->unwrap(), name.toStdString());
-            inst->setName(name);
-        });
-
-        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::removeTopDieInstance, [this] (schematic::TopDieInstanceItem* inst) {
-            this->_basedie->remove_topdie_inst(inst->unwrap());
-            this->_scene->removeTopDieInstance(inst);
-        });
+        connect(this->_topdieInstInfoWidget, &TopDieInstanceInfoWidget::topdieInstanceRename, this,&SchematicInfoWidget::topdieInstanceRename);
+        connect(this->_topdieInstInfoWidget, &TopDieInstanceInfoWidget::removeTopDieInstance, this,&SchematicInfoWidget::removeTopDieInstance);
     }
 
-    void SchematicInfoWidget::showExPortInfoWidget(schematic::ExternalPortItem* eport) {
+    void SchematicInfoWidget::showExPortInfoWidget(ExternalPortItem* eport) {
         this->setCurrentWidget(this->_eportInfoWidget);
         this->_eportInfoWidget->loadExternalPort(eport);
     }
 
-    void SchematicInfoWidget::showNetInfoWidget(schematic::NetItem* net) {
+    void SchematicInfoWidget::showNetInfoWidget(NetItem* net) {
         this->setCurrentWidget(this->_netInfoWidget);
         this->_netInfoWidget->loadNet(net);
     }
 
-    void SchematicInfoWidget::showTopDieInstanceInfoWidget(schematic::TopDieInstanceItem* inst) {
+    void SchematicInfoWidget::showTopDieInstanceInfoWidget(TopDieInstanceItem* inst) {
         this->setCurrentWidget(this->_topdieInstInfoWidget);
         this->_topdieInstInfoWidget->loadTopDieInstance(inst);
     }
@@ -118,5 +95,61 @@ namespace kiwi::widget {
     void SchematicInfoWidget::showViewInfo() {
         this->setCurrentWidget(this->_viewInfoWidget);
     }
+
+    #define QMESSAGEBOX_REPORT_EXCEPTION(title)\
+    catch (const std::Exception& err) {\
+        QMessageBox::critical(\
+            this,\
+            title,\
+            QString::fromLatin1(err.what())\
+        );\
+    }
+
+    void SchematicInfoWidget::externalPortRename(ExternalPortItem* eport, const QString& name) try {
+        this->_basedie->external_port_rename(eport->unwrap(), name.toStdString());
+        eport->setName(name);
+    } 
+    QMESSAGEBOX_REPORT_EXCEPTION("External Port Rename Failed") 
+
+    void SchematicInfoWidget::externalPortSetCoord(ExternalPortItem* eport, const hardware::TrackCoord& coord) try {
+        this->_basedie->external_port_set_coord(eport->unwrap(), coord);
+    } 
+    QMESSAGEBOX_REPORT_EXCEPTION("External Port Set Coord Failed")
+    
+    void SchematicInfoWidget::removeExternalPort(ExternalPortItem* eport) try {
+        this->_basedie->remove_external_port(eport->unwrap());
+        this->_scene->removeExternalPort(eport);
+    }
+    QMESSAGEBOX_REPORT_EXCEPTION("Remove External Port Coord Failed")
+
+    void SchematicInfoWidget::netSyncChanged(NetItem* net, int sync) try {
+        this->_basedie->connection_set_sync(net->unwrap(), sync);
+    }
+    QMESSAGEBOX_REPORT_EXCEPTION("Net Sync Change Failed")
+
+    void SchematicInfoWidget::netColorChanged(NetItem* net, const QColor& color) {
+        net->setColor(color);
+        net->update();
+    }
+
+    void SchematicInfoWidget::netWidthChanged(NetItem* net, qreal width) {
+    }
+
+    void SchematicInfoWidget::removeNet(NetItem* net) {
+        this->_basedie->remove_connection(net->unwrap());
+        this->_scene->removeNet(net);
+    }
+
+    void SchematicInfoWidget::topdieInstanceRename(TopDieInstanceItem* inst, const QString& name) try {
+        this->_basedie->topdie_inst_rename(inst->unwrap(), name.toStdString());
+        inst->setName(name);
+    }
+    QMESSAGEBOX_REPORT_EXCEPTION("TopDie Instance Rename Failed")
+
+    void SchematicInfoWidget::removeTopDieInstance(TopDieInstanceItem* inst) try {
+        this->_basedie->remove_topdie_inst(inst->unwrap());
+        this->_scene->removeTopDieInstance(inst);
+    }
+    QMESSAGEBOX_REPORT_EXCEPTION("Remove TopDie Filed")
 
 }

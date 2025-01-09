@@ -205,9 +205,20 @@ namespace kiwi::circuit {
     }
 
     void BaseDie::topdie_inst_rename(TopDieInstance* inst, std::String new_name) {
-        debug::debug_fmt("Rename topdie instance '{}' to '{}'", inst->name_view(), new_name);
+        assert(inst != nullptr);
+        this->topdie_inst_rename(inst->name_view(), std::move(new_name));
+    }
 
-        auto old_name = inst->name();
+    void BaseDie::topdie_inst_rename(std::StringView old_name, std::String new_name) {
+        debug::debug_fmt("Rename topdie instance '{}' to '{}'", old_name, new_name);
+
+        if (old_name == new_name) {
+            return;
+        }
+
+        if (this->_topdie_insts.contains(new_name)) {
+            debug::exception_fmt("TopDie instance '{}' already exits!", new_name);
+        }
         
         auto node = this->_topdie_insts.extract(old_name);
         if (!node) {
@@ -220,13 +231,24 @@ namespace kiwi::circuit {
     }
 
     void BaseDie::external_port_rename(ExternalPort* eport, std::String new_name) {
-        debug::debug_fmt("Rename external port '{}' to '{}'", eport->name_view(), new_name);
+        assert(eport != nullopt);
+        this->external_port_rename(eport->name_view(), std::move(new_name));
+    }
 
-        auto old_name = eport->name();
+    void BaseDie::external_port_rename(std::StringView old_name, std::String new_name) {
+        debug::debug_fmt("Rename external port '{}' to '{}'", old_name, new_name);
+        
+        if (old_name == new_name) {
+            return;
+        }
+
+        if (this->_external_ports.contains(new_name)) {
+            debug::exception_fmt("External port '{}' already exits!", new_name);
+        }
 
         auto node = this->_external_ports.extract(old_name);
         if (!node) {
-            debug::exception_fmt("Topdie Instance '{}' not exit!", old_name);
+            debug::exception_fmt("External port '{}' not exit!", old_name);
         } else {
             auto eport = std::move(node.mapped());
             eport->set_name(std::move(new_name));
@@ -235,10 +257,42 @@ namespace kiwi::circuit {
     }
 
     void BaseDie::external_port_set_coord(ExternalPort* eport, const hardware::TrackCoord& coord) {
+        assert(eport != nullptr);
         debug::debug_fmt("Set coord for external port '{}' from '{}' to '{}'", eport->name_view(), eport->coord(), coord);
 
-        // MARK, the same coord?
+        // MARK check coord !
+        auto coord_exit = false;
+        auto eport_exit = false;
+        for (auto& [_, ep] : this->_external_ports) {
+            if (ep.get() == eport) {
+                eport_exit = true;
+                continue;
+            }
+            
+            if (ep->coord() == coord) {
+                coord_exit = true;
+                break;
+            }
+        }
+
+        if (coord_exit) {
+            debug::debug_fmt("The coord '{}' already been used!", coord);
+        }
+
+        if (!eport_exit) {
+            debug::debug_fmt("External port '{}' no exits", eport->name());
+        }
+
         eport->set_coord(coord);
+    }
+
+    void BaseDie::external_port_set_coord(std::StringView old_name, const hardware::TrackCoord& coord) {
+        auto res = this->_external_ports.find(old_name);
+        if (res == this->_external_ports.end()) {
+            debug::exception_fmt("External port '{}' not exit!", old_name);
+        }
+
+        this->external_port_set_coord(res->second.get(), coord);
     }
 
     void BaseDie::connection_set_input(Connection* connection, Pin input) {

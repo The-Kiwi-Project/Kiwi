@@ -1,11 +1,14 @@
 #pragma once
 
-#include "qobjectdefs.h"
 #include <QStackedWidget>
 
 namespace kiwi::circuit {
     class BaseDie;
 };
+
+namespace kiwi::hardware {
+    class TrackCoord;
+}
 
 namespace kiwi::widget {
 
@@ -44,6 +47,19 @@ namespace kiwi::widget {
         void showExPortInfoWidget(schematic::ExternalPortItem*);
         void showNetInfoWidget(schematic::NetItem*);
         void showTopDieInstanceInfoWidget(schematic::TopDieInstanceItem*);
+
+    private:
+        void externalPortRename(schematic::ExternalPortItem* eport, const QString& name);
+        void externalPortSetCoord(schematic::ExternalPortItem* eport, const hardware::TrackCoord& coord);
+        void removeExternalPort(schematic::ExternalPortItem* eport);
+
+        void netSyncChanged(schematic::NetItem* net, int sync);
+        void netColorChanged(schematic::NetItem* net, const QColor& color);
+        void netWidthChanged(schematic::NetItem* net, qreal width);
+        void removeNet(schematic::NetItem* net);
+
+        void topdieInstanceRename(schematic::TopDieInstanceItem* inst, const QString& name);
+        void removeTopDieInstance(schematic::TopDieInstanceItem* inst);
 
     private:
         circuit::BaseDie* _basedie {nullptr};

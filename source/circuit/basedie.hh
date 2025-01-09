@@ -40,9 +40,12 @@ namespace kiwi::circuit {
 
     public:
         void topdie_inst_rename(TopDieInstance* inst, std::String new_name);
+        void topdie_inst_rename(std::StringView old_name, std::String new_name);
 
         void external_port_rename(ExternalPort* eport, std::String new_name);
+        void external_port_rename(std::StringView old_name, std::String new_name);
         void external_port_set_coord(ExternalPort* eport, const hardware::TrackCoord& coord);
+        void external_port_set_coord(std::StringView old_name, const hardware::TrackCoord& coord);
 
         void connection_set_input(Connection* connection, Pin input);
         void connection_set_output(Connection* connection, Pin output);
