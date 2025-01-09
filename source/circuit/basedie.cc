@@ -17,6 +17,8 @@
 namespace kiwi::circuit {
     
     auto BaseDie::add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> TopDie* {
+        debug::debug_fmt("Add topdie '{}'", name);
+
         auto topdie = std::make_unique<TopDie>(std::move(name), std::move(pin_map));
         auto res = this->_topdies.emplace(topdie->name_view(), nullptr);
         if (res.second == false) {
@@ -32,6 +34,8 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance* {
+        debug::debug_fmt("Add topdie instance '{}' of '{}'", name, topdie->name());
+
         auto p = new TopDieInstance{std::move(name), topdie, tob};
         auto topdie_inst = std::Box<TopDieInstance>(p);
 
@@ -49,6 +53,8 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::add_external_port(std::String name, const hardware::TrackCoord& coord) -> ExternalPort* {
+        debug::debug_fmt("Add external port '{}' in '{}'", name, coord);
+
         auto p = new ExternalPort{std::move(name), coord};
         auto external_port = std::Box<ExternalPort>{p};
 
@@ -61,6 +67,8 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::add_connection(int sync, Pin input, Pin output) -> Connection* {
+        debug::debug_fmt("Add connection from '{}' to '{}'", input, output);
+
         auto p = new Connection{sync, std::move(input), std::move(output)};
         auto connection = std::Box<Connection>{p};
         
@@ -82,6 +90,8 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::remove_topdie_inst(std::StringView name) -> bool {
+        debug::debug_fmt("Remove topdie instance '{}'", name);
+
         // return this->_topdie_insts.erase(name);
         auto node = this->_topdie_insts.extract(name);
         if (node.empty()) {
@@ -129,6 +139,8 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::remove_external_port(std::StringView name) -> bool {
+        debug::debug_fmt("Remove external port '{}'", name);
+
         auto node = this->_external_ports.extract(name);
         if (node.empty()) {
             return false;
@@ -172,6 +184,8 @@ namespace kiwi::circuit {
             return false;
         }
 
+        debug::debug_fmt("Remove connection '{}'", *connection);
+
         auto res = this->_connections.find(connection->sync());
         if (res == this->_connections.end()) {
             return false;
@@ -191,6 +205,8 @@ namespace kiwi::circuit {
     }
 
     void BaseDie::topdie_inst_rename(TopDieInstance* inst, std::String new_name) {
+        debug::debug_fmt("Rename topdie instance '{}' to '{}'", inst->name_view(), new_name);
+
         auto old_name = inst->name();
         
         auto node = this->_topdie_insts.extract(old_name);
@@ -204,6 +220,8 @@ namespace kiwi::circuit {
     }
 
     void BaseDie::external_port_rename(ExternalPort* eport, std::String new_name) {
+        debug::debug_fmt("Rename external port '{}' to '{}'", eport->name_view(), new_name);
+
         auto old_name = eport->name();
 
         auto node = this->_external_ports.extract(old_name);
@@ -217,14 +235,21 @@ namespace kiwi::circuit {
     }
 
     void BaseDie::external_port_set_coord(ExternalPort* eport, const hardware::TrackCoord& coord) {
+        debug::debug_fmt("Set coord for external port '{}' from '{}' to '{}'", eport->name_view(), eport->coord(), coord);
+
+        // MARK, the same coord?
         eport->set_coord(coord);
     }
 
     void BaseDie::connection_set_input(Connection* connection, Pin input) {
+        debug::debug_fmt("Set connection '{}' input to '{}'", *connection, input);
+
         connection->set_input(std::move(input));
     }
 
     void BaseDie::connection_set_output(Connection* connection, Pin output) {
+        debug::debug_fmt("Set connection '{}' output to '{}'", *connection, output);
+
         connection->set_output(std::move(output));
     }
 
@@ -233,6 +258,8 @@ namespace kiwi::circuit {
             return;
         } 
 
+        debug::debug_fmt("Set connection '{}' sync form '{}' to '{}'", *connection, connection->sync(), sync);
+        
         auto& old_group = this->_connections.at(connection->sync());
         
         auto removed_connection = std::Box<Connection>{nullptr};

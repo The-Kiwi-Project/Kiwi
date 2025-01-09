@@ -29,6 +29,7 @@ namespace kiwi::widget::schematic {
         void linkToPin(PinItem* pin);
         auto unlinkPin() -> PinItem*;
 
+        auto netItem() const -> NetItem* { return this->_netitem; }
         void setNetItem(NetItem* netitem) 
         { this->_netitem = netitem; }
 

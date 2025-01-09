@@ -211,42 +211,48 @@ namespace kiwi::widget {
 
     void SchematicScene::removeExPort(schematic::ExternalPortItem* eport) {
         assert(eport != nullptr);
+        // debug::debug_fmt("Remove external port '{}'", eport->exPort()->name());
 
-        auto deleteNets = QVector<schematic::NetItem*>{};
-        for (auto net : this->_nets) {
-            auto beginPoint = net->beginPoint();
-            auto endPoint = net->endPoint();
-
-            assert(beginPoint != nullptr && endPoint != nullptr);
-
-            auto beginPin = beginPoint->connectedPin();
-            auto endPin = endPoint->connectedPin();
-
-            assert(beginPin != nullptr && endPin != nullptr);
-
-            if (eport->pin() == beginPin || eport->pin() == endPin) {
-                deleteNets.push_back(net);
-            }
+        auto pinItem = eport->pin();
+        assert(pinItem != nullptr);
+        
+        for (auto pointItem : pinItem->connectedPoints()) {
+            auto netItem = pointItem->netItem();
+            assert(netItem != nullptr);
+            this->removeNet(netItem);
         }
 
-        for (auto net : deleteNets) {
-            this->removeNet(net);
-        }
+        delete pinItem;
 
         this->_exportMap.remove(eport->exPort());
         this->removeItem(eport);
 
-        delete eport->pin();
         delete eport;
     }
 
     void SchematicScene::removeTopDieInst(schematic::TopDieInstanceItem* inst) {
-        // TODO!
+        assert(inst != nullptr);
+        // debug::debug_fmt("Remove topdie instance '{}'", inst->topdieInst()->name());
+
+        for (auto pinItem : inst->pinItems()) {
+            for (auto point : pinItem->connectedPoints()) {
+                assert(point != nullptr);
+                assert(point->netItem() != nullptr);
+                this->removeNet(point->netItem());
+            }
+            delete pinItem;
+        }
+
+        this->_topdieinstMap.remove(inst->topdieInst());
+        this->removeItem(inst);
+
+        delete inst;
     }
 
     void SchematicScene::removeNet(schematic::NetItem* net) {
         // net has two point, each pin has 
         assert(net != nullptr);
+        // debug::debug_fmt("Remove net '{}'", *net->connection());
     
         auto beginPoint = net->beginPoint();
         auto endPoint = net->endPoint();
@@ -277,7 +283,7 @@ namespace kiwi::widget {
             },
             [this](const circuit::ConnectBump& bump) -> schematic::PinItem* {
                 auto top = this->_topdieinstMap.value(bump.inst);
-                return top->pinitems().value(QString::fromStdString(bump.name));
+                return top->pinItems().value(QString::fromStdString(bump.name));
             }
         );
     }

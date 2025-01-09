@@ -17,6 +17,7 @@
 #include <QStandardItemModel>
 #include <QHeaderView>
 #include <QGroupBox>
+#include <QMessageBox>
 
 namespace kiwi::widget::schematic {
 
@@ -60,8 +61,16 @@ namespace kiwi::widget::schematic {
         layout->addWidget(removeButton, 3, 0, 1, 2);
 
         connect(removeButton, &QPushButton::clicked, [this] () {
-            assert(this->_inst != nullptr);
-            emit this->removeTopDieInst(this->_inst);
+            auto response = QMessageBox::question(
+                nullptr, 
+                "Confirm", 
+                "Do yout want to delete this topdie instance?",
+                QMessageBox::Yes | QMessageBox::No);
+        
+            if (response == QMessageBox::Yes) {
+                assert(this->_inst != nullptr);
+                emit this->removeTopDieInst(this->_inst);
+            }
         });
     
         layout->setColumnMinimumWidth(0, 50);

@@ -61,24 +61,25 @@ namespace kiwi::widget {
             inst->setName(name);
         });
 
+        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::removeTopDieInst, [this] (schematic::TopDieInstanceItem* inst) {
+            this->_basedie->remove_topdie_inst(inst->topdieInst());
+            this->_scene->removeTopDieInst(inst);
+        });
+
         // Export inst
         this->_eportInfoWidget = new schematic::ExternalPortInfoWidget {this};
         this->addWidget(this->_eportInfoWidget);
 
         connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::exportRename, [this](schematic::ExternalPortItem* eport, const QString& name) {
-            auto newName = name.toStdString();
-            debug::debug_fmt("Rename external port '{}' to '{}'", eport->exPort()->name(), newName);
-            this->_basedie->external_port_rename(eport->exPort(), std::move(newName));
+            this->_basedie->external_port_rename(eport->exPort(), name.toStdString());
             eport->setName(name);
         });
 
         connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::exportSetCoord, [this](schematic::ExternalPortItem* eport, hardware::TrackCoord& coord) {
-            debug::debug_fmt("Set coord for external port '{}' from '{}' to '{}'", eport->exPort()->name(), eport->exPort()->coord(), coord);
             this->_basedie->external_port_set_coord(eport->exPort(), coord);
         });
 
         connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::removeExPort, [this] (schematic::ExternalPortItem* eport) {
-            debug::debug_fmt("Remove external port '{}'", eport->exPort()->name());
             this->_basedie->remove_external_port(eport->exPort());
             this->_scene->removeExPort(eport);
         });
