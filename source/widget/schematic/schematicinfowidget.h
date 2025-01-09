@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qobjectdefs.h"
 #include <QStackedWidget>
 
 namespace kiwi::circuit {
@@ -20,12 +21,17 @@ namespace kiwi::widget {
     }
 
     class SchematicView;
+    class SchematicScene;
 
     class SchematicInfoWidget : public QStackedWidget {
         Q_OBJECT
 
     public:
-        SchematicInfoWidget(circuit::BaseDie* basedie, SchematicView* view, QWidget* parent = nullptr);
+        SchematicInfoWidget(
+            circuit::BaseDie* basedie, 
+            SchematicScene* scene,
+            SchematicView* view, 
+            QWidget* parent = nullptr);
         
     public:
         void showExPortInfoWidget(schematic::ExternalPortItem*);
@@ -35,6 +41,7 @@ namespace kiwi::widget {
 
     private:
         circuit::BaseDie* _basedie {nullptr};
+        SchematicScene* _scene {nullptr};
 
         schematic::ExternalPortInfoWidget* _eportInfoWidget {nullptr};
         schematic::NetInfoWidget* _netInfoWidget {nullptr};

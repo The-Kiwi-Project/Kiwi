@@ -31,10 +31,11 @@ namespace kiwi::circuit {
 
     public:
         auto remove_topdie_inst(std::StringView name) -> bool;
-        auto remove_external_port(std::StringView name) -> bool;
-
         auto remove_topdie_inst(TopDieInstance* inst) -> bool;
+
+        auto remove_external_port(std::StringView name) -> bool;
         auto remove_external_port(ExternalPort* eport) -> bool;
+
         auto remove_connection(Connection*) -> bool;
 
     public:

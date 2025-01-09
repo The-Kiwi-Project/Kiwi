@@ -75,7 +75,7 @@ namespace kiwi::widget::schematic {
         void setRaduis(qreal radius) { this->_raduis = radius; }
         void resetRaduis() { this->_raduis = PIN_RADIUS; }
 
-    private:
+    public:
         auto exportItem() const -> ExternalPortItem*;
         auto topdieInstItem() const -> TopDieInstanceItem*;
 

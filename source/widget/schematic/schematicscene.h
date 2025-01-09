@@ -1,6 +1,8 @@
 #pragma once
 
 #include "qhash.h"
+#include "qset.h"
+#include "qvector.h"
 #include <QGraphicsScene>
 
 namespace kiwi::circuit {
@@ -43,6 +45,11 @@ namespace kiwi::widget {
         auto addExPort(circuit::ExternalPort*) -> schematic::ExternalPortItem*;
         auto addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem*;
         auto addNet(circuit::Connection* connection) -> schematic::NetItem*;
+
+    public:
+        void removeExPort(schematic::ExternalPortItem* eport);
+        void removeTopDieInst(schematic::TopDieInstanceItem* inst);
+        void removeNet(schematic::NetItem* net);
         
     private:
         auto addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem*;
@@ -82,6 +89,7 @@ namespace kiwi::widget {
 
         QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
         QHash<circuit::ExternalPort*, schematic::ExternalPortItem*> _exportMap;
+        QSet<schematic::NetItem*> _nets;
 
         // Temp var 
         schematic::NetItem* _floatingNet {nullptr};

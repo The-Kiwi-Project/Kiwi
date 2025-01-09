@@ -25,6 +25,7 @@ namespace kiwi::widget::schematic {
 
     signals:
         void topDieInstRename(TopDieInstanceItem* inst, const QString& name);
+        void removeTopDieInst(TopDieInstanceItem* inst);
 
     public:
         void loadInst(TopDieInstanceItem* inst);

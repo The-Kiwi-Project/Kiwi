@@ -27,6 +27,7 @@ namespace kiwi::widget::schematic {
     signals:
         void exportRename(ExternalPortItem* eport, const QString& name);
         void exportSetCoord(ExternalPortItem* eport, hardware::TrackCoord& coord);
+        void removeExPort(ExternalPortItem* eport);
 
     public:
         void loadExPort(ExternalPortItem* eport);

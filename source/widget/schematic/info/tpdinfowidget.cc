@@ -49,13 +49,23 @@ namespace kiwi::widget::schematic {
         this->_pinMapView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         layout->addWidget(this->_pinMapView, 2, 0, 1, 2);
 
-        layout->setColumnMinimumWidth(0, 50);
-        layout->setColumnStretch(0, 0);
-
         connect(this->_nameEdit, &LineEditWithButton::textConfirmed, [this] (const QString& name) {
             assert(this->_inst != nullptr);
             this->topDieInstRename(this->_inst, name);
         });
+
+        // Remove
+        auto removeButton = new QPushButton {"Remove", widget};
+        removeButton->setMinimumHeight(30);
+        layout->addWidget(removeButton, 3, 0, 1, 2);
+
+        connect(removeButton, &QPushButton::clicked, [this] () {
+            assert(this->_inst != nullptr);
+            emit this->removeTopDieInst(this->_inst);
+        });
+    
+        layout->setColumnMinimumWidth(0, 50);
+        layout->setColumnStretch(0, 0);
     }
 
     void TopDieInstanceInfoWidget::loadInst(TopDieInstanceItem* inst) {

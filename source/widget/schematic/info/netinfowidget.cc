@@ -4,6 +4,7 @@
 #include "../item/pinitem.h"
 #include "qboxlayout.h"
 #include "qgroupbox.h"
+#include "qpushbutton.h"
 #include "qspinbox.h"
 #include "qwidget.h"
 #include <widget/frame/colorpickbutton.h>
@@ -16,6 +17,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
+#include <QMessageBox>
 
 namespace kiwi::widget::schematic {
 
@@ -66,15 +68,32 @@ namespace kiwi::widget::schematic {
         this->_colorButton->setMinimumHeight(30);
         layout->addWidget(this->_colorButton, 3, 1);
 
-        // Width
-        layout->setColumnMinimumWidth(0, 50);
-        layout->setColumnStretch(0, 0);
-
         connect(this->_colorButton, &ColorPickerButton::colorChanged, this, &NetInfoWidget::colorChanged);
         connect(this->_syncSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this] (int sync) {
-            assert(this->_ent != nullptr);
+            assert(this->_net != nullptr);
             emit this->connectionSyncChanged(this->_net, sync);
         });
+
+        // Remove        
+        auto removeButton = new QPushButton {"Remove", widget};
+        removeButton->setMinimumHeight(30);
+        layout->addWidget(removeButton, 4, 0, 1, 2);
+
+        connect(removeButton, &QPushButton::clicked, [this] () {
+            auto response = QMessageBox::question(
+                nullptr, 
+                "Confirm", 
+                "Do yout want to delete this net?",
+                QMessageBox::Yes | QMessageBox::No);
+            
+            if (response == QMessageBox::Yes) {
+                assert(this->_net != nullptr);
+                emit this->removeNet(this->_net);
+            }
+        });
+
+        layout->setColumnMinimumWidth(0, 50);
+        layout->setColumnStretch(0, 0);
     }
 
     void NetInfoWidget::loadNet(NetItem* net) {

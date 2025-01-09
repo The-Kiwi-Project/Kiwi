@@ -60,7 +60,7 @@ namespace kiwi::widget {
     }
 
     void SchematicWidget::initInfoWidget() {
-        this->_infoWidget = new SchematicInfoWidget{this->_basedie, this->_view, this->_splitter};
+        this->_infoWidget = new SchematicInfoWidget{this->_basedie, this->_scene, this->_view, this->_splitter};
         this->_infoWidget->setMinimumWidth(250);
         this->_infoWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 

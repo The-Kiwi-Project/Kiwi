@@ -4,15 +4,17 @@
 
 #include <circuit/basedie.hh>
 
-#include "widget/schematic/info/exportwidget.h"
-#include "widget/schematic/info/netinfowidget.h"
-#include "widget/schematic/info/tpdinfowidget.h"
-#include "widget/schematic/info/viewinfowidget.h"
-#include "widget/schematic/item/exportitem.h"
-#include "widget/schematic/item/netitem.h"
-#include "widget/schematic/item/topdieinstitem.h"
-#include "widget/schematic/item/topdieinstitem.h"
-#include "widget/schematic/schematiclibwidget.h"
+#include "./info/exportwidget.h"
+#include "./info/netinfowidget.h"
+#include "./info/tpdinfowidget.h"
+#include "./info/viewinfowidget.h"
+#include "./item/exportitem.h"
+#include "./item/netitem.h"
+#include "./item/topdieinstitem.h"
+#include "./item/topdieinstitem.h"
+#include "./schematicscene.h"
+
+#include <debug/debug.hh>
 
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -21,9 +23,15 @@
 
 namespace kiwi::widget {
 
-    SchematicInfoWidget::SchematicInfoWidget(circuit::BaseDie* basedie, SchematicView* view, QWidget* parent) :
+    SchematicInfoWidget::SchematicInfoWidget(
+        circuit::BaseDie* basedie, 
+        SchematicScene* scene,
+        SchematicView* view, 
+        QWidget* parent
+    ) :
         QStackedWidget{parent},
-        _basedie{basedie}
+        _basedie{basedie},
+        _scene{scene}
     {
         this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
@@ -37,6 +45,11 @@ namespace kiwi::widget {
 
         connect(this->_netInfoWidget, &schematic::NetInfoWidget::connectionSyncChanged, [this] (schematic::NetItem* net, int sync) {
             this->_basedie->connection_set_sync(net->connection(), sync);
+        });
+
+        connect(this->_netInfoWidget, &schematic::NetInfoWidget::removeNet, [this] (schematic::NetItem* net) {
+            this->_basedie->remove_connection(net->connection());
+            this->_scene->removeNet(net);
         });
 
         // TopDie inst
@@ -53,14 +66,22 @@ namespace kiwi::widget {
         this->addWidget(this->_eportInfoWidget);
 
         connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::exportRename, [this](schematic::ExternalPortItem* eport, const QString& name) {
-            this->_basedie->external_port_rename(eport->exPort(), name.toStdString());
+            auto newName = name.toStdString();
+            debug::debug_fmt("Rename external port '{}' to '{}'", eport->exPort()->name(), newName);
+            this->_basedie->external_port_rename(eport->exPort(), std::move(newName));
             eport->setName(name);
         });
 
         connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::exportSetCoord, [this](schematic::ExternalPortItem* eport, hardware::TrackCoord& coord) {
+            debug::debug_fmt("Set coord for external port '{}' from '{}' to '{}'", eport->exPort()->name(), eport->exPort()->coord(), coord);
             this->_basedie->external_port_set_coord(eport->exPort(), coord);
         });
 
+        connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::removeExPort, [this] (schematic::ExternalPortItem* eport) {
+            debug::debug_fmt("Remove external port '{}'", eport->exPort()->name());
+            this->_basedie->remove_external_port(eport->exPort());
+            this->_scene->removeExPort(eport);
+        });
     }
 
     void SchematicInfoWidget::showExPortInfoWidget(schematic::ExternalPortItem* eport) {

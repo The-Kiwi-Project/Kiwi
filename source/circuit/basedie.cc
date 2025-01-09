@@ -1,5 +1,6 @@
 #include "./basedie.hh"
 #include "circuit/connection/connection.hh"
+#include "circuit/connection/pin.hh"
 #include "circuit/export/export.hh"
 #include "circuit/topdie/topdie.hh"
 #include "circuit/topdieinst/topdieinst.hh"
@@ -73,29 +74,120 @@ namespace kiwi::circuit {
         this->_nets.emplace_back(std::move(net));
     }
 
+    auto BaseDie::remove_topdie_inst(TopDieInstance* inst) -> bool {
+        if (inst == nullptr) {
+            return false;
+        }
+        return this->remove_topdie_inst(inst->name_view());
+    }
+
     auto BaseDie::remove_topdie_inst(std::StringView name) -> bool {
-        return this->_topdie_insts.erase(name);
+        // return this->_topdie_insts.erase(name);
+        auto node = this->_topdie_insts.extract(name);
+        if (node.empty()) {
+            return false;
+        }
+
+        auto topdie_inst = std::move(node.mapped());
+        auto topdie_inst_ptr = topdie_inst.get();
+
+        // Remove all topdie 
+        for (auto& [sync, connections] : this->_connections) {
+            auto iter = std::remove_if(connections.begin(), connections.end(), [topdie_inst_ptr](std::Box<Connection>& c) -> bool {
+                auto is_input = std::match(c->input().connected_point(),
+                    [](const ConnectExPort& _) -> bool {
+                        return false;
+                    },
+                    [topdie_inst_ptr](const ConnectBump& bump) -> bool {
+                        return bump.inst == topdie_inst_ptr;
+                    }
+                );
+
+                auto is_output = std::match(c->output().connected_point(),
+                    [](const ConnectExPort& _) -> bool {
+                        return false;
+                    },
+                    [topdie_inst_ptr](const ConnectBump& bump) -> bool {
+                        return bump.inst == topdie_inst_ptr;
+                    }
+                );
+
+                return is_input || is_output;
+            });
+
+            connections.erase(iter, connections.end());
+        } 
+
+        return true;
+    }
+
+    auto BaseDie::remove_external_port(ExternalPort* eport) -> bool {
+        if (eport == nullptr) {
+            return false;
+        }
+        return this->remove_external_port(eport->name_view());
     }
 
     auto BaseDie::remove_external_port(std::StringView name) -> bool {
-        return this->_external_ports.erase(name);
+        auto node = this->_external_ports.extract(name);
+        if (node.empty()) {
+            return false;
+        }
+
+        auto port = std::move(node.mapped());
+        auto port_ptr = port.get();
+        
+        // Remove all connection in with this external_port!
+        for (auto& [sync, connections] : this->_connections) {
+            auto iter = std::remove_if(connections.begin(), connections.end(), [port_ptr](std::Box<Connection>& c) -> bool {
+                auto is_input = std::match(c->input().connected_point(),
+                    [port_ptr](const ConnectExPort& cep) -> bool {
+                        return cep.port == port_ptr;
+                    },
+                    [](const ConnectBump& cep) -> bool {
+                        return false;
+                    }
+                );
+
+                auto is_output = std::match(c->output().connected_point(),
+                    [port_ptr](const ConnectExPort& cep) -> bool {
+                        return cep.port == port_ptr;
+                    },
+                    [](const ConnectBump& cep) -> bool {
+                        return false;
+                    }
+                );
+
+                return is_input || is_output;
+            });
+
+            connections.erase(iter, connections.end());
+        }
+
+        return true;
     }
 
     auto BaseDie::remove_connection(Connection* connection) -> bool {
-        auto& connections = this->_connections.at(connection->sync());
-        auto s = std::remove_if(connections.begin(), connections.end(), [connection] (auto& c) {
-            return c.get() == connection;
-        });
+        if (connection == nullptr) {
+            return false;
+        }
 
+        auto res = this->_connections.find(connection->sync());
+        if (res == this->_connections.end()) {
+            return false;
+        }
+
+        auto& connections = res->second;
         auto iter = std::remove_if(connections.begin(), connections.end(), [connection] (auto& c) {
             return c.get() == connection;
         });
 
-        if (iter != connections.end()) {
-            connections.erase(iter, connections.end());
-            return true;
+        if (iter == connections.end()) {
+            return false;
         }
-        return false;
+        
+        connections.erase(iter, connections.end());
+        return true;
     }
 
     void BaseDie::topdie_inst_rename(TopDieInstance* inst, std::String new_name) {

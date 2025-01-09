@@ -6,7 +6,11 @@
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
 #include "./item/griditem.h"
+#include "qdebug.h"
+#include "qglobal.h"
+#include "qvector.h"
 
+#include <cassert>
 #include <circuit/connection/connection.hh>
 #include <circuit/topdieinst/topdieinst.hh>
 #include <circuit/basedie.hh>
@@ -174,7 +178,6 @@ namespace kiwi::widget {
 
     auto SchematicScene::addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem* {
         auto point = new schematic::NetPointItem {pin};
-        this->addItem(point);
         return point;
     }
 
@@ -201,8 +204,69 @@ namespace kiwi::widget {
 
         auto item = new schematic::NetItem {connection, beginPoint, endPoint};
         this->addItem(item);
+        this->_nets.insert(item);
 
         return item;
+    }
+
+    void SchematicScene::removeExPort(schematic::ExternalPortItem* eport) {
+        assert(eport != nullptr);
+
+        auto deleteNets = QVector<schematic::NetItem*>{};
+        for (auto net : this->_nets) {
+            auto beginPoint = net->beginPoint();
+            auto endPoint = net->endPoint();
+
+            assert(beginPoint != nullptr && endPoint != nullptr);
+
+            auto beginPin = beginPoint->connectedPin();
+            auto endPin = endPoint->connectedPin();
+
+            assert(beginPin != nullptr && endPin != nullptr);
+
+            if (eport->pin() == beginPin || eport->pin() == endPin) {
+                deleteNets.push_back(net);
+            }
+        }
+
+        for (auto net : deleteNets) {
+            this->removeNet(net);
+        }
+
+        this->_exportMap.remove(eport->exPort());
+        this->removeItem(eport);
+
+        delete eport->pin();
+        delete eport;
+    }
+
+    void SchematicScene::removeTopDieInst(schematic::TopDieInstanceItem* inst) {
+        // TODO!
+    }
+
+    void SchematicScene::removeNet(schematic::NetItem* net) {
+        // net has two point, each pin has 
+        assert(net != nullptr);
+    
+        auto beginPoint = net->beginPoint();
+        auto endPoint = net->endPoint();
+
+        assert(beginPoint != nullptr && endPoint != nullptr);
+
+        auto beginPin = beginPoint->connectedPin();
+        auto endPin = endPoint->connectedPin();
+
+        assert(beginPoint != nullptr && endPoint != nullptr);
+
+        beginPin->removeConnectedPoint(beginPoint);
+        endPin->removeConnectedPoint(endPoint);
+
+        this->removeItem(net);
+        this->_nets.remove(net);
+
+        delete net;
+        delete beginPoint;
+        delete endPoint;
     }
 
     auto SchematicScene::circuitPinToPinItem(const circuit::Pin& pin) -> schematic::PinItem* {
@@ -233,6 +297,7 @@ namespace kiwi::widget {
 
             this->_floatingNet->resetPaint();
             endPoint->setNetItem(this->_floatingNet);
+            this->_nets.insert(this->_floatingNet);
 
             this->_floatingNet = nullptr;
         } 

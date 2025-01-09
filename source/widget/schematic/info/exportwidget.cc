@@ -22,6 +22,7 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 #include <QGridLayout>
+#include <QMessageBox>
 
 namespace kiwi::widget::schematic {
 
@@ -92,6 +93,23 @@ namespace kiwi::widget::schematic {
                 static_cast<std::usize>(this->_indexSpinBox->value())
             };
             emit this->exportSetCoord(this->_eport, coord);
+        });
+
+        // Delete
+        auto deleteButton = new QPushButton {"Delete", widget};
+        deleteButton->setMinimumHeight(MIN_HEIGHT);
+        layout->addWidget(deleteButton, 6, 0, 1, 2);
+        connect(deleteButton, &QPushButton::clicked, [this] () {
+            auto response = QMessageBox::question(
+                nullptr, 
+                "Confirm", 
+                "Do yout want to delete this external port?",
+                QMessageBox::Yes | QMessageBox::No);
+        
+            if (response == QMessageBox::Yes) {
+                assert(this->_eport != nullptr);
+                this->removeExPort(this->_eport);
+            }
         });
     }
 
