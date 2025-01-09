@@ -21,18 +21,15 @@ namespace kiwi::widget::schematic {
     public:
         NetInfoWidget(QWidget* parent = nullptr);
 
-    public:
-        void loadNet(NetItem* net);
-
     signals:
         void netSyncChanged(NetItem* net, int sync);
-        // void netColorChanged(const QColor& color);
-        // void netWidthChanged(qreal width);
+        void netColorChanged(NetItem* net, const QColor& color);
+        void netWidthChanged(NetItem* net, qreal width);
         void removeNet(NetItem* net);
 
-    private:
-        void colorChanged(const QColor& color);
-        void widthChanged(qreal width);
+    public:
+        void loadNet(NetItem* net);
+        auto currentNet() -> NetItem*;
 
     protected:
         NetItem* _net {nullptr};

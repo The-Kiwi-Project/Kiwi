@@ -31,42 +31,23 @@ namespace kiwi::widget {
     ) :
         QStackedWidget{parent},
         _basedie{basedie},
-        _scene{scene}
+        _scene{scene},
+        _view{view}
     {
         this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-        // View 
-        this->_viewInfoWidget = new schematic::ViewInfoWidget {view, this};
+        this->createViewInfoWidget();
+        this->createNetInfoWidget();
+        this->createTopDieInstanceInfoWidget();
+        this->createExternalPortInfoWidget();
+    }
+
+    void SchematicInfoWidget::createViewInfoWidget() {
+        this->_viewInfoWidget = new schematic::ViewInfoWidget {this->_view, this};
         this->addWidget(this->_viewInfoWidget);
+    }
 
-        // Net info
-        this->_netInfoWidget = new schematic::NetInfoWidget {this};
-        this->addWidget(this->_netInfoWidget);
-
-        connect(this->_netInfoWidget, &schematic::NetInfoWidget::netSyncChanged, [this] (schematic::NetItem* net, int sync) {
-            this->_basedie->connection_set_sync(net->unwrap(), sync);
-        });
-
-        connect(this->_netInfoWidget, &schematic::NetInfoWidget::removeNet, [this] (schematic::NetItem* net) {
-            this->_basedie->remove_connection(net->unwrap());
-            this->_scene->removeNet(net);
-        });
-
-        // TopDie inst
-        this->_topdieInstInfoWidget = new schematic::TopDieInstanceInfoWidget {this};
-        this->addWidget(this->_topdieInstInfoWidget);
-
-        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::topdieInstanceRename, [this](schematic::TopDieInstanceItem* inst, const QString& name){
-            this->_basedie->topdie_inst_rename(inst->unwrap(), name.toStdString());
-            inst->setName(name);
-        });
-
-        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::removeTopDieInstance, [this] (schematic::TopDieInstanceItem* inst) {
-            this->_basedie->remove_topdie_inst(inst->unwrap());
-            this->_scene->removeTopDieInstance(inst);
-        });
-
-        // Export inst
+    void SchematicInfoWidget::createExternalPortInfoWidget() {
         this->_eportInfoWidget = new schematic::ExternalPortInfoWidget {this};
         this->addWidget(this->_eportInfoWidget);
 
@@ -82,6 +63,40 @@ namespace kiwi::widget {
         connect(this->_eportInfoWidget, &schematic::ExternalPortInfoWidget::removeExternalPort, [this] (schematic::ExternalPortItem* eport) {
             this->_basedie->remove_external_port(eport->unwrap());
             this->_scene->removeExternalPort(eport);
+        });
+    }
+
+    void SchematicInfoWidget::createNetInfoWidget() {
+        this->_netInfoWidget = new schematic::NetInfoWidget {this};
+        this->addWidget(this->_netInfoWidget);
+
+        connect(this->_netInfoWidget, &schematic::NetInfoWidget::netSyncChanged, [this] (schematic::NetItem* net, int sync) {
+            this->_basedie->connection_set_sync(net->unwrap(), sync);
+        });
+
+        connect(this->_netInfoWidget, &schematic::NetInfoWidget::netColorChanged, [this] (schematic::NetItem* net, const QColor& color) {
+            net->setColor(color);
+            net->update();
+        });
+
+        connect(this->_netInfoWidget, &schematic::NetInfoWidget::removeNet, [this] (schematic::NetItem* net) {
+            this->_basedie->remove_connection(net->unwrap());
+            this->_scene->removeNet(net);
+        });
+    }
+
+    void SchematicInfoWidget::createTopDieInstanceInfoWidget() {
+        this->_topdieInstInfoWidget = new schematic::TopDieInstanceInfoWidget {this};
+        this->addWidget(this->_topdieInstInfoWidget);
+
+        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::topdieInstanceRename, [this](schematic::TopDieInstanceItem* inst, const QString& name){
+            this->_basedie->topdie_inst_rename(inst->unwrap(), name.toStdString());
+            inst->setName(name);
+        });
+
+        connect(this->_topdieInstInfoWidget, &schematic::TopDieInstanceInfoWidget::removeTopDieInstance, [this] (schematic::TopDieInstanceItem* inst) {
+            this->_basedie->remove_topdie_inst(inst->unwrap());
+            this->_scene->removeTopDieInstance(inst);
         });
     }
 

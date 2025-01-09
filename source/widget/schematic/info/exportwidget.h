@@ -31,17 +31,17 @@ namespace kiwi::widget::schematic {
 
     public:
         void loadExternalPort(ExternalPortItem* eport);
+        auto currentExternalPort() -> ExternalPortItem*;
 
     protected:
-        ExternalPortItem* _eport {nullptr};
+        ExternalPortItem* _externalPort {nullptr};
 
         LineEditWithButton* _nameEdit {nullptr};
-        
-        QSpinBox* _rowSpinBox;
-        QSpinBox* _colSpinBox;
-        QComboBox* _dirComboBox;
-        QSpinBox* _indexSpinBox;
-        QPushButton* _setCoordButton;
+        QSpinBox* _rowSpinBox {nullptr};
+        QSpinBox* _colSpinBox {nullptr};
+        QComboBox* _dirComboBox {nullptr};
+        QSpinBox* _indexSpinBox {nullptr};
+        QPushButton* _setCoordButton {nullptr};
     };
 
 }

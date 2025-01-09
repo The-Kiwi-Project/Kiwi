@@ -36,7 +36,6 @@ namespace kiwi::widget {
         QSplitter* _splitter {nullptr};
 
         SchematicScene* _scene {nullptr};
-
         SchematicLibWidget* _libWidget {nullptr};
         SchematicView*  _view {nullptr};  
         SchematicInfoWidget* _infoWidget {nullptr};

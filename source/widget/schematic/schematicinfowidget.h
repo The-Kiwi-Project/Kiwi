@@ -32,21 +32,28 @@ namespace kiwi::widget {
             SchematicScene* scene,
             SchematicView* view, 
             QWidget* parent = nullptr);
+
+    private:
+        void createViewInfoWidget();
+        void createExternalPortInfoWidget();
+        void createNetInfoWidget();
+        void createTopDieInstanceInfoWidget();
         
     public:
+        void showViewInfo();
         void showExPortInfoWidget(schematic::ExternalPortItem*);
         void showNetInfoWidget(schematic::NetItem*);
         void showTopDieInstanceInfoWidget(schematic::TopDieInstanceItem*);
-        void showViewInfo();
 
     private:
         circuit::BaseDie* _basedie {nullptr};
         SchematicScene* _scene {nullptr};
+        SchematicView* _view {nullptr};
 
+        schematic::ViewInfoWidget* _viewInfoWidget {nullptr};
         schematic::ExternalPortInfoWidget* _eportInfoWidget {nullptr};
         schematic::NetInfoWidget* _netInfoWidget {nullptr};
         schematic::TopDieInstanceInfoWidget* _topdieInstInfoWidget {nullptr};
-        schematic::ViewInfoWidget* _viewInfoWidget {nullptr};
     };
 
 }

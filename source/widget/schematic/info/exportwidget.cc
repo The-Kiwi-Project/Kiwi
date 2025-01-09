@@ -48,8 +48,8 @@ namespace kiwi::widget::schematic {
         layout->addWidget(this->_nameEdit, 0, 1);
 
         connect(this->_nameEdit, &LineEditWithButton::textConfirmed, [this] (const QString& name) {
-            assert(this->_eport == nullptr);
-            emit this->externalPortRename(this->_eport, name);
+            assert(this->_externalPort == nullptr);
+            emit this->externalPortRename(this->_externalPort, name);
         });
 
         // Coord
@@ -92,7 +92,7 @@ namespace kiwi::widget::schematic {
                 this->_dirComboBox->currentIndex() == 0 ? hardware::TrackDirection::Horizontal : hardware::TrackDirection::Vertical,
                 static_cast<std::usize>(this->_indexSpinBox->value())
             };
-            emit this->externalPortSetCoord(this->_eport, coord);
+            emit this->externalPortSetCoord(this->_externalPort, coord);
         });
 
         // Delete
@@ -107,15 +107,15 @@ namespace kiwi::widget::schematic {
                 QMessageBox::Yes | QMessageBox::No);
         
             if (response == QMessageBox::Yes) {
-                assert(this->_eport != nullptr);
-                this->removeExternalPort(this->_eport);
+                assert(this->_externalPort != nullptr);
+                this->removeExternalPort(this->_externalPort);
             }
         });
     }
 
     void ExternalPortInfoWidget::loadExternalPort(ExternalPortItem* eport) {
-        this->_eport = eport;
-        if (this->_eport == nullptr) {
+        this->_externalPort = eport;
+        if (this->_externalPort == nullptr) {
             debug::exception("Load a empty externl port into ExPortInfoWidget");
         }
 
@@ -127,5 +127,9 @@ namespace kiwi::widget::schematic {
             eport->unwrap()->coord().dir == hardware::TrackDirection::Horizontal ? 0 : 1
         );
         this->_indexSpinBox->setValue(eport->unwrap()->coord().index);
+    }
+
+    auto ExternalPortInfoWidget::currentExternalPort() -> ExternalPortItem* {
+        return this->_externalPort;
     }
 }

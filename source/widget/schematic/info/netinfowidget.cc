@@ -3,6 +3,7 @@
 #include "../item/netpointitem.h"
 #include "../item/pinitem.h"
 #include "qboxlayout.h"
+#include "qcolor.h"
 #include "qgroupbox.h"
 #include "qpushbutton.h"
 #include "qspinbox.h"
@@ -68,7 +69,11 @@ namespace kiwi::widget::schematic {
         this->_colorButton->setMinimumHeight(30);
         layout->addWidget(this->_colorButton, 3, 1);
 
-        connect(this->_colorButton, &ColorPickerButton::colorChanged, this, &NetInfoWidget::colorChanged);
+        connect(this->_colorButton, &ColorPickerButton::colorChanged, [this] (const QColor& color) {
+            assert(this->_net != nullptr);
+            emit this->netColorChanged(this->_net, color);
+        });
+
         connect(this->_syncSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this] (int sync) {
             assert(this->_net != nullptr);
             emit this->netSyncChanged(this->_net, sync);
@@ -114,14 +119,9 @@ namespace kiwi::widget::schematic {
 
         this->_colorButton->setColor(this->_net->color());
     }
-        
-    void NetInfoWidget::colorChanged(const QColor& color) {
-        if (this->_net == nullptr) {
-            debug::exception("Change color for nullptr net");
-        }
 
-        this->_net->setColor(color);
-        this->_net->update();
+    auto NetInfoWidget::currentNet() -> NetItem* {
+        return this->_net;
     }
 
 }

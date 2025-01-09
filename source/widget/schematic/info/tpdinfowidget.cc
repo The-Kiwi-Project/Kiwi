@@ -51,8 +51,8 @@ namespace kiwi::widget::schematic {
         layout->addWidget(this->_pinMapView, 2, 0, 1, 2);
 
         connect(this->_nameEdit, &LineEditWithButton::textConfirmed, [this] (const QString& name) {
-            assert(this->_inst != nullptr);
-            this->topdieInstanceRename(this->_inst, name);
+            assert(this->_topdieInstance != nullptr);
+            this->topdieInstanceRename(this->_topdieInstance, name);
         });
 
         // Remove
@@ -68,8 +68,8 @@ namespace kiwi::widget::schematic {
                 QMessageBox::Yes | QMessageBox::No);
         
             if (response == QMessageBox::Yes) {
-                assert(this->_inst != nullptr);
-                emit this->removeTopDieInstance(this->_inst);
+                assert(this->_topdieInstance != nullptr);
+                emit this->removeTopDieInstance(this->_topdieInstance);
             }
         });
     
@@ -78,15 +78,15 @@ namespace kiwi::widget::schematic {
     }
 
     void TopDieInstanceInfoWidget::loadTopDieInstance(TopDieInstanceItem* inst) {
-        this->_inst = inst;
-        if (this->_inst == nullptr) {
+        this->_topdieInstance = inst;
+        if (this->_topdieInstance == nullptr) {
             debug::exception("Load a empty net into TopDieInstanceInfoWidget");
         }
 
-        this->_nameEdit->setText(this->_inst->name());
+        this->_nameEdit->setText(this->_topdieInstance->name());
 
         // Create model
-        const auto& pinmap = this->_inst->unwrap()->topdie()->pins_map();
+        const auto& pinmap = this->_topdieInstance->unwrap()->topdie()->pins_map();
         auto pinMapModel = new QStandardItemModel {static_cast<int>(pinmap.size()), 2};
         
         // Init header
@@ -104,6 +104,10 @@ namespace kiwi::widget::schematic {
         
         delete this->_pinMapView->model();
         this->_pinMapView->setModel(pinMapModel);
+    }
+
+    auto TopDieInstanceInfoWidget::currentTopDieInstance() -> TopDieInstanceItem* {
+        return this->_topdieInstance;
     }
 
 }

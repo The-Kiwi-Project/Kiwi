@@ -29,9 +29,10 @@ namespace kiwi::widget::schematic {
 
     public:
         void loadTopDieInstance(TopDieInstanceItem* inst);
+        auto currentTopDieInstance() -> TopDieInstanceItem*;
 
     protected:
-        TopDieInstanceItem* _inst {nullptr};
+        TopDieInstanceItem* _topdieInstance {nullptr};
 
         LineEditWithButton*_nameEdit {nullptr};
         QTableView* _pinMapView {nullptr};
