@@ -32,23 +32,21 @@ static auto print_config(hardware::Interposer* i, circuit::BaseDie* b) -> void {
     console::println("");
 }
 
-static auto test_muyan_xinzhai() -> void 
-try {
-    auto [i, b] = parse::read_config("../config/muyan");
+static auto test_case1() -> void try {
+    auto [i, b] = parse::read_config("../test/config/case1");
     print_config(i.get(), b.get());
 }
-THROW_UP_WITH("test_muyan_xinzhai")
+THROW_UP_WITH("test_case1")
 
-static auto test_muyan_xinzhai_no_bus() -> void 
-try{
-    auto [i, b] = parse::read_config("../config/muyan_no_bus");
+static auto test_case2() -> void  try{
+    auto [i, b] = parse::read_config("../test/config/case2");
     print_config(i.get(), b.get());
 }
-THROW_UP_WITH("test_muyan_xinzhai_no_bus")
+THROW_UP_WITH("test_case2")
 
 void test_config_main() 
 try {
-    test_muyan_xinzhai();
-    test_muyan_xinzhai_no_bus();
+    test_case1();
+    test_case2();
 }
 THROW_UP_WITH("test_config_main")

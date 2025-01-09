@@ -29,6 +29,12 @@ namespace kiwi::circuit {
         auto is_external_port_pin() const -> bool;
         auto is_topdie_instance_pin() const -> bool;
 
+    public:
+        auto is_pose_pin() const -> bool;
+        auto is_nege_pin() const -> bool;
+        auto is_fixed_pin() const -> bool;
+
+    public:
         auto connected_point() const -> const ConnectedPoint & 
         { return this->_point; }
 

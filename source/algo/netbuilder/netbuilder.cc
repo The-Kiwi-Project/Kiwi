@@ -12,6 +12,10 @@
 
 namespace kiwi::algo {
 
+    void build_nets(circuit::BaseDie* basedie, hardware::Interposer* interposer) {
+        algo::NetBuilder{basedie, interposer}.build();
+    }
+
     NetBuilder::NetBuilder(circuit::BaseDie* basedie, hardware::Interposer* interposer) :
         _interposer{interposer},
         _basedie{basedie}

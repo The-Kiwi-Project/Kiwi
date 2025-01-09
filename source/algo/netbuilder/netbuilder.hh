@@ -24,6 +24,8 @@ namespace kiwi::circuit {
 
 namespace kiwi::algo {
 
+    void build_nets(circuit::BaseDie* basedie, hardware::Interposer* interposer);
+
     class NetBuilder {
     public:
         NetBuilder(circuit::BaseDie* basedie, hardware::Interposer* interposer);

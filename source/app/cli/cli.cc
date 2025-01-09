@@ -19,12 +19,10 @@
 namespace kiwi {
 
     auto cli_main(std::StringView config_path, std::Option<std::StringView> output_path) -> int {
-//!
-debug::initial_log("./debug.log");
-//!
+        debug::initial_log("./debug.log");
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);
 
-        algo::NetBuilder{basedie.get(), interposer.get()}.build();
+        algo::build_nets(basedie.get(), interposer.get());
         auto l = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
         debug::info_fmt("Length: '{}'", l);
 

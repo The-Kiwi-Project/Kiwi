@@ -14,7 +14,6 @@ extern void test_router_main();
 extern void test_placer_main();
 extern void test_debug_main();
 extern void test_config_main();
-extern void test_kiwi_main();
 
 #define REGISTER_TEST(test_name)\
 functions.emplace(#test_name, & test_##test_name##_main);\
@@ -38,7 +37,6 @@ try {
     REGISTER_TEST(placer)
     REGISTER_TEST(debug)
     REGISTER_TEST(config)
-    REGISTER_TEST(kiwi)
 
     if (target == "all") {
         for (auto [test_name, test_func] : functions) {

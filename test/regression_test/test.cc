@@ -1,3 +1,4 @@
+#include "algo/netbuilder/netbuilder.hh"
 #include <catch2/catch_test_macros.hpp>
 #include <std/string.hh>
 #include <std/file.hh>
@@ -17,8 +18,9 @@ namespace kiwi::test {
             
             WHEN("Case 1: Muyan topdie with synchroinzed nets only"){
                 kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
-                std::FilePath config_path{"../test/regression_test/case1"};
+                std::FilePath config_path{"../test/config/case1"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                algo::build_nets(basedie.get(), interposer.get());
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
                 THEN("The total length should be within a limit"){
@@ -38,8 +40,9 @@ namespace kiwi::test {
 
             WHEN("Case 2: Muyan topdie with both synchroinzed and unsynchronized nets"){
                 kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
-                std::FilePath config_path{"../test/regression_test/case2"};
+                std::FilePath config_path{"../test/config/case2"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                algo::build_nets(basedie.get(), interposer.get());
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
                 THEN("The total length should be within a limit"){
@@ -59,8 +62,9 @@ namespace kiwi::test {
 
             WHEN("Case 3: Muyan topdie with unsynchronized nets only"){
                 kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
-                std::FilePath config_path{"../test/regression_test/case3"};
+                std::FilePath config_path{"../test/config/case3"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                algo::build_nets(basedie.get(), interposer.get());
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
                 THEN("The total length should be within a limit"){
@@ -80,8 +84,9 @@ namespace kiwi::test {
     
             WHEN("Case 4: A complete case with more nets & IO, including positive/negative ports"){
                 kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
-                std::FilePath config_path{"../test/regression_test/case4"};
+                std::FilePath config_path{"../test/config/case4"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                algo::build_nets(basedie.get(), interposer.get());
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
                 THEN("The total length should be within a limit"){
@@ -101,8 +106,9 @@ namespace kiwi::test {
 
             WHEN("Case 5: Test repeated connections"){
                 kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
-                std::FilePath config_path{"../test/regression_test/case5"};
+                std::FilePath config_path{"../test/config/case5"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                algo::build_nets(basedie.get(), interposer.get());
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
                 THEN("The total length should be within a limit"){
@@ -122,8 +128,9 @@ namespace kiwi::test {
 
             WHEN("Case 6: A case with a bit more connections then case1"){
                 kiwi::debug::set_debug_level(kiwi::debug::DebugLevel::Debug);
-                std::FilePath config_path{"../test/regression_test/case6"};
+                std::FilePath config_path{"../test/config/case6"};
                 auto [interposer, basedie] = kiwi::parse::read_config(config_path);
+                algo::build_nets(basedie.get(), interposer.get());
                 auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
 
                 THEN("The total length should be within a limit"){
