@@ -21,7 +21,7 @@ namespace kiwi::hardware {
     public:
         enum {
             // total columns = 12
-            COB_ARRAY_WIDTH   = 12,
+            COB_ARRAY_WIDTH   = 13,
             COB_ARRAY_HEIGHT  = 9,
 
             TOB_ARRAY_WIDTH   = 4,

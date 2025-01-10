@@ -83,15 +83,22 @@ xmake run module_test [module]
 
 ### regression_test
 
-集成系统各个模块，用于回归测试，目前包含 6 个 case ：
-|case|说明|
-|:---:|:---:|
-|[case1](./test/config/case1)|仅测试同步线布线功能|
-|[case2](./test/config/case2)|测试同步线，并对同步线中的一个bump增加一根连到I/O的线，测试已布线bump的复用|
-|[case3](./test/config/case3)|仅测试非同步线布线功能|
-|[case4](./test/config/case4)|包含 VDD/GND|
-|[case5](./test/config/case5)|重复连接|
-|[case6](./test/config/case6)|更多的连接数量|
+集成系统各个模块，用于回归测试，目前包含 16 个 case 。
+- case 1-6 测试基本的功能 ：
+    |case|说明|
+    |:---:|:---:|
+    |[case1](./test/config/case1)|仅测试同步线布线功能|
+    |[case2](./test/config/case2)|测试同步线，并对同步线中的一个bump增加一根连到I/O的线，测试已布线bump的复用|
+    |[case3](./test/config/case3)|仅测试非同步线布线功能|
+    |[case4](./test/config/case4)|包含 VDD/GND|
+    |[case5](./test/config/case5)|重复连接|
+    |[case6](./test/config/case6)|更多的连接数量|
+- case 7-16 使用构造的芯粒系统进行测试，系统中包含所有类型的线网与较多的线网数量 ：
+    |case|说明|
+    |:---:|:---:|
+    |case 7-9|一个 cpu-ai-mem 芯粒系统|
+    |case 10-12|一个 cpu 芯粒系统|
+    |case 13-16|一个 AI core 芯粒系统|
 
 编译：
 

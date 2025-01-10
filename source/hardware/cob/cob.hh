@@ -54,6 +54,7 @@ namespace kiwi::hardware {
 
     public:
         auto to_dir_track_coord(COBDirection dir, std::usize index) -> TrackCoord;
+        auto cobunit_by_cob_index(std::usize cob_index) -> COBUnit&;
 
     public:
         static auto track_index_map(COBDirection from_dir, std::usize from_track_index, COBDirection to_dir) -> std::usize;

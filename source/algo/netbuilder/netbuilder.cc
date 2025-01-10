@@ -24,6 +24,7 @@ namespace kiwi::algo {
 
     auto NetBuilder::build() -> void
     try {
+        build_01_ports();
         for (auto& [sync, connections] : this->_basedie->connections()) {
             if (sync == -1) {
                 this->build_no_sync_nets(connections);
@@ -309,28 +310,9 @@ namespace kiwi::algo {
         debug::unreachable("This pin can't be source type!!!");
     }
 
-    std::Vector<hardware::TrackCoord> NetBuilder::_pose_tracks {
-        // group1
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 10}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 19},
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 28}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 37},
-        // group2
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 46}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 55},
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 122}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 115},
-        // group3
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 108}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 101},
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 94}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 87}
-    };
-        
-    std::Vector<hardware::TrackCoord> NetBuilder::_nege_tracks {
-        // group1
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 17}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 26},
-        hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 35}, hardware::TrackCoord{0, 5, hardware::TrackDirection::Vertical, 44},
-        // group2
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 53}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 62},
-        hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 98}, hardware::TrackCoord{9, 4, hardware::TrackDirection::Vertical, 105},
-        // group3
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 91}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 84},
-        hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 77}, hardware::TrackCoord{4, 12, hardware::TrackDirection::Horizontal, 70}
-    };
+    auto NetBuilder::build_01_ports() -> void {
+        this->_pose_tracks = _basedie->pose_ports();
+        this->_nege_tracks = _basedie->nege_ports();
+    }
 
 }

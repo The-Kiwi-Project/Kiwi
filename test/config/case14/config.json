@@ -1,0 +1,9 @@
+{
+    "interposer": "",
+    "topdies": "",
+    "topdie_insts": "",
+    "external_ports": "",
+    "connections": "case1_16.txt",
+    "reigster_adder": "",
+    "ports_01" : "01_ports.json"
+}

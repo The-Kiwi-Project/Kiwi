@@ -37,18 +37,19 @@ namespace kiwi::algo {
         auto build_no_sync_nets(std::Span<const std::Box<circuit::Connection>> connections) -> void;
         auto build_sync_net(std::Span<const std::Box<circuit::Connection>> connections) -> void;
         auto build_fixed_nets() -> void;
+        auto build_01_ports() -> void;
      
         using Node = std::Variant<hardware::Track*, hardware::Bump*>;
         auto pin_to_node(const circuit::Pin& pin) -> Node;
-    
-        static std::Vector<hardware::TrackCoord> _pose_tracks;
-        static std::Vector<hardware::TrackCoord> _nege_tracks;
+        
 
     private:
         circuit::BaseDie* _basedie {nullptr};
         hardware::Interposer* _interposer {nullptr};
 
         // Temp var while build!
+        std::Vector<hardware::TrackCoord> _pose_tracks;
+        std::Vector<hardware::TrackCoord> _nege_tracks;
         std::Vector<hardware::Bump*> _bumps_with_pose {};
         std::Vector<hardware::Bump*> _bumps_with_nege {};
         std::HashMap<hardware::Bump*, circuit::TopDieInstance*> _bump_to_topdie_inst {};

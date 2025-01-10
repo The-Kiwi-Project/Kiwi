@@ -60,6 +60,7 @@ namespace kiwi::parse {
         this->add_topdieinst_to_basedie();
         this->add_external_ports_to_basedie();
         this->add_connections_to_basedie();
+        this->add_01ports_to_basedie();
         return { std::move(this->_interposer), std::move(this->_basedie) };
     }
     THROW_UP_WITH("Build system")
@@ -158,8 +159,8 @@ namespace kiwi::parse {
             if (tokens.size() != 2) {
                 debug::exception_fmt("Invalid topinst' pin name '{}'", name);
             }
-            auto topdie_inst_name = tokens[0];
-            auto pin_name = tokens[1];
+            auto topdie_inst_name = tokens.at(0);
+            auto pin_name = tokens.at(1);
 
             // Is inst exit?
             auto inst = this->_basedie->get_topdie_inst(topdie_inst_name);
@@ -176,6 +177,19 @@ namespace kiwi::parse {
             
             return circuit::Pin::connect_bump(*inst, std::String{pin_name});
         }
+    }
+
+    auto Reader::add_01ports_to_basedie() -> void {
+        this->_basedie->add_pose_port(parse_01(this->_config.ports_01.at("pose")));
+        this->_basedie->add_nege_port(parse_01(this->_config.ports_01.at("nege")));
+    }
+    
+    auto Reader::parse_01(const std::HashMap<std::String, hardware::TrackCoord>& ports) -> std::Vector<hardware::TrackCoord> {
+        auto tracks = std::Vector<hardware::TrackCoord>{};
+        for (auto& [_, coord] : ports) {
+            tracks.emplace_back(coord);
+        }
+        return std::move(tracks);
     }
 
 }

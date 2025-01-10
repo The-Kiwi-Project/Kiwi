@@ -4,5 +4,6 @@
     "topdie_insts": "topdie_insts.json",
     "external_ports": "external_ports.json",
     "connections": "connections.json",
-    "reigster_adder": "reigster_adder.json"
+    "reigster_adder": "reigster_adder.json",
+    "ports_01" : "01_ports.json"
 }

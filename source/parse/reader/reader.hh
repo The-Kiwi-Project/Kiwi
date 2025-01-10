@@ -72,8 +72,10 @@ namespace kiwi::parse {
         auto add_topdieinst_to_basedie() -> void;
         auto add_external_ports_to_basedie() -> void;
         auto add_connections_to_basedie() -> void;
+        auto add_01ports_to_basedie() -> void;
 
         auto parse_connection_pin(std::StringView name) -> circuit::Pin;
+        auto parse_01(const std::HashMap<std::String, hardware::TrackCoord>& ports) -> std::Vector<hardware::TrackCoord>;
         
     private:
         const Config& _config;

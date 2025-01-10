@@ -1,0 +1,14 @@
+CPU AI MEM test by xl
+Bump - Bump 
+CPU-AI: 4 groups of bus-nets, 8 net per bus
+CPU-MEM: 4 groups of nets, 4-net-bus + 4-unsync-net per group
+MEM-MEM: 4 groups of bus-nets, 4 net per bus
+Track - Bump
+I/O->cpu, 64 nets
+0/1->cpu, 32 nets
+0/1->AI, 64 nets
+
+!!! COB array = 9 * 13
+
+目前结果：约1437
+

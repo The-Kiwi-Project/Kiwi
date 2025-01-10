@@ -1,0 +1,5 @@
+AI core test by xl
+
+（这个xl的程序布线失败）
+
+!!! COB array = 9 * 13

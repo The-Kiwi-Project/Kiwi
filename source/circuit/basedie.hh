@@ -26,6 +26,8 @@ namespace kiwi::circuit {
         auto add_external_port(std::String name, const hardware::TrackCoord& coord) -> ExternalPort*;
         auto add_external_port(const hardware::TrackCoord& coord) -> ExternalPort*;
         auto add_connection(int sync, Pin input, Pin output) -> Connection*;
+        auto add_pose_port(const std::Vector<hardware::TrackCoord>& ports) -> void;
+        auto add_nege_port(const std::Vector<hardware::TrackCoord>& ports) -> void;
 
         auto add_net(std::Box<Net>) -> void;
 
@@ -76,6 +78,12 @@ namespace kiwi::circuit {
         auto connections() const -> const std::HashMap<int, std::Vector<std::Box<Connection>>>& 
         { return this->_connections; }
 
+        auto pose_ports() const -> const std::Vector<hardware::TrackCoord>&
+        { return this-> _pose_ports; }
+
+        auto nege_ports() const -> const std::Vector<hardware::TrackCoord>&
+        { return this-> _nege_ports; }
+
         auto nets() -> std::Vector<std::Box<Net>>& 
         { return this->_nets; }
 
@@ -87,6 +95,8 @@ namespace kiwi::circuit {
         std::HashMap<std::StringView, std::Box<TopDieInstance>> _topdie_insts {};
         std::HashMap<std::StringView, std::Box<ExternalPort>> _external_ports {};
         std::HashMap<int, std::Vector<std::Box<Connection>>> _connections {};
+        std::Vector<hardware::TrackCoord> _pose_ports {};
+        std::Vector<hardware::TrackCoord> _nege_ports {};
 
         std::Vector<std::Box<Net>> _nets;
     };

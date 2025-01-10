@@ -1,0 +1,7 @@
+AI core test by xl
+16 groups, each:
+16 Bump-Bump sync nets + 32 unsync_net(Bump-Bump & Track-Bump)
+
+（这个xl的程序布线失败）
+
+!!! COB array = 9 * 13

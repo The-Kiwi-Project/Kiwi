@@ -148,6 +148,13 @@ namespace kiwi::hardware {
         return cobunit_index * COBUnit::WILTON_SIZE + cobunit_inner_index; 
     }
 
+    auto COB::cobunit_by_cob_index(std::usize cob_index) -> COBUnit& {
+        COB::assert_index(cob_index);
+        auto bank_size = COB::INDEX_SIZE / 2;
+        auto unit = (cob_index / bank_size)*COBUnit::WILTON_SIZE + (cob_index % COBUnit::WILTON_SIZE);
+        return *(_cobunits[unit]); 
+    }
+
     auto COB::assert_index(std::usize index) -> void {
         assert(index < COB::INDEX_SIZE);
     }

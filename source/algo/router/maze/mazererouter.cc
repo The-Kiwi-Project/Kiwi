@@ -195,6 +195,7 @@ namespace kiwi::algo{
 
     auto MazeRerouter::Manhattan_distance(const std::Rc<Node> node, const std::HashSet<hardware::Track*>& end_tracks) const -> std::usize{
         assert(end_tracks.size() > 0);
+        // check all end_tracks are below the same tob
         auto co {(*end_tracks.begin())->coord()};
         for (auto it = end_tracks.begin(); it != end_tracks.end(); ++it){
             if((*it)->coord().row != co.row || (*it)->coord().col != co.col){
@@ -203,8 +204,83 @@ namespace kiwi::algo{
             co = (*it)->coord();
         }
 
-        auto coord {(*end_tracks.begin())->coord()};
-        return std::abs(node->track()->coord().row - coord.row) + std::abs(node->track()->coord().col - coord.col);
+        auto begin_coord {(*end_tracks.begin())->coord()};
+        auto end_coord {node->track()->coord()};
+        if (begin_coord.row == end_coord.row && begin_coord.col == end_coord.col && begin_coord.dir == end_coord.dir){
+            return 0;
+        }
+        else if (begin_coord.row == end_coord.row && begin_coord.col == end_coord.col && begin_coord.dir != end_coord.dir) {
+            return 1;
+        }
+        else if ((begin_coord.row == end_coord.row || begin_coord.col == end_coord.col) && begin_coord.dir == end_coord.dir){
+            return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) + 1;
+        }
+        else if ((begin_coord.row == end_coord.row || begin_coord.col == end_coord.col) && begin_coord.dir != end_coord.dir){
+            if (begin_coord.dir == hardware::TrackDirection::Horizontal && end_coord.dir == hardware::TrackDirection::Vertical){
+                if (begin_coord.row == end_coord.row && begin_coord.col < end_coord.col){
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) + 1;
+                }
+                else if (begin_coord.row == end_coord.row && begin_coord.col > end_coord.col){
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                }
+                else if (begin_coord.row < end_coord.row && begin_coord.col == end_coord.col){
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                }
+                else{
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) + 1;
+                }
+            }
+            else {
+                if (begin_coord.row == end_coord.row && begin_coord.col < end_coord.col){
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                }
+                else if (begin_coord.row == end_coord.row && begin_coord.col > end_coord.col){
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) + 1;
+                }
+                else if (begin_coord.row < end_coord.row && begin_coord.col == end_coord.col){
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) + 1;
+                }
+                else {
+                    return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                }
+            }
+        }
+        else {
+            if (begin_coord.dir == end_coord.dir){
+                return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+            }
+            else{
+                if (begin_coord.dir == hardware::TrackDirection::Horizontal && end_coord.dir == hardware::TrackDirection::Vertical){
+                    if (begin_coord.row < end_coord.row && begin_coord.col < end_coord.col){
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                    }
+                    else if (begin_coord.row < end_coord.row && begin_coord.col > end_coord.col){
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) - 1;
+                    }
+                    else if (begin_coord.row > end_coord.row && begin_coord.col < end_coord.col){
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) + 1;
+                    }
+                    else {
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                    }
+                }
+                else {
+                    if (begin_coord.row < end_coord.row && begin_coord.col < end_coord.col){
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                    }
+                    else if (begin_coord.row < end_coord.row && begin_coord.col > end_coord.col){
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) + 1;
+                    }
+                    else if (begin_coord.row > end_coord.row && begin_coord.col < end_coord.col){
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col) - 1;
+                    }
+                    else {
+                        return std::abs(end_coord.row - begin_coord.row) + std::abs(end_coord.col - begin_coord.col);
+                    }
+                }
+            }
+        }
+
     }
 
     auto MazeRerouter::refind_path(
@@ -321,3 +397,5 @@ debug::debug("Rerouting...");
     }
 
 }
+
+

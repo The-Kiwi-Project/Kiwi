@@ -78,6 +78,14 @@ namespace kiwi::circuit {
         return iter.get();
     }
 
+    auto BaseDie::add_pose_port(const std::Vector<hardware::TrackCoord>& ports) -> void {
+        this->_pose_ports = ports;
+    }
+
+    auto BaseDie::add_nege_port(const std::Vector<hardware::TrackCoord>& ports) -> void {
+        this->_nege_ports = ports;
+    }
+
     auto BaseDie::add_net(std::Box<Net> net) -> void {
         this->_nets.emplace_back(std::move(net));
     }
