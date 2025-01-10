@@ -65,7 +65,7 @@ namespace kiwi::parse {
     static auto load_ports_01_config(const std::FilePath& path, std::HashMap<std::String, std::HashMap<std::String, hardware::TrackCoord>>& ports_01) -> void;
 
     static auto load_from_txt(const std::FilePath& path, Config& config) -> void;
-    static auto parse_txt_line(const std::String& topdie1, const std::String& topdie2, const std::Array<std::usize, 11>& numbers, Config& config) -> void;
+    static auto parse_txt_line(const std::String& topdie1, const std::String& topdie2, const std::Array<int, 11>& numbers, Config& config) -> void;
 
     auto load_config(const std::FilePath& config_folder) -> Config 
     try {
@@ -191,7 +191,7 @@ namespace kiwi::parse {
             debug::exception_fmt("Cannot open file '{}'", path.string());
         }
 
-        std::Array<std::usize, 11> numbers;  // input[dir, x, y, bump_x, bump_y], output[dir, x, y, bump_x, bump_y], net_tag
+        std::Array<int, 11> numbers;  // input[dir, x, y, bump_x, bump_y], output[dir, x, y, bump_x, bump_y], net_tag
         std::string line, topdie_name1, topdie_name2;
         while (std::getline(file, line)) {
             // skip empty line
@@ -213,7 +213,7 @@ namespace kiwi::parse {
 
             // parse line
             std::stringstream ss(line);  
-            std::usize num, pos=0;
+            int num, pos=0;
             while (ss >> num) {
                 numbers[pos++] = num;
             }
@@ -225,13 +225,13 @@ namespace kiwi::parse {
     }
     THROW_UP_WITH("Load from txt")
 
-    auto parse_txt_line(const std::String& topdie1, const std::String& topdie2, const std::Array<std::usize, 11>& numbers, Config& config) -> void
+    auto parse_txt_line(const std::String& topdie1, const std::String& topdie2, const std::Array<int, 11>& numbers, Config& config) -> void
     try{
         const auto net_tag = numbers.back();
         std::String input{}, output{};
 
-        auto parse_node = [&config](const std::Array<std::usize, 5>& info, std::String& node, const std::String& topdie){
-            std::Vector<std::usize> externs { 0,9,18,27,36,45,54,63,120,113,106,99,92,85,78,71 };
+        auto parse_node = [&config](const std::Array<int, 5>& info, std::String& node, const std::String& topdie){
+            std::Vector<int> externs { 0,9,18,27,36,45,54,63,120,113,106,99,92,85,78,71 };
             if (topdie != "cpu" && topdie != "AI" && topdie != "mem" && topdie != "extIO" && topdie != "0/1"){
                 debug::exception_fmt("Invalid topdie_name '{}'", topdie);
             }
