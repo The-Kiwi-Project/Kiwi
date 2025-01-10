@@ -1,8 +1,10 @@
 #pragma once
 
+#include "qchar.h"
 #include "qhash.h"
 #include "qset.h"
 #include "qvector.h"
+#include "widget/schematic/item/sourceportitem.h"
 #include <QGraphicsScene>
 
 namespace kiwi::circuit {
@@ -22,6 +24,7 @@ namespace kiwi::widget {
         class PinItem;
         class TopDieInstanceItem;
         class ExternalPortItem;
+        class SourcePortItem;
     }
 
     class SchematicScene : public QGraphicsScene {
@@ -45,6 +48,8 @@ namespace kiwi::widget {
         auto addExPort(circuit::ExternalPort*) -> schematic::ExternalPortItem*;
         auto addTopDieInst(circuit::TopDieInstance* inst) -> schematic::TopDieInstanceItem*;
         auto addNet(circuit::Connection* connection) -> schematic::NetItem*;
+        auto addVDDSourcePort(const QString& name) -> schematic::SourcePortItem*;
+        auto addGNDSourcePort(const QString& name) -> schematic::SourcePortItem*;
 
     public:
         void removeExternalPort(schematic::ExternalPortItem* eport);
@@ -58,7 +63,7 @@ namespace kiwi::widget {
         /*
             Load all item from the basedie!
         */
-        void initialSceneItems();
+        void addSceneItems();
 
     public:
         void headleCreateNet(schematic::PinItem* pin, QGraphicsSceneMouseEvent* event);
@@ -70,9 +75,9 @@ namespace kiwi::widget {
         { return this->_topdieinstMap; }
 
     private:
-        void initialTopDieInstItems();
-        void initialExternalPortItems();
-        void initialNetItems();
+        void addTopDieInstItems();
+        void addExternalPortItems();
+        void addNetItems();
 
     private:
         auto circuitPinToPinItem(const circuit::Pin& pin) -> schematic::PinItem*;
@@ -90,6 +95,8 @@ namespace kiwi::widget {
         QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
         QHash<circuit::ExternalPort*, schematic::ExternalPortItem*> _exportMap;
         QSet<schematic::NetItem*> _nets;
+        QVector<schematic::SourcePortItem*> _vddPorts;
+        QVector<schematic::SourcePortItem*> _gndPorts;
 
         schematic::PinItem* _vddPinItem;
         schematic::PinItem* _gndPinItem;

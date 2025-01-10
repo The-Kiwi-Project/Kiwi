@@ -9,8 +9,12 @@
 
 namespace kiwi::circuit {
 
-    struct ConnectVDD {};
-    struct ConnectGND {};
+    struct ConnectVDD {
+        std::String name;
+    };
+    struct ConnectGND {
+        std::String name;
+    };
 
     struct ConnectExPort {
         ExternalPort* port;
@@ -36,8 +40,8 @@ namespace kiwi::circuit {
         static constexpr std::usize BUMP_INDEX = 3;
 
     public:
-        static auto connect_vdd() -> Pin;
-        static auto connect_gnd() -> Pin;
+        static auto connect_vdd(std::String name) -> Pin;
+        static auto connect_gnd(std::String name) -> Pin;
         static auto connect_export(ExternalPort* port) -> Pin; 
         static auto connect_bump(TopDieInstance* inst, std::String name) -> Pin;
 

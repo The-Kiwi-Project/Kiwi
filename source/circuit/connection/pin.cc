@@ -7,12 +7,12 @@ namespace kiwi::circuit {
     {
     }
 
-    auto Pin::connect_vdd() -> Pin {
-        return Pin { ConnectVDD {} };
+    auto Pin::connect_vdd(std::String name) -> Pin {
+        return Pin { ConnectVDD { std::move(name) } };
     }
 
-    auto Pin::connect_gnd() -> Pin {
-        return Pin { ConnectGND {} };
+    auto Pin::connect_gnd(std::String name) -> Pin {
+        return Pin { ConnectGND { std::move(name) } };
     }
 
     auto Pin::connect_export(ExternalPort* port) -> Pin {

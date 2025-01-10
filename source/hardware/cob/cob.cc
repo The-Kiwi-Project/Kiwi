@@ -82,7 +82,7 @@ namespace kiwi::hardware {
             case COBDirection::Up: return TrackCoord{coord.row + 1, coord.col, TrackDirection::Vertical, index};
             case COBDirection::Down: return TrackCoord{coord.row, coord.col, TrackDirection::Vertical, index};
         }
-        debug::unreachable();
+        debug::unreachable("COB::to_dir_track_coord");
     }
 
     auto COB::track_index_map(COBDirection from_dir, std::usize from_track_index, COBDirection to_dir) -> std::usize {

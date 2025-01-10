@@ -135,10 +135,10 @@ namespace kiwi::parse {
 
     auto Reader::parse_connection_pin(std::StringView name) -> circuit::Pin {
         if (name.ends_with("pose")) {
-            return circuit::Pin::connect_vdd();
+            return circuit::Pin::connect_vdd(std::String{name});
         } 
         else if (name.ends_with("nege")) {
-            return circuit::Pin::connect_gnd();
+            return circuit::Pin::connect_gnd(std::String{name});
         }
         else if (std::StringView::npos == name.find('.')) {
             /// 

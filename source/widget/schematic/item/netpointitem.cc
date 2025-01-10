@@ -18,13 +18,14 @@ namespace kiwi::widget::schematic {
         QGraphicsEllipseItem{parent}, 
         _connectedPin{connectedPin}
     {
+        qDebug() << "??";
         this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
         this->setBrush(COLOR);
         this->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsScenePositionChanges);
         this->setAcceptHoverEvents(true);
 
         this->linkToPin(connectedPin);
-        this->setZValue(10);
+        // this->setZValue(10);
     }
  
     void NetPointItem::linkToPin(PinItem* pin) {

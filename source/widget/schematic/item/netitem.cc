@@ -139,7 +139,7 @@ namespace kiwi::widget::schematic {
             this->updateEndPosition(pos);
             this->updateEndPin(pointItem->connectedPin());
         } else {
-            debug::unreachable();
+            debug::unreachable("NetItem::updatePositionFrom");
         }
     }
 

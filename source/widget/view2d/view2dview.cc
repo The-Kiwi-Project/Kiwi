@@ -271,7 +271,7 @@ namespace kiwi::widget {
                 return std::Tuple<QPointF, QPointF>{QPointF{x, downY}, QPointF{x, upY}};
             }
         }
-        debug::unreachable();
+        debug::unreachable("View2DView::trackPositions");
     }
 
     auto View2DView::cobPosition(const hardware::COBCoord& coord) -> QPointF {

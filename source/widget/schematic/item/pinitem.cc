@@ -1,4 +1,5 @@
 #include "./pinitem.h"
+#include "debug/debug.hh"
 #include "qcolor.h"
 #include "qglobal.h"
 #include "qnamespace.h"
@@ -7,6 +8,7 @@
 #include "./netitem.h"
 #include "./netpointitem.h"
 #include "./topdieinstitem.h"
+#include "./sourceportitem.h"
 #include "../schematicscene.h"
 #include "./exportitem.h"
 #include <QGraphicsSceneMouseEvent>
@@ -105,7 +107,11 @@ namespace kiwi::widget::schematic {
     }
 
     auto PinItem::isTopDieInstancePin() const -> bool {
-        return !this->isExternalPortPin();
+        return this->parentItem()->type() == TopDieInstanceItem::Type;
+    }
+
+    auto PinItem::isSourcePortPin() const -> bool {
+        return this->parentItem()->type() == SourcePortItem::Type;
     }
 
     auto PinItem::toString() const -> QString {
@@ -117,18 +123,28 @@ namespace kiwi::widget::schematic {
 
     auto PinItem::toCircuitPin() const -> circuit::Pin {
         assert(this->parentItem() != nullptr);
-        auto circuitPin = this->isExternalPortPin() ? (
-            circuit::Pin::connect_export(
+
+        if (this->isExternalPortPin()) {
+            return circuit::Pin::connect_export(
                 this->parentExternalPort()->unwrap()
-            )
-        ) : (
-            circuit::Pin::connect_bump(
+            );
+        }
+        else if (this->isTopDieInstancePin()) {
+            return circuit::Pin::connect_bump(
                 this->parentTopDieInstance()->unwrap(),
                 this->name().toStdString()
-            )
-        );
+            );
+        }
+        else if (this->isSourcePortPin()) {
+            auto port = this->parentSourcePort();
+            if (port->isVDD()) {
+                return circuit::Pin::connect_vdd(this->name().toStdString());
+            } else {
+                return circuit::Pin::connect_gnd(this->name().toStdString());
+            }
+        }
 
-        return circuitPin;
+        debug::unreachable("PinItem::toCircuitPin()");
     }
 
     auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {
@@ -165,6 +181,11 @@ namespace kiwi::widget::schematic {
     auto PinItem::parentTopDieInstance() const -> TopDieInstanceItem* {
         assert(this->parentItem() != nullptr);
         return dynamic_cast<TopDieInstanceItem*>(this->parentItem());   
+    }
+
+    auto PinItem::parentSourcePort() const -> SourcePortItem* {
+        assert(this->parentItem() != nullptr);
+        return dynamic_cast<SourcePortItem*>(this->parentItem());     
     }
 
 }

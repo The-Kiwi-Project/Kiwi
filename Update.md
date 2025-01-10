@@ -11,5 +11,5 @@
 
 3. 在 BaseDie 类中添加部分编辑电路信息的 API
 
-4. 修改 reader.cc，将创建 Net 对象的步骤转移到 algo 模块，需要在布线前单独调用（也许可能将 Net 直接放在 algo 模块中）
+4. 修改 reader.cc，将创建 Net 对象的步骤转移到 algo 模块，需要在布线前单独调用（也许可能将 Net 直接放在 algo 模块中）！！！
 

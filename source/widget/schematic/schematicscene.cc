@@ -6,7 +6,9 @@
 #include "./item/exportitem.h"
 #include "./item/topdieinstitem.h"
 #include "./item/griditem.h"
+#include "./item/sourceportitem.h"
 #include "circuit/connection/pin.hh"
+#include "qpoint.h"
 
 #include <cassert>
 #include <circuit/connection/connection.hh>
@@ -37,23 +39,24 @@ namespace kiwi::widget {
         (int)schematic::PinItem::Type,
         (int)schematic::TopDieInstanceItem::Type,
         (int)schematic::NetPointItem::Type,
-        (int)schematic::ExternalPortItem::Type
+        (int)schematic::ExternalPortItem::Type,
+        (int)schematic::SourcePortItem::Type
     >::value);
 
     SchematicScene::SchematicScene(circuit::BaseDie* basedie) :
         _basedie{basedie},
         QGraphicsScene{}
     {
-        this->initialSceneItems();
+        this->addSceneItems();
     }
 
-    void SchematicScene::initialSceneItems() {
-        this->initialTopDieInstItems();
-        this->initialExternalPortItems();
-        this->initialNetItems();
+    void SchematicScene::addSceneItems() {
+        this->addTopDieInstItems();
+        this->addExternalPortItems();
+        this->addNetItems();
     }
 
-    void SchematicScene::initialTopDieInstItems() {
+    void SchematicScene::addTopDieInstItems() {
         // Load all topdie inst!
         for (auto& [name, topdie] : this->_basedie->topdie_insts()) {
             auto t = this->addTopDieInst(topdie.get());
@@ -81,7 +84,7 @@ namespace kiwi::widget {
         }
     }
 
-    void SchematicScene::initialExternalPortItems() {
+    void SchematicScene::addExternalPortItems() {
         auto i = 0;
         for (auto& [name, eport] : this->_basedie->external_ports()) {
             auto p = this->addExPort(eport.get());
@@ -94,7 +97,7 @@ namespace kiwi::widget {
         }
     }
 
-    void SchematicScene::initialNetItems() {
+    void SchematicScene::addNetItems() {
         for (auto& [sync, connections] : this->_basedie->connections()) {
             for (const auto& connection : connections) {
                 this->addNet(connection.get());
@@ -207,6 +210,36 @@ namespace kiwi::widget {
         return item;
     }
 
+    auto SchematicScene::addVDDSourcePort(const QString& name) -> schematic::SourcePortItem* {
+        auto item = new schematic::SourcePortItem{name, schematic::SourcePortType::VDD};
+        this->_vddPorts.push_back(item);
+        this->addItem(item);
+        
+        auto x = 0.;
+        for (auto i : this->_vddPorts) {
+            x += (i->width() + 2 * schematic::GridItem::GRID_SIZE);
+        }
+
+        item->setPos(QPointF{x, -5 * schematic::GridItem::GRID_SIZE});
+
+        return item;
+    }
+
+    auto SchematicScene::addGNDSourcePort(const QString& name) -> schematic::SourcePortItem* {
+        auto item = new schematic::SourcePortItem{name, schematic::SourcePortType::GND};
+        this->_gndPorts.push_back(item);
+        this->addItem(item);
+        
+        auto x = 0.;
+        for (auto i : this->_gndPorts) {
+            x += (i->width() + 2 * schematic::GridItem::GRID_SIZE);
+        }
+
+        item->setPos(QPointF{x, -10 * schematic::GridItem::GRID_SIZE});
+
+        return item;
+    }
+
     void SchematicScene::removeExternalPort(schematic::ExternalPortItem* eport) {
         assert(eport != nullptr);
         // debug::debug_fmt("Remove external port '{}'", eport->exPort()->name());
@@ -275,11 +308,11 @@ namespace kiwi::widget {
 
     auto SchematicScene::circuitPinToPinItem(const circuit::Pin& pin) -> schematic::PinItem* {
         return std::match(pin.connected_point(),
-            [this](const circuit::ConnectVDD& _) -> schematic::PinItem* {
-                return this->_vddPinItem;
+            [this](const circuit::ConnectVDD& vdd) -> schematic::PinItem* {
+                return this->addVDDSourcePort(QString::fromStdString(vdd.name))->pin();
             },
-            [this](const circuit::ConnectGND& _) -> schematic::PinItem* {
-                return this->_vddPinItem;
+            [this](const circuit::ConnectGND& gnd) -> schematic::PinItem* {
+                return this->addGNDSourcePort(QString::fromStdString(gnd.name))->pin();
             },
             [this](const circuit::ConnectExPort& eport) -> schematic::PinItem* {
                 auto eportItem = this->_exportMap.value(eport.port);

@@ -306,7 +306,7 @@ namespace kiwi::algo {
             return Node{*bump};
         }
         
-        debug::unreachable();
+        debug::unreachable("This pin can't be source type!!!");
     }
 
     std::Vector<hardware::TrackCoord> NetBuilder::_pose_tracks {

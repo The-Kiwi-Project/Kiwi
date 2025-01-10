@@ -23,6 +23,7 @@ namespace kiwi::widget::schematic {
     class NetPointItem;
     class TopDieInstanceItem;
     class ExternalPortItem;
+    class SourcePortItem;
 
     class PinItem : public QGraphicsItem {
     public:
@@ -59,6 +60,9 @@ namespace kiwi::widget::schematic {
     public:
         auto isExternalPortPin() const -> bool;
         auto isTopDieInstancePin() const -> bool;
+        auto isSourcePortPin() const -> bool;
+
+    public:
         auto toString() const -> QString;
         auto toCircuitPin() const -> circuit::Pin;
 
@@ -81,6 +85,7 @@ namespace kiwi::widget::schematic {
     public:
         auto parentExternalPort() const -> ExternalPortItem*;
         auto parentTopDieInstance() const -> TopDieInstanceItem*;
+        auto parentSourcePort() const -> SourcePortItem*;
 
     private:
         QString _name;
