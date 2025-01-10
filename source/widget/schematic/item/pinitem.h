@@ -1,12 +1,10 @@
 #pragma once
 
-#include "qglobal.h"
-#include "qvariant.h"
-#include "qvector.h"
 #include <QColor>
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QDebug>
+#include <circuit/connection/pin.hh>
 
 namespace kiwi::widget {
    class SchematicScene;
@@ -23,6 +21,9 @@ namespace kiwi::widget::schematic {
 
     class NetItem;
     class NetPointItem;
+    class TopDieInstanceItem;
+    class ExternalPortItem;
+    class SourcePortItem;
 
     class PinItem : public QGraphicsItem {
     public:
@@ -35,13 +36,15 @@ namespace kiwi::widget::schematic {
         static const    QColor COLOR;
         static const    QColor HOVERED_COLOR;
 
-        enum { Type = UserType + 2 };
+        enum { Type = UserType + 5 };
         int type() const override { return Type; }
     
     public:
         PinItem(
-            const QString &name, QPointF position, PinSide side, 
-            SchematicScene* scene, QGraphicsItem *parent = nullptr
+            const QString &name, 
+            QPointF position, 
+            PinSide side, 
+            QGraphicsItem *parent = nullptr
         );
 
     public:        
@@ -50,13 +53,25 @@ namespace kiwi::widget::schematic {
         auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
 
     protected:
-        // void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
         void mousePressEvent(QGraphicsSceneMouseEvent*) override;
         void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
 
+    public:
+        auto isExternalPortPin() const -> bool;
+        auto isTopDieInstancePin() const -> bool;
+        auto isSourcePortPin() const -> bool;
+
+    public:
+        auto toString() const -> QString;
+        auto toCircuitPin() const -> circuit::Pin;
+
     public: 
         auto name() const -> const QString& { return this->_name; }
+        void setName(const QString& name) { this->_name = name; }
+
+        auto connectedPoints() const -> const QVector<NetPointItem*>& 
+        { return this->_connectedNetPoints; }
 
         void addConnectedPoint(NetPointItem* point) 
         { this->_connectedNetPoints.push_back(point); }
@@ -67,17 +82,19 @@ namespace kiwi::widget::schematic {
         void setRaduis(qreal radius) { this->_raduis = radius; }
         void resetRaduis() { this->_raduis = PIN_RADIUS; }
 
+    public:
+        auto parentExternalPort() const -> ExternalPortItem*;
+        auto parentTopDieInstance() const -> TopDieInstanceItem*;
+        auto parentSourcePort() const -> SourcePortItem*;
+
     private:
         QString _name;
         PinSide _side;
 
         qreal _raduis {PIN_RADIUS};
-
-        QVector<NetPointItem*> _connectedNetPoints {};
-
         bool _hovered {false};
 
-        SchematicScene* _scene;
+        QVector<NetPointItem*> _connectedNetPoints {};
     };
 
 

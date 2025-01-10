@@ -1,3 +1,4 @@
+#include "algo/netbuilder/netbuilder.hh"
 #include <catch2/catch_test_macros.hpp>
 #include <std/string.hh>
 #include <std/file.hh>
@@ -5,14 +6,16 @@
 #include <parse/reader/module.hh>
 #include <algo/router/route.hh>
 #include <algo/router/maze/mazeroutestrategy.hh>
+#include <algo/netbuilder/netbuilder.hh>
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 
 
 #define PLEASE_DO_NOT_FAIL(id, info) \
     WHEN("Case " #id ": " info) {\
-        std::FilePath config_path{"../test/regression_test/case" #id};\
+        std::FilePath config_path{"../test/config/case" #id};\
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);\
+        algo::build_nets(basedie.get(), interposer.get());\
         auto total_length = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});\
         THEN("The total length should be within a limit"){\
             std::ifstream golden_file(config_path / "golden.txt");\
@@ -31,19 +34,19 @@
 
 namespace kiwi::test{
 
-    // SCENARIO("Regression test for basic kiwi functions", "[basic]"){
+    SCENARIO("Regression test for basic kiwi functions", "[basic]"){
         
-    //     GIVEN("Configs, describing connections, external_ports, topdies and topdie_insts"){
-    //         //! notice: cob array here is 9*12
-    //         PLEASE_DO_NOT_FAIL(1, "Muyan topdie with synchroinzed nets only");
-    //         PLEASE_DO_NOT_FAIL(2, "Muyan topdie with both synchroinzed and unsynchronized nets");
-    //         PLEASE_DO_NOT_FAIL(3, "Muyan topdie with unsynchronized nets only");
-    //         // PLEASE_DO_NOT_FAIL(4, "A complete case with more nets and net types");
-    //         // PLEASE_DO_NOT_FAIL(5, "test repeated connections in input file");
-    //         PLEASE_DO_NOT_FAIL(6, "a case with more nets then case1");
+        GIVEN("Configs, describing connections, external_ports, topdies and topdie_insts"){
+            //! notice: cob array here is 9*12
+            PLEASE_DO_NOT_FAIL(1, "Muyan topdie with synchroinzed nets only");
+            PLEASE_DO_NOT_FAIL(2, "Muyan topdie with both synchroinzed and unsynchronized nets");
+            PLEASE_DO_NOT_FAIL(3, "Muyan topdie with unsynchronized nets only");
+            // PLEASE_DO_NOT_FAIL(4, "A complete case with more nets and net types");
+            // PLEASE_DO_NOT_FAIL(5, "test repeated connections in input file");
+            PLEASE_DO_NOT_FAIL(6, "a case with more nets then case1");
             
-    //     }
-    // }
+        }
+    }
 
     SCENARIO("CPU-MEM-AI circuit test", "[CPU_MEM_AI]"){
         

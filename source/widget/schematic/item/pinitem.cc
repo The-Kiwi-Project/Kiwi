@@ -1,12 +1,18 @@
 #include "./pinitem.h"
+#include "debug/debug.hh"
 #include "qcolor.h"
 #include "qglobal.h"
 #include "qnamespace.h"
 #include "qobject.h"
 #include "qpoint.h"
 #include "./netitem.h"
+#include "./netpointitem.h"
+#include "./topdieinstitem.h"
+#include "./sourceportitem.h"
 #include "../schematicscene.h"
+#include "./exportitem.h"
 #include <QGraphicsSceneMouseEvent>
+#include <cassert>
 
 namespace kiwi::widget::schematic {
 
@@ -16,18 +22,19 @@ namespace kiwi::widget::schematic {
     const QColor PinItem::HOVERED_COLOR = Qt::red;
 
     PinItem::PinItem(
-        const QString &name, QPointF position, PinSide side, 
-        SchematicScene* scene, QGraphicsItem *parent
+        const QString &name, 
+        QPointF position, 
+        PinSide side, 
+        QGraphicsItem *parent
     )
         : QGraphicsItem(parent), 
-        _name{name}, 
-        _side{side},
-        _hovered{false},
-        _scene{scene}
+        _name{name},
+        _side{side}
     {
         this->setPos(position);
         this->setAcceptHoverEvents(true);
-        this->setFlags(ItemSendsScenePositionChanges | ItemIsSelectable);
+        this->setFlags(QGraphicsItem::ItemSendsScenePositionChanges | QGraphicsItem::ItemIsSelectable);
+        this->setZValue(0);
     }
 
     auto PinItem::boundingRect() const -> QRectF {
@@ -96,6 +103,51 @@ namespace kiwi::widget::schematic {
         }
     }
 
+    auto PinItem::isExternalPortPin() const -> bool {
+        return this->parentItem()->type() == ExternalPortItem::Type;
+    }
+
+    auto PinItem::isTopDieInstancePin() const -> bool {
+        return this->parentItem()->type() == TopDieInstanceItem::Type;
+    }
+
+    auto PinItem::isSourcePortPin() const -> bool {
+        return this->parentItem()->type() == SourcePortItem::Type;
+    }
+
+    auto PinItem::toString() const -> QString {
+        if (this->isTopDieInstancePin()) {
+            return QString{"%1.%2"}.arg(this->parentTopDieInstance()->name()).arg(this->_name);
+        }
+        return this->_name;
+    }
+
+    auto PinItem::toCircuitPin() const -> circuit::Pin {
+        assert(this->parentItem() != nullptr);
+
+        if (this->isExternalPortPin()) {
+            return circuit::Pin::connect_export(
+                this->parentExternalPort()->unwrap()
+            );
+        }
+        else if (this->isTopDieInstancePin()) {
+            return circuit::Pin::connect_bump(
+                this->parentTopDieInstance()->unwrap(),
+                this->name().toStdString()
+            );
+        }
+        else if (this->isSourcePortPin()) {
+            auto port = this->parentSourcePort();
+            if (port->isVDD()) {
+                return circuit::Pin::connect_vdd(this->name().toStdString());
+            } else {
+                return circuit::Pin::connect_gnd(this->name().toStdString());
+            }
+        }
+
+        debug::unreachable("PinItem::toCircuitPin()");
+    }
+
     auto PinItem::itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant {
         if (change == QGraphicsItem::ItemScenePositionHasChanged) {
             for (auto point : this->_connectedNetPoints) {
@@ -106,7 +158,7 @@ namespace kiwi::widget::schematic {
     }
 
     void PinItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-        this->_scene->headleCreateNet(this, event);
+        dynamic_cast<SchematicScene*>(this->scene())->headleCreateNet(this, event);
         QGraphicsItem::mousePressEvent(event);
     }
 
@@ -120,6 +172,21 @@ namespace kiwi::widget::schematic {
         this->_hovered = false;
         this->update();
         QGraphicsItem::hoverLeaveEvent(event);
+    }
+
+    auto PinItem::parentExternalPort() const -> ExternalPortItem* {
+        assert(this->parentItem() != nullptr);
+        return dynamic_cast<ExternalPortItem*>(this->parentItem());
+    }
+
+    auto PinItem::parentTopDieInstance() const -> TopDieInstanceItem* {
+        assert(this->parentItem() != nullptr);
+        return dynamic_cast<TopDieInstanceItem*>(this->parentItem());   
+    }
+
+    auto PinItem::parentSourcePort() const -> SourcePortItem* {
+        assert(this->parentItem() != nullptr);
+        return dynamic_cast<SourcePortItem*>(this->parentItem());     
     }
 
 }

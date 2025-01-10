@@ -1,4 +1,5 @@
 #include "./gui.hh"
+#include "widget/schematic/schematicwidget.h"
 
 #include <widget/window.h>
 
@@ -23,13 +24,14 @@ namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
         auto [interposer, basedie] 
-            = kiwi::parse::read_config("../test/regression_test/case2");
+            = kiwi::parse::read_config("../test/config/case4");
     
-        algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
-        interposer->randomly_map_remain_indexes();
+        // algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
+        // interposer->randomly_map_remain_indexes();
 
-        QApplication app(argc, argv);
-        auto w = widget::SWindow{interposer.get(), basedie.get()};
+        auto app = QApplication{argc, argv};
+        app.setStyle("Fusion");
+        auto w = widget::SchematicWidget{interposer.get(), basedie.get()};
         w.show();
         return app.exec();
     }
