@@ -179,6 +179,7 @@ namespace kiwi::widget {
 
     auto SchematicScene::addNetPoint(schematic::PinItem* pin) -> schematic::NetPointItem* {
         auto point = new schematic::NetPointItem {pin};
+        this->addItem(point);
         return point;
     }
 

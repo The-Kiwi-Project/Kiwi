@@ -23,7 +23,7 @@ namespace kiwi::widget::schematic {
         int type() const override { return Type; }
 
     public:
-        NetPointItem(PinItem* connectedPin, QGraphicsItem* parent = nullptr);
+        NetPointItem(PinItem* connectedPin);
 
     public:
         void linkToPin(PinItem* pin);

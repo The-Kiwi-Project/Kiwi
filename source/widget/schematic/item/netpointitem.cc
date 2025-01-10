@@ -14,18 +14,17 @@ namespace kiwi::widget::schematic {
     const QColor NetPointItem::COLOR = Qt::blue;
     const QColor NetPointItem::HOVER_COLOR = Qt::red;
 
-    NetPointItem::NetPointItem(PinItem* connectedPin, QGraphicsItem* parent): 
-        QGraphicsEllipseItem{parent}, 
+    NetPointItem::NetPointItem(PinItem* connectedPin): 
+        QGraphicsEllipseItem{nullptr}, 
         _connectedPin{connectedPin}
     {
-        qDebug() << "??";
         this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
         this->setBrush(COLOR);
-        this->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsScenePositionChanges);
+        this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsScenePositionChanges);
         this->setAcceptHoverEvents(true);
 
         this->linkToPin(connectedPin);
-        // this->setZValue(10);
+        this->setZValue(1);
     }
  
     void NetPointItem::linkToPin(PinItem* pin) {

@@ -26,6 +26,7 @@ namespace kiwi::widget::schematic {
         _topdieinstance{topdieinst}
     {
         this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
+        this->setZValue(0);
 
         // Dive pinsize to four size:
         auto pinmap = this->_topdieinstance->topdie()->pins_map();

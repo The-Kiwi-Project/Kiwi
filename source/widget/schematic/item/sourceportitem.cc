@@ -19,6 +19,7 @@ namespace kiwi::widget::schematic {
         this->_width = GridItem::snapToGrid(PIN_SIDE_INTERVAL + PinItem::NAME_INTERVAL + name.size() * PinItem::CHAR_WIDTH_ + PIN_SIDE_INTERVAL);
 
         this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
+        this->setZValue(0);
     }
 
     auto SourcePortItem::boundingRect() const -> QRectF {

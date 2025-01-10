@@ -33,7 +33,8 @@ namespace kiwi::widget::schematic {
     {
         this->setPos(position);
         this->setAcceptHoverEvents(true);
-        this->setFlags(ItemSendsScenePositionChanges | ItemIsSelectable);
+        this->setFlags(QGraphicsItem::ItemSendsScenePositionChanges | QGraphicsItem::ItemIsSelectable);
+        this->setZValue(0);
     }
 
     auto PinItem::boundingRect() const -> QRectF {

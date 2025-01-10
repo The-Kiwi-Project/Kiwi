@@ -29,6 +29,7 @@ namespace kiwi::widget::schematic {
         this->_beginPoint->setNetItem(this);
         this->_endPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
+        this->setZValue(0);
 
         auto begin = beginPoint->scenePos();
         auto end = endPoint->scenePos();
@@ -64,6 +65,7 @@ namespace kiwi::widget::schematic {
         
         this->_beginPoint->setNetItem(this);
         this->setAcceptHoverEvents(true);
+        this->setZValue(0);
         this->setLine(this->_beginPoint->scenePos(), this->_beginPoint->scenePos());
     }
 
