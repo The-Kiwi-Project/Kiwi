@@ -63,7 +63,7 @@ namespace kiwi::serde {
     template <typename Deserializer, typename Value>
     auto deserialize_from(const std::FilePath& path) -> Value {
         auto dsr = Deserializer::load_from(path);
-        return Deserialize<Deserializer, Value>::from(dsr);
+        return deserialize<Deserializer, Value>(dsr);
     }
 
     /*

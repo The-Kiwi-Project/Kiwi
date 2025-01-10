@@ -2,7 +2,7 @@
 #include "./layoutscene.h"
 
 #include "./item/topdieinstitem.h"
-#include "circuit/pin/pin.hh"
+#include "circuit/connection/connection.hh"
 #include "hardware/tob/tobcoord.hh"
 #include "qbrush.h"
 #include "qcolor.h"
@@ -93,40 +93,40 @@ namespace kiwi::widget {
             }
         }
 
-        for (auto& [sync, connections] : this->_basedie->connections()) {
-            for (const auto& connection : connections) {
-                layout::PinItem* beginPin, *endPin;
-                bool cont = false;
+        // for (auto& [sync, connections] : this->_basedie->connections()) {
+        //     for (const auto& connection : connections) {
+        //         layout::PinItem* beginPin, *endPin;
+        //         bool cont = false;
 
-                std::match(connection.input,
-                    [this, &cont](const circuit::ConnectExPort& eport) {
-                        cont = true;
-                    },
-                    [this, &beginPin](const circuit::ConnectBump& bump) {
-                        auto inst = this->_scene->topdieinstMap().value(bump.inst);
-                        auto pin = inst->pins()[bump.inst->topdie()->pins_map().at(bump.name)];
-                        beginPin = pin;
-                    }
-                );
+        //         std::match(connection->input_pin().connected_point(),
+        //             [this, &cont](const circuit::ConnectExPort& eport) {
+        //                 cont = true;
+        //             },
+        //             [this, &beginPin](const circuit::ConnectBump& bump) {
+        //                 auto inst = this->_scene->topdieinstMap().value(bump.inst);
+        //                 auto pin = inst->pins()[bump.inst->topdie()->pins_map().at(bump.name)];
+        //                 beginPin = pin;
+        //             }
+        //         );
 
-                std::match(connection.output,
-                    [this, &cont](const circuit::ConnectExPort& eport) {
-                        cont = true;
-                    },
-                    [this, &endPin](const circuit::ConnectBump& bump) {
-                        auto inst = this->_scene->topdieinstMap().value(bump.inst);
-                        auto pin = inst->pins()[bump.inst->topdie()->pins_map().at(bump.name)];
-                        endPin = pin;
-                    }
-                );
+        //         std::match(connection->output().connected_point(),
+        //             [this, &cont](const circuit::ConnectExPort& eport) {
+        //                 cont = true;
+        //             },
+        //             [this, &endPin](const circuit::ConnectBump& bump) {
+        //                 auto inst = this->_scene->topdieinstMap().value(bump.inst);
+        //                 auto pin = inst->pins()[bump.inst->topdie()->pins_map().at(bump.name)];
+        //                 endPin = pin;
+        //             }
+        //         );
 
-                if (cont) {
-                    continue;
-                }
+        //         if (cont) {
+        //             continue;
+        //         }
 
-                this->_scene->addNet(beginPin, endPin);
-            }
-        }
+        //         this->_scene->addNet(beginPin, endPin);
+        //     }
+        // }
     }
 
     LayoutView::~LayoutView() noexcept {}

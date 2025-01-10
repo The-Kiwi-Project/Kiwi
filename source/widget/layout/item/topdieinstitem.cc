@@ -97,7 +97,7 @@ namespace kiwi::widget::layout {
                 if (!tob->hasTopDieInst()) {
                     // 如果这个 tob 是空的，吸附到这个 tob 上
                     if (this->_currentTOB != nullptr) {
-                        this->_currentTOB->removeTopDieInst();
+                        this->_currentTOB->removeTopDieInstance();
                     }
                     tob->setTopDieInst(this);
                     this->setPos(tob->pos());
@@ -116,7 +116,7 @@ namespace kiwi::widget::layout {
 
         // 没有碰到任何的 TOBItem，是否是将自己移出？
         if (this->_currentTOB != nullptr) {
-            this->_currentTOB->removeTopDieInst();
+            this->_currentTOB->removeTopDieInstance();
             this->_currentTOB = nullptr;
         }
     }

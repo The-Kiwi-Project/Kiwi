@@ -14,6 +14,9 @@ namespace kiwi::widget {
     public:
         explicit GraphicsView(QWidget* parent = nullptr);
 
+    public:
+        void adjustSceneRect();
+
     protected:
         void wheelEvent(QWheelEvent* event) override;
         void mousePressEvent(QMouseEvent* event) override;

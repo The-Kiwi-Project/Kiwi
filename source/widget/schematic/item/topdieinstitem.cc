@@ -1,6 +1,8 @@
 #include "./topdieinstitem.h"
 #include "./pinitem.h"
+#include "../schematicscene.h"
 #include "qchar.h"
+#include "qcolor.h"
 #include "qnamespace.h"
 #include "qpoint.h"
 #include "qregion.h"
@@ -17,16 +19,17 @@
 
 namespace kiwi::widget::schematic {
     
-    const QColor TopDieInstanceItem::COLOR = Qt::lightGray;;
+    const QColor TopDieInstanceItem::COLOR = QColor::fromRgb(200, 200, 200, 100);
 
-    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst, SchematicScene* scene):
-        _topdieinst{topdieinst},
-        _scene{scene}
+    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieinst):
+        GridItem{},
+        _topdieinstance{topdieinst}
     {
-        this->setFlags(ItemIsMovable);
+        this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
+        this->setZValue(0);
 
         // Dive pinsize to four size:
-        auto pinmap = this->_topdieinst->topdie()->pins_map();
+        auto pinmap = this->_topdieinstance->topdie()->pins_map();
         auto pinnames = QVector<QString>{};
         for (const auto& [name, _] : pinmap) {
             pinnames.push_back(QString::fromStdString(name));
@@ -110,8 +113,8 @@ namespace kiwi::widget::schematic {
             int x = horizontal ? static_cast<int>(pos + x_offset) : x_offset;
             int y = horizontal ? y_offset : static_cast<int>(pos + y_offset);
 
-            auto *pin = new PinItem {*iter, QPointF(x, y), side, this->_scene, this};
-            this->_pinitems.insert(*iter, pin);
+            auto *pin = new PinItem {*iter, QPointF(x, y), side, this};
+            this->_pins.insert(*iter, pin);
         }
     }
 

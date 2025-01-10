@@ -14,6 +14,8 @@ rule("qt.opengl")
         end
     end)
 
+-- Kiwi Tarsk!!!
+
 target("kiwi")
     set_kind("binary")
     set_targetdir("./output")
@@ -23,6 +25,9 @@ target("kiwi")
     add_files("source/**.cc", "source/widget/**.h", "resource/resource.qrc")
     add_rules("qt.widgetapp", "qt.opengl")
 
+-- Tool Application 
+
+-- Simple tool for get cob index map 
 target("cobmap")
     set_kind("binary")
     set_targetdir("./output")
@@ -32,13 +37,60 @@ target("cobmap")
     add_files("source/hardware/**.cc")
     add_files("source/global/**.cc")
 
-target("simpletest")
+-- Load config, run P&R and view result in 2D view
+target("view2d")
     set_kind("binary")
     set_targetdir("./output")
     set_default(false)
     add_packages("xlnt")
-    add_includedirs("source", "source/global", "test/simple_test")
-    add_files("test/simple_test/**.cc")
+    add_includedirs("source", "source/global")
+    add_files(
+        "source/algo/**.cc",
+        "source/circuit/**.cc",
+        "source/global/**.cc",
+        "source/hardware/**.cc",
+        "source/parse/**.cc",
+        "source/serde/**.cc",
+        "source/widget/view2d/**.cc",
+        "source/widget/view2d/**.h",
+        "source/widget/frame/**.h",
+        "source/widget/frame/**.cc",
+        "tools/view2d.cc"
+    )
+    add_rules("qt.widgetapp", "qt.opengl")
+
+-- Load config, run P&R and view result in 3D view
+target("view3d")
+    set_kind("binary")
+    set_targetdir("./output")
+    set_default(false)
+    add_packages("xlnt")
+    add_includedirs("source", "source/global")
+    add_files(
+        "source/algo/**.cc",
+        "source/circuit/**.cc",
+        "source/global/**.cc",
+        "source/hardware/**.cc",
+        "source/parse/**.cc",
+        "source/serde/**.cc",
+        "source/widget/view3d/**.cc",
+        "source/widget/view3d/**.h",
+        "source/widget/frame/**.h",
+        "source/widget/frame/**.cc",
+        "resource/resource.qrc",
+        "tools/view3d.cc"
+    )
+    add_rules("qt.widgetapp", "qt.opengl")
+
+-- Test Tasks
+
+target("module_test")
+    set_kind("binary")
+    set_targetdir("./output")
+    set_default(false)
+    add_packages("xlnt")
+    add_includedirs("source", "source/global", "test/module_test")
+    add_files("test/module_test/**.cc")
     add_files(
         "source/algo/**.cc",
         "source/circuit/**.cc",
@@ -48,7 +100,7 @@ target("simpletest")
         "source/serde/**.cc"
     )
 
-target("regressiontest")
+target("regression_test")
     set_kind("binary")
     set_targetdir("./output")
     set_default(false)

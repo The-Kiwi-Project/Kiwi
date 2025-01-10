@@ -91,7 +91,7 @@ namespace kiwi::hardware {
             }
         }
 
-        debug::unreachable();
+        debug::unreachable("COBUnit::sw_register");
     }
 
     auto COBUnit::sel_register(COBDirection dir, std::usize index) -> COBSelRegister* {
@@ -107,7 +107,7 @@ namespace kiwi::hardware {
             case COBDirection::Down:  return &this->_down_sel[index];
         }
         
-        debug::unreachable();
+        debug::unreachable("COBUnit::sel_register");
     }
 
     auto COBUnit::index_map(COBDirection from_dir, std::usize from_index, COBDirection to_dir) -> std::usize {

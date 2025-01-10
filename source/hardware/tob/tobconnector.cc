@@ -55,7 +55,7 @@ namespace kiwi::hardware {
                 break;
             }
             case TOBSignalDirection::DisConnected: {
-                debug::unreachable();
+                debug::unreachable("TOBConnector::connect()");
                 break;
             }
         }
