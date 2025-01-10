@@ -115,7 +115,7 @@ def bus_routing(maze, nets, logger, experiment_dir, rate = 0.8, show_expand = Fa
                                     if show_expand:
                                         vis_maze.set_special(p, 100)
                                 if show_expand:
-                                    vis_maze.show_matrix_expand(experiment_dir, net_i)
+                                    vis_maze.show_matrix_expand(experiment_dir, net_i, save=True)
                                     vis_maze.show_search_counts(experiment_dir, save=True)
                                 return False, max_length 
                             
@@ -127,7 +127,7 @@ def bus_routing(maze, nets, logger, experiment_dir, rate = 0.8, show_expand = Fa
                                     if show_expand:
                                         vis_maze.set_special(p, 100)
                                 if show_expand:
-                                    vis_maze.show_matrix_expand(experiment_dir, net_i)
+                                    vis_maze.show_matrix_expand(experiment_dir, net_i, save=True)
                                     vis_maze.show_search_counts(experiment_dir, save=True)
                                 return True, max_length      
                             # still less than max_length     
@@ -215,6 +215,8 @@ def bus_routing(maze, nets, logger, experiment_dir, rate = 0.8, show_expand = Fa
         
 
 def segmentation_bus_routing_1(maze, nets, logger, experiment_dir, rate = 0.8, show_expand = False, method="maze"):
+    # not implemented !!!
+
     def reroute(to_be_routed, max_length, paths):
         def reroute_single_net(start_node, max_length, vis_maze, net_i):
             assert start_node.coord != end, "start and end node is the same"
@@ -241,6 +243,10 @@ def segmentation_bus_routing_1(maze, nets, logger, experiment_dir, rate = 0.8, s
                         max_length = len(paths[i])
                         for p in paths[i]:
                             maze.set_net_point(p, i)
+                            if show_expand:
+                                vis_maze.set_special(p, 100)
+                        if show_expand:
+                            vis_maze.show_matrix_expand(experiment_dir, net_i, save=True)
                         return False, max_length 
                     
                     # keep the max_length unchanged 
@@ -248,6 +254,10 @@ def segmentation_bus_routing_1(maze, nets, logger, experiment_dir, rate = 0.8, s
                         paths[i] = cleared_path + re_routed_path
                         for p in paths[i]:
                             maze.set_net_point(p, i)
+                            if show_expand:
+                                vis_maze.set_special(p, 100)
+                        if show_expand:
+                            vis_maze.show_matrix_expand(experiment_dir, net_i, save=True)
                         return True, max_length      
                     # still less than max_length     
                     else:
@@ -264,6 +274,8 @@ def segmentation_bus_routing_1(maze, nets, logger, experiment_dir, rate = 0.8, s
                             current_node.add_child(new_node) # 这一步就已经把new_node加到tree里面了
                             heapq.heappush(queue, new_node) 
                             maze.search_count += 1
+                            if show_expand:
+                                vis_maze.matrix()[new_node.coord] -= 1
 
             logger.exception("no path found")
             return False, max_length

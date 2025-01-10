@@ -6,12 +6,13 @@ import time
 
 def test_bus_routing_asic(outputdir):
     try:
-        experiment = "Experiment_6"
+        experiment = "Experiment_7"
         experiment_dir = f"{outputdir}/{experiment}"
-        size = 100
+        size = 20
         nets = [
-            [(1, 5), (9, 20)],
-            [(10, 8), (80, 35)]
+            [(1, 5), (14, 13)],
+            [(3, 8), (13, 11)],
+            [(6, 1), (19, 5)]
         ]
         maze = Maze(size)
 
@@ -25,7 +26,7 @@ def test_bus_routing_asic(outputdir):
         # route
         logger.info("start bus routing")
         start_time = time.time()
-        paths, maze = segmentation_bus_routing_1(maze, nets, logger, experiment_dir, show_expand=False)
+        paths, maze = segmentation_bus_routing_1(maze, nets, logger, experiment_dir, show_expand=True)
         end_time = time.time()
         logger.info(f"bus nets {nets} routing done successfully, on {size}*{size} maze")
         logger.info(f"routing time: {end_time - start_time} seconds")
@@ -55,7 +56,7 @@ def setup_logger(logfile):
 
 
 if __name__ == '__main__':
-    outputdir = "./algorithm/bus_routing/asic/expe_results"
+    outputdir = "./expe_results"
 
     try:
         test_bus_routing_asic(outputdir)
