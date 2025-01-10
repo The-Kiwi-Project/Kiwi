@@ -16,7 +16,8 @@ output
 
 *.ctb
 
-**/__pycache/
+**/.idea
+**/__pycache__/
 schedule*
 
 /test/EDA_case
