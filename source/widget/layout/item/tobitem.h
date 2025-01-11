@@ -8,7 +8,7 @@
 
 namespace kiwi::widget::layout {
 
-    class TopDieInstItem;
+    class TopDieInstanceItem;
 
     class TOBItem : public QGraphicsRectItem {
     public:
@@ -26,7 +26,7 @@ namespace kiwi::widget::layout {
         TOBItem(hardware::TOB* tob);
 
     public:
-        void setTopDieInst(TopDieInstItem* topdieinst);
+        void setTopDieInst(TopDieInstanceItem* topdieinst);
         void removeTopDieInstance();
         bool hasTopDieInst() const;
         void highlight(bool active);
@@ -37,7 +37,7 @@ namespace kiwi::widget::layout {
     private:
         hardware::TOB* _tob;
 
-        TopDieInstItem* _topdieInstItem {nullptr};
+        TopDieInstanceItem* _topdieInstItem {nullptr};
 
     };
 

@@ -12,6 +12,7 @@ namespace kiwi::hardware {
 namespace kiwi::widget::layout {
 
     class NetItem;
+    
     class PinItem : public QGraphicsEllipseItem {
     public:
         static constexpr qreal RADIUS = 5.;
@@ -20,7 +21,7 @@ namespace kiwi::widget::layout {
         static const    QColor HOVERED_COLOR;
 
     public:
-        PinItem(hardware::Bump* bump, QPointF position, QGraphicsItem *parent = nullptr);
+        PinItem(QPointF position, QGraphicsItem *parent = nullptr);
 
     protected:
         void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
@@ -28,12 +29,10 @@ namespace kiwi::widget::layout {
         auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
 
     public:
-        void addNet(NetItem* net) {
-            this->_nets.push_back(net);
-        }
+        void addNet(NetItem* net) 
+        { this->_nets.push_back(net); }
 
     private:
-        hardware::Bump* _bump;
         QVector<NetItem*> _nets {};
     };
 

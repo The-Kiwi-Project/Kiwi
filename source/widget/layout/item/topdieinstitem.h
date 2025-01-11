@@ -14,7 +14,7 @@ namespace kiwi::widget::layout {
     
     class TOBItem;
 
-    class TopDieInstItem : public QGraphicsItem {
+    class TopDieInstanceItem : public QGraphicsItem {
     public:
         static constexpr qreal WIDTH  = 500.;
         static constexpr qreal HEIGHT  = 500.;
@@ -46,7 +46,7 @@ namespace kiwi::widget::layout {
         static_assert(BUMP_VERT_INTERVAL > PinItem::DIAMETER);
 
     public:
-        TopDieInstItem(circuit::TopDieInstance* topdieInst);
+        TopDieInstanceItem(circuit::TopDieInstance* topdieInst);
 
     public:
         auto boundingRect() const -> QRectF override;
@@ -56,6 +56,9 @@ namespace kiwi::widget::layout {
         void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
         void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
         // auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
+
+    public:
+        auto placeInTOB(TOBItem* tob) -> bool; 
 
     public:
         auto pins() const -> const QVector<PinItem*> 

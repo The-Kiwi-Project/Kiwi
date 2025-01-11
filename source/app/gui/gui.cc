@@ -29,7 +29,7 @@ namespace kiwi {
     
         auto app = QApplication{argc, argv};
         app.setStyle("Fusion");
-        auto w = widget::SchematicWidget{interposer.get(), basedie.get()};
+        auto w = widget::LayoutView{interposer.get(), basedie.get()};
         w.show();
         return app.exec();
     }

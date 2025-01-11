@@ -7,9 +7,8 @@ namespace kiwi::widget::layout {
     const QColor PinItem::COLOR = Qt::black;
     const QColor PinItem::HOVERED_COLOR = Qt::red;
 
-    PinItem::PinItem(hardware::Bump* bump, QPointF position, QGraphicsItem *parent) :
-        QGraphicsEllipseItem{parent},
-        _bump{bump}
+    PinItem::PinItem(QPointF position, QGraphicsItem *parent) :
+        QGraphicsEllipseItem{parent}
     {
         this->setRect(-RADIUS, -RADIUS, DIAMETER, DIAMETER);
         this->setPos(position);

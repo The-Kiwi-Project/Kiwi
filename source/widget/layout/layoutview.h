@@ -23,8 +23,6 @@ namespace kiwi::widget {
     class LayoutScene;
 
     class LayoutView : public GraphicsView {
-        
-        static constexpr qreal TOB_INTERVAL = 30.0;
         static const     QColor BACK_COLOR;
 
     public:
@@ -34,9 +32,6 @@ namespace kiwi::widget {
             QWidget *parent = nullptr);
 
         ~LayoutView() noexcept;
-
-    protected:
-        static auto tobPosition(const hardware::TOBCoord& coord) -> QPointF;
         
     protected:
         hardware::Interposer* _interposer {nullptr};

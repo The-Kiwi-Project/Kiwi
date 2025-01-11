@@ -16,7 +16,7 @@ namespace kiwi::widget::layout {
         this->setZValue(-1);
     }
 
-    void TOBItem::setTopDieInst(TopDieInstItem* topdieinst) {
+    void TOBItem::setTopDieInst(TopDieInstanceItem* topdieinst) {
         this->_topdieInstItem = topdieinst;
         this->updateAppearance();
     }
