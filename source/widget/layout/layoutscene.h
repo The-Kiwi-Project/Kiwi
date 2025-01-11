@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hardware/track/trackcoord.hh"
 #include <circuit/basedie.hh>
 #include <circuit/export/export.hh>
 #include <QGraphicsScene>
@@ -23,6 +24,7 @@ namespace kiwi::widget {
         class TOBItem;
         class TopDieInstanceItem;
         class ExternalPortItem;
+        class SourcePortItem;
     }
 
     class LayoutScene : public QGraphicsScene {   
@@ -46,6 +48,8 @@ namespace kiwi::widget {
         auto addTOB(hardware::TOB* tob) -> layout::TOBItem*;
         auto addTopDieInstance(circuit::TopDieInstance* topdieInst) -> layout::TopDieInstanceItem*;
         auto addExternalPort(circuit::ExternalPort* eport) -> layout::ExternalPortItem*;
+        auto addVDDSourcePort() -> layout::SourcePortItem*;
+        auto addGNDSourcePort() -> layout::SourcePortItem*;
 
     private:
         void addSceneItems();

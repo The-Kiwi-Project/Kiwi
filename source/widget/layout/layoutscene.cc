@@ -7,6 +7,7 @@
 #include "hardware/track/trackcoord.hh"
 #include "qpoint.h"
 #include "widget/layout/item/exportitem.h"
+#include "widget/layout/item/sourceportitem.h"
 
 #include <cassert>
 #include <hardware/bump/bump.hh>
@@ -82,38 +83,47 @@ namespace kiwi::widget {
         const auto width_interval = width / (hardware::Interposer::COB_ARRAY_WIDTH * (int)hardware::COB::INDEX_SIZE);
         const auto height_interval = height / (hardware::Interposer::COB_ARRAY_WIDTH * (int)hardware::COB::INDEX_SIZE);
 
-        for (auto& [name, eport] : this->_basedie->external_ports()) {
-            auto item = this->addExternalPort(eport.get());
-            const auto coord = eport->coord();
-            assert(hardware::Interposer::is_external_port_coord(coord));
-
-            auto position = QPointF{};
+        auto get_port_position = [width_interval, height_interval] (const hardware::TrackCoord& coord) -> QPointF {
             switch (coord.dir) {
                 case hardware::TrackDirection::Horizontal: {
                     auto index = coord.row * hardware::COB::INDEX_SIZE + coord.index;
                     auto y = EXPORT_LEFT_DOWN_POSITION.y() - height_interval * index;
                     if (coord.col == 0) {
-                        position = QPointF { EXPORT_LEFT_DOWN_POSITION.x(), y };
+                        return QPointF { EXPORT_LEFT_DOWN_POSITION.x(), y };
                     } 
                     else {
-                        position = QPointF { EXPORT_RIGHT_UP_POSITION.x(), y };
+                        return QPointF { EXPORT_RIGHT_UP_POSITION.x(), y };
                     }
-                    break;
                 }
                 case hardware::TrackDirection::Vertical: {
                     auto index = coord.col * hardware::COB::INDEX_SIZE + coord.index;
                     auto x = EXPORT_LEFT_DOWN_POSITION.x() + index * width_interval;
                     if (coord.row == 0) {
-                        position = QPointF { x, EXPORT_LEFT_DOWN_POSITION.y() };
+                        return QPointF { x, EXPORT_LEFT_DOWN_POSITION.y() };
                     } 
                     else {
-                        position = QPointF { x, EXPORT_RIGHT_UP_POSITION.y()};
+                        return QPointF { x, EXPORT_RIGHT_UP_POSITION.y()};
                     }
-                    break;
                 }
             }
+            debug::unreachable();
+        };
 
-            item->setPos(position);
+        for (auto& [name, eport] : this->_basedie->external_ports()) {
+            auto item = this->addExternalPort(eport.get());
+            const auto coord = eport->coord();
+            assert(hardware::Interposer::is_external_port_coord(coord));
+            item->setPos(get_port_position(coord));
+        }
+
+        for (auto& coord : this->_basedie->pose_ports()) {
+            auto port = this->addVDDSourcePort();
+            port->setPos(get_port_position(coord));
+        }
+
+        for (auto& coord : this->_basedie->nege_ports()) {
+            auto port = this->addGNDSourcePort();
+            port->setPos(get_port_position(coord));
         }
     }
 
@@ -156,6 +166,18 @@ namespace kiwi::widget {
         this->_externalPortsMap.insert(eport, eportItem);
         this->addItem(eportItem);
         return eportItem;
+    }
+
+    auto LayoutScene::addVDDSourcePort() -> layout::SourcePortItem* {
+        auto portItem = new layout::SourcePortItem {layout::SoucePortType::VDD};
+        this->addItem(portItem);
+        return portItem;
+    }
+
+    auto LayoutScene::addGNDSourcePort() -> layout::SourcePortItem* {
+        auto portItem = new layout::SourcePortItem {layout::SoucePortType::GND};
+        this->addItem(portItem);
+        return portItem;
     }
 
     auto LayoutScene::circuitPinToPinItem(const circuit::Pin& pin) -> layout::PinItem* {
