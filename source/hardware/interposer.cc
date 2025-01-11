@@ -17,7 +17,6 @@
 
 namespace kiwi::hardware {
 
-
     static auto build_tob_coord_map() -> std::HashMap<Coord, Coord> {
         auto map = std::HashMap<Coord, Coord>{};
         for (std::i64 row = 0; row < Interposer::TOB_ARRAY_HEIGHT; ++row) {
@@ -31,6 +30,19 @@ namespace kiwi::hardware {
     }
 
     const std::HashMap<Coord, Coord> Interposer::TOB_COORD_MAP = build_tob_coord_map();
+
+    auto Interposer::is_external_port_coord(const TrackCoord& coord) -> bool {
+        switch (coord.dir) {
+            case hardware::TrackDirection::Horizontal: {
+                return coord.col == 0 || coord.col == hardware::Interposer::COB_ARRAY_WIDTH;
+            }
+            case hardware::TrackDirection::Vertical: {
+                return coord.row == 0 || coord.row == hardware::Interposer::COB_ARRAY_HEIGHT;
+            }
+        }
+
+        debug::unreachable("Interposer::is_external_port_coord");
+    }
 
     Interposer::Interposer() :
         _cobs{},

@@ -8,6 +8,7 @@
 #include "qpoint.h"
 #include "widget/layout/item/exportitem.h"
 
+#include <cassert>
 #include <hardware/bump/bump.hh>
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
@@ -84,11 +85,11 @@ namespace kiwi::widget {
         for (auto& [name, eport] : this->_basedie->external_ports()) {
             auto item = this->addExternalPort(eport.get());
             const auto coord = eport->coord();
+            assert(hardware::Interposer::is_external_port_coord(coord));
 
             auto position = QPointF{};
             switch (coord.dir) {
                 case hardware::TrackDirection::Horizontal: {
-                    // assert(coord.col == 0 || coord.col == hardware::Interposer::COB_ARRAY_WIDTH);
                     auto index = coord.row * hardware::COB::INDEX_SIZE + coord.index;
                     auto y = EXPORT_LEFT_DOWN_POSITION.y() - height_interval * index;
                     if (coord.col == 0) {
@@ -97,9 +98,9 @@ namespace kiwi::widget {
                     else {
                         position = QPointF { EXPORT_RIGHT_UP_POSITION.x(), y };
                     }
+                    break;
                 }
                 case hardware::TrackDirection::Vertical: {
-                    // assert(coord.row == 0 || coord.row == hardware::Interposer::COB_ARRAY_HEIGHT);
                     auto index = coord.col * hardware::COB::INDEX_SIZE + coord.index;
                     auto x = EXPORT_LEFT_DOWN_POSITION.x() + index * width_interval;
                     if (coord.row == 0) {
@@ -108,6 +109,7 @@ namespace kiwi::widget {
                     else {
                         position = QPointF { x, EXPORT_RIGHT_UP_POSITION.y()};
                     }
+                    break;
                 }
             }
 

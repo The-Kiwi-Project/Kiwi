@@ -8,7 +8,7 @@
 
 #include "./track/track.hh"
 #include "./bump/bump.hh"
-#include "hardware/coord.hh"
+#include "./coord.hh"
 #include "std/memory.hh"
 #include <std/integer.hh>
 
@@ -20,8 +20,7 @@ namespace kiwi::hardware {
     class Interposer {
     public:
         enum {
-            // total columns = 12
-            COB_ARRAY_WIDTH   = 13,
+            COB_ARRAY_WIDTH   = 12,
             COB_ARRAY_HEIGHT  = 9,
 
             TOB_ARRAY_WIDTH   = 4,
@@ -29,6 +28,7 @@ namespace kiwi::hardware {
         };
 
         static const std::HashMap<Coord, Coord> TOB_COORD_MAP;
+        static auto is_external_port_coord(const TrackCoord& coord) -> bool;
 
     public:
         Interposer();

@@ -187,6 +187,10 @@ namespace kiwi::parse {
     auto Reader::parse_01(const std::HashMap<std::String, hardware::TrackCoord>& ports) -> std::Vector<hardware::TrackCoord> {
         auto tracks = std::Vector<hardware::TrackCoord>{};
         for (auto& [_, coord] : ports) {
+            debug::check_fmt(
+                hardware::Interposer::is_external_port_coord(coord), 
+                "'{}' is not a valid external port coord!", coord
+            );
             tracks.emplace_back(coord);
         }
         return std::move(tracks);
