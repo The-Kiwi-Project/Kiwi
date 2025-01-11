@@ -7,14 +7,15 @@
 #include "./item/topdieinstitem.h"
 #include "./item/griditem.h"
 #include "./item/sourceportitem.h"
-#include "circuit/connection/pin.hh"
-#include "qpoint.h"
 
-#include <cassert>
+#include <circuit/connection/pin.hh>
 #include <circuit/connection/connection.hh>
 #include <circuit/topdieinst/topdieinst.hh>
 #include <circuit/basedie.hh>
+#include <hardware/interposer.hh>
+
 #include <debug/debug.hh>
+#include <QMessageBox>
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
@@ -43,8 +44,9 @@ namespace kiwi::widget {
         (int)schematic::SourcePortItem::Type
     >::value);
 
-    SchematicScene::SchematicScene(circuit::BaseDie* basedie) :
+    SchematicScene::SchematicScene(circuit::BaseDie* basedie, hardware::Interposer* interposer) :
         _basedie{basedie},
+        _interposer{interposer},
         QGraphicsScene{}
     {
         this->addSceneItems();
@@ -354,14 +356,24 @@ namespace kiwi::widget {
     }
 
     void SchematicScene::handleInitialTopDie(circuit::TopDie* topdie) {
-        auto topdieInst = this->_basedie->add_topdie_inst(topdie, nullptr);
-        auto topdieInstItem = this->addTopDieInst(topdieInst);
+        auto idle_tob = this->_interposer->get_a_idle_tob();
+        if (!idle_tob.has_value()) {
+            QMessageBox::critical(
+                nullptr,
+                "Add TopDies Error",
+                "No idle tob to place topdie inst!"
+            );
+        } 
+        else {
+            auto topdieInst = this->_basedie->add_topdie_inst(topdie, *idle_tob);
+            auto topdieInstItem = this->addTopDieInst(topdieInst);
 
-        if (this->_floatingTopdDieInst != nullptr) {
-            this->cleanFloatingTopdDieInst();
+            if (this->_floatingTopdDieInst != nullptr) {
+                this->cleanFloatingTopdDieInst();
+            }
+
+            this->_floatingTopdDieInst = topdieInstItem;
         }
-
-        this->_floatingTopdDieInst = topdieInstItem;
     }
 
     void SchematicScene::handleAddExport() {

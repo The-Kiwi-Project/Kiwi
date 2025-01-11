@@ -16,6 +16,10 @@ namespace kiwi::circuit {
     class Pin;
 }
 
+namespace kiwi::hardware {
+    class Interposer;
+}
+
 namespace kiwi::widget {
 
     namespace schematic {
@@ -31,7 +35,7 @@ namespace kiwi::widget {
         Q_OBJECT
         
     public:
-        SchematicScene(circuit::BaseDie* basedie);
+        SchematicScene(circuit::BaseDie* basedie, hardware::Interposer* interposer);
 
     signals:
         void netSelected(schematic::NetItem* net);
@@ -91,6 +95,7 @@ namespace kiwi::widget {
 
     protected:
         circuit::BaseDie* _basedie;
+        hardware::Interposer* _interposer;
 
         QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
         QHash<circuit::ExternalPort*, schematic::ExternalPortItem*> _exportMap;

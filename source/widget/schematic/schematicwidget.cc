@@ -19,7 +19,7 @@ namespace kiwi::widget {
         _interposer{interposer},
         _basedie{basedie}
     {
-        this->_scene = new SchematicScene{this->_basedie};
+        this->_scene = new SchematicScene{this->_basedie, interposer};
 
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setContentsMargins(10, 10, 10, 10);
