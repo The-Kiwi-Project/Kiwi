@@ -13,7 +13,7 @@ namespace kiwi::widget::layout {
     {
         this->setRect(-WIDTH / 2., -HEIGHT / 2., WIDTH, HEIGHT);
         this->setBrush(COLOR);
-        this->setZValue(-1);
+        this->setZValue(Z_VALUE);
     }
 
     void TOBItem::setTopDieInst(TopDieInstanceItem* topdieinst) {

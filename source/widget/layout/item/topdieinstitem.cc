@@ -49,6 +49,7 @@ namespace kiwi::widget::layout {
         _name{ topdieInst != nullptr ? QString::fromStdString(topdieInst->name().data()) : "" }
     {   
         this->setFlags(ItemIsSelectable | ItemIsMovable);
+        this->setZValue(Z_VALUE);
 
         auto basePos = QPointF{BUMP_AREA_BEGIN_X - WIDTH / 2, BUMP_AREA_BEGIN_Y - HEIGHT / 2.};
         for (int r = 0; r < BUMP_ARRAY_ROW; ++r) {
@@ -79,6 +80,7 @@ namespace kiwi::widget::layout {
     }
 
     void TopDieInstanceItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+        this->setZValue(MOVING_Z_VALUE);
         if (event->button() == Qt::LeftButton) {
             this->_originPos = event->scenePos();
         }
@@ -86,6 +88,7 @@ namespace kiwi::widget::layout {
     }
 
     void TopDieInstanceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+        this->setZValue(Z_VALUE);
         QGraphicsItem::mouseReleaseEvent(event);
 
         // 检测是否与某个 TOBItem 碰撞

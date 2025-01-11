@@ -1,10 +1,8 @@
 #pragma once
 
 #include "./pinitem.h"
-#include "circuit/topdieinst/topdieinst.hh"
-#include "qchar.h"
-#include "qpoint.h"
-#include "qvector.h"
+#include "./tobitem.h"
+#include <circuit/topdieinst/topdieinst.hh>
 #include <hardware/tob/tob.hh>
 
 #include <QGraphicsItem>
@@ -12,12 +10,12 @@
 
 namespace kiwi::widget::layout {
     
-    class TOBItem;
-
     class TopDieInstanceItem : public QGraphicsItem {
     public:
         static constexpr qreal WIDTH  = 500.;
         static constexpr qreal HEIGHT  = 500.;
+        static constexpr int   Z_VALUE = TOBItem::Z_VALUE + 1;
+        static constexpr int   MOVING_Z_VALUE = Z_VALUE + 1;
 
         static constexpr qreal BUMP_AREA_WIDTH  = 220.;
         static constexpr qreal BUMP_AREA_HEIGHT = 220.;

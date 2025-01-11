@@ -63,7 +63,7 @@ namespace kiwi::widget {
         }};
         
         r->setBrush(Qt::gray);
-        r->setZValue(-5);
+        r->setZValue(layout::TOBItem::Z_VALUE - 1);
         this->addItem(r);
     }
 

@@ -14,8 +14,8 @@ namespace kiwi::widget::layout {
         this->setPos(position);
         this->setBrush(COLOR); 
         this->setAcceptHoverEvents(true);
-
         this->setFlags(ItemSendsScenePositionChanges | ItemIsSelectable);
+        this->setZValue(Z_VALUE);
     }
 
     void PinItem::hoverEnterEvent(QGraphicsSceneHoverEvent * e) {

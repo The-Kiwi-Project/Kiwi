@@ -12,6 +12,8 @@ namespace kiwi::widget::layout {
         _beginPin{beginPin},
         _endPin{endPin}
     {
+        this->setZValue(Z_VALUE);
+
         if (this->_beginPin == nullptr || this->_endPin == nullptr) {
             debug::exception("Nullptr in begin pin or end pin");
         }    

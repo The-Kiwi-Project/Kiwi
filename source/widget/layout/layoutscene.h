@@ -1,9 +1,7 @@
 #pragma once
 
-#include "circuit/basedie.hh"
-#include "circuit/export/export.hh"
-#include "hardware/track/trackcoord.hh"
-#include "qpoint.h"
+#include <circuit/basedie.hh>
+#include <circuit/export/export.hh>
 #include <QGraphicsScene>
 #include <QHash>
 
@@ -39,7 +37,7 @@ namespace kiwi::widget {
 
         static const   QPointF EXPORT_LEFT_DOWN_POSITION;
         static const   QPointF EXPORT_RIGHT_UP_POSITION;
-        
+
     public:
         LayoutScene(circuit::BaseDie* basedie, hardware::Interposer* interposer);
 

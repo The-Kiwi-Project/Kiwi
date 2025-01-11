@@ -19,6 +19,7 @@ namespace kiwi::widget::layout {
         static constexpr qreal DIAMETER = 2. * RADIUS;
         static const    QColor COLOR;
         static const    QColor HOVERED_COLOR;
+        static constexpr int   Z_VALUE = 6;
 
     public:
         PinItem(QPointF position, QGraphicsItem *parent = nullptr);

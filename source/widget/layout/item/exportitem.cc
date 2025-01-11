@@ -9,6 +9,7 @@ namespace kiwi::widget::layout {
         _eport{eport},
         _pin{nullptr}
     {
+        this->setZValue(Z_VALUE);
         this->_pin = new PinItem {QPointF{0.0, 0.0}, this};
     }
 

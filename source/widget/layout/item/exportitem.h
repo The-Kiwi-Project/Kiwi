@@ -14,6 +14,7 @@ namespace kiwi::widget::layout {
     public:
         static constexpr qreal WIDTH = PinItem::DIAMETER + 2;
         static const    QColor COLOR;
+        static constexpr int   Z_VALUE = 6;
 
     public:
         ExternalPortItem(circuit::ExternalPort* eport);

@@ -14,6 +14,7 @@ namespace kiwi::widget::layout {
         static const     QColor HOVER_COLOR;
         static constexpr qreal  WIDTH = 2;
         static constexpr qreal  HOVER_WIDTH = 3;
+        static constexpr int    Z_VALUE = 5;
 
     public:
         NetItem(PinItem* beginPin, PinItem* endPin, QGraphicsLineItem *parent = nullptr);
