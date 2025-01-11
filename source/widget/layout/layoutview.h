@@ -1,10 +1,8 @@
 #pragma once
 
 #include <widget/frame/graphicsview.h>
-#include "hardware/tob/tobcoord.hh"
 #include <QWidget>
 #include <QGraphicsView>
-#include <std/collection.hh>
 
 namespace kiwi::hardware {
     class Interposer;

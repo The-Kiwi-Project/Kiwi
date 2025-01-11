@@ -1,6 +1,6 @@
 #include "./gui.hh"
-#include "widget/layout/layoutview.h"
-#include "widget/schematic/schematicwidget.h"
+#include <widget/layout/layoutwidget.h>
+#include <widget/schematic/schematicwidget.h>
 
 #include <widget/window.h>
 
@@ -29,7 +29,7 @@ namespace kiwi {
     
         auto app = QApplication{argc, argv};
         app.setStyle("Fusion");
-        auto w = widget::LayoutView{interposer.get(), basedie.get()};
+        auto w = widget::LayoutWidget{interposer.get(), basedie.get()};
         w.show();
         return app.exec();
     }

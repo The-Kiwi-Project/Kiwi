@@ -84,6 +84,9 @@ namespace kiwi::widget::schematic {
         this->_setCoordButton->setMinimumHeight(MIN_HEIGHT);
         layout->addWidget(this->_setCoordButton, 5, 0, 1, 2);
 
+        layout->setColumnMinimumWidth(0, 50);
+        layout->setColumnStretch(0, 0);
+
         connect(this->_setCoordButton, &QPushButton::clicked, [this] () {
             auto coord = hardware::TrackCoord {
                 this->_rowSpinBox->value(),

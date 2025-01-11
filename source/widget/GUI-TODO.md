@@ -11,3 +11,5 @@
 - 新建外部端口时检查
 
 - Layout 连接 VDD/GND
+
+- Layout GUI 更新 basedie

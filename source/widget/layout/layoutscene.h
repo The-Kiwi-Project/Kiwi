@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hardware/track/trackcoord.hh"
+#include "qobject.h"
 #include <circuit/basedie.hh>
 #include <circuit/export/export.hh>
 #include <QGraphicsScene>
@@ -41,7 +41,7 @@ namespace kiwi::widget {
         static const   QPointF EXPORT_RIGHT_UP_POSITION;
 
     public:
-        LayoutScene(circuit::BaseDie* basedie, hardware::Interposer* interposer);
+        LayoutScene(hardware::Interposer* interposer, circuit::BaseDie* basedie, QObject* parent = nullptr);
 
     public:
         auto addNet(layout::PinItem* beginPoint, layout::PinItem* endPoint) -> layout::NetItem*;

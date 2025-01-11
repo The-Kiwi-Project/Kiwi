@@ -37,8 +37,8 @@ namespace kiwi::widget {
         QPointF{TOBItem::WIDTH/2 + EXPORT_SIDE_GAP, -TOBItem::HEIGHT/2 - EXPORT_SIDE_GAP};
 
 
-    LayoutScene::LayoutScene(circuit::BaseDie* basedie, hardware::Interposer* interposer) :
-        QGraphicsScene{},
+    LayoutScene::LayoutScene(hardware::Interposer* interposer, circuit::BaseDie* basedie, QObject* parent) :
+        QGraphicsScene{parent},
         _basedie{basedie},
         _interposer{interposer}
     {
