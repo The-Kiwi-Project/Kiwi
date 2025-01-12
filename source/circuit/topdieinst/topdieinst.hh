@@ -27,13 +27,27 @@ namespace kiwi::circuit {
         auto add_net(Net* net) -> void;
         
     public:
-        auto name() const -> const std::String& { return this->_name; }
-        auto name_view() const -> std::StringView { return this->_name; }
-        auto topdie() const -> TopDie* { return this->_topdie; }
-        auto tob() const -> hardware::TOB* { return this->_tob; }
-        auto nets() const -> const std::Vector<Net*> { return this->_nets; }
+        auto name() const -> const std::String& 
+        { return this->_name; }
+        
+        auto name_view() const -> std::StringView 
+        { return this->_name; }
+        
+        auto topdie() const -> TopDie* 
+        { return this->_topdie; }
+        
+        auto tob() const -> hardware::TOB* 
+        { return this->_tob; }
+        
+        auto nets() const -> const std::Vector<Net*> 
+        { return this->_nets; }
 
-        void set_name(std::String name) { this->_name = std::move(name); } 
+        void set_name(std::String name) 
+        { this->_name = std::move(name); } 
+        
+        // WARNING: this method can only used before nets build
+        void set_placed_tob(hardware::TOB* tob) 
+        { this->_tob = tob; }
 
     private:
         std::String _name;

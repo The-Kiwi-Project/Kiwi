@@ -18,6 +18,8 @@ namespace kiwi::widget {
     class LayoutInfoWidget;
 
     class LayoutWidget : public QWidget {
+        Q_OBJECT
+
     public:
         explicit LayoutWidget(
             hardware::Interposer* interposer, 

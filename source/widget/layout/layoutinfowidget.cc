@@ -14,6 +14,7 @@
 #include <QStandardItemModel>
 #include <QHeaderView>
 #include <QGroupBox>
+#include <QDebug>
 #include <QMessageBox>
 
 namespace kiwi::widget {
@@ -39,8 +40,6 @@ namespace kiwi::widget {
         this->_topdieInstSizeSpinBox = new QSpinBox {this};
         this->_topdieInstSizeSpinBox->setMinimum(0);
         this->_topdieInstSizeSpinBox->setMaximum(hardware::Interposer::TOB_ARRAY_HEIGHT * hardware::Interposer::TOB_ARRAY_WIDTH);
-        auto instSize = this->_basedie->topdie_insts().size();
-        this->_topdieInstSizeSpinBox->setValue(instSize);
         layout->addWidget(this->_topdieInstSizeSpinBox, 0, 1);
 
         // Layout Map
@@ -51,23 +50,50 @@ namespace kiwi::widget {
         this->_instPlaceView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
         layout->addWidget(this->_instPlaceView, 2, 0, 1, 2);
 
-        // Data
+        // Path length
+        layout->addWidget(new QLabel {"Prediect Path Length", widget}, 3, 0);
+
+
+
+        layout->setColumnMinimumWidth(0, 50);
+        layout->setColumnStretch(0, 0);
+
+        this->updateInfo();
+    }
+
+    void LayoutInfoWidget::updateInfo() {
+        qDebug() << "Update Infomation";
+
+        // Instance size
+        auto instSize = this->_basedie->topdie_insts().size();
+        this->_topdieInstSizeSpinBox->setValue(instSize);
+        this->_topdieInstSizeSpinBox->setEnabled(true);
+
+        // Coords
         auto model = new QStandardItemModel {static_cast<int>(instSize), 2};
-        model->setHorizontalHeaderLabels(QStringList{"Pin Name", "Bump Index"}); 
+        model->setHorizontalHeaderLabels(QStringList{"TopDie Instance", "TOB Coord"}); 
         // Add items
         auto itemRoot = model->invisibleRootItem();
         int row = 0;
         for (auto& [name, inst] : this->_basedie->topdie_insts()) {
             model->setItem(row, 0, new QStandardItem {QString::fromStdString(name.data())});
-            model->setItem(row, 1, new QStandardItem {
-                QString::fromStdString(std::format("{}", inst->tob()->coord()))
-            });
+            auto tob = inst->tob();
+            if (tob == nullptr) {
+                model->setItem(row, 1, new QStandardItem {"No Placed"});
+            } else {
+                model->setItem(row, 1, new QStandardItem {
+                    QString::fromStdString(std::format("{}", inst->tob()->coord()))
+                });
+            }
             row += 1;
         }
-        this->_instPlaceView->setModel(model);
 
-        layout->setColumnMinimumWidth(0, 50);
-        layout->setColumnStretch(0, 0);
+        auto originModel = this->_instPlaceView->model();
+        if (originModel != nullptr) {
+            delete originModel;
+        }
+
+        this->_instPlaceView->setModel(model);
     }
 
 }

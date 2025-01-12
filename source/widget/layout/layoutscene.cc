@@ -5,12 +5,10 @@
 #include "./item/topdieinstitem.h"
 #include "circuit/connection/pin.hh"
 #include "hardware/track/trackcoord.hh"
-#include "qpoint.h"
 #include "widget/layout/item/exportitem.h"
 #include "widget/layout/item/sourceportitem.h"
+#include <circuit/basedie.hh>
 
-#include <cassert>
-#include <hardware/bump/bump.hh>
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 
@@ -69,11 +67,21 @@ namespace kiwi::widget {
     }
 
     void LayoutScene::addTopDieInstanceItems() {
+        // Call after addTOBItems!!
         for (auto& [name, topdieInst] : this->_basedie->topdie_insts()) {
             auto item = this->addTopDieInstance(topdieInst.get());
             auto tob = topdieInst->tob();
+            debug::check_fmt(tob != nullptr, "No placed tob of topdie instance!");
+            // Find the tobitem object
             auto tobItem = this->_tobsMaps.value(tob);
             item->placeInTOB(tobItem);
+
+            // Connect the tob changed signal
+            connect(item, &TopDieInstanceItem::placedTOBChanged, 
+                [this, item] (TOBItem *originTOB, TOBItem *newTOB) {
+                    emit this->topdieInstancePlacedTOBChanged(item, originTOB, newTOB);
+                }
+            );
         }
     }
 

@@ -1,6 +1,6 @@
 #include "./tobitem.h"
-#include <hardware/bump/bump.hh>
 #include <QDebug>
+#include <hardware/bump/bump.hh>
 
 namespace kiwi::widget::layout {
 

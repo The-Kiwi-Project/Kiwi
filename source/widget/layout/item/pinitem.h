@@ -5,10 +5,6 @@
 #include <QPainter>
 #include <QVector>
 
-namespace kiwi::hardware {
-    class Bump;
-}
-
 namespace kiwi::widget::layout {
 
     class NetItem;

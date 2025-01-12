@@ -3,7 +3,7 @@
 #include "qchar.h"
 #include "qpoint.h"
 #include "./tobitem.h"
-#include <hardware/bump/bump.hh>
+#include <cassert>
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -71,6 +71,9 @@ namespace kiwi::widget::layout {
     
     void TopDieInstanceItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
         painter->setBrush(COLOR);
+        QFont font = painter->font();
+        font.setPointSize(FONT_SIZE);
+        painter->setFont(font);
         painter->drawRect(-WIDTH / 2., -HEIGHT / 2., WIDTH, HEIGHT);
         painter->drawText(QPointF{
             NAME_AREA_BEGIN_X - WIDTH/2, 
@@ -91,7 +94,7 @@ namespace kiwi::widget::layout {
         this->setZValue(Z_VALUE);
         QGraphicsItem::mouseReleaseEvent(event);
 
-        // 检测是否与某个 TOBItem 碰撞
+        // With any TOBItem ?
         auto collidingItems = scene()->collidingItems(this);
         for (auto item : collidingItems) {
             if (item->type() == TOBItem::Type) {
@@ -101,26 +104,34 @@ namespace kiwi::widget::layout {
             }
         }
 
-        // 没有碰到任何的 TOBItem，是否是将自己移出？
-        if (this->_currentTOB != nullptr) {
-            this->_currentTOB->removeTopDieInstance();
-            this->_currentTOB = nullptr;
-        }
+        // No touch any tobitem
+        this->removeCurrentTOB();
+        emit this->placedTOBChanged(this->_currentTOB, nullptr);
     }
 
     auto TopDieInstanceItem::placeInTOB(TOBItem* tob) -> bool {
+        assert(tob != nullptr);
+        // Target tob has no topdie instance!
         if (!tob->hasTopDieInst()) {
-            // 如果这个 tob 是空的，吸附到这个 tob 上
-            if (this->_currentTOB != nullptr) {
-                this->_currentTOB->removeTopDieInstance();
-            }
+            auto originTOB = this->_currentTOB;
+            this->removeCurrentTOB();
+            
+            // Link to this tob
             tob->setTopDieInst(this);
             this->setPos(tob->pos());
             this->_currentTOB = tob;
-            
+
+            // Set basedie data
+            assert(this->_topdieInst != nullptr);
+            assert(tob->tob() != nullptr);
+            this->_topdieInst->set_placed_tob(tob->tob());
+
+            emit this->placedTOBChanged(originTOB, tob);
+
             return true;
+
+        // Target tob has placed with other topdie instance!
         } else {
-            // 如果这个 tob 不是空的，吸附不了，把 TopDieInst 归位
             if (this->_currentTOB != nullptr) {
                 this->setPos(this->_currentTOB->pos());
             } else {
@@ -131,4 +142,11 @@ namespace kiwi::widget::layout {
         }
     }
 
+    void TopDieInstanceItem::removeCurrentTOB() {
+        if (this->_currentTOB != nullptr) {
+            this->_currentTOB->removeTopDieInstance();
+            this->_currentTOB = nullptr;
+            this->_topdieInst->set_placed_tob(nullptr);
+        }
+    }
 }

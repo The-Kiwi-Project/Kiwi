@@ -2,11 +2,16 @@
 #include "./layoutscene.h"
 #include "./layoutview.h"
 #include "./layoutinfowidget.h"
+#include "./item/tobitem.h"
+#include "./item/topdieinstitem.h"
 
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QDebug>
 
 namespace kiwi::widget {
+
+    using namespace layout;
 
     LayoutWidget::LayoutWidget(hardware::Interposer* interposer, circuit::BaseDie* basedie, QWidget* parent):
         QWidget{parent},
@@ -14,7 +19,7 @@ namespace kiwi::widget {
         _basedie{basedie}
     {
         this->_scene = new LayoutScene {this->_interposer, this->_basedie, this};
-        
+
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(10, 10, 10, 10);
 
@@ -33,6 +38,12 @@ namespace kiwi::widget {
         this->_infoWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         this->_infoWidget->setMinimumWidth(300);
         this->_splitter->addWidget(this->_infoWidget);
+
+        connect(this->_scene, &LayoutScene::topdieInstancePlacedTOBChanged, 
+            [this](TopDieInstanceItem* inst, TOBItem *originTOB, TOBItem *newTOB) {
+                this->_infoWidget->updateInfo();
+            }
+        );
 
         this->setWindowTitle("Layout Editor");
         this->resize(1000, 800);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qobject.h"
+#include "qobjectdefs.h"
 #include <circuit/basedie.hh>
 #include <circuit/export/export.hh>
 #include <QGraphicsScene>
@@ -27,7 +28,9 @@ namespace kiwi::widget {
         class SourcePortItem;
     }
 
-    class LayoutScene : public QGraphicsScene {   
+    class LayoutScene : public QGraphicsScene {  
+        Q_OBJECT
+
         static constexpr qreal TOB_INTERVAL = 30.0;
         static constexpr qreal INTERPOSER_SIDE_GAP = 30.0;
         static constexpr qreal EXPORT_SIDE_GAP = 50.0;
@@ -42,6 +45,9 @@ namespace kiwi::widget {
 
     public:
         LayoutScene(hardware::Interposer* interposer, circuit::BaseDie* basedie, QObject* parent = nullptr);
+
+    signals:
+        void topdieInstancePlacedTOBChanged(layout::TopDieInstanceItem* inst, layout::TOBItem *originTOB, layout::TOBItem *newTOB);
 
     public:
         auto addNet(layout::PinItem* beginPoint, layout::PinItem* endPoint) -> layout::NetItem*;

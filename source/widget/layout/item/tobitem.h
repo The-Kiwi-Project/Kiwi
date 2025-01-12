@@ -35,6 +35,10 @@ namespace kiwi::widget::layout {
 
     private:
         void updateAppearance();
+        
+    public:
+        auto tob() const -> hardware::TOB*
+        { return this->_tob; }
 
     private:
         hardware::TOB* _tob;
