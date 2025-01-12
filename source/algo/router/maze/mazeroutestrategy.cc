@@ -587,6 +587,18 @@ print_sync_path(ptr_sync_net);
         std::HashMap<hardware::Track*, hardware::TOBConnector> begin_track_to_tob_map {};
         std::HashMap<hardware::Track*, hardware::TOBConnector> end_track_to_tob_map {};
 
+//!
+if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value) {
+    auto net = sync_net[0].get();
+    auto test_begin_bump = net->begin_bump();
+    auto test_end_bump = net->end_bump();
+    if (test_begin_bump->coord().row == 3 && test_begin_bump->coord().col == 6){
+        if (test_end_bump->coord().row == 3 && test_end_bump->coord().col == 3)
+            auto a = 1;
+    }
+}
+//!
+
         for (auto& uptr_net: sync_net){
             auto net = uptr_net.get();
             

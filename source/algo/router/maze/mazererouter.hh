@@ -78,6 +78,9 @@ namespace kiwi::algo{
     };
 
     class MazeRerouter{
+
+    static constexpr int CUT_RATE = 0.3;
+    
     public:
         auto bus_reroute(       // reroute through pointer path_ptrs
             hardware::Interposer* interposer, std::Vector<routed_path*>& path_ptrs,
@@ -88,7 +91,7 @@ namespace kiwi::algo{
     
     private:
         auto remove_tracks(
-            routed_path* path_ptr, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>* end_tracks, int cut_rate = 0.2
+            routed_path* path_ptr, std::HashMap<kiwi::hardware::Track *, kiwi::hardware::TOBConnector>* end_tracks, int cut_rate = MazeRerouter::CUT_RATE
         ) const -> void;
         auto refind_path(
             hardware::Interposer* interposer, Tree& tree, routed_path* path_ptr,\

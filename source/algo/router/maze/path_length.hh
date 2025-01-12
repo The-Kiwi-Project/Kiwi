@@ -13,7 +13,7 @@ namespace kiwi::hardware {
 
 namespace kiwi::algo {
 
-    static constexpr bool USE_SWITCH_LENGTH = true;
+    static constexpr bool USE_SWITCH_LENGTH = false;
     using routed_path = std::Vector<std::Tuple<kiwi::hardware::Track *, std::Option<kiwi::hardware::COBConnector>>>;
 
     auto path_length(const routed_path& path, bool switch_length = USE_SWITCH_LENGTH) -> std::usize;
