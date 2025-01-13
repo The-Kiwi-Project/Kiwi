@@ -38,6 +38,23 @@ namespace kiwi::widget {
         this->addSceneItems();
     }
 
+    void SchematicScene::reloadItems() {
+        // Clear
+        this->_topdieinstMap.clear();
+        this->_exportMap.clear();
+        this->_nets.clear();
+        this->_vddPorts.clear();
+        this->_gndPorts.clear();
+
+        this->_floatingNet = nullptr;
+        this->_floatingTopdDieInst = nullptr;
+        this->_floatingExPort = nullptr;
+
+        this->clear();
+
+        this->addSceneItems();
+    }
+
     void SchematicScene::addSceneItems() {
         this->addTopDieInstItems();
         this->addExternalPortItems();

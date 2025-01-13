@@ -36,6 +36,9 @@ namespace kiwi::widget {
             SchematicView* view, 
             QWidget* parent = nullptr);
 
+    public:
+        void reload();
+
     private:
         void createViewInfoWidget();
         void createExternalPortInfoWidget();

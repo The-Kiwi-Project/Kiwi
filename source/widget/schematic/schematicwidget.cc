@@ -35,6 +35,13 @@ namespace kiwi::widget {
         this->resize(1000, 800);
     }
 
+    void SchematicWidget::reload() {
+        this->_scene->reloadItems();
+        this->_view->adjustSceneRect();
+        this->_libWidget->reload();
+        this->_infoWidget->reload();
+    }
+
     void SchematicWidget::initTopdieLibWidget() {
         this->_libWidget = new SchematicLibWidget {this->_basedie, this->_splitter};
         this->_libWidget->setMinimumWidth(200);

@@ -57,6 +57,19 @@ namespace kiwi::widget {
         this->addSceneItems();
     }
 
+    void LayoutScene::reloadItems() {
+        this->_topdieinstMap.clear();
+        this->_externalPortsMap.clear();
+        this->_tobsMaps.clear();
+        this->_nets.clear();
+        this->_vddPorts.clear();
+        this->_gndPorts.clear();
+        this->_netsWithSourcePorts.clear();
+        this->clear();
+
+        this->addSceneItems();
+    }
+
     void LayoutScene::addSceneItems() {
         this->addTOBItems();
         this->addTopDieInstanceItems();

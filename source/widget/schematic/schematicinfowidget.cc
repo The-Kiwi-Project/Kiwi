@@ -45,6 +45,10 @@ namespace kiwi::widget {
         this->createExternalPortInfoWidget();
     }
 
+    void SchematicInfoWidget::reload() {
+        this->setCurrentWidget(this->_viewInfoWidget);
+    }
+
     void SchematicInfoWidget::createViewInfoWidget() {
         this->_viewInfoWidget = new ViewInfoWidget {this->_view, this};
         this->addWidget(this->_viewInfoWidget);

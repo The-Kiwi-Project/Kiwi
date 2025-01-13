@@ -112,6 +112,9 @@ namespace kiwi::widget {
         if (!filePath.isEmpty()) {
             auto configPath = std::FilePath{filePath.toStdString()};
             parse::read_config(configPath, this->_interposer.get(), this->_basedie.get());
+        
+            this->_schematicWidget->reload();
+            this->_layoutWidget->reload();
         }
     }
     QMESSAGEBOX_REPORT_EXCEPTION("Load Config")

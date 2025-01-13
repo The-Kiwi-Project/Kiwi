@@ -27,6 +27,9 @@ namespace kiwi::widget {
             circuit::BaseDie* basedie,
             QWidget *parent = nullptr);
 
+    public:
+        void reload();
+
     private:
         void initTopdieLibWidget();
         void initSchematicView(hardware::Interposer* interposer, circuit::BaseDie* basedie);

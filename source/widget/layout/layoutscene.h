@@ -53,6 +53,9 @@ namespace kiwi::widget {
         void topdieInstancePlacedTOBChanged(layout::TopDieInstanceItem* inst, layout::TOBItem *originTOB, layout::TOBItem *newTOB);
 
     public:
+        void reloadItems();
+
+    public:
         auto addNet(layout::PinItem* beginPoint, layout::PinItem* endPoint) -> layout::NetItem*;
         auto addTOB(hardware::TOB* tob) -> layout::TOBItem*;
         auto addTopDieInstance(circuit::TopDieInstance* topdieInst) -> layout::TopDieInstanceItem*;

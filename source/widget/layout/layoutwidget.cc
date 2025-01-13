@@ -51,4 +51,10 @@ namespace kiwi::widget {
         this->resize(1000, 800);
     }
 
+    void LayoutWidget::reload() {
+        this->_scene->reloadItems();
+        this->_view->adjustSceneRect();
+        this->_infoWidget->updateInfo();
+    }
+
 }

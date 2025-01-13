@@ -109,7 +109,7 @@ namespace kiwi::circuit {
         auto topdie_inst = std::move(node.mapped());
         auto topdie_inst_ptr = topdie_inst.get();
 
-        // Remove all topdie 
+        // Remove all nets connection to this topdie instance 
         for (auto& [sync, connections] : this->_connections) {
             auto iter = std::remove_if(connections.begin(), connections.end(), [topdie_inst_ptr](std::Box<Connection>& c) -> bool {
                 auto& input_pin = c->input_pin();
@@ -127,6 +127,10 @@ namespace kiwi::circuit {
 
             connections.erase(iter, connections.end());
         } 
+
+        // free tob 
+        if (topdie_inst->tob() != nullptr) {
+        }
 
         return true;
     }

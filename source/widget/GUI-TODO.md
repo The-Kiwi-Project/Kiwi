@@ -24,3 +24,11 @@
     - 原理图更新 basedie 时，布局需要更新
     - 当开始布局布线后，布局界面需要更新。原理图和布局都无法修改
   
+
+
+# TODO:
+
+- 实现 `get_a_idle_tob`
+- save/save as
+- 清除 basedie 对象数据
+- load 前检查是否已经构建，提示

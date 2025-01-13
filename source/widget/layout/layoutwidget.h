@@ -27,6 +27,9 @@ namespace kiwi::widget {
             QWidget *parent = nullptr
         );
 
+    public:
+        void reload();
+
     private:
         QSplitter* _splitter {nullptr};
 

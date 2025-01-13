@@ -43,6 +43,9 @@ namespace kiwi::widget {
         void exportSelected(schematic::ExternalPortItem* eport);
         void viewSelected();
 
+    public:
+        void reloadItems();
+
     protected:
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
         void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
@@ -102,9 +105,6 @@ namespace kiwi::widget {
         QSet<schematic::NetItem*> _nets;
         QVector<schematic::SourcePortItem*> _vddPorts;
         QVector<schematic::SourcePortItem*> _gndPorts;
-
-        schematic::PinItem* _vddPinItem;
-        schematic::PinItem* _gndPinItem;
 
         // Temp var 
         schematic::NetItem* _floatingNet {nullptr};
