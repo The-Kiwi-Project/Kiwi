@@ -9,7 +9,9 @@
 #include "./item/topdieinstitem.h"
 #include "./item/topdieinstitem.h"
 #include "./schematicscene.h"
-#include "std/exception.hh"
+
+#include <std/exception.hh>
+#include <widget/frame/msgexception.h>
 
 #include <debug/debug.hh>
 #include <circuit/basedie.hh>
@@ -91,15 +93,6 @@ namespace kiwi::widget {
 
     void SchematicInfoWidget::showViewInfo() {
         this->setCurrentWidget(this->_viewInfoWidget);
-    }
-
-    #define QMESSAGEBOX_REPORT_EXCEPTION(title)\
-    catch (const std::Exception& err) {\
-        QMessageBox::critical(\
-            this,\
-            title,\
-            QString::fromLatin1(err.what())\
-        );\
     }
 
     void SchematicInfoWidget::externalPortRename(ExternalPortItem* eport, const QString& name) try {

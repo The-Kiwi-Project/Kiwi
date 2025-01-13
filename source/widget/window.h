@@ -1,5 +1,8 @@
 #pragma once
 
+#include "std/file.hh"
+#include "std/memory.hh"
+#include "std/utility.hh"
 #include <QMainWindow>
 
 namespace kiwi::hardware {
@@ -12,6 +15,7 @@ namespace kiwi::circuit {
 
 class QToolBar;
 class QStackedWidget;
+class QMenuBar;
 
 namespace kiwi::widget {
 
@@ -23,15 +27,33 @@ namespace kiwi::widget {
         Q_OBJECT
 
     public:
-        Window(hardware::Interposer* i, circuit::BaseDie* b, QWidget *parent = nullptr);
+        Window(QWidget *parent = nullptr);
         ~Window();
 
     private:
+        void createSystem();
+        void createMenuBar();
+        void createToolBar();
+        void createCentralWidget();
+
+    private:
+        void loadConfig();
+        void saveConfig();
+        void saveConfigAs();
+
+    private:
+        QMenuBar* _menuBar {nullptr};
         QToolBar* _toolBar {nullptr};
         QStackedWidget* _stackedWidget {nullptr};
 
         SchematicWidget* _schematicWidget {nullptr};
         LayoutWidget* _layoutWidget {nullptr};
+
+    private:
+        std::Box<hardware::Interposer> _interposer {nullptr};
+        std::Box<circuit::BaseDie> _basedie {nullptr};
+
+        std::Option<std::FilePath> _configFilePath {}; 
     };
 
 }

@@ -1,4 +1,5 @@
 #include "./gui.hh"
+#include <widget/entrydialog.h>
 #include <widget/layout/layoutwidget.h>
 #include <widget/schematic/schematicwidget.h>
 
@@ -20,16 +21,14 @@
 #include <std/algorithm.hh>
 
 #include <QApplication>
+#include <QDebug>
 
 namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
-        auto [interposer, basedie] 
-            = kiwi::parse::read_config("../test/config/case5");
-    
         auto app = QApplication{argc, argv};
         app.setStyle("Fusion");
-        auto w = widget::Window{interposer.get(), basedie.get()};
+        auto w = widget::Window{};
         w.show();
         return app.exec();
     }
