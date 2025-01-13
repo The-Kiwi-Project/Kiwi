@@ -2,6 +2,7 @@
 
 #include "qobject.h"
 #include "qobjectdefs.h"
+#include "qvector.h"
 #include <circuit/basedie.hh>
 #include <circuit/export/export.hh>
 #include <QGraphicsScene>
@@ -65,6 +66,9 @@ namespace kiwi::widget {
         void addExternalPortItems();
         void addNetItems();
 
+    public:
+        auto totalNetLenght() -> qreal;
+
     private:
         auto circuitPinToPinItem(const circuit::Pin& pin) -> layout::PinItem*;
         
@@ -78,6 +82,7 @@ namespace kiwi::widget {
         QHash<circuit::TopDieInstance*, layout::TopDieInstanceItem*> _topdieinstMap {};
         QHash<circuit::ExternalPort*, layout::ExternalPortItem*> _externalPortsMap {};
         QHash<hardware::TOB*, layout::TOBItem*> _tobsMaps {};
+        QVector<layout::NetItem*> _nets {};
     };
 
 

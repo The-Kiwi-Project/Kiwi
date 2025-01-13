@@ -17,19 +17,26 @@ namespace kiwi::circuit {
 
 namespace kiwi::widget {
 
+    class LayoutScene;
+
     class LayoutInfoWidget : public QWidget {
     public:
-        LayoutInfoWidget(hardware::Interposer* interposer, circuit::BaseDie* basedie, QWidget* parent);
+        LayoutInfoWidget(
+            hardware::Interposer* interposer, circuit::BaseDie* basedie, 
+            LayoutScene* scene,
+            QWidget* parent
+        );
 
         void updateInfo();
 
     private:
-        QSpinBox* _topdieInstSizeSpinBox {nullptr};
-        QTableView* _instPlaceView {nullptr};
-
         hardware::Interposer* _interposer {nullptr};
         circuit::BaseDie*     _basedie {nullptr};
-        QLineEdit* _predictPathLength {nullptr};
+        LayoutScene* _scene {nullptr};
+    
+        QSpinBox* _topdieInstSizeSpinBox {nullptr};
+        QTableView* _instPlaceView {nullptr};
+        QLineEdit* _pathLengthEdit {nullptr};
     };
 
 }

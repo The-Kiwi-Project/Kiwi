@@ -24,6 +24,7 @@ namespace kiwi::widget::layout {
         void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     public:
+        auto length() -> qreal;
         void updateLine();
 
     private:

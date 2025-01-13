@@ -19,6 +19,8 @@ namespace kiwi::widget {
         _basedie{basedie}
     {
         this->_scene = new LayoutScene {this->_interposer, this->_basedie, this};
+        // MARK
+        this->_scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
         auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(10, 10, 10, 10);
@@ -34,7 +36,7 @@ namespace kiwi::widget {
         this->_splitter->addWidget(this->_view);
 
         // Info
-        this->_infoWidget = new LayoutInfoWidget {this->_interposer, this->_basedie, this->_splitter};
+        this->_infoWidget = new LayoutInfoWidget {this->_interposer, this->_basedie, this->_scene, this->_splitter};
         this->_infoWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         this->_infoWidget->setMinimumWidth(300);
         this->_splitter->addWidget(this->_infoWidget);

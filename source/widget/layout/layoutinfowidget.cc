@@ -1,6 +1,6 @@
 #include "./layoutinfowidget.h"
-#include "qchar.h"
-#include <format>
+#include "./layoutscene.h"
+#include "qlineedit.h"
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 
@@ -16,15 +16,17 @@
 #include <QGroupBox>
 #include <QDebug>
 #include <QMessageBox>
+#include <QLineEdit>
 
 namespace kiwi::widget {
 
     constexpr int MIN_HEIGHT = 30;
 
-    LayoutInfoWidget::LayoutInfoWidget(hardware::Interposer* interposer, circuit::BaseDie* basedie, QWidget* parent):
+    LayoutInfoWidget::LayoutInfoWidget(hardware::Interposer* interposer, circuit::BaseDie* basedie, LayoutScene* scene, QWidget* parent):
         QWidget{parent},
         _interposer{interposer},
-        _basedie{basedie}
+        _basedie{basedie},
+        _scene{scene}
     {
         auto thisLayout = new QVBoxLayout {this};
         auto widget = new QGroupBox {"Layout Infomation", this};
@@ -35,10 +37,11 @@ namespace kiwi::widget {
         auto layout = new QGridLayout{widget};
         layout->setSpacing(10);
 
-        // Name
+        // Size
         layout->addWidget(new QLabel {"TopDie Instance Size ", widget}, 0, 0);
         this->_topdieInstSizeSpinBox = new QSpinBox {this};
         this->_topdieInstSizeSpinBox->setMinimum(0);
+        this->_topdieInstSizeSpinBox->setReadOnly(true);
         this->_topdieInstSizeSpinBox->setMaximum(hardware::Interposer::TOB_ARRAY_HEIGHT * hardware::Interposer::TOB_ARRAY_WIDTH);
         layout->addWidget(this->_topdieInstSizeSpinBox, 0, 1);
 
@@ -51,9 +54,11 @@ namespace kiwi::widget {
         layout->addWidget(this->_instPlaceView, 2, 0, 1, 2);
 
         // Path length
-        layout->addWidget(new QLabel {"Prediect Path Length", widget}, 3, 0);
-
-
+        layout->addWidget(new QLabel {"Path Length", widget}, 3, 0);
+        this->_pathLengthEdit = new QLineEdit {this};
+        this->_pathLengthEdit->setMinimumHeight(MIN_HEIGHT);
+        this->_pathLengthEdit->setReadOnly(true);
+        layout->addWidget(this->_pathLengthEdit, 4, 0, 1, 2);
 
         layout->setColumnMinimumWidth(0, 50);
         layout->setColumnStretch(0, 0);
@@ -62,8 +67,6 @@ namespace kiwi::widget {
     }
 
     void LayoutInfoWidget::updateInfo() {
-        qDebug() << "Update Infomation";
-
         // Instance size
         auto instSize = this->_basedie->topdie_insts().size();
         this->_topdieInstSizeSpinBox->setValue(instSize);
@@ -94,6 +97,9 @@ namespace kiwi::widget {
         }
 
         this->_instPlaceView->setModel(model);
+
+        // Length
+        this->_pathLengthEdit->setText(QString{"%1"}.arg(this->_scene->totalNetLenght()));
     }
 
 }

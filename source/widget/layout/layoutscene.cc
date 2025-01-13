@@ -151,6 +151,7 @@ namespace kiwi::widget {
 
     auto LayoutScene::addNet(layout::PinItem* beginPoint, layout::PinItem* endPoint) -> layout::NetItem* {
         auto n = new layout::NetItem {beginPoint, endPoint};
+        this->_nets.push_back(n);
         this->addItem(n);
         return n;
     }
@@ -186,6 +187,14 @@ namespace kiwi::widget {
         auto portItem = new layout::SourcePortItem {layout::SoucePortType::GND};
         this->addItem(portItem);
         return portItem;
+    }
+
+    auto LayoutScene::totalNetLenght() -> qreal {
+        auto sum = 0.0;
+        for (auto net : this->_nets) {
+            sum += net->length();
+        }
+        return sum;
     }
 
     auto LayoutScene::circuitPinToPinItem(const circuit::Pin& pin) -> layout::PinItem* {

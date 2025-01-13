@@ -1,5 +1,7 @@
 #include "./netitem.h"
 #include "./pinitem.h"
+#include <cassert>
+#include <cstdlib>
 #include <debug/debug.hh>
 
 namespace kiwi::widget::layout {
@@ -24,6 +26,14 @@ namespace kiwi::widget::layout {
 
     void NetItem::updateLine() {
         this->setLine(QLineF{this->_beginPin->scenePos(), this->_endPin->scenePos()});
+    }
+
+    auto NetItem::length() -> qreal {
+        assert(this->_beginPin != nullptr);
+        assert(this->_endPin != nullptr);
+        auto beginPos = this->_beginPin->scenePos();
+        auto endPos = this->_endPin->scenePos();
+        return qAbs(beginPos.x() - endPos.x()) + qAbs(beginPos.y() - endPos.y());
     }
 
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
