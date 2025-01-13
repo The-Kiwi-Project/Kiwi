@@ -25,11 +25,11 @@ namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
         auto [interposer, basedie] 
-            = kiwi::parse::read_config("../test/config/case4");
+            = kiwi::parse::read_config("../test/config/case5");
     
         auto app = QApplication{argc, argv};
         app.setStyle("Fusion");
-        auto w = widget::LayoutWidget{interposer.get(), basedie.get()};
+        auto w = widget::Window{interposer.get(), basedie.get()};
         w.show();
         return app.exec();
     }

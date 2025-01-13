@@ -36,7 +36,7 @@ namespace kiwi::widget {
 
         static constexpr qreal TOB_INTERVAL = 30.0;
         static constexpr qreal INTERPOSER_SIDE_GAP = 30.0;
-        static constexpr qreal EXPORT_SIDE_GAP = 50.0;
+        static constexpr qreal EXPORT_SIDE_GAP = 150.0;
 
         static_assert(EXPORT_SIDE_GAP > INTERPOSER_SIDE_GAP);
 

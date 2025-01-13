@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QWidget>
+#include <QMainWindow>
 
 namespace kiwi::hardware {
     class Interposer;
@@ -10,9 +10,15 @@ namespace kiwi::circuit {
     class BaseDie;
 }
 
+class QToolBar;
+class QStackedWidget;
+
 namespace kiwi::widget {
 
-    class Window : public QWidget 
+    class SchematicWidget;
+    class LayoutWidget;
+
+    class Window : public QMainWindow 
     {
         Q_OBJECT
 
@@ -21,7 +27,11 @@ namespace kiwi::widget {
         ~Window();
 
     private:
-        QWidget* _widget {nullptr};
+        QToolBar* _toolBar {nullptr};
+        QStackedWidget* _stackedWidget {nullptr};
+
+        SchematicWidget* _schematicWidget {nullptr};
+        LayoutWidget* _layoutWidget {nullptr};
     };
 
 }
