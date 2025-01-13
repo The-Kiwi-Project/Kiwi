@@ -47,6 +47,9 @@ namespace kiwi::widget::layout {
         static_assert(BUMP_HORI_INTERVAL > PinItem::DIAMETER);
         static_assert(BUMP_VERT_INTERVAL > PinItem::DIAMETER);
 
+        enum { Type = UserType + 7 };
+        int type() const override { return Type; }
+
     public:
         TopDieInstanceItem(circuit::TopDieInstance* topdieInst);
 

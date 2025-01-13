@@ -5,16 +5,30 @@
 #include "./item/topdieinstitem.h"
 #include "circuit/connection/pin.hh"
 #include "hardware/track/trackcoord.hh"
+#include "qglobal.h"
+#include "qpoint.h"
 #include "widget/layout/item/exportitem.h"
 #include "widget/layout/item/sourceportitem.h"
+#include <cassert>
 #include <circuit/basedie.hh>
 
+#include <cmath>
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
+#include <widget/frame/itemtypecheck.h>
 
 #include <debug/debug.hh>
+#include <QDebug>
 
 namespace kiwi::widget {
+
+    static_assert(AllUnique<
+        (int)layout::NetItem::Type,
+        (int)layout::PinItem::Type,
+        (int)layout::TopDieInstanceItem::Type,
+        (int)layout::ExternalPortItem::Type,
+        (int)layout::SourcePortItem::Type
+    >::value);
 
     using namespace layout;
 
@@ -48,6 +62,8 @@ namespace kiwi::widget {
         this->addTopDieInstanceItems();
         this->addExternalPortItems();
         this->addNetItems();
+
+        this->choiseSourcePort();
     }
 
     void LayoutScene::addTOBItems() {
@@ -79,6 +95,8 @@ namespace kiwi::widget {
             // Connect the tob changed signal
             connect(item, &TopDieInstanceItem::placedTOBChanged, 
                 [this, item] (TOBItem *originTOB, TOBItem *newTOB) {
+                    // MARK, maybe better..
+                    this->choiseSourcePort();
                     emit this->topdieInstancePlacedTOBChanged(item, originTOB, newTOB);
                 }
             );
@@ -140,17 +158,22 @@ namespace kiwi::widget {
             for (const auto& connection : connections) {
                 auto beginPin = this->circuitPinToPinItem(connection->input_pin());
                 auto endPin = this->circuitPinToPinItem(connection->output_pin());
-                if (beginPin == nullptr || endPin == nullptr) {
-                    continue;
-                }
+                
+                assert(beginPin != nullptr);
+                assert(endPin != nullptr);
 
                 this->addNet(beginPin, endPin);
             }
         }
     }
 
-    auto LayoutScene::addNet(layout::PinItem* beginPoint, layout::PinItem* endPoint) -> layout::NetItem* {
-        auto n = new layout::NetItem {beginPoint, endPoint};
+    auto LayoutScene::addNet(layout::PinItem* beginPin, layout::PinItem* endPin) -> layout::NetItem* {
+        auto n = new layout::NetItem {beginPin, endPin};
+        // MARK: Check source to source
+        assert(!(beginPin->isSourcePortPin() && endPin->isSourcePortPin()));
+        if (beginPin->isSourcePortPin() || endPin->isSourcePortPin()) {
+            this->_netsWithSourcePorts.push_back(n);
+        }
         this->_nets.push_back(n);
         this->addItem(n);
         return n;
@@ -178,13 +201,15 @@ namespace kiwi::widget {
     }
 
     auto LayoutScene::addVDDSourcePort() -> layout::SourcePortItem* {
-        auto portItem = new layout::SourcePortItem {layout::SoucePortType::VDD};
+        auto portItem = new layout::SourcePortItem {layout::SourcePortType::VDD};
+        this->_vddPorts.push_back(portItem);
         this->addItem(portItem);
         return portItem;
     }
 
     auto LayoutScene::addGNDSourcePort() -> layout::SourcePortItem* {
-        auto portItem = new layout::SourcePortItem {layout::SoucePortType::GND};
+        auto portItem = new layout::SourcePortItem {layout::SourcePortType::GND};
+        this->_gndPorts.push_back(portItem);
         this->addItem(portItem);
         return portItem;
     }
@@ -192,18 +217,48 @@ namespace kiwi::widget {
     auto LayoutScene::totalNetLenght() -> qreal {
         auto sum = 0.0;
         for (auto net : this->_nets) {
-            sum += net->length();
+            sum += LayoutScene::pinDistance(net->beginPin(), net->endPin());
         }
         return sum;
+    }
+
+    void LayoutScene::choiseSourcePort() {
+        for (auto net : this->_netsWithSourcePorts) {
+            if (net->beginPin()->isSourcePortPin()) {
+                auto endPinPos = net->endPin()->scenePos();
+                
+                auto originPort = net->beginPin()->parentSourcePort();
+                auto& ports = originPort->isVDD() ? this->_vddPorts : this->_gndPorts;
+
+                auto newBeginPort = 
+                    LayoutScene::getMinDistancePort(ports, endPinPos);
+                
+                net->moveToBeginPin(newBeginPort->pin());
+            }
+            else if (net->endPin()->isSourcePortPin()) {
+                auto beginPinPos = net->beginPin()->scenePos();
+                
+                auto originPort = net->endPin()->parentSourcePort();
+                auto& ports = originPort->isVDD() ? this->_vddPorts : this->_gndPorts;
+
+                auto newEndPort = 
+                    LayoutScene::getMinDistancePort(ports, beginPinPos);
+                
+                net->moveToEndPin(newEndPort->pin());
+            } 
+            else {
+                debug::unreachable();
+            }
+        }
     }
 
     auto LayoutScene::circuitPinToPinItem(const circuit::Pin& pin) -> layout::PinItem* {
         return std::match(pin.connected_point(),
             [this](const circuit::ConnectVDD& vdd) -> PinItem* {
-                return nullptr;
+                return this->_vddPorts.front()->pin();
             },
             [this](const circuit::ConnectGND& vdd) -> PinItem* {
-                return nullptr;
+                return this->_gndPorts.front()->pin();
             },
             [this](const circuit::ConnectExPort& eport) -> PinItem* {
                 auto eportItem = this->_externalPortsMap.value(eport.port);
@@ -217,7 +272,36 @@ namespace kiwi::widget {
         );
     }
 
+    auto LayoutScene::getMinDistancePort(
+        const QVector<layout::SourcePortItem*> ports, 
+        const QPointF& targetPos) -> layout::SourcePortItem* 
+    {
+        auto minDistance = std::numeric_limits<qreal>::max();
+        layout::SourcePortItem* minPort = nullptr;
+
+        for (auto sport : ports) {
+            auto distance = LayoutScene::pointDistance(sport->pin()->scenePos(), targetPos);
+            if (distance < minDistance) {
+                minDistance = distance;
+                minPort = sport;
+            }
+        }
+
+        assert(minPort != nullptr);
+        return minPort;
+    }
+
+    auto LayoutScene::pinDistance(layout::PinItem* pin1, layout::PinItem* pin2) -> qreal {
+        assert(pin1 != nullptr && pin2 != nullptr);
+        return LayoutScene::pointDistance(pin1->scenePos(), pin2->scenePos());
+    }
+
+    auto LayoutScene::pointDistance(const QPointF& p1, const QPointF& p2) -> qreal {
+        return (p1 - p2).manhattanLength();
+    }
+
     auto LayoutScene::tobPosition(const hardware::TOBCoord& coord) -> QPointF {
         return QPointF{coord.col * (TOBItem::WIDTH + TOB_INTERVAL), -coord.row * (TOBItem::HEIGHT + TOB_INTERVAL)};
     }
+
 }

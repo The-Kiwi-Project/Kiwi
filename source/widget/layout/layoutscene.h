@@ -1,7 +1,9 @@
 #pragma once
 
+#include "qglobal.h"
 #include "qobject.h"
 #include "qobjectdefs.h"
+#include "qpoint.h"
 #include "qvector.h"
 #include <circuit/basedie.hh>
 #include <circuit/export/export.hh>
@@ -68,11 +70,15 @@ namespace kiwi::widget {
 
     public:
         auto totalNetLenght() -> qreal;
+        void choiseSourcePort();
 
     private:
         auto circuitPinToPinItem(const circuit::Pin& pin) -> layout::PinItem*;
         
     private:
+        static auto getMinDistancePort(const QVector<layout::SourcePortItem*> ports, const QPointF& targetPos) -> layout::SourcePortItem*;
+        static auto pinDistance(layout::PinItem* pin1, layout::PinItem* pin2) -> qreal;
+        static auto pointDistance(const QPointF& p1, const QPointF& p2) -> qreal;
         static auto tobPosition(const hardware::TOBCoord& coord) -> QPointF;
 
     protected:
@@ -83,6 +89,9 @@ namespace kiwi::widget {
         QHash<circuit::ExternalPort*, layout::ExternalPortItem*> _externalPortsMap {};
         QHash<hardware::TOB*, layout::TOBItem*> _tobsMaps {};
         QVector<layout::NetItem*> _nets {};
+        QVector<layout::SourcePortItem*> _vddPorts {};
+        QVector<layout::SourcePortItem*> _gndPorts {};
+        QVector<layout::NetItem*> _netsWithSourcePorts {};
     };
 
 

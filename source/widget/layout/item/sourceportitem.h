@@ -6,7 +6,7 @@
 
 namespace kiwi::widget::layout {
 
-    enum class SoucePortType {
+    enum class SourcePortType {
         VDD, GND
     };
 
@@ -17,19 +17,28 @@ namespace kiwi::widget::layout {
         static const     QColor GND_COLOR;
         static constexpr int   Z_VALUE = 6;
 
+        enum { Type = UserType + 5 };
+        int type() const override { return Type; }
+
     public:
-        SourcePortItem(SoucePortType type);
+        SourcePortItem(SourcePortType type);
 
     protected:
         auto boundingRect() const -> QRectF override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
     public:
+        auto isVDD() -> bool
+        { return this->_type == SourcePortType::VDD; }
+
+        auto isGND() -> bool 
+        { return this->_type == SourcePortType::GND; }
+
         auto pin() const -> PinItem* 
         { return this->_pin; }
 
     private:
-        SoucePortType _type;
+        SourcePortType _type;
         PinItem* _pin {nullptr};
     };
 

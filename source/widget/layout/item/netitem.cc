@@ -28,12 +28,20 @@ namespace kiwi::widget::layout {
         this->setLine(QLineF{this->_beginPin->scenePos(), this->_endPin->scenePos()});
     }
 
-    auto NetItem::length() -> qreal {
+    void NetItem::moveToBeginPin(PinItem* pin) {
         assert(this->_beginPin != nullptr);
+        assert(pin != nullptr);
+        this->_beginPin->removeNet(this);
+        this->_beginPin = pin;
+        pin->addNet(this);
+    }
+
+    void NetItem::moveToEndPin(PinItem* pin) {
         assert(this->_endPin != nullptr);
-        auto beginPos = this->_beginPin->scenePos();
-        auto endPos = this->_endPin->scenePos();
-        return qAbs(beginPos.x() - endPos.x()) + qAbs(beginPos.y() - endPos.y());
+        assert(pin != nullptr);
+        this->_endPin->removeNet(this);
+        this->_endPin = pin;
+        pin->addNet(this);
     }
 
     void NetItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {

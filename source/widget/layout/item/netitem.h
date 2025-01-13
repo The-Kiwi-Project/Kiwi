@@ -16,6 +16,9 @@ namespace kiwi::widget::layout {
         static constexpr qreal  HOVER_WIDTH = 3;
         static constexpr int    Z_VALUE = 5;
 
+        enum { Type = UserType + 3 };
+        int type() const override { return Type; }
+
     public:
         NetItem(PinItem* beginPin, PinItem* endPin, QGraphicsLineItem *parent = nullptr);
 
@@ -24,8 +27,18 @@ namespace kiwi::widget::layout {
         void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     public:
-        auto length() -> qreal;
         void updateLine();
+
+    public:
+        void moveToBeginPin(PinItem* pin);
+        void moveToEndPin(PinItem* pin);
+
+    public:
+        auto beginPin() const -> PinItem*
+        { return this->_beginPin; }
+
+        auto endPin() const -> PinItem*
+        { return this->_endPin; }
 
     private:
         PinItem* _beginPin;

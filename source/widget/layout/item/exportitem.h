@@ -16,6 +16,9 @@ namespace kiwi::widget::layout {
         static const    QColor COLOR;
         static constexpr int   Z_VALUE = 6;
 
+        enum { Type = UserType + 2 };
+        int type() const override { return Type; }
+
     public:
         ExternalPortItem(circuit::ExternalPort* eport);
 

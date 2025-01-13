@@ -6,7 +6,7 @@ namespace kiwi::widget::layout {
     const QColor SourcePortItem::VDD_COLOR = QColor::fromRgb(255, 100, 100, 100);
     const QColor SourcePortItem::GND_COLOR = QColor::fromRgb(100, 255, 100, 100); 
 
-    SourcePortItem::SourcePortItem(SoucePortType type) :
+    SourcePortItem::SourcePortItem(SourcePortType type) :
         _type{type},
         _pin{nullptr}
     {
@@ -19,7 +19,7 @@ namespace kiwi::widget::layout {
     }
 
     void SourcePortItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) {
-        painter->setBrush(this->_type == SoucePortType::VDD ? VDD_COLOR : GND_COLOR);
+        painter->setBrush(this->_type == SourcePortType::VDD ? VDD_COLOR : GND_COLOR);
         painter->drawRect(-WIDTH / 2., -WIDTH / 2., WIDTH, WIDTH);
     }
 

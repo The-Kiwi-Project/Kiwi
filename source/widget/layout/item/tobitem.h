@@ -14,7 +14,7 @@ namespace kiwi::widget::layout {
     public:
         static constexpr int    Z_VALUE = 0;
 
-        enum { Type = UserType + 3 };
+        enum { Type = UserType + 6 };
         int type() const override { return Type; }
 
     public:
