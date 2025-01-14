@@ -488,6 +488,8 @@ namespace kiwi::widget {
             return;
         }
 
+        this->makeCurrent();
+
         using enum hardware::COBDirection;
         using enum hardware::TrackDirection;
         using hardware::COBSwState;
@@ -643,6 +645,8 @@ namespace kiwi::widget {
             }
         }
         this->updateTrackInstMatrices();
+
+        this->doneCurrent();
     }
 
     void View3DWidget::updateViewMatrix() {
@@ -786,21 +790,27 @@ namespace kiwi::widget {
         auto [cube, i] = *(this->_pointedCube);
         switch (cube->type) {
             case CubeType::COB: {
+                this->makeCurrent();
                 auto cob = this->getCOBByCubeIndeces(i);
                 auto dialog = COBInfoDialog{cob};
                 dialog.exec();
+                this->doneCurrent();
                 break;
             }
             case CubeType::TOB: {
+                this->makeCurrent();
                 auto tob = this->getTOBByCubeIndeces(i);
                 auto dialog = TOBInfoDialog{tob};
                 dialog.exec();
+                this->doneCurrent();
                 break;                    
             }
             case CubeType::Topdie: {
+                this->makeCurrent();
                 auto topdieinst = this->getTopdieInstByCubeIndeces(i);
                 auto dialog = TopDieInsDialog{topdieinst};
                 dialog.exec();
+                this->doneCurrent();
                 break;
             }
             default: break;
