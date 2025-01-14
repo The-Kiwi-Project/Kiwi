@@ -50,7 +50,8 @@ namespace kiwi::widget {
         LayoutScene(hardware::Interposer* interposer, circuit::BaseDie* basedie, QObject* parent = nullptr);
 
     signals:
-        void topdieInstancePlacedTOBChanged(layout::TopDieInstanceItem* inst, layout::TOBItem *originTOB, layout::TOBItem *newTOB);
+        // void topdieInstancePlacedTOBChanged(layout::TopDieInstanceItem* inst, layout::TOBItem *originTOB, layout::TOBItem *newTOB);
+        void layoutChanged();
 
     public:
         void reloadItems();

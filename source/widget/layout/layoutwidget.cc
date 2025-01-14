@@ -41,8 +41,8 @@ namespace kiwi::widget {
         this->_infoWidget->setMinimumWidth(300);
         this->_splitter->addWidget(this->_infoWidget);
 
-        connect(this->_scene, &LayoutScene::topdieInstancePlacedTOBChanged, 
-            [this](TopDieInstanceItem* inst, TOBItem *originTOB, TOBItem *newTOB) {
+        connect(this->_scene, &LayoutScene::layoutChanged, [this]() {
+                this->_scene->choiseSourcePort();
                 this->_infoWidget->updateInfo();
             }
         );

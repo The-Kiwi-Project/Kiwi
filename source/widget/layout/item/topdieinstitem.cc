@@ -3,6 +3,7 @@
 #include "qchar.h"
 #include "qpoint.h"
 #include "./tobitem.h"
+#include "widget/layout/layoutscene.h"
 #include <cassert>
 
 #include <QGraphicsScene>
@@ -130,6 +131,9 @@ namespace kiwi::widget::layout {
             assert(otherInstance->_currentTOB == tob);
             this->swapTOBWith(otherInstance);
         }
+
+        assert(this->scene() != nullptr);
+        emit dynamic_cast<LayoutScene*>(this->scene())->layoutChanged();
     }
 
     void TopDieInstanceItem::swapTOBWith(TopDieInstanceItem* other) {

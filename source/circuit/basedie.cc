@@ -16,6 +16,18 @@
 #include <utility>
 
 namespace kiwi::circuit {
+
+    void BaseDie::clear() {
+        this->_topdies.clear();
+        this->_topdie_insts.clear();
+        this->_external_ports.clear();
+        this->_connections.clear();
+        this->_pose_ports.clear();
+        this->_nege_ports.clear();
+
+        // MARK: ??????
+        this->_nets.clear();
+    }
     
     auto BaseDie::add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> TopDie* {
         debug::debug_fmt("Add topdie '{}'", name);

@@ -53,9 +53,6 @@ namespace kiwi::widget::layout {
     public:
         TopDieInstanceItem(circuit::TopDieInstance* topdieInst, TOBItem* tob);
 
-    signals:
-        void placedTOBChanged(TOBItem* originTOB, TOBItem* newTOB);
-
     public:
         auto boundingRect() const -> QRectF override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;

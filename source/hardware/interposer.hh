@@ -37,6 +37,9 @@ namespace kiwi::hardware {
         Interposer();
 
     public:
+        void clear();
+
+    public:
         auto available_tracks(Bump* bump, TOBSignalDirection dir) -> std::HashMap<Track*, TOBConnector>;
         auto available_tracks_bump_to_track(Bump* bump) -> std::HashMap<Track*, TOBConnector>;
         auto available_tracks_track_to_bump(Bump* bump) -> std::HashMap<Track*, TOBConnector>;
@@ -66,6 +69,9 @@ namespace kiwi::hardware {
     public:
         auto randomly_map_remain_indexes() -> void;
         auto manage_cobunit_resources() -> void;
+
+    private:
+        void build();
 
     private:
         auto static check_track_coord(const TrackCoord& coord) -> bool;

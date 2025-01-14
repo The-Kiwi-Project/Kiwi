@@ -101,14 +101,14 @@ namespace kiwi::widget {
             auto tobItem = this->_tobsMaps.value(topdieInst->tob());
             auto item = this->addTopDieInstance(topdieInst.get(), tobItem);
             
-            // Connect the tob changed signal
-            connect(item, &TopDieInstanceItem::placedTOBChanged, 
-                [this, item] (TOBItem *originTOB, TOBItem *newTOB) {
-                    // MARK, maybe better..
-                    this->choiseSourcePort();
-                    emit this->topdieInstancePlacedTOBChanged(item, originTOB, newTOB);
-                }
-            );
+            // // Connect the tob changed signal
+            // connect(item, &TopDieInstanceItem::placedTOBChanged, 
+            //     [this, item] (TOBItem *originTOB, TOBItem *newTOB) {
+            //         // MARK, maybe better..
+            //         this->choiseSourcePort();
+            //         emit this->topdieInstancePlacedTOBChanged(item, originTOB, newTOB);
+            //     }
+            // );
         }
     }
 

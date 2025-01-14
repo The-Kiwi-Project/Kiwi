@@ -50,6 +50,17 @@ namespace kiwi::hardware {
         _tobs{},
         _tracks{}
     {
+        this->build();
+    }
+
+    void Interposer::clear() {
+        this->_cobs.clear();
+        this->_tobs.clear();
+        this->_tracks.clear();
+        this->build();
+    }
+
+    void Interposer::build() {
         for (std::i64 row = 0; row < Interposer::COB_ARRAY_HEIGHT; ++row) {
             for (std::i64 col = 0; col < Interposer::COB_ARRAY_WIDTH; ++col) {
                 auto coord = COBCoord{row, col};
