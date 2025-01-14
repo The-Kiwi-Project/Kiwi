@@ -28,16 +28,18 @@ namespace kiwi::widget::layout {
         TOBItem(hardware::TOB* tob);
 
     public:
-        void setTopDieInst(TopDieInstanceItem* topdieinst);
+        void setTopDieInstance(TopDieInstanceItem* topdieinst);
         void removeTopDieInstance();
-        bool hasTopDieInst() const;
+        bool hasTopDieInstance() const;
+        auto placedTobDieInstance() const -> TopDieInstanceItem*;
+
         void highlight(bool active);
 
     private:
         void updateAppearance();
         
     public:
-        auto tob() const -> hardware::TOB*
+        auto unwrap() const -> hardware::TOB*
         { return this->_tob; }
 
     private:

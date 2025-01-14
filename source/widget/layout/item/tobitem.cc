@@ -16,7 +16,7 @@ namespace kiwi::widget::layout {
         this->setZValue(Z_VALUE);
     }
 
-    void TOBItem::setTopDieInst(TopDieInstanceItem* topdieinst) {
+    void TOBItem::setTopDieInstance(TopDieInstanceItem* topdieinst) {
         this->_topdieInstItem = topdieinst;
         this->updateAppearance();
     }
@@ -26,8 +26,12 @@ namespace kiwi::widget::layout {
         this->updateAppearance();
     }
 
-    bool TOBItem::hasTopDieInst() const {
+    bool TOBItem::hasTopDieInstance() const {
         return this->_topdieInstItem != nullptr;
+    }
+
+    auto TOBItem::placedTobDieInstance() const -> TopDieInstanceItem* {
+        return this->_topdieInstItem;
     }
 
     void TOBItem::highlight(bool active) {

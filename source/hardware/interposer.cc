@@ -5,6 +5,7 @@
 #include "./bump/bump.hh"
 
 #include <memory>
+#include <ranges>
 #include <std/collection.hh>
 #include <std/utility.hh>
 #include <std/integer.hh>
@@ -196,7 +197,11 @@ namespace kiwi::hardware {
     }
 
     auto Interposer::get_a_idle_tob() -> std::Option<TOB*> {
-        // TODO
+        for (auto& [coord, tob] : this->_tobs) {
+            if (tob->is_idle()) {
+                return {tob.get()};
+            }
+        }
         return std::nullopt;
     }
 

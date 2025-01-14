@@ -44,10 +44,14 @@ namespace kiwi::widget::layout {
 
     const QColor TopDieInstanceItem::COLOR = QColor::fromRgb(84, 139, 84);
 
-    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieInst): 
+    TopDieInstanceItem::TopDieInstanceItem(circuit::TopDieInstance* topdieInst, TOBItem* tob): 
         _topdieInst{topdieInst},
-        _name{ topdieInst != nullptr ? QString::fromStdString(topdieInst->name().data()) : "" }
+        _name{ topdieInst != nullptr ? QString::fromStdString(topdieInst->name().data()) : "" },
+        _currentTOB{tob}
     {   
+        assert(this->_topdieInst != nullptr);
+        assert(this->_currentTOB != nullptr);
+
         this->setFlags(ItemIsSelectable | ItemIsMovable);
         this->setZValue(Z_VALUE);
 
@@ -63,6 +67,9 @@ namespace kiwi::widget::layout {
                 this->_pins.push_back(pinItem);
             }
         }
+
+        tob->setTopDieInstance(this);
+        this->updatePos();
     }
 
     auto TopDieInstanceItem::boundingRect() const -> QRectF {
@@ -99,54 +106,71 @@ namespace kiwi::widget::layout {
         for (auto item : collidingItems) {
             if (item->type() == TOBItem::Type) {
                 auto tob = dynamic_cast<TOBItem*>(item);
-                this->placeInTOB(tob);
+                this->tryPlaceInTOB(tob);
                 return;
             }
         }
 
-        // No touch any tobitem
-        this->removeCurrentTOB();
-        emit this->placedTOBChanged(this->_currentTOB, nullptr);
+        // Nothing happend!
+        assert(this->_currentTOB != nullptr);
+        this->setPos(this->_currentTOB->pos());
     }
 
-    auto TopDieInstanceItem::placeInTOB(TOBItem* tob) -> bool {
+    void TopDieInstanceItem::tryPlaceInTOB(TOBItem* tob) {
+        // This method try to place this topdie instance to tobitem
         assert(tob != nullptr);
+
         // Target tob has no topdie instance!
-        if (!tob->hasTopDieInst()) {
-            auto originTOB = this->_currentTOB;
-            this->removeCurrentTOB();
-            
-            // Link to this tob
-            tob->setTopDieInst(this);
-            this->setPos(tob->pos());
-            this->_currentTOB = tob;
-
-            // Set basedie data
-            assert(this->_topdieInst != nullptr);
-            assert(tob->tob() != nullptr);
-            this->_topdieInst->set_placed_tob(tob->tob());
-
-            emit this->placedTOBChanged(originTOB, tob);
-
-            return true;
-
-        // Target tob has placed with other topdie instance!
-        } else {
-            if (this->_currentTOB != nullptr) {
-                this->setPos(this->_currentTOB->pos());
-            } else {
-                this->setPos(this->_originPos);
-            }
-
-            return false;
+        if (!tob->hasTopDieInstance()) {
+            this->placeToIdleTOB(tob);
+        }
+        // Target tob has topdie instance!
+        else {
+            auto otherInstance = tob->placedTobDieInstance();
+            assert(otherInstance->_currentTOB == tob);
+            this->swapTOBWith(otherInstance);
         }
     }
 
-    void TopDieInstanceItem::removeCurrentTOB() {
-        if (this->_currentTOB != nullptr) {
-            this->_currentTOB->removeTopDieInstance();
-            this->_currentTOB = nullptr;
-            this->_topdieInst->set_placed_tob(nullptr);
-        }
+    void TopDieInstanceItem::swapTOBWith(TopDieInstanceItem* other) {
+        auto thisTOB = this->_currentTOB;
+        auto otherTOB = other->_currentTOB;
+
+        assert(thisTOB != nullptr && otherTOB != nullptr);
+        assert(thisTOB->placedTobDieInstance() == this);
+        assert(otherTOB->placedTobDieInstance() == other);
+
+        this->_currentTOB = otherTOB;
+        other->_currentTOB = thisTOB;
+
+        thisTOB->setTopDieInstance(other);
+        otherTOB->setTopDieInstance(this);
+
+        this->updatePos();
+        other->updatePos();
+
+        this->_topdieInst->swap_tob_with_(other->_topdieInst);
     }
+
+    void TopDieInstanceItem::placeToIdleTOB(TOBItem* tob) {
+        auto originTOB = this->_currentTOB;
+        assert(originTOB != nullptr);
+
+        // Origin TOB become empty!
+        originTOB->removeTopDieInstance();
+
+        // Move to new TOB
+        this->_currentTOB = tob;
+        tob->setTopDieInstance(this);
+
+        this->updatePos();
+
+        this->_topdieInst->place_to_idle_tob(tob->unwrap());
+    }
+
+    void TopDieInstanceItem::updatePos() {
+        assert(this->_currentTOB != nullptr);
+        this->setPos(this->_currentTOB->scenePos());
+    }
+
 }

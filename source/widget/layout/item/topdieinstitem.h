@@ -51,7 +51,7 @@ namespace kiwi::widget::layout {
         int type() const override { return Type; }
 
     public:
-        TopDieInstanceItem(circuit::TopDieInstance* topdieInst);
+        TopDieInstanceItem(circuit::TopDieInstance* topdieInst, TOBItem* tob);
 
     signals:
         void placedTOBChanged(TOBItem* originTOB, TOBItem* newTOB);
@@ -63,18 +63,19 @@ namespace kiwi::widget::layout {
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
         void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
-        // auto itemChange(GraphicsItemChange change, const QVariant& value) -> QVariant override;
 
-    public:
-        auto placeInTOB(TOBItem* tob) -> bool; 
-        void removeCurrentTOB();
+    private:
+        void tryPlaceInTOB(TOBItem* tobItem);
+        void placeToIdleTOB(TOBItem* tob); 
+        void swapTOBWith(TopDieInstanceItem* other);
+        void updatePos();
 
     public:
         auto pins() const -> const QVector<PinItem*> 
         { return this->_pins; }
 
     private:
-        circuit::TopDieInstance* _topdieInst;
+        circuit::TopDieInstance* const _topdieInst;
         QString _name;
 
         TOBItem* _currentTOB {nullptr};

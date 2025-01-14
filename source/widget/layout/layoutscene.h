@@ -58,7 +58,7 @@ namespace kiwi::widget {
     public:
         auto addNet(layout::PinItem* beginPoint, layout::PinItem* endPoint) -> layout::NetItem*;
         auto addTOB(hardware::TOB* tob) -> layout::TOBItem*;
-        auto addTopDieInstance(circuit::TopDieInstance* topdieInst) -> layout::TopDieInstanceItem*;
+        auto addTopDieInstance(circuit::TopDieInstance* topdieInst, layout::TOBItem* tob) -> layout::TopDieInstanceItem*;
         auto addExternalPort(circuit::ExternalPort* eport) -> layout::ExternalPortItem*;
         auto addVDDSourcePort() -> layout::SourcePortItem*;
         auto addGNDSourcePort() -> layout::SourcePortItem*;

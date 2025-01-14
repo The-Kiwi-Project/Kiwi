@@ -22,6 +22,7 @@ namespace kiwi::circuit {
         TopDieInstance(std::String name, TopDie* topdie, hardware::TOB* tob);
 
     public:
+        // MARK algo method ...
         auto move_to_tob(hardware::TOB* tob) -> void;
         auto swap_tob_with(TopDieInstance* other) -> void;
         auto add_net(Net* net) -> void;
@@ -37,22 +38,23 @@ namespace kiwi::circuit {
         { return this->_topdie; }
         
         auto tob() const -> hardware::TOB* 
-        { return this->_tob; }
+        { return this->_tob.value(); }
         
         auto nets() const -> const std::Vector<Net*> 
         { return this->_nets; }
 
         void set_name(std::String name) 
         { this->_name = std::move(name); } 
-        
-        // WARNING: this method can only used before nets build
-        void set_placed_tob(hardware::TOB* tob) 
-        { this->_tob = tob; }
+
+    public:
+        // MARK. Move algo method to algo
+        void place_to_idle_tob(hardware::TOB* tob);
+        void swap_tob_with_(TopDieInstance* other);
 
     private:
         std::String _name;
         TopDie* _topdie;
-        hardware::TOB* _tob;
+        std::Option<hardware::TOB*> _tob;
         std::Vector<Net*> _nets; 
         
     };

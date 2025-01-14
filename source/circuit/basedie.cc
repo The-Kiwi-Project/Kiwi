@@ -4,6 +4,7 @@
 #include "circuit/export/export.hh"
 #include "circuit/topdie/topdie.hh"
 #include "circuit/topdieinst/topdieinst.hh"
+#include <hardware/tob/tob.hh>
 #include "std/collection.hh"
 #include "std/memory.hh"
 #include "std/string.hh"
@@ -34,6 +35,9 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance* {
+        assert(topdie != nullptr);
+        assert(tob != nullptr);
+
         debug::debug_fmt("Add topdie instance '{}' of '{}'", name, topdie->name());
 
         auto p = new TopDieInstance{std::move(name), topdie, tob};
@@ -44,6 +48,8 @@ namespace kiwi::circuit {
             debug::exception_fmt("Topdie Instance '{}' already exit!", topdie_inst->name());
         }
         res.first->second = std::move(topdie_inst);
+        tob->set_placed_instance(res.first->second.get());
+
         return res.first->second.get();
     }
 
@@ -130,6 +136,8 @@ namespace kiwi::circuit {
 
         // free tob 
         if (topdie_inst->tob() != nullptr) {
+            assert(topdie_inst->tob()->placed_instance() == topdie_inst.get());
+            topdie_inst->tob()->remove_placed_instance();
         }
 
         return true;

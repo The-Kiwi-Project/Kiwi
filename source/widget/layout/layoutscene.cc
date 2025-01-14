@@ -98,13 +98,9 @@ namespace kiwi::widget {
     void LayoutScene::addTopDieInstanceItems() {
         // Call after addTOBItems!!
         for (auto& [name, topdieInst] : this->_basedie->topdie_insts()) {
-            auto item = this->addTopDieInstance(topdieInst.get());
-            auto tob = topdieInst->tob();
-            debug::check_fmt(tob != nullptr, "No placed tob of topdie instance!");
-            // Find the tobitem object
-            auto tobItem = this->_tobsMaps.value(tob);
-            item->placeInTOB(tobItem);
-
+            auto tobItem = this->_tobsMaps.value(topdieInst->tob());
+            auto item = this->addTopDieInstance(topdieInst.get(), tobItem);
+            
             // Connect the tob changed signal
             connect(item, &TopDieInstanceItem::placedTOBChanged, 
                 [this, item] (TOBItem *originTOB, TOBItem *newTOB) {
@@ -199,8 +195,8 @@ namespace kiwi::widget {
         return t;
     }
 
-    auto LayoutScene::addTopDieInstance(circuit::TopDieInstance* topdieInst) -> layout::TopDieInstanceItem* {
-        auto ti = new layout::TopDieInstanceItem {topdieInst};
+    auto LayoutScene::addTopDieInstance(circuit::TopDieInstance* topdieInst, layout::TOBItem* tob) -> layout::TopDieInstanceItem* {
+        auto ti = new layout::TopDieInstanceItem {topdieInst, tob};
         this->_topdieinstMap.insert(topdieInst, ti);
         this->addItem(ti);
         return ti;

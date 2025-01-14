@@ -25,6 +25,9 @@ namespace kiwi::hardware {
 
             TOB_ARRAY_WIDTH   = 4,
             TOB_ARRAY_HEIGHT  = 4,
+
+            COB_SIZE          = COB_ARRAY_WIDTH * COB_ARRAY_HEIGHT,
+            TOB_SIZE          = TOB_ARRAY_WIDTH * TOB_ARRAY_HEIGHT,
         };
 
         static const std::HashMap<Coord, Coord> TOB_COORD_MAP;
