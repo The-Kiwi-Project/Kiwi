@@ -7,6 +7,9 @@
 
 #include "algo/netbuilder/netbuilder.hh"
 #include "algo/router/maze/mazererouter.hh"
+#include "qaction.h"
+#include "qmessagebox.h"
+#include "widget/setting/settingwidget.h"
 #include <algo/router/route.hh>
 
 #include <parse/reader/module.hh>
@@ -28,6 +31,7 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QThread>
+#include <QStatusBar>
 
 namespace kiwi::widget {
 
@@ -39,6 +43,7 @@ namespace kiwi::widget {
         this->createMenuBar();
         this->createToolBar();
         this->createCentralWidget();
+        this->createStatusBar();
 
         this->resize(1500, 900);
     }
@@ -80,6 +85,23 @@ namespace kiwi::widget {
         connect(saveAction, &QAction::triggered, this, &Window::saveConfig);
         connect(saveAsAction, &QAction::triggered, this, &Window::saveConfigAs);
         connect(exitAction, &QAction::triggered, this, &Window::close);
+
+        // ====================== View ======================
+        auto viewMenu= new QMenu("View", this->_menuBar);
+        auto themesAction = new QAction{"Themes", viewMenu};
+        viewMenu->addAction(themesAction);
+
+        this->_menuBar->addMenu(viewMenu);
+
+        // ====================== Help ======================
+        auto helpMenu= new QMenu("Help", this->_menuBar);
+        auto aboutAction= new QAction("About", helpMenu);
+        helpMenu->addAction(aboutAction);
+
+        auto aboutQTAction= new QAction("About Qt", helpMenu);
+        helpMenu->addAction(aboutQTAction);
+
+        this->_menuBar->addMenu(helpMenu);
     }
 
     void Window::createToolBar() {
@@ -111,9 +133,20 @@ namespace kiwi::widget {
 
         this->_toolBar->addSeparator();
 
-        // Run button!
+        QWidget *stretch = new QWidget(this->_toolBar);
+        stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        this->_toolBar->addWidget(stretch);
+
         auto prButton = this->_toolBar->addAction(QIcon{":/image/image/icon/execute.png"}, "");
         connect(prButton, &QAction::triggered, this, &Window::executePR);
+
+        this->_toolBar->addSeparator();
+
+        // Run button!
+        auto settingButton = this->_toolBar->addAction(QIcon{":/image/image/icon/setting.png"}, "");
+        connect(settingButton, &QAction::triggered, [this] () {
+            this->_stackedWidget->setCurrentWidget(this->_settingWidget);
+        });
     }
 
     void Window::createCentralWidget() {
@@ -131,9 +164,23 @@ namespace kiwi::widget {
         this->_view3DWidget = new View3DWidget {this->_interposer.get(), this->_basedie.get(), this};
         this->_stackedWidget->addWidget(this->_view3DWidget);
 
+        this->_settingWidget = new SettingWidget {this};
+        this->_stackedWidget->addWidget(this->_settingWidget); 
+
         this->setCentralWidget(this->_stackedWidget);
 
         connect(this->_schematicWidget, &SchematicWidget::layoutChanged, this->_layoutWidget, &LayoutWidget::reload);
+    }
+
+    void Window::createStatusBar() {
+        auto statusBar = this->statusBar();
+
+        auto status1 = new QLabel{"Kiwi", this};
+        status1->setAlignment(Qt::AlignCenter);                    
+
+        status1->setMinimumWidth(200); 
+
+        statusBar->addPermanentWidget(status1);
     }
 
     void Window::loadConfig() try {
@@ -200,6 +247,16 @@ namespace kiwi::widget {
     }
 
     void Window::executePR() try {
+        if (this->_finishPR) {
+            QMessageBox::critical(
+                this,
+                "Execute P&R",
+                "P&R already finished!"
+            );
+
+            return;
+        }
+
         // MARK, if faild...
 
         auto dialog = QDialog(this);

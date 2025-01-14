@@ -7,7 +7,6 @@
 #include "./item/topdieinstitem.h"
 #include "./item/netitem.h"
 #include "./item/exportitem.h"
-#include "qobject.h"
 
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -45,8 +44,8 @@ namespace kiwi::widget {
 
     void SchematicWidget::initTopdieLibWidget() {
         this->_libWidget = new SchematicLibWidget {this->_basedie, this->_splitter};
-        this->_libWidget->setMinimumWidth(200);
-        this->_libWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        this->_libWidget->setFixedWidth(200);
+        this->_libWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         this->_splitter->addWidget(this->_libWidget);
 
@@ -71,7 +70,7 @@ namespace kiwi::widget {
     void SchematicWidget::initInfoWidget() {
         this->_infoWidget = new SchematicInfoWidget{this->_basedie, this->_scene, this->_view, this->_splitter};
         this->_infoWidget->setMinimumWidth(250);
-        this->_infoWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        this->_infoWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         this->_splitter->addWidget(this->_infoWidget);
 

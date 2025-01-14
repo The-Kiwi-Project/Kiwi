@@ -13,6 +13,7 @@ namespace kiwi::widget::layout {
     class TOBItem : public QGraphicsRectItem {
     public:
         static constexpr int    Z_VALUE = 0;
+        static constexpr int    FONT_SIZE = 30;
 
         enum { Type = UserType + 6 };
         int type() const override { return Type; }
@@ -26,6 +27,9 @@ namespace kiwi::widget::layout {
 
     public:
         TOBItem(hardware::TOB* tob);
+
+    protected:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
 
     public:
         void setTopDieInstance(TopDieInstanceItem* topdieinst);

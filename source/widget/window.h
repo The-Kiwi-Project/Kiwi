@@ -23,6 +23,7 @@ namespace kiwi::widget {
     class LayoutWidget;
     class View3DWidget;
     class View2DView;
+    class SettingWidget;
 
     class Window : public QMainWindow {
         Q_OBJECT
@@ -36,6 +37,7 @@ namespace kiwi::widget {
         void createMenuBar();
         void createToolBar();
         void createCentralWidget();
+        void createStatusBar();
 
     private:
         void loadConfig();
@@ -57,6 +59,7 @@ namespace kiwi::widget {
         LayoutWidget* _layoutWidget {nullptr};
         View2DView* _view2DWidget {nullptr};
         View3DWidget* _view3DWidget {nullptr};
+        SettingWidget* _settingWidget {nullptr};
 
     private:
         std::Box<hardware::Interposer> _interposer {nullptr};

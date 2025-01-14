@@ -69,6 +69,7 @@ namespace kiwi::widget {
             }
             delete item;
         }
+        this->_libraryLayout->addStretch();
 
         this->loadTopDiesFromBaseDie();
     }
