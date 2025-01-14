@@ -481,7 +481,7 @@ namespace kiwi::widget {
         this->addTrack(begin, end, update);
     }
 
-    auto View3DWidget::displayCOBConnections() -> void {
+    auto View3DWidget::displayRoutingResult() -> void {
         using enum hardware::COBDirection;
         using enum hardware::TrackDirection;
         using hardware::COBSwState;
@@ -841,8 +841,6 @@ namespace kiwi::widget {
         this->initCube(view, projection, bias);
         this->initFrame(view, projection, bias);
         this->initTracks(view, projection, bias);
-
-        this->displayCOBConnections();
     }
 
     void View3DWidget::resizeGL(int w, int h) {

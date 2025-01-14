@@ -1,5 +1,4 @@
 #include "./gui.hh"
-#include <widget/entrydialog.h>
 #include <widget/layout/layoutwidget.h>
 #include <widget/schematic/schematicwidget.h>
 

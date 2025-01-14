@@ -21,6 +21,8 @@ namespace kiwi::widget {
 
     class SchematicWidget;
     class LayoutWidget;
+    class View3DWidget;
+    class View2DView;
 
     class Window : public QMainWindow {
         Q_OBJECT
@@ -39,9 +41,12 @@ namespace kiwi::widget {
         void loadConfig();
         void saveConfig();
         void saveConfigAs();
+        
+        void executePR();
 
     private:
         auto hasConfigPath() -> bool;
+        void disableEdit();
 
     private:
         QMenuBar* _menuBar {nullptr};
@@ -50,12 +55,15 @@ namespace kiwi::widget {
 
         SchematicWidget* _schematicWidget {nullptr};
         LayoutWidget* _layoutWidget {nullptr};
+        View2DView* _view2DWidget {nullptr};
+        View3DWidget* _view3DWidget {nullptr};
 
     private:
         std::Box<hardware::Interposer> _interposer {nullptr};
         std::Box<circuit::BaseDie> _basedie {nullptr};
 
         std::Option<std::FilePath> _configPath {}; 
+        bool _finishPR {false};
     };
 
 }

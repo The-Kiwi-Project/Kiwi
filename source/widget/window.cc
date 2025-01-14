@@ -1,7 +1,13 @@
 #include "./window.h"
+#include "./prthread.h"
+#include "./view2d/view2dview.h"
 #include "./view3d/view3dwidget.h"
 #include "./schematic/schematicwidget.h"
 #include "./layout/layoutwidget.h"
+
+#include "algo/netbuilder/netbuilder.hh"
+#include "algo/router/maze/mazererouter.hh"
+#include <algo/router/route.hh>
 
 #include <parse/reader/module.hh>
 #include <widget/frame/msgexception.h>
@@ -20,6 +26,8 @@
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QLabel>
+#include <QThread>
 
 namespace kiwi::widget {
 
@@ -79,18 +87,33 @@ namespace kiwi::widget {
         this->_toolBar->setOrientation(Qt::Vertical);
         this->_toolBar->setMovable(false);
         this->_toolBar->setMinimumWidth(50);
-        this->_toolBar->setIconSize(QSize(40, 40));
+        this->_toolBar->setIconSize(QSize(35, 35));
         this->addToolBar(Qt::LeftToolBarArea, this->_toolBar);
 
+        // Page button!
         auto schematicButton = this->_toolBar->addAction(QIcon(":/image/image/icon/chip.png"), "");
         auto layoutButton = this->_toolBar->addAction(QIcon(":/image/image/icon/layout.png"), "");
+        auto view2DButton = this->_toolBar->addAction(QIcon(":/image/image/icon/view2d.png"), "");
+        auto view3DButton = this->_toolBar->addAction(QIcon(":/image/image/icon/view3d.png"), "");
 
         connect(schematicButton, &QAction::triggered, [this]() {
             this->_stackedWidget->setCurrentWidget(this->_schematicWidget);
         });
         connect(layoutButton, &QAction::triggered, [this]() {
             this->_stackedWidget->setCurrentWidget(this->_layoutWidget);
-        });;
+        });
+        connect(view2DButton, &QAction::triggered, [this] () {
+            this->_stackedWidget->setCurrentWidget(this->_view2DWidget);
+        });
+        connect(view3DButton, &QAction::triggered, [this] () {
+            this->_stackedWidget->setCurrentWidget(this->_view3DWidget);
+        });
+
+        this->_toolBar->addSeparator();
+
+        // Run button!
+        auto prButton = this->_toolBar->addAction(QIcon{":/image/image/icon/execute.png"}, "");
+        connect(prButton, &QAction::triggered, this, &Window::executePR);
     }
 
     void Window::createCentralWidget() {
@@ -102,12 +125,27 @@ namespace kiwi::widget {
         this->_layoutWidget = new LayoutWidget{this->_interposer.get(), this->_basedie.get(), this->_schematicWidget};
         this->_stackedWidget->addWidget(this->_layoutWidget);
 
+        this->_view2DWidget = new View2DView {this->_interposer.get(), this->_basedie.get(), this};
+        this->_stackedWidget->addWidget(this->_view2DWidget);
+
+        this->_view3DWidget = new View3DWidget {this->_interposer.get(), this->_basedie.get(), this};
+        this->_stackedWidget->addWidget(this->_view3DWidget);
+
         this->setCentralWidget(this->_stackedWidget);
 
         connect(this->_schematicWidget, &SchematicWidget::layoutChanged, this->_layoutWidget, &LayoutWidget::reload);
     }
 
     void Window::loadConfig() try {
+        if (this->_finishPR) {
+            QMessageBox::critical(\
+                this,
+                "Load Config",
+                "Can't load new config after finishing P&R"
+            );
+            return;
+        }
+
         if (this->hasConfigPath()) {
             auto reply = QMessageBox::question(nullptr, 
                         "Load Config", 
@@ -161,8 +199,47 @@ namespace kiwi::widget {
 
     }
 
+    void Window::executePR() try {
+        // MARK, if faild...
+
+        auto dialog = QDialog(this);
+        dialog.setWindowTitle("working...");
+        dialog.setModal(true);
+
+        QVBoxLayout layout(&dialog);
+        auto label = QLabel("Executing P&R");
+        auto font = label.font();
+        font.setPointSize(20);
+        font.setBold(true);
+        label.setFont(font);
+        label.setAlignment(Qt::AlignCenter);
+        layout.addWidget(&label);
+        dialog.setFixedSize(400, 200);
+
+        auto *worker = new PRThread{this->_interposer.get(), this->_basedie.get()};
+        connect(worker, &PRThread::prFinished, &dialog, &QDialog::accept);
+        connect(worker, &PRThread::finished, worker, &QObject::deleteLater);
+        worker->start();
+
+        dialog.exec();
+
+        ////////////////////////////////////////////////
+
+        this->_view2DWidget->displayRoutingResult();
+        this->_view3DWidget->displayRoutingResult();
+
+        this->disableEdit();
+        this->_finishPR = true;
+    }
+    QMESSAGEBOX_REPORT_EXCEPTION("Execute Place & Routing")
+
     auto Window::hasConfigPath() -> bool {
         return this->_configPath.has_value();
+    }
+
+    void Window::disableEdit() { 
+        this->_schematicWidget->setEnabled(false);
+        this->_layoutWidget->setEnabled(false);
     }
 
     Window::~Window() {}

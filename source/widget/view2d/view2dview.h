@@ -38,7 +38,7 @@ namespace kiwi::widget {
         ~View2DView() noexcept;
 
     public:
-        auto displayCOBConnections() -> void;
+        auto displayRoutingResult() -> void;
 
     protected:
         void addTrack(const hardware::TrackCoord& coord);

@@ -106,6 +106,9 @@ namespace kiwi::widget {
             QWidget *parent = nullptr);
         ~View3DWidget() noexcept;
 
+    public:
+        auto displayRoutingResult() -> void;
+
     protected:
         void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
         void initCube(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
@@ -141,8 +144,6 @@ namespace kiwi::widget {
         auto addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void;
         auto addTrack(const hardware::TrackCoord& coord, bool update) -> void;
         
-        auto displayCOBConnections() -> void;
-
     protected:
         void renderCubes();
         void renderAxis();
