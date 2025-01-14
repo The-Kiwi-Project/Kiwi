@@ -22,6 +22,7 @@
 #include <QMimeData>
 #include <QFileInfo>
 #include <QtDebug>
+#include <QTimer>
 
 namespace kiwi::widget {
 
@@ -482,6 +483,11 @@ namespace kiwi::widget {
     }
 
     auto View3DWidget::displayRoutingResult() -> void {
+        if (!this->isVisible()) {
+            QTimer::singleShot(0, this, &View3DWidget::displayRoutingResult);
+            return;
+        }
+
         using enum hardware::COBDirection;
         using enum hardware::TrackDirection;
         using hardware::COBSwState;
