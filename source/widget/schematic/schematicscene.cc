@@ -349,6 +349,8 @@ namespace kiwi::widget {
             this->_nets.insert(this->_floatingNet);
 
             this->_floatingNet = nullptr;
+
+            emit this->layoutChanged();
         } 
         else {
             auto beginPoint = this->addNetPoint(pin);
@@ -376,6 +378,8 @@ namespace kiwi::widget {
             }
 
             this->_floatingTopdDieInst = topdieInstItem;
+
+            emit this->layoutChanged();
         }
     }
 
@@ -388,6 +392,8 @@ namespace kiwi::widget {
         }
 
         this->_floatingExPort = eportItem;
+
+        emit this->layoutChanged();
     }
 
     void SchematicScene::placeFloatingTopdDieInst() {
@@ -397,9 +403,13 @@ namespace kiwi::widget {
 
     void SchematicScene::cleanFloatingTopdDieInst() {
         assert(this->_floatingTopdDieInst != nullptr);
-        this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->unwrap()->name());
+        assert(this->_floatingTopdDieInst->unwrap() != nullptr);
+
+        this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->unwrap());
         this->removeItem(this->_floatingTopdDieInst);
         this->_floatingTopdDieInst = nullptr;
+
+        emit this->layoutChanged();
     }
 
     void SchematicScene::placeFloatingExPort() {
@@ -409,8 +419,13 @@ namespace kiwi::widget {
 
     void SchematicScene::cleanFloatingExPort() {
         assert(this->_floatingExPort != nullptr);
+        assert(this->_floatingExPort->unwrap() != nullptr);
+
+        this->_basedie->remove_external_port(this->_floatingExPort->unwrap());
         this->removeItem(this->_floatingExPort);
         this->_floatingExPort = nullptr;
+
+        emit this->layoutChanged();
     }
 
 }

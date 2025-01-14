@@ -103,6 +103,8 @@ namespace kiwi::widget {
         this->_stackedWidget->addWidget(this->_layoutWidget);
 
         this->setCentralWidget(this->_stackedWidget);
+
+        connect(this->_schematicWidget, &SchematicWidget::layoutChanged, this->_layoutWidget, &LayoutWidget::reload);
     }
 
     void Window::loadConfig() try {

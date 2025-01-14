@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qobjectdefs.h"
 #include <QStackedWidget>
 
 namespace kiwi::circuit {
@@ -38,6 +39,9 @@ namespace kiwi::widget {
 
     public:
         void reload();
+
+    signals:
+        void layoutChanged();
 
     private:
         void createViewInfoWidget();

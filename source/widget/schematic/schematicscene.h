@@ -42,6 +42,7 @@ namespace kiwi::widget {
         void topdieInstSelected(schematic::TopDieInstanceItem* topdieinst);
         void exportSelected(schematic::ExternalPortItem* eport);
         void viewSelected();
+        void layoutChanged();
 
     public:
         void reloadItems();

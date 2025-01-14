@@ -7,6 +7,7 @@
 #include "./item/topdieinstitem.h"
 #include "./item/netitem.h"
 #include "./item/exportitem.h"
+#include "qobject.h"
 
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -89,6 +90,14 @@ namespace kiwi::widget {
         QObject::connect(
             this->_scene, &SchematicScene::topdieInstSelected, 
             this->_infoWidget, &SchematicInfoWidget::showTopDieInstanceInfoWidget);
+
+        QObject::connect(
+            this->_scene, &SchematicScene::layoutChanged, 
+            this, &SchematicWidget::layoutChanged);
+    
+        QObject::connect(
+            this->_infoWidget, &SchematicInfoWidget::layoutChanged,
+            this, &SchematicWidget::layoutChanged);
     }
 
 }

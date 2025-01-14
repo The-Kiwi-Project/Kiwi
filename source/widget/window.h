@@ -22,8 +22,7 @@ namespace kiwi::widget {
     class SchematicWidget;
     class LayoutWidget;
 
-    class Window : public QMainWindow 
-    {
+    class Window : public QMainWindow {
         Q_OBJECT
 
     public:
