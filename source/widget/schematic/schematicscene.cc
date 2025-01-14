@@ -360,7 +360,7 @@ namespace kiwi::widget {
 
     void SchematicScene::handleInitialTopDie(circuit::TopDie* topdie) {
         auto idle_tob = this->_interposer->get_a_idle_tob();
-        if (this->_basedie->topdie_insts().size() < hardware::Interposer::TOB_SIZE && !idle_tob.has_value()) {
+        if (!idle_tob.has_value()) {
             QMessageBox::critical(
                 nullptr,
                 "Add TopDies Error",

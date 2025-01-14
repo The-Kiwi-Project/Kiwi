@@ -31,7 +31,7 @@ namespace kiwi::widget::layout {
         { return this->_pin; }
 
     private:
-        circuit::ExternalPort* _eport {nullptr};
+        circuit::ExternalPort* const _eport {nullptr};
         PinItem* _pin {nullptr};
     };
 

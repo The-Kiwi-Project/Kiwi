@@ -1,9 +1,5 @@
 #include "./window.h"
 #include "./view3d/view3dwidget.h"
-#include "./view2d/view2dview.h"
-#include "./layout/layoutview.h"
-#include "./layout/layoutview.h"
-#include "./schematic/schematicview.h"
 #include "./schematic/schematicwidget.h"
 #include "./layout/layoutwidget.h"
 
@@ -23,6 +19,7 @@
 #include <QToolButton>
 #include <QMenuBar>
 #include <QFileDialog>
+#include <QMessageBox>
 
 namespace kiwi::widget {
 
@@ -74,6 +71,7 @@ namespace kiwi::widget {
         connect(loadAction, &QAction::triggered, this, &Window::loadConfig);
         connect(saveAction, &QAction::triggered, this, &Window::saveConfig);
         connect(saveAsAction, &QAction::triggered, this, &Window::saveConfigAs);
+        connect(exitAction, &QAction::triggered, this, &Window::close);
     }
 
     void Window::createToolBar() {
@@ -108,13 +106,47 @@ namespace kiwi::widget {
     }
 
     void Window::loadConfig() try {
+        if (this->hasConfigPath()) {
+            auto reply = QMessageBox::question(nullptr, 
+                        "Load Config", 
+                        "A configuration already exists.\nDo you want to delete the original configuration and import it?", 
+                        QMessageBox::Yes | QMessageBox::No);
+            if (reply == QMessageBox::No) {
+                return;
+            }
+        }
+
+        // Load a new one!
         auto filePath = QFileDialog::getExistingDirectory(this, "Select Config path");
         if (!filePath.isEmpty()) {
+            // MARK: For loss origin data, it should be these, buf box<net> in basedie...
+            // Once faild, loss all 
+
+            // auto configPath = std::FilePath{filePath.toStdString()};
+            // auto [i, b] = parse::read_config(configPath);
+
+            // this->_interposer->clear();
+            // this->_basedie->clear();
+
+            // *(this->_interposer) = std::move(*i);
+            // *(this->_basedie) = std::move(*b);
+
+            // this->_schematicWidget->reload();
+            // this->_layoutWidget->reload();
+
+            // this->_configPath.emplace(std::move(configPath));
+
             auto configPath = std::FilePath{filePath.toStdString()};
+
+            this->_interposer->clear();
+            this->_basedie->clear();
+
             parse::read_config(configPath, this->_interposer.get(), this->_basedie.get());
-        
+
             this->_schematicWidget->reload();
             this->_layoutWidget->reload();
+
+            this->_configPath.emplace(std::move(configPath));
         }
     }
     QMESSAGEBOX_REPORT_EXCEPTION("Load Config")
@@ -125,6 +157,10 @@ namespace kiwi::widget {
 
     void Window::saveConfigAs() {
 
+    }
+
+    auto Window::hasConfigPath() -> bool {
+        return this->_configPath.has_value();
     }
 
     Window::~Window() {}

@@ -85,7 +85,7 @@ namespace kiwi::widget::schematic {
 
     public:
         void wrap(circuit::Connection* connection) 
-        { this->_connection = connection; }
+        { assert(this->_connection == nullptr); this->_connection = connection; }
 
         auto unwrap() const -> circuit::Connection* {
             assert(this->_connection != nullptr);

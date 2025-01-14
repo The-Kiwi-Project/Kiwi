@@ -65,7 +65,7 @@ namespace kiwi::widget::schematic {
         qreal _width {};
         qreal _height {};
 
-        circuit::TopDieInstance* _topdieinstance {nullptr};
+        circuit::TopDieInstance* const _topdieinstance {nullptr};
         QMap<QString, PinItem*> _pins {};
     };
 

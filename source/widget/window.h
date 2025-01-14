@@ -42,6 +42,9 @@ namespace kiwi::widget {
         void saveConfigAs();
 
     private:
+        auto hasConfigPath() -> bool;
+
+    private:
         QMenuBar* _menuBar {nullptr};
         QToolBar* _toolBar {nullptr};
         QStackedWidget* _stackedWidget {nullptr};
@@ -53,7 +56,7 @@ namespace kiwi::widget {
         std::Box<hardware::Interposer> _interposer {nullptr};
         std::Box<circuit::BaseDie> _basedie {nullptr};
 
-        std::Option<std::FilePath> _configFilePath {}; 
+        std::Option<std::FilePath> _configPath {}; 
     };
 
 }

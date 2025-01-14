@@ -1,6 +1,7 @@
 #include "./layoutinfowidget.h"
 #include "./layoutscene.h"
 #include "qlineedit.h"
+#include <cassert>
 #include <hardware/interposer.hh>
 #include <circuit/basedie.hh>
 
@@ -81,13 +82,10 @@ namespace kiwi::widget {
         for (auto& [name, inst] : this->_basedie->topdie_insts()) {
             model->setItem(row, 0, new QStandardItem {QString::fromStdString(name.data())});
             auto tob = inst->tob();
-            if (tob == nullptr) {
-                model->setItem(row, 1, new QStandardItem {"No Placed"});
-            } else {
-                model->setItem(row, 1, new QStandardItem {
-                    QString::fromStdString(std::format("{}", inst->tob()->coord()))
-                });
-            }
+            assert(inst->tob() != nullptr);
+            model->setItem(row, 1, new QStandardItem {
+                QString::fromStdString(std::format("{}", inst->tob()->coord()))
+            });
             row += 1;
         }
 

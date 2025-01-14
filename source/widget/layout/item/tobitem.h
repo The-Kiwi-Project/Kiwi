@@ -43,7 +43,7 @@ namespace kiwi::widget::layout {
         { return this->_tob; }
 
     private:
-        hardware::TOB* _tob;
+        hardware::TOB* const _tob;
 
         TopDieInstanceItem* _topdieInstItem {nullptr};
 
