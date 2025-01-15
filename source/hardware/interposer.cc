@@ -5,6 +5,7 @@
 #include "./bump/bump.hh"
 
 #include <memory>
+#include <ranges>
 #include <std/collection.hh>
 #include <std/utility.hh>
 #include <std/integer.hh>
@@ -16,7 +17,6 @@
 #include <debug/debug.hh>
 
 namespace kiwi::hardware {
-
 
     static auto build_tob_coord_map() -> std::HashMap<Coord, Coord> {
         auto map = std::HashMap<Coord, Coord>{};
@@ -32,11 +32,35 @@ namespace kiwi::hardware {
 
     const std::HashMap<Coord, Coord> Interposer::TOB_COORD_MAP = build_tob_coord_map();
 
+    auto Interposer::is_external_port_coord(const TrackCoord& coord) -> bool {
+        switch (coord.dir) {
+            case hardware::TrackDirection::Horizontal: {
+                return coord.col == 0 || coord.col == hardware::Interposer::COB_ARRAY_WIDTH;
+            }
+            case hardware::TrackDirection::Vertical: {
+                return coord.row == 0 || coord.row == hardware::Interposer::COB_ARRAY_HEIGHT;
+            }
+        }
+
+        debug::unreachable("Interposer::is_external_port_coord");
+    }
+
     Interposer::Interposer() :
         _cobs{},
         _tobs{},
         _tracks{}
     {
+        this->build();
+    }
+
+    void Interposer::clear() {
+        this->_cobs.clear();
+        this->_tobs.clear();
+        this->_tracks.clear();
+        this->build();
+    }
+
+    void Interposer::build() {
         for (std::i64 row = 0; row < Interposer::COB_ARRAY_HEIGHT; ++row) {
             for (std::i64 col = 0; col < Interposer::COB_ARRAY_WIDTH; ++col) {
                 auto coord = COBCoord{row, col};
@@ -184,7 +208,11 @@ namespace kiwi::hardware {
     }
 
     auto Interposer::get_a_idle_tob() -> std::Option<TOB*> {
-        // TODO
+        for (auto& [coord, tob] : this->_tobs) {
+            if (tob->is_idle()) {
+                return {tob.get()};
+            }
+        }
         return std::nullopt;
     }
 

@@ -7,32 +7,19 @@
 #include "./item/topdieinstitem.h"
 #include "./item/griditem.h"
 #include "./item/sourceportitem.h"
-#include "circuit/connection/pin.hh"
-#include "qpoint.h"
 
-#include <cassert>
+#include <circuit/connection/pin.hh>
 #include <circuit/connection/connection.hh>
 #include <circuit/topdieinst/topdieinst.hh>
 #include <circuit/basedie.hh>
+#include <hardware/interposer.hh>
+#include <widget/frame/itemtypecheck.h>
+
 #include <debug/debug.hh>
+#include <QMessageBox>
 #include <QGraphicsSceneMouseEvent>
 
 namespace kiwi::widget {
-    
-    template <int A, int B, int... Rest>
-    struct AllUnique {
-        static constexpr bool value = (A != B) && AllUnique<A, Rest...>::value && AllUnique<B, Rest...>::value;
-    };
-
-    template <int A, int B>
-    struct AllUnique<A, B> {
-        static constexpr bool value = (A != B);
-    };
-
-    template <int... Values>
-    constexpr void checkAllUnique() {
-        static_assert(AllUnique<Values...>::value, "Constants must be unique!");
-    }
 
     static_assert(AllUnique<
         (int)schematic::NetItem::Type,
@@ -43,10 +30,28 @@ namespace kiwi::widget {
         (int)schematic::SourcePortItem::Type
     >::value);
 
-    SchematicScene::SchematicScene(circuit::BaseDie* basedie) :
+    SchematicScene::SchematicScene(circuit::BaseDie* basedie, hardware::Interposer* interposer) :
         _basedie{basedie},
+        _interposer{interposer},
         QGraphicsScene{}
     {
+        this->addSceneItems();
+    }
+
+    void SchematicScene::reloadItems() {
+        // Clear
+        this->_topdieinstMap.clear();
+        this->_exportMap.clear();
+        this->_nets.clear();
+        this->_vddPorts.clear();
+        this->_gndPorts.clear();
+
+        this->_floatingNet = nullptr;
+        this->_floatingTopdDieInst = nullptr;
+        this->_floatingExPort = nullptr;
+
+        this->clear();
+
         this->addSceneItems();
     }
 
@@ -344,6 +349,8 @@ namespace kiwi::widget {
             this->_nets.insert(this->_floatingNet);
 
             this->_floatingNet = nullptr;
+
+            emit this->layoutChanged();
         } 
         else {
             auto beginPoint = this->addNetPoint(pin);
@@ -354,14 +361,26 @@ namespace kiwi::widget {
     }
 
     void SchematicScene::handleInitialTopDie(circuit::TopDie* topdie) {
-        auto topdieInst = this->_basedie->add_topdie_inst(topdie, nullptr);
-        auto topdieInstItem = this->addTopDieInst(topdieInst);
+        auto idle_tob = this->_interposer->get_a_idle_tob();
+        if (!idle_tob.has_value()) {
+            QMessageBox::critical(
+                nullptr,
+                "Add TopDies Error",
+                "No idle tob to place topdie inst!"
+            );
+        } 
+        else {
+            auto topdieInst = this->_basedie->add_topdie_inst(topdie, *idle_tob);
+            auto topdieInstItem = this->addTopDieInst(topdieInst);
 
-        if (this->_floatingTopdDieInst != nullptr) {
-            this->cleanFloatingTopdDieInst();
+            if (this->_floatingTopdDieInst != nullptr) {
+                this->cleanFloatingTopdDieInst();
+            }
+
+            this->_floatingTopdDieInst = topdieInstItem;
+
+            emit this->layoutChanged();
         }
-
-        this->_floatingTopdDieInst = topdieInstItem;
     }
 
     void SchematicScene::handleAddExport() {
@@ -373,6 +392,8 @@ namespace kiwi::widget {
         }
 
         this->_floatingExPort = eportItem;
+
+        emit this->layoutChanged();
     }
 
     void SchematicScene::placeFloatingTopdDieInst() {
@@ -382,9 +403,13 @@ namespace kiwi::widget {
 
     void SchematicScene::cleanFloatingTopdDieInst() {
         assert(this->_floatingTopdDieInst != nullptr);
-        this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->unwrap()->name());
+        assert(this->_floatingTopdDieInst->unwrap() != nullptr);
+
+        this->_basedie->remove_topdie_inst(this->_floatingTopdDieInst->unwrap());
         this->removeItem(this->_floatingTopdDieInst);
         this->_floatingTopdDieInst = nullptr;
+
+        emit this->layoutChanged();
     }
 
     void SchematicScene::placeFloatingExPort() {
@@ -394,8 +419,13 @@ namespace kiwi::widget {
 
     void SchematicScene::cleanFloatingExPort() {
         assert(this->_floatingExPort != nullptr);
+        assert(this->_floatingExPort->unwrap() != nullptr);
+
+        this->_basedie->remove_external_port(this->_floatingExPort->unwrap());
         this->removeItem(this->_floatingExPort);
         this->_floatingExPort = nullptr;
+
+        emit this->layoutChanged();
     }
 
 }

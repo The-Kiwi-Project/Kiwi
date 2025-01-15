@@ -53,13 +53,31 @@ namespace kiwi::widget {
 
         libraryScrollArea->setWidget(libraryWidget);
 
-        for (auto& [_, topdie] : this->_basedie->topdies()) {
-            this->addTopDie(topdie.get());
-        }
-
         connect(addExportButton, &QPushButton::clicked, this, &SchematicLibWidget::addExport);
         connect(loadTopDieButton, &QPushButton::clicked, this, &SchematicLibWidget::onLoadTopDieClicked);
         connect(loadTopDiesButton, &QPushButton::clicked, this, &SchematicLibWidget::onLoadTopDiesClicked);
+
+        this->loadTopDiesFromBaseDie();
+    }
+
+    void SchematicLibWidget::reload() {
+        // Delete all topdie button
+        while (auto item = this->_libraryLayout->takeAt(0)) {
+            if (QWidget *widget = item->widget()) {
+                widget->setParent(nullptr);
+                delete widget;
+            }
+            delete item;
+        }
+        this->_libraryLayout->addStretch();
+
+        this->loadTopDiesFromBaseDie();
+    }
+
+    void SchematicLibWidget::loadTopDiesFromBaseDie() {
+        for (auto& [_, topdie] : this->_basedie->topdies()) {
+            this->addTopDie(topdie.get());
+        }
     }
 
     void SchematicLibWidget::onLoadTopDieClicked() try {

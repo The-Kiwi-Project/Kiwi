@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qobjectdefs.h"
 #include <QStackedWidget>
 
 namespace kiwi::circuit {
@@ -35,6 +36,12 @@ namespace kiwi::widget {
             SchematicScene* scene,
             SchematicView* view, 
             QWidget* parent = nullptr);
+
+    public:
+        void reload();
+
+    signals:
+        void layoutChanged();
 
     private:
         void createViewInfoWidget();

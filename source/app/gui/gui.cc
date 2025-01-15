@@ -1,5 +1,6 @@
 #include "./gui.hh"
-#include "widget/schematic/schematicwidget.h"
+#include <widget/layout/layoutwidget.h>
+#include <widget/schematic/schematicwidget.h>
 
 #include <widget/window.h>
 
@@ -19,19 +20,14 @@
 #include <std/algorithm.hh>
 
 #include <QApplication>
+#include <QDebug>
 
 namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
-        auto [interposer, basedie] 
-            = kiwi::parse::read_config("../test/config/case4");
-    
-        // algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
-        // interposer->randomly_map_remain_indexes();
-
         auto app = QApplication{argc, argv};
         app.setStyle("Fusion");
-        auto w = widget::SchematicWidget{interposer.get(), basedie.get()};
+        auto w = widget::Window{};
         w.show();
         return app.exec();
     }

@@ -19,6 +19,9 @@ namespace kiwi::widget {
     public:
         SchematicLibWidget(circuit::BaseDie* basedie, QWidget* parent = nullptr);
 
+    public:
+        void reload();
+
     signals:
         void initialTopDieInst(circuit::TopDie* topdie);
         void addExport();
@@ -32,6 +35,9 @@ namespace kiwi::widget {
             
         void addTopDie(std::String name, std::HashMap<std::String, std::usize> pinmap);
         void addTopDie(circuit::TopDie* topdie);
+
+    private:
+        void loadTopDiesFromBaseDie();
 
     private:
         QVBoxLayout* _libraryLayout;

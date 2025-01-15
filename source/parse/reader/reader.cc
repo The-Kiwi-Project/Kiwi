@@ -45,33 +45,24 @@
 
 namespace kiwi::parse {
 
-    Reader::Reader(const Config& config) :
+    Reader::Reader(const Config& config, hardware::Interposer* interposer, circuit::BaseDie* basedie) :
         _config{config},
-        _interposer{},
-        _basedie{}
+        _interposer{interposer},
+        _basedie{basedie}
     {
-        this->_interposer = this->create_interposer();
-        this->_basedie = this->create_basedir();
+        debug::check(this->_interposer != nullptr, "Nullptr interposer");
+        debug::check(this->_basedie != nullptr, "Nullptr basedie");
     }
 
-    auto Reader::build() -> std::Tuple<std::Box<hardware::Interposer>, std::Box<circuit::BaseDie>>
+    void Reader::build()
     try {
         this->add_topdies_to_basedie();
         this->add_topdieinst_to_basedie();
         this->add_external_ports_to_basedie();
         this->add_connections_to_basedie();
         this->add_01ports_to_basedie();
-        return { std::move(this->_interposer), std::move(this->_basedie) };
     }
     THROW_UP_WITH("Build system")
-
-    auto Reader::create_interposer() -> std::Box<hardware::Interposer> {
-        return std::make_unique<hardware::Interposer>();
-    }
-
-    auto Reader::create_basedir() -> std::Box<circuit::BaseDie> {
-        return std::make_unique<circuit::BaseDie>();
-    }
 
     auto Reader::add_topdies_to_basedie() -> void 
     try {
@@ -187,6 +178,10 @@ namespace kiwi::parse {
     auto Reader::parse_01(const std::HashMap<std::String, hardware::TrackCoord>& ports) -> std::Vector<hardware::TrackCoord> {
         auto tracks = std::Vector<hardware::TrackCoord>{};
         for (auto& [_, coord] : ports) {
+            debug::check_fmt(
+                hardware::Interposer::is_external_port_coord(coord), 
+                "'{}' is not a valid external port coord!", coord
+            );
             tracks.emplace_back(coord);
         }
         return std::move(tracks);

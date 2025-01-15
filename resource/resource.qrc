@@ -16,16 +16,13 @@
         <file>texture/topdie.jpg</file>
     </qresource>
     <qresource prefix="/image">
-        <file>image/icon/list.png</file>
-        <file>image/icon/about.png</file>
-        <file>image/icon/print.png</file>
+        <file>image/icon/chip.png</file>
+        <file>image/icon/layout.png</file>
+        <file>image/icon/view2d.png</file>
+        <file>image/icon/view3d.png</file>
+        <file>image/icon/execute.png</file>
         <file>image/icon/setting.png</file>
-        <file>image/icon/slicing.png</file>
-        <file>image/icon/welcome.png</file>
-        <file>image/icon/work.png</file>
-        <file>image/icon/device.png</file>
-        <file>image/icon/control.png</file>
-        <file>image/icon/load.png</file>
+        <file>image/icon/list.png</file>
     </qresource>
     <qresource prefix="/qss">
         <file>qss/button.qss</file>

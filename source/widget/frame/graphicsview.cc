@@ -11,6 +11,8 @@ namespace kiwi::widget {
         this->setDragMode(QGraphicsView::RubberBandDrag);
         this->setInteractive(true);
         this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
+        this->scale(1.0 / 2.5, 1.0 / 2.5);
     }
 
     void GraphicsView::adjustSceneRect() {

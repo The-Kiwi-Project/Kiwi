@@ -22,6 +22,7 @@
 #include <QMimeData>
 #include <QFileInfo>
 #include <QtDebug>
+#include <QTimer>
 
 namespace kiwi::widget {
 
@@ -181,7 +182,7 @@ namespace kiwi::widget {
         this->initCOBCube();
         this->initChannelCube();
         this->initTOBCube();
-        this->initTopdieInstance();
+        // this->initTopdieInstance();
 
         this->_cubeVAO.release();
     }
@@ -481,7 +482,14 @@ namespace kiwi::widget {
         this->addTrack(begin, end, update);
     }
 
-    auto View3DWidget::displayCOBConnections() -> void {
+    auto View3DWidget::displayRoutingResult() -> void {
+        if (!this->isVisible()) {
+            QTimer::singleShot(0, this, &View3DWidget::displayRoutingResult);
+            return;
+        }
+
+        this->makeCurrent();
+
         using enum hardware::COBDirection;
         using enum hardware::TrackDirection;
         using hardware::COBSwState;
@@ -637,6 +645,9 @@ namespace kiwi::widget {
             }
         }
         this->updateTrackInstMatrices();
+        this->updateBiasMatrix();
+
+        this->doneCurrent();
     }
 
     void View3DWidget::updateViewMatrix() {
@@ -780,21 +791,27 @@ namespace kiwi::widget {
         auto [cube, i] = *(this->_pointedCube);
         switch (cube->type) {
             case CubeType::COB: {
+                this->makeCurrent();
                 auto cob = this->getCOBByCubeIndeces(i);
                 auto dialog = COBInfoDialog{cob};
                 dialog.exec();
+                this->doneCurrent();
                 break;
             }
             case CubeType::TOB: {
+                this->makeCurrent();
                 auto tob = this->getTOBByCubeIndeces(i);
                 auto dialog = TOBInfoDialog{tob};
                 dialog.exec();
+                this->doneCurrent();
                 break;                    
             }
             case CubeType::Topdie: {
+                this->makeCurrent();
                 auto topdieinst = this->getTopdieInstByCubeIndeces(i);
                 auto dialog = TopDieInsDialog{topdieinst};
                 dialog.exec();
+                this->doneCurrent();
                 break;
             }
             default: break;
@@ -841,8 +858,6 @@ namespace kiwi::widget {
         this->initCube(view, projection, bias);
         this->initFrame(view, projection, bias);
         this->initTracks(view, projection, bias);
-
-        this->displayCOBConnections();
     }
 
     void View3DWidget::resizeGL(int w, int h) {

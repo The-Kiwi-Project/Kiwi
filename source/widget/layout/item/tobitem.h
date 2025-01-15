@@ -8,11 +8,14 @@
 
 namespace kiwi::widget::layout {
 
-    class TopDieInstItem;
+    class TopDieInstanceItem;
 
     class TOBItem : public QGraphicsRectItem {
     public:
-        enum { Type = UserType + 3 };
+        static constexpr int    Z_VALUE = 0;
+        static constexpr int    FONT_SIZE = 30;
+
+        enum { Type = UserType + 6 };
         int type() const override { return Type; }
 
     public:
@@ -25,19 +28,28 @@ namespace kiwi::widget::layout {
     public:
         TOBItem(hardware::TOB* tob);
 
+    protected:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
+
     public:
-        void setTopDieInst(TopDieInstItem* topdieinst);
+        void setTopDieInstance(TopDieInstanceItem* topdieinst);
         void removeTopDieInstance();
-        bool hasTopDieInst() const;
+        bool hasTopDieInstance() const;
+        auto placedTobDieInstance() const -> TopDieInstanceItem*;
+
         void highlight(bool active);
 
     private:
         void updateAppearance();
+        
+    public:
+        auto unwrap() const -> hardware::TOB*
+        { return this->_tob; }
 
     private:
-        hardware::TOB* _tob;
+        hardware::TOB* const _tob;
 
-        TopDieInstItem* _topdieInstItem {nullptr};
+        TopDieInstanceItem* _topdieInstItem {nullptr};
 
     };
 

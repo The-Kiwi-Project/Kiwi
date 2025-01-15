@@ -20,6 +20,9 @@ namespace kiwi::circuit {
         ~BaseDie() noexcept;
 
     public:
+        void clear();
+
+    public:
         auto add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> TopDie*;
         auto add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance*;
         auto add_topdie_inst(TopDie* topdie, hardware::TOB* tob) -> TopDieInstance*;

@@ -4,6 +4,7 @@
 #include "circuit/export/export.hh"
 #include "circuit/topdie/topdie.hh"
 #include "circuit/topdieinst/topdieinst.hh"
+#include <hardware/tob/tob.hh>
 #include "std/collection.hh"
 #include "std/memory.hh"
 #include "std/string.hh"
@@ -15,6 +16,18 @@
 #include <utility>
 
 namespace kiwi::circuit {
+
+    void BaseDie::clear() {
+        this->_topdies.clear();
+        this->_topdie_insts.clear();
+        this->_external_ports.clear();
+        this->_connections.clear();
+        this->_pose_ports.clear();
+        this->_nege_ports.clear();
+
+        // MARK: ??????
+        this->_nets.clear();
+    }
     
     auto BaseDie::add_topdie(std::String name, std::HashMap<std::String, std::usize> pin_map) -> TopDie* {
         debug::debug_fmt("Add topdie '{}'", name);
@@ -34,6 +47,9 @@ namespace kiwi::circuit {
     }
 
     auto BaseDie::add_topdie_inst(std::String name, TopDie* topdie, hardware::TOB* tob) -> TopDieInstance* {
+        assert(topdie != nullptr);
+        assert(tob != nullptr);
+
         debug::debug_fmt("Add topdie instance '{}' of '{}'", name, topdie->name());
 
         auto p = new TopDieInstance{std::move(name), topdie, tob};
@@ -44,6 +60,8 @@ namespace kiwi::circuit {
             debug::exception_fmt("Topdie Instance '{}' already exit!", topdie_inst->name());
         }
         res.first->second = std::move(topdie_inst);
+        tob->set_placed_instance(res.first->second.get());
+
         return res.first->second.get();
     }
 
@@ -109,7 +127,7 @@ namespace kiwi::circuit {
         auto topdie_inst = std::move(node.mapped());
         auto topdie_inst_ptr = topdie_inst.get();
 
-        // Remove all topdie 
+        // Remove all nets connection to this topdie instance 
         for (auto& [sync, connections] : this->_connections) {
             auto iter = std::remove_if(connections.begin(), connections.end(), [topdie_inst_ptr](std::Box<Connection>& c) -> bool {
                 auto& input_pin = c->input_pin();
@@ -127,6 +145,12 @@ namespace kiwi::circuit {
 
             connections.erase(iter, connections.end());
         } 
+
+        // free tob 
+        if (topdie_inst->tob() != nullptr) {
+            assert(topdie_inst->tob()->placed_instance() == topdie_inst.get());
+            topdie_inst->tob()->remove_placed_instance();
+        }
 
         return true;
     }

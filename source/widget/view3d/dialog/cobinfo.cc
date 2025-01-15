@@ -8,6 +8,7 @@
 #include "qglobal.h"
 #include "qgroupbox.h"
 #include "qlabel.h"
+#include "qlist.h"
 #include "qnamespace.h"
 #include "qobject.h"
 #include "qpushbutton.h"
@@ -24,6 +25,10 @@
 // MARK: A Litter MESS(String)
 
 namespace kiwi::widget {
+
+    static auto directions = QStringList {
+        "Left", "Right", "Up", "Down"
+    };
 
     COBInfoDialog::COBInfoDialog(hardware::COB* cob) :
         QDialog{},
@@ -80,10 +85,9 @@ namespace kiwi::widget {
         sublayout2->addWidget(fromdirLabel);
 
         this->_fromDirection = new QComboBox {registerGroup};
-        this->_fromDirection->addItem("Left");
-        this->_fromDirection->addItem("Right");
-        this->_fromDirection->addItem("Up");
-        this->_fromDirection->addItem("Down");
+        for (const auto& d : directions) {
+            this->_fromDirection->addItem(d);
+        }
         sublayout2->addWidget(this->_fromDirection);
 
         registerLayout->addLayout(sublayout2);
@@ -112,10 +116,12 @@ namespace kiwi::widget {
         sublayout3->addWidget(todirLabel);
 
         this->_toDirection = new QComboBox {registerGroup};
-        this->_toDirection->addItem("Left");
-        this->_toDirection->addItem("Right");
-        this->_toDirection->addItem("Up");
-        this->_toDirection->addItem("Down");
+        auto currentText = this->_fromDirection->currentText();
+        for (const auto& s : directions) {
+            if (currentText != s) {
+                this->_toDirection->addItem(s);
+            }
+        }
         sublayout3->addWidget(this->_toDirection);
 
         registerLayout->addLayout(sublayout3);
@@ -196,8 +202,18 @@ namespace kiwi::widget {
         /////////////////////////////////////////////////////////////////////////
 
         QObject::connect(this->_fromDirection, QOverload<int>::of(&QComboBox::currentIndexChanged), [this] (int _) {
+            auto currentText = this->_fromDirection->currentText();
+            this->_toDirection->clear();
+            for (const auto& s : directions) {
+                if (currentText != s) {
+                    this->_toDirection->addItem(s);
+                }
+            }
+            
             this->updateRegister();
         });
+
+        this->_fromDirection->setCurrentIndex(0);
 
         QObject::connect(this->_fromTrackIndex, QOverload<int>::of(&QSpinBox::valueChanged), [this] (int _) {
             this->updateRegister();

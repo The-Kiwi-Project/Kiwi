@@ -9,7 +9,9 @@
 #include "./item/topdieinstitem.h"
 #include "./item/topdieinstitem.h"
 #include "./schematicscene.h"
-#include "std/exception.hh"
+
+#include <std/exception.hh>
+#include <widget/frame/msgexception.h>
 
 #include <debug/debug.hh>
 #include <circuit/basedie.hh>
@@ -41,6 +43,10 @@ namespace kiwi::widget {
         this->createNetInfoWidget();
         this->createTopDieInstanceInfoWidget();
         this->createExternalPortInfoWidget();
+    }
+
+    void SchematicInfoWidget::reload() {
+        this->setCurrentWidget(this->_viewInfoWidget);
     }
 
     void SchematicInfoWidget::createViewInfoWidget() {
@@ -93,23 +99,16 @@ namespace kiwi::widget {
         this->setCurrentWidget(this->_viewInfoWidget);
     }
 
-    #define QMESSAGEBOX_REPORT_EXCEPTION(title)\
-    catch (const std::Exception& err) {\
-        QMessageBox::critical(\
-            this,\
-            title,\
-            QString::fromLatin1(err.what())\
-        );\
-    }
-
     void SchematicInfoWidget::externalPortRename(ExternalPortItem* eport, const QString& name) try {
         this->_basedie->external_port_rename(eport->unwrap(), name.toStdString());
         eport->setName(name);
+        emit this->layoutChanged();
     } 
     QMESSAGEBOX_REPORT_EXCEPTION("External Port Rename Failed") 
 
     void SchematicInfoWidget::externalPortSetCoord(ExternalPortItem* eport, const hardware::TrackCoord& coord) try {
         this->_basedie->external_port_set_coord(eport->unwrap(), coord);
+        emit this->layoutChanged();
     } 
     QMESSAGEBOX_REPORT_EXCEPTION("External Port Set Coord Failed")
     
@@ -117,6 +116,7 @@ namespace kiwi::widget {
         this->_basedie->remove_external_port(eport->unwrap());
         this->_scene->removeExternalPort(eport);
         this->showViewInfo();
+        emit this->layoutChanged();
     }
     QMESSAGEBOX_REPORT_EXCEPTION("Remove External Port Coord Failed")
 
@@ -137,11 +137,13 @@ namespace kiwi::widget {
         this->_basedie->remove_connection(net->unwrap());
         this->_scene->removeNet(net);
         this->showViewInfo();
+        emit this->layoutChanged();
     }
 
     void SchematicInfoWidget::topdieInstanceRename(TopDieInstanceItem* inst, const QString& name) try {
         this->_basedie->topdie_inst_rename(inst->unwrap(), name.toStdString());
         inst->setName(name);
+        emit this->layoutChanged();
     }
     QMESSAGEBOX_REPORT_EXCEPTION("TopDie Instance Rename Failed")
 
@@ -149,6 +151,7 @@ namespace kiwi::widget {
         this->_basedie->remove_topdie_inst(inst->unwrap());
         this->_scene->removeTopDieInstance(inst);
         this->showViewInfo();
+        emit this->layoutChanged();
     }
     QMESSAGEBOX_REPORT_EXCEPTION("Remove TopDie Filed")
 
