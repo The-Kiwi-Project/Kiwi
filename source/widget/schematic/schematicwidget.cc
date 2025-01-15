@@ -19,7 +19,7 @@ namespace kiwi::widget {
         _interposer{interposer},
         _basedie{basedie}
     {
-        this->_scene = new SchematicScene{this->_basedie};
+        this->_scene = new SchematicScene{this->_basedie, interposer};
 
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setContentsMargins(10, 10, 10, 10);
@@ -35,10 +35,17 @@ namespace kiwi::widget {
         this->resize(1000, 800);
     }
 
+    void SchematicWidget::reload() {
+        this->_scene->reloadItems();
+        this->_view->adjustSceneRect();
+        this->_libWidget->reload();
+        this->_infoWidget->reload();
+    }
+
     void SchematicWidget::initTopdieLibWidget() {
         this->_libWidget = new SchematicLibWidget {this->_basedie, this->_splitter};
-        this->_libWidget->setMinimumWidth(200);
-        this->_libWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        this->_libWidget->setFixedWidth(200);
+        this->_libWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         this->_splitter->addWidget(this->_libWidget);
 
@@ -63,7 +70,7 @@ namespace kiwi::widget {
     void SchematicWidget::initInfoWidget() {
         this->_infoWidget = new SchematicInfoWidget{this->_basedie, this->_scene, this->_view, this->_splitter};
         this->_infoWidget->setMinimumWidth(250);
-        this->_infoWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        this->_infoWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
         this->_splitter->addWidget(this->_infoWidget);
 
@@ -82,6 +89,14 @@ namespace kiwi::widget {
         QObject::connect(
             this->_scene, &SchematicScene::topdieInstSelected, 
             this->_infoWidget, &SchematicInfoWidget::showTopDieInstanceInfoWidget);
+
+        QObject::connect(
+            this->_scene, &SchematicScene::layoutChanged, 
+            this, &SchematicWidget::layoutChanged);
+    
+        QObject::connect(
+            this->_infoWidget, &SchematicInfoWidget::layoutChanged,
+            this, &SchematicWidget::layoutChanged);
     }
 
 }

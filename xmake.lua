@@ -14,7 +14,7 @@ rule("qt.opengl")
         end
     end)
 
--- Kiwi Tarsk!!!
+-- Kiwi Task!!!
 
 target("kiwi")
     set_kind("binary")

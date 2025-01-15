@@ -50,13 +50,11 @@ namespace kiwi::widget {
             auto item = this->_scene->addTOB(tob.get());
             item->setPos(pos);
         }
-
-        this->displayCOBConnections();
     }
 
     View2DView::~View2DView() noexcept {}
 
-    auto View2DView::displayCOBConnections() -> void {
+    auto View2DView::displayRoutingResult() -> void {
         using enum hardware::COBDirection;
         using enum hardware::TrackDirection;
         using hardware::COBSwState;

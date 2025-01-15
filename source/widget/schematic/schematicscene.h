@@ -16,6 +16,10 @@ namespace kiwi::circuit {
     class Pin;
 }
 
+namespace kiwi::hardware {
+    class Interposer;
+}
+
 namespace kiwi::widget {
 
     namespace schematic {
@@ -31,13 +35,17 @@ namespace kiwi::widget {
         Q_OBJECT
         
     public:
-        SchematicScene(circuit::BaseDie* basedie);
+        SchematicScene(circuit::BaseDie* basedie, hardware::Interposer* interposer);
 
     signals:
         void netSelected(schematic::NetItem* net);
         void topdieInstSelected(schematic::TopDieInstanceItem* topdieinst);
         void exportSelected(schematic::ExternalPortItem* eport);
         void viewSelected();
+        void layoutChanged();
+
+    public:
+        void reloadItems();
 
     protected:
         void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
@@ -91,15 +99,13 @@ namespace kiwi::widget {
 
     protected:
         circuit::BaseDie* _basedie;
+        hardware::Interposer* _interposer;
 
         QHash<circuit::TopDieInstance*, schematic::TopDieInstanceItem*> _topdieinstMap;
         QHash<circuit::ExternalPort*, schematic::ExternalPortItem*> _exportMap;
         QSet<schematic::NetItem*> _nets;
         QVector<schematic::SourcePortItem*> _vddPorts;
         QVector<schematic::SourcePortItem*> _gndPorts;
-
-        schematic::PinItem* _vddPinItem;
-        schematic::PinItem* _gndPinItem;
 
         // Temp var 
         schematic::NetItem* _floatingNet {nullptr};

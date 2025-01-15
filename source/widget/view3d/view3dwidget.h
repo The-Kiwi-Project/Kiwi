@@ -69,7 +69,7 @@ namespace kiwi::widget {
     private:
         static constexpr float DEFAULT_THETA_VALUE = M_PI / 3.0f + M_PI;
         static constexpr float DEFAULT_PITCH_VALUE = M_PI / 7.0f;
-        static constexpr float DEFAULT_RADIUS_VALUE = 30.0f;
+        static constexpr float DEFAULT_RADIUS_VALUE = 50.0f;
         static constexpr float ARROWHEAD_SIZE = 0.3f;
         static constexpr float Z_BIAS = -2.5f;
         static constexpr float MAX_PITCH = M_PI / 2.0 - 0.0001;
@@ -106,6 +106,9 @@ namespace kiwi::widget {
             QWidget *parent = nullptr);
         ~View3DWidget() noexcept;
 
+    public:
+        auto displayRoutingResult() -> void;
+
     protected:
         void initAxis(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
         void initCube(const QMatrix4x4& view, const QMatrix4x4& projection, const QMatrix4x4& bias);
@@ -141,8 +144,6 @@ namespace kiwi::widget {
         auto addTrack(const QVector3D &begin, const QVector3D &end, bool update) -> void;
         auto addTrack(const hardware::TrackCoord& coord, bool update) -> void;
         
-        auto displayCOBConnections() -> void;
-
     protected:
         void renderCubes();
         void renderAxis();

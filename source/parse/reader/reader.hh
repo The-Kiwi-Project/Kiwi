@@ -58,14 +58,10 @@ namespace kiwi::parse {
 
     class Reader {
     public: 
-        Reader(const Config& config);
+        Reader(const Config& config, hardware::Interposer* interposer, circuit::BaseDie* basedie);
 
     public:
-        auto build() -> std::Tuple<std::Box<hardware::Interposer>, std::Box<circuit::BaseDie>>;
-
-    private:
-        auto create_interposer() -> std::Box<hardware::Interposer>;
-        auto create_basedir() -> std::Box<circuit::BaseDie>;
+        void build();
 
     private:
         auto add_topdies_to_basedie() -> void;
@@ -79,8 +75,8 @@ namespace kiwi::parse {
         
     private:
         const Config& _config;
-        std::Box<hardware::Interposer> _interposer; 
-        std::Box<circuit::BaseDie> _basedie;
+        hardware::Interposer* _interposer; 
+        circuit::BaseDie* _basedie;
     };
 
 }

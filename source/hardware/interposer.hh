@@ -8,7 +8,7 @@
 
 #include "./track/track.hh"
 #include "./bump/bump.hh"
-#include "hardware/coord.hh"
+#include "./coord.hh"
 #include "std/memory.hh"
 #include <std/integer.hh>
 
@@ -20,18 +20,24 @@ namespace kiwi::hardware {
     class Interposer {
     public:
         enum {
-            // total columns = 12
-            COB_ARRAY_WIDTH   = 13,
+            COB_ARRAY_WIDTH   = 12,
             COB_ARRAY_HEIGHT  = 9,
 
             TOB_ARRAY_WIDTH   = 4,
             TOB_ARRAY_HEIGHT  = 4,
+
+            COB_SIZE          = COB_ARRAY_WIDTH * COB_ARRAY_HEIGHT,
+            TOB_SIZE          = TOB_ARRAY_WIDTH * TOB_ARRAY_HEIGHT,
         };
 
         static const std::HashMap<Coord, Coord> TOB_COORD_MAP;
+        static auto is_external_port_coord(const TrackCoord& coord) -> bool;
 
     public:
         Interposer();
+
+    public:
+        void clear();
 
     public:
         auto available_tracks(Bump* bump, TOBSignalDirection dir) -> std::HashMap<Track*, TOBConnector>;
@@ -63,6 +69,9 @@ namespace kiwi::hardware {
     public:
         auto randomly_map_remain_indexes() -> void;
         auto manage_cobunit_resources() -> void;
+
+    private:
+        void build();
 
     private:
         auto static check_track_coord(const TrackCoord& coord) -> bool;

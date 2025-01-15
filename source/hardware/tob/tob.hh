@@ -3,18 +3,21 @@
 #include "./tobmux.hh"
 #include "./tobconnector.hh"
 #include "./tobsigdir.hh"
-#include "hardware/coord.hh"
-#include "std/memory.hh"
+#include <hardware/coord.hh>
+#include <hardware/bump/bump.hh>
 
+#include <std/memory.hh>
 #include <std/collection.hh>
 #include <std/integer.hh>
 #include <std/utility.hh>
 #include <hardware/tob/tobcoord.hh>
 #include <hardware/tob/tobregister.hh>
 
-namespace kiwi::hardware {
+namespace kiwi::circuit {
+    class TopDieInstance;
+}
 
-    class Bump;
+namespace kiwi::hardware {
 
     class TOB { 
     public:
@@ -91,16 +94,33 @@ namespace kiwi::hardware {
     public:
         auto collect_cobunit_usage() -> void;
 
-    public:
-        auto coord() const -> TOBCoord const& { return this->_coord; }
-        auto coord_in_interposer() const -> Coord const& { return this->_coord_in_interposer; }
-    
     private:
         static auto check_index(std::usize index) -> void;
+
+    public:
+        auto coord() const -> TOBCoord const& 
+        { return this->_coord; }
+        
+        auto coord_in_interposer() const -> Coord const& 
+        { return this->_coord_in_interposer; }
+        
+        auto placed_instance() const -> circuit::TopDieInstance*
+        { return this->_placed_instance.value(); }
+
+        void set_placed_instance(circuit::TopDieInstance* instance) 
+        { this->_placed_instance.emplace(instance); } 
+
+        void remove_placed_instance() 
+        { this->_placed_instance.reset(); }
+
+        auto is_idle() const -> bool 
+        { return !this->_placed_instance.has_value(); }
 
     private:
         TOBCoord const _coord;
         Coord const _coord_in_interposer;
+
+        std::Option<circuit::TopDieInstance*> _placed_instance {};
 
         std::HashMap<std::usize, std::Box<Bump>> _bumps {};
         std::Array<std::usize, 16> _cobunit_resources;

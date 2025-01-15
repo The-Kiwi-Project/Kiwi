@@ -39,5 +39,6 @@ auto main(int argc, char** argv) -> int {
     app.setStyle("Fusion");
     auto w = kiwi::widget::View3DWidget{interposer.get(), basedie.get()};
     w.show();
+    w.displayRoutingResult();
     return app.exec();
 }

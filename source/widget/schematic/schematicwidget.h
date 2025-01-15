@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qobjectdefs.h"
 #include "qwidget.h"
 #include "widget/schematic/schematicinfowidget.h"
 #include "widget/schematic/schematiclibwidget.h"
@@ -21,11 +22,20 @@ namespace kiwi::widget {
     class SchematicScene;
 
     class SchematicWidget : public QWidget {
+        Q_OBJECT
+        
     public:
         explicit SchematicWidget(
             hardware::Interposer* interposer, 
             circuit::BaseDie* basedie,
             QWidget *parent = nullptr);
+
+    public:
+        void reload();
+
+    signals:
+        // MARK: More detail infomation
+        void layoutChanged();
 
     private:
         void initTopdieLibWidget();

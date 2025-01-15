@@ -51,7 +51,7 @@ namespace kiwi::widget::schematic {
         }
 
     private:
-        circuit::ExternalPort* _externalPort;
+        circuit::ExternalPort* const _externalPort;
         PinItem* _pin;
 
         qreal _width;
