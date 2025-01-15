@@ -20,12 +20,12 @@ namespace kiwi::widget::layout {
 
     void TOBItem::setTopDieInstance(TopDieInstanceItem* topdieinst) {
         this->_topdieInstItem = topdieinst;
-        this->updateAppearance();
+        // this->updateAppearance();
     }
 
     void TOBItem::removeTopDieInstance() {
         this->_topdieInstItem = nullptr;
-        this->updateAppearance();
+        // this->updateAppearance();
     }
 
     bool TOBItem::hasTopDieInstance() const {

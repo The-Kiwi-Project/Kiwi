@@ -182,7 +182,7 @@ namespace kiwi::widget {
         this->initCOBCube();
         this->initChannelCube();
         this->initTOBCube();
-        this->initTopdieInstance();
+        // this->initTopdieInstance();
 
         this->_cubeVAO.release();
     }
@@ -645,6 +645,7 @@ namespace kiwi::widget {
             }
         }
         this->updateTrackInstMatrices();
+        this->updateBiasMatrix();
 
         this->doneCurrent();
     }
