@@ -156,13 +156,14 @@ print_path(input_node, output_node, path);
             
             auto path = this->route_path(interposer, begin_tracks_vec, this->track_map_to_track_set(end_tracks));
 
-            std::Vector<hardware::Track*> temp_vec {};
-            for (auto t: begin_tracks_vec){
-                if (!begin_tracks.contains(t)){
-                    temp_vec.emplace_back(t);
+            for (auto it = begin_tracks_vec.begin(); it != begin_tracks_vec.end();) {
+                if (begin_tracks.contains(*it)){
+                    it = begin_tracks_vec.erase(it);
+                }
+                else{
+                    ++it;
                 }
             }
-            begin_tracks_vec.swap(temp_vec);
 
             // Get begin and end track in path
             auto begin_track = path.front();
@@ -176,13 +177,14 @@ print_path(input_node, output_node, path);
             end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
             end_tracks.find(end_track)->second.connect();
 
-            // Is the begin is from begin_tracks?
+            // Is the begin from begin_tracks?
             auto find_res = begin_tracks.find(begin_track);
             if (find_res != begin_tracks.end()) {
-                // If `begin_track` is in `begin_tracks`, mean we find a track which is should be connected
+                // If `begin_track` is in `begin_tracks`, then we find a track which should be connected
                 // with begin bump!
                 begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
                 find_res->second.connect();
+                total_length += 1;  // head of path is calculate seperately 
             } else {
                 // `begin_track` is not the `begin_tracks`, so we find a track in path to connected with `end_bump`
                 // do not need to connect TOB!
@@ -193,7 +195,10 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += (path_length(path) + 1);
+            total_length += path_length(path);    // path_length(path) + 1(end_bump) - 1(head of path)
+//!
+print_path<hardware::Bump, hardware::Bump>(begin_bump, end_bump, path);
+//!
         }
 
         return total_length + 1;
@@ -228,10 +233,13 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += (path_length(path) + 1);
+            total_length += path_length(path);  // +1(end_bump) - 1(head)
+//!
+print_path<hardware::Track, hardware::Bump>(begin_track, end_bump, path);
+//!
         }
 
-        return total_length;
+        return total_length + 1;
     }
     
 
@@ -252,13 +260,14 @@ print_path(input_node, output_node, path);
     
             auto path = this->route_path(interposer, begin_tracks_vec, std::HashSet<hardware::Track *>{end_track});
 
-            std::Vector<hardware::Track*> temp_vec {};
-            for (auto t: begin_tracks_vec){
-                if (!begin_tracks.contains(t)){
-                    temp_vec.emplace_back(t);
+            for (auto it = begin_tracks_vec.begin(); it != begin_tracks_vec.end();) {
+                if (begin_tracks.contains(*it)){
+                    it = begin_tracks_vec.erase(it);
+                }
+                else{
+                    ++it;
                 }
             }
-            begin_tracks_vec.swap(temp_vec);
 
             // Get begin and end track in path
             auto begin_track = path.front();
@@ -270,6 +279,7 @@ print_path(input_node, output_node, path);
                 // with begin bump!
                 find_res->second.connect();
                 begin_bump->set_connected_track(begin_track, hardware::TOBSignalDirection::BumpToTrack);
+                total_length += 1;
             } else {
                 // `begin_track` is not the `begin_tracks`, so we find a track in path to connected with `end_bump`
                 // do not need to connect TOB!
@@ -280,7 +290,10 @@ print_path(input_node, output_node, path);
                 begin_tracks_vec.emplace_back(t);
             } 
 
-            total_length += path_length(path);
+            total_length += path_length(path) - 1;  // -1 for removing head of path 
+//!
+print_path<hardware::Bump, hardware::Track>(begin_bump, end_track, path);
+//!
         }
 
         return total_length + 1;
@@ -306,12 +319,17 @@ print_path(input_node, output_node, path);
             if (!end_tracks.contains(end_track)){
                 throw FinalError("MazeRouteStrategy::route_tracks_to_bumps_net(): end track not in end tracks set");
             }
+            end_bump->set_connected_track(end_track, hardware::TOBSignalDirection::TrackToBump);
+            end_tracks.find(end_track)->second.connect();
 
             for (auto t : path) {
                 begin_tracks_vec.emplace_back(t);
             }
 
             total_length += (path_length(path) + 1);
+//!
+print_path<hardware::Track, hardware::Bump>(path[0], end_bump, path);
+//!
         }
 
         return total_length;
@@ -586,18 +604,6 @@ print_sync_path(ptr_sync_net);
         hardware::Bump* end_bump = nullptr;
         std::HashMap<hardware::Track*, hardware::TOBConnector> begin_track_to_tob_map {};
         std::HashMap<hardware::Track*, hardware::TOBConnector> end_track_to_tob_map {};
-
-//!
-if constexpr (std::is_same<Net, circuit::BumpToBumpNet>::value) {
-    auto net = sync_net[0].get();
-    auto test_begin_bump = net->begin_bump();
-    auto test_end_bump = net->end_bump();
-    if (test_begin_bump->coord().row == 3 && test_begin_bump->coord().col == 6){
-        if (test_end_bump->coord().row == 3 && test_end_bump->coord().col == 3)
-            auto a = 1;
-    }
-}
-//!
 
         for (auto& uptr_net: sync_net){
             auto net = uptr_net.get();
