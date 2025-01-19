@@ -25,15 +25,6 @@
 namespace kiwi {
 
     auto gui_main(int argc, char** argv) -> int {
-<<<<<<< HEAD
-        auto [interposer, basedie] 
-            = kiwi::parse::read_config("../test/config/case6");
-    
-        // algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
-        // interposer->randomly_map_remain_indexes();
-
-=======
->>>>>>> 1bbe919b66a550e2445fdc19a23ddcada1950598
         auto app = QApplication{argc, argv};
         app.setStyle("Fusion");
         auto w = widget::Window{};

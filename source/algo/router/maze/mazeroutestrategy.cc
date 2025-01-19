@@ -449,7 +449,7 @@ print_sync_path(ptr_sync_net);
     }
 
     // Return : Vector<(Track*, COBConnector)>
-    auto MazeRouteStrategy::search_path(
+    auto MazeRouteStrategy::maze_search(
         hardware::Interposer* interposer, 
         const std::Vector<hardware::Track*>& begin_tracks,
         const std::HashSet<hardware::Track*>& end_tracks,
@@ -478,7 +478,7 @@ print_sync_path(ptr_sync_net);
                 while (true) {
                     auto prev_track_info = prev_track_infos.find(cur_track);
                     if(prev_track_info == prev_track_infos.end()){
-                        throw FinalError("MazeRouteStrategy::search_path(): cannot find previous track");
+                        throw FinalError("MazeRouteStrategy::maze_search(): cannot find previous track");
                     }
                     // Reach start track
                     if (!prev_track_info->second.has_value()) {
@@ -506,7 +506,7 @@ print_sync_path(ptr_sync_net);
             }
         }
 
-        throw RetryExpt("MazeRouteStrategy::search_path(): path not found");
+        throw RetryExpt("MazeRouteStrategy::maze_search(): path not found");
     }
 
     auto MazeRouteStrategy::route_path(
@@ -516,7 +516,7 @@ print_sync_path(ptr_sync_net);
     ) const -> std::Vector<hardware::Track*> 
     try {
         std::HashSet<hardware::Track*> empty {};
-        auto path_info = search_path(interposer, begin_tracks, end_tracks, empty);
+        auto path_info = maze_search(interposer, begin_tracks, end_tracks, empty);
 
         auto path = std::Vector<hardware::Track*>{};
 
@@ -650,7 +650,7 @@ print_sync_path(ptr_sync_net);
             }
 
             // route and connect
-            auto path_info = search_path(interposer, begin_tracks_vec, end_tracks_set, occupied_tracks_vec); // notice: negative sequence
+            auto path_info = maze_search(interposer, begin_tracks_vec, end_tracks_set, occupied_tracks_vec); // notice: negative sequence
                                                                                         //  |
             auto path = std::Vector<hardware::Track*>{};                                //  V
             hardware::Track* prev_track = nullptr;                                      // prev_track is the track before this
