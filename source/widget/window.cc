@@ -225,8 +225,10 @@ namespace kiwi::widget {
 
             auto configPath = std::FilePath{filePath.toStdString()};
 
-            this->_interposer->clear();
-            this->_basedie->clear();
+            if (this->hasConfigPath()) {
+                this->_interposer->clear();
+                this->_basedie->clear();
+            }
 
             parse::read_config(configPath, this->_interposer.get(), this->_basedie.get());
 
