@@ -2,8 +2,6 @@
 #include "./layoutscene.h"
 #include "./layoutview.h"
 #include "./layoutinfowidget.h"
-#include "./item/tobitem.h"
-#include "./item/topdieinstitem.h"
 
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -29,7 +27,7 @@ namespace kiwi::widget {
         layout->addWidget(this->_splitter);
 
         // View
-        this->_view = new LayoutView {this->_interposer, this->_basedie, this->_splitter};
+        this->_view = new LayoutView {this->_splitter};
         this->_view->setScene(this->_scene);
         this->_view->adjustSceneRect();
         this->_view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

@@ -313,7 +313,6 @@ namespace kiwi::widget {
     }
 
     auto View3DWidget::trackPosition(const hardware::TrackCoord& coord) -> std::Tuple<QVector3D, QVector3D> {
-        // MARK: Channel position error
         auto channelPos = this->channelPosition(coord.row, coord.col, coord.dir);
         auto begin = QVector3D{};
         auto end = QVector3D{};
@@ -331,7 +330,7 @@ namespace kiwi::widget {
                 break;
             }
             case hardware::TrackDirection::Vertical: {
-                auto zpos = channelPos.z() + (coord.index+1) * TRACK_INTERVAL;
+                auto zpos = channelPos.z() + COB_WIDTH - (coord.index+1) * TRACK_INTERVAL;
 
                 begin.setZ(zpos);
                 begin.setX(channelPos.x() - COB_WIDTH - CHANNEL_LENGTH);

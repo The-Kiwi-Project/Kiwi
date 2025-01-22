@@ -22,6 +22,8 @@
         <file>image/icon/view3d.png</file>
         <file>image/icon/execute.png</file>
         <file>image/icon/setting.png</file>
+        <file>image/icon/save.png</file>
+        <file>image/icon/infomation.png</file>
         <file>image/icon/list.png</file>
     </qresource>
     <qresource prefix="/qss">

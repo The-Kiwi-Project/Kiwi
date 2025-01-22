@@ -16,13 +16,14 @@ namespace kiwi::circuit {
 class QToolBar;
 class QStackedWidget;
 class QMenuBar;
+class QPushButton;
 
 namespace kiwi::widget {
 
     class SchematicWidget;
     class LayoutWidget;
     class View3DWidget;
-    class View2DView;
+    class View2DWidget;
     class SettingWidget;
 
     class Window : public QMainWindow {
@@ -44,7 +45,8 @@ namespace kiwi::widget {
         void saveConfig();
         void saveConfigAs();
         
-        void executePR();
+        void executePlaceRoute();
+        void generateControlBitAs();
 
     private:
         auto hasConfigPath() -> bool;
@@ -57,9 +59,12 @@ namespace kiwi::widget {
 
         SchematicWidget* _schematicWidget {nullptr};
         LayoutWidget* _layoutWidget {nullptr};
-        View2DView* _view2DWidget {nullptr};
+        View2DWidget* _view2DWidget {nullptr};
         View3DWidget* _view3DWidget {nullptr};
         SettingWidget* _settingWidget {nullptr};
+
+        QAction* _placeRouteAction {nullptr};
+        QAction* _generateControlBitAction {nullptr};
 
     private:
         std::Box<hardware::Interposer> _interposer {nullptr};
