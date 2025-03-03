@@ -1,6 +1,10 @@
 #include "./cobitem.h"
-#include "qcolor.h"
-#include "qnamespace.h"
+#include "../detail/cob.h"
+#include "qboxlayout.h"
+#include "qdialog.h"
+#include "qgraphicsitem.h"
+#include <widget/frame/graphicsview.h>
+#include <QDebug>
 
 namespace kiwi::widget::view2d {
 
@@ -36,6 +40,7 @@ namespace kiwi::widget::view2d {
     COBItem::COBItem(hardware::COB* cob): 
         _cob{cob} 
     {
+        this->setFlags(this->flags() | QGraphicsItem::ItemIsMovable);
     }
 
     auto COBItem::boundingRect() const -> QRectF {
@@ -73,5 +78,22 @@ namespace kiwi::widget::view2d {
 
     }
 
+    void COBItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+        auto scene = widget::view2d::COBScene{this->_cob};
+
+        auto dialog = QDialog {};
+        auto layout = new QVBoxLayout{&dialog};
+
+        auto view = new widget::GraphicsView {};
+        view->setScene(&scene);
+        view->setRenderHint(QPainter::Antialiasing); // 抗锯齿
+        view->setWindowTitle("COB Unit Layout");
+        view->resize(820, 820);
+        view->adjustSceneRect();
+
+        layout->addWidget(view);
+
+        dialog.exec();
+    }
 
 }

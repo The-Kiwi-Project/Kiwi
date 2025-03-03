@@ -27,6 +27,8 @@ namespace kiwi::widget::view2d {
     public:
         auto boundingRect() const -> QRectF override;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
+        void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
+
 
     private:
         hardware::COB* _cob;

@@ -21,21 +21,10 @@ namespace kiwi::widget {
     class LayoutScene;
 
     class LayoutView : public GraphicsView {
-        static const     QColor BACK_COLOR;
-
     public:
-        explicit LayoutView(
-            hardware::Interposer* interposer, 
-            circuit::BaseDie* basedie,
-            QWidget *parent = nullptr);
+        explicit LayoutView(QWidget *parent = nullptr);
 
         ~LayoutView() noexcept;
-        
-    protected:
-        hardware::Interposer* _interposer {nullptr};
-        circuit::BaseDie* _basedie {nullptr};
-
-        LayoutScene* _scene {nullptr};
     };
 
 }

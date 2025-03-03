@@ -1,17 +1,21 @@
 #include "./window.h"
 #include "./prthread.h"
-#include "./view2d/view2dview.h"
+#include "./view2d/view2dwidget.h"
 #include "./view3d/view3dwidget.h"
 #include "./schematic/schematicwidget.h"
 #include "./layout/layoutwidget.h"
 
 #include "algo/netbuilder/netbuilder.hh"
 #include "algo/router/maze/mazererouter.hh"
+#include "parse/writer/module.hh"
 #include "qaction.h"
+#include "qdir.h"
+#include "qfiledialog.h"
 #include "qmessagebox.h"
 #include "widget/setting/settingwidget.h"
 #include <algo/router/route.hh>
 
+#include <cassert>
 #include <parse/reader/module.hh>
 #include <widget/frame/msgexception.h>
 
@@ -137,8 +141,12 @@ namespace kiwi::widget {
         stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         this->_toolBar->addWidget(stretch);
 
-        auto prButton = this->_toolBar->addAction(QIcon{":/image/image/icon/execute.png"}, "");
-        connect(prButton, &QAction::triggered, this, &Window::executePR);
+        this->_placeRouteAction = this->_toolBar->addAction(QIcon{":/image/image/icon/execute.png"}, "");
+        connect(this->_placeRouteAction, &QAction::triggered, this, &Window::executePlaceRoute);
+
+        this->_generateControlBitAction = this->_toolBar->addAction(QIcon{":/image/image/icon/save.png"}, "");
+        this->_generateControlBitAction->setEnabled(false);
+        connect(this->_generateControlBitAction, &QAction::triggered, this, &Window::generateControlBitAs);
 
         this->_toolBar->addSeparator();
 
@@ -158,7 +166,7 @@ namespace kiwi::widget {
         this->_layoutWidget = new LayoutWidget{this->_interposer.get(), this->_basedie.get(), this->_schematicWidget};
         this->_stackedWidget->addWidget(this->_layoutWidget);
 
-        this->_view2DWidget = new View2DView {this->_interposer.get(), this->_basedie.get(), this};
+        this->_view2DWidget = new View2DWidget {this->_interposer.get(), this->_basedie.get(), this};
         this->_stackedWidget->addWidget(this->_view2DWidget);
 
         this->_view3DWidget = new View3DWidget {this->_interposer.get(), this->_basedie.get(), this};
@@ -225,8 +233,10 @@ namespace kiwi::widget {
 
             auto configPath = std::FilePath{filePath.toStdString()};
 
-            this->_interposer->clear();
-            this->_basedie->clear();
+            if (this->hasConfigPath()) {
+                this->_interposer->clear();
+                this->_basedie->clear();
+            }
 
             parse::read_config(configPath, this->_interposer.get(), this->_basedie.get());
 
@@ -239,18 +249,18 @@ namespace kiwi::widget {
     QMESSAGEBOX_REPORT_EXCEPTION("Load Config")
 
     void Window::saveConfig() {
-        
+
     }
 
     void Window::saveConfigAs() {
-
+        
     }
 
-    void Window::executePR() try {
+    void Window::executePlaceRoute() try {
         if (this->_finishPR) {
             QMessageBox::critical(
                 this,
-                "Execute P&R",
+                "Execute Place & Route",
                 "P&R already finished!"
             );
 
@@ -260,11 +270,11 @@ namespace kiwi::widget {
         // MARK, if faild...
 
         auto dialog = QDialog(this);
-        dialog.setWindowTitle("working...");
+        dialog.setWindowTitle("Execute Place & Route");
         dialog.setModal(true);
 
         QVBoxLayout layout(&dialog);
-        auto label = QLabel("Executing P&R");
+        auto label = QLabel("Running");
         auto font = label.font();
         font.setPointSize(20);
         font.setBold(true);
@@ -279,16 +289,39 @@ namespace kiwi::widget {
         worker->start();
 
         dialog.exec();
+        delete worker;
 
         ////////////////////////////////////////////////
 
-        this->_view2DWidget->displayRoutingResult();
+        this->_view2DWidget->reload();
         this->_view3DWidget->displayRoutingResult();
 
         this->disableEdit();
+        
+        assert(this->_generateControlBitAction != nullptr);
+        this->_generateControlBitAction->setEnabled(true);
+        this->_placeRouteAction->setEnabled(false);
         this->_finishPR = true;
     }
     QMESSAGEBOX_REPORT_EXCEPTION("Execute Place & Routing")
+
+    void Window::generateControlBitAs() try {
+        assert(this->_finishPR == true);
+        auto filePath = QFileDialog::getSaveFileName(
+            this,
+            "Generate Control Bit File",
+            QDir::currentPath() + "/output.ctb",
+            "Control Bit Files (*.ctb);;All Files (*.*)"
+        );
+
+        if (filePath.isEmpty()) {
+            QMessageBox::information(this, "Cancelled", "Save operation cancelled.");
+            return;
+        }
+
+        parse::write_control_bits(this->_interposer.get(), filePath.toStdString());
+    }
+    QMESSAGEBOX_REPORT_EXCEPTION("Generate control bit file")
 
     auto Window::hasConfigPath() -> bool {
         return this->_configPath.has_value();
