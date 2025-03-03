@@ -3,7 +3,7 @@
     "topdies": "",
     "topdie_insts": "",
     "external_ports": "",
-    "connections": "case1_32_reordered.txt",
+    "connections": "case1_64.txt",
     "reigster_adder": "",
     "ports_01" : "01_ports.json"
 }

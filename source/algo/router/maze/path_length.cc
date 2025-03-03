@@ -28,9 +28,19 @@ namespace kiwi::algo {
                     auto tail_cobs {track_pos_to_cobs(std::get<0>(path.at(tail)))};
                     current_pos = shared_cobs(current_pos, tail_cobs);
                     if (current_pos.empty()){
-                        path_length += 2;
-                        head = tail;
-                        break;
+                        if (tail - head >= 3){
+                            path_length += 2;
+                            head = tail;
+                            break;
+                        }
+                        else if (tail - head == 2){
+                            path_length += 1;
+                            tail = head = head + 1;
+                            break;
+                        }
+                        else {
+                            throw FinalError("error when calculating path length: tail == head but share no cobs");
+                        }
                     }
                     else{
                         if (tail == path.size() - 1){
@@ -75,9 +85,19 @@ namespace kiwi::algo {
                     auto tail_cobs {track_pos_to_cobs(path.at(tail))};
                     current_pos = shared_cobs(current_pos, tail_cobs);
                     if (current_pos.empty()){
-                        path_length += 2;
-                        head = tail;
-                        break;
+                        if (tail - head >= 3){
+                            path_length += 2;
+                            head = tail;
+                            break;
+                        }
+                        else if (tail - head == 2){
+                            path_length += 1;
+                            tail = head = head + 1;
+                            break;
+                        }
+                        else {
+                            throw FinalError("error when calculating path length: tail == head but share no cobs");
+                        }
                     }
                     else{
                         if(tail == path.size() - 1){

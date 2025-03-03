@@ -1,0 +1,2530 @@
+max tob utilization is 48, rate is 0.375000
+route group -2
+net 112 success 
+net 112 route 6 step	tmpTree 1512
+net 113 success 
+net 113 route 6 step	tmpTree 1512
+net 114 success 
+net 114 route 15 step	tmpTree 1569
+net 115 success 
+net 115 route 15 step	tmpTree 1569
+net 116 success 
+net 116 route 7 step	tmpTree 1087
+net 117 success 
+net 117 route 7 step	tmpTree 1087
+net 118 success 
+net 118 route 16 step	tmpTree 1711
+net 119 success 
+net 119 route 16 step	tmpTree 1711
+net 120 success 
+net 120 route 4 step	tmpTree 1324
+net 121 success 
+net 121 route 4 step	tmpTree 1324
+net 122 success 
+net 122 route 16 step	tmpTree 1488
+net 123 success 
+net 123 route 16 step	tmpTree 1488
+net 124 success 
+net 124 route 7 step	tmpTree 1028
+net 125 success 
+net 125 route 7 step	tmpTree 1028
+net 126 success 
+net 126 route 19 step	tmpTree 1692
+net 127 success 
+net 127 route 19 step	tmpTree 1692
+GROUP -2 success in 19
+success 16	failed 0
+route group 1
+net 0 success 
+net 0 route 6 step	tmpTree 260
+net 1 success 
+net 1 route 6 step	tmpTree 269
+net 2 success 
+net 2 route 6 step	tmpTree 262
+net 3 success 
+net 3 route 6 step	tmpTree 267
+net 4 success 
+net 4 route 6 step	tmpTree 269
+net 5 success 
+net 5 route 6 step	tmpTree 265
+net 6 success 
+net 6 route 6 step	tmpTree 265
+net 7 success 
+net 7 route 6 step	tmpTree 270
+GROUP 1 success in 6
+success 24	failed 0
+route group 2
+net 8 success 
+net 8 route 6 step	tmpTree 236
+net 9 success 
+net 9 route 6 step	tmpTree 244
+net 10 success 
+net 10 route 6 step	tmpTree 238
+net 11 success 
+net 11 route 6 step	tmpTree 238
+net 12 success 
+net 12 route 6 step	tmpTree 240
+net 13 success 
+net 13 route 6 step	tmpTree 244
+net 14 success 
+net 14 route 6 step	tmpTree 245
+net 15 success 
+net 15 route 6 step	tmpTree 244
+GROUP 2 success in 6
+success 32	failed 0
+route group 3
+net 16 success 
+net 16 route 6 step	tmpTree 127
+net 17 success 
+net 17 route 6 step	tmpTree 129
+net 18 success 
+net 18 route 6 step	tmpTree 120
+net 19 success 
+net 19 route 6 step	tmpTree 129
+net 20 success 
+net 20 route 6 step	tmpTree 129
+net 21 success 
+net 21 route 6 step	tmpTree 129
+net 22 success 
+net 22 route 6 step	tmpTree 129
+net 23 success 
+net 23 route 6 step	tmpTree 127
+GROUP 3 success in 6
+success 40	failed 0
+route group 4
+net 24 success 
+net 24 route 6 step	tmpTree 120
+net 25 success 
+net 25 route 6 step	tmpTree 124
+net 26 success 
+net 26 route 6 step	tmpTree 112
+net 27 success 
+net 27 route 6 step	tmpTree 124
+net 28 success 
+net 28 route 6 step	tmpTree 124
+net 29 success 
+net 29 route 6 step	tmpTree 123
+net 30 success 
+net 30 route 6 step	tmpTree 124
+net 31 success 
+net 31 route 6 step	tmpTree 123
+GROUP 4 success in 6
+success 48	failed 0
+route group 16
+net 104 success 
+net 104 route 7 step	tmpTree 314
+net 105 success 
+net 105 route 7 step	tmpTree 290
+net 106 success 
+net 106 route 7 step	tmpTree 296
+net 107 success 
+net 107 route 7 step	tmpTree 311
+GROUP 16 success in 7
+success 52	failed 0
+route group 15
+net 96 success 
+net 96 route 4 step	tmpTree 38
+net 97 success 
+net 97 route 4 step	tmpTree 38
+net 98 success 
+net 98 route 4 step	tmpTree 25
+net 99 success 
+net 99 route 4 step	tmpTree 38
+GROUP 15 success in 4
+success 56	failed 0
+route group 14
+net 88 success 
+net 88 route 4 step	tmpTree 23
+net 89 success 
+net 89 route 4 step	tmpTree 23
+net 90 success 
+net 90 route 4 step	tmpTree 23
+net 91 success 
+net 91 route 4 step	tmpTree 23
+GROUP 14 success in 4
+success 60	failed 0
+route group 13
+net 80 success 
+net 80 route 7 step	tmpTree 193
+net 81 success 
+net 81 route 7 step	tmpTree 198
+net 82 success 
+net 82 route 7 step	tmpTree 152
+net 83 success 
+net 83 route 7 step	tmpTree 203
+GROUP 13 success in 7
+success 64	failed 0
+route group 12
+net 72 success 
+net 72 route 7 step	tmpTree 340
+net 73 success 
+net 73 route 7 step	tmpTree 386
+net 74 success 
+net 74 route 7 step	tmpTree 398
+net 75 success 
+net 75 route 7 step	tmpTree 381
+GROUP 12 success in 7
+success 68	failed 0
+route group 11
+net 64 success 
+net 64 route 4 step	tmpTree 30
+net 65 success 
+net 65 route 4 step	tmpTree 30
+net 66 success 
+net 66 route 4 step	tmpTree 30
+net 67 success 
+net 67 route 4 step	tmpTree 30
+GROUP 11 success in 4
+success 72	failed 0
+route group 10
+net 56 success 
+net 56 route 4 step	tmpTree 46
+net 57 success 
+net 57 route 4 step	tmpTree 50
+net 58 success 
+net 58 route 4 step	tmpTree 50
+net 59 success 
+net 59 route 4 step	tmpTree 50
+GROUP 10 success in 4
+success 76	failed 0
+route group 9
+net 48 success 
+net 48 route 7 step	tmpTree 525
+net 49 success 
+net 49 route 7 step	tmpTree 522
+net 50 success 
+net 50 route 7 step	tmpTree 527
+net 51 success 
+net 51 route 7 step	tmpTree 535
+GROUP 9 success in 7
+success 80	failed 0
+route group 8
+net 44 success 
+net 44 route 6 step	tmpTree 224
+net 45 success 
+net 45 route 6 step	tmpTree 226
+net 46 success 
+net 46 route 6 step	tmpTree 297
+net 47 success 
+net 47 route 6 step	tmpTree 226
+GROUP 8 success in 6
+success 84	failed 0
+route group 7
+net 40 success 
+net 40 route 4 step	tmpTree 54
+net 41 success 
+net 41 route 4 step	tmpTree 54
+net 42 success 
+net 42 route 4 step	tmpTree 53
+net 43 success 
+net 43 route 4 step	tmpTree 54
+GROUP 7 success in 4
+success 88	failed 0
+route group 6
+net 36 success 
+net 36 route 6 step	tmpTree 294
+net 37 success 
+net 37 route 6 step	tmpTree 255
+net 38 success 
+net 38 route 6 step	tmpTree 193
+net 39 success 
+net 39 route 6 step	tmpTree 254
+GROUP 6 success in 6
+success 92	failed 0
+route group 5
+net 32 success 
+net 32 route 4 step	tmpTree 30
+net 33 success 
+net 33 route 4 step	tmpTree 30
+net 34 success 
+net 34 route 4 step	tmpTree 30
+net 35 success 
+net 35 route 4 step	tmpTree 30
+GROUP 5 success in 4
+success 96	failed 0
+route group -3
+net 129 success 
+net 129 route 7 step	tmpTree 7563
+GROUP -3 success in 7
+success 97	failed 0
+route group -4
+net 128 success 
+net 128 route 7 step	tmpTree 7898
+GROUP -4 success in 7
+success 98	failed 0
+route group -1
+net 52 success 
+net 52 route 7 step	tmpTree 525
+net 53 success 
+net 53 route 7 step	tmpTree 520
+net 54 success 
+net 54 route 7 step	tmpTree 523
+net 55 success 
+net 55 route 7 step	tmpTree 525
+net 60 success 
+net 60 route 4 step	tmpTree 54
+net 61 success 
+net 61 route 4 step	tmpTree 54
+net 62 success 
+net 62 route 4 step	tmpTree 54
+net 63 success 
+net 63 route 4 step	tmpTree 54
+net 68 success 
+net 68 route 4 step	tmpTree 30
+net 69 success 
+net 69 route 4 step	tmpTree 30
+net 70 success 
+net 70 route 4 step	tmpTree 30
+net 71 success 
+net 71 route 4 step	tmpTree 30
+net 76 success 
+net 76 route 7 step	tmpTree 368
+net 77 success 
+net 77 route 7 step	tmpTree 375
+net 78 success 
+net 78 route 7 step	tmpTree 379
+net 79 success 
+net 79 route 7 step	tmpTree 368
+net 84 success 
+net 84 route 7 step	tmpTree 216
+net 85 success 
+net 85 route 7 step	tmpTree 216
+net 86 success 
+net 86 route 7 step	tmpTree 209
+net 87 success 
+net 87 route 7 step	tmpTree 209
+net 92 success 
+net 92 route 4 step	tmpTree 24
+net 93 success 
+net 93 route 4 step	tmpTree 24
+net 94 success 
+net 94 route 4 step	tmpTree 24
+net 95 success 
+net 95 route 4 step	tmpTree 24
+net 100 success 
+net 100 route 4 step	tmpTree 34
+net 101 success 
+net 101 route 4 step	tmpTree 34
+net 102 success 
+net 102 route 4 step	tmpTree 34
+net 103 success 
+net 103 route 4 step	tmpTree 34
+net 108 success 
+net 108 route 7 step	tmpTree 243
+net 109 success 
+net 109 route 7 step	tmpTree 279
+net 110 success 
+net 110 route 7 step	tmpTree 290
+net 111 success 
+net 111 route 7 step	tmpTree 278
+GROUP -1 success in 7
+success 130	failed 0
+route group -10
+GROUP -10 success in -1
+success 130	failed 0
+success 130	failed 0
+wilton 
+272 sinks have been routed, max net uses 18 tracks, average 6.161765 tracks
+*************************PATHs***************************
+total nets: 130
+net 0 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=0)
+Track (x=5, y=9, direction=Vertical, index=0, step=1)
+Track (x=5, y=9, direction=Horizontal, index=48, step=2)
+Track (x=5, y=8, direction=Horizontal, index=48, step=3)
+Track (x=5, y=7, direction=Horizontal, index=48, step=4)
+Track (x=5, y=6, direction=Vertical, index=40, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=0)
+
+net 1 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=8)
+Track (x=5, y=9, direction=Vertical, index=1, step=1)
+Track (x=5, y=9, direction=Horizontal, index=49, step=2)
+Track (x=5, y=8, direction=Horizontal, index=49, step=3)
+Track (x=5, y=7, direction=Horizontal, index=49, step=4)
+Track (x=5, y=6, direction=Vertical, index=41, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=8)
+
+net 2 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=16)
+Track (x=5, y=9, direction=Vertical, index=2, step=1)
+Track (x=5, y=9, direction=Horizontal, index=50, step=2)
+Track (x=5, y=8, direction=Horizontal, index=50, step=3)
+Track (x=5, y=7, direction=Horizontal, index=50, step=4)
+Track (x=5, y=6, direction=Vertical, index=42, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=16)
+
+net 3 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=24)
+Track (x=5, y=9, direction=Vertical, index=3, step=1)
+Track (x=5, y=9, direction=Horizontal, index=51, step=2)
+Track (x=5, y=8, direction=Horizontal, index=51, step=3)
+Track (x=5, y=7, direction=Horizontal, index=51, step=4)
+Track (x=5, y=6, direction=Vertical, index=43, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=24)
+
+net 4 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=32)
+Track (x=5, y=9, direction=Vertical, index=8, step=1)
+Track (x=5, y=9, direction=Horizontal, index=40, step=2)
+Track (x=5, y=8, direction=Horizontal, index=40, step=3)
+Track (x=5, y=7, direction=Horizontal, index=40, step=4)
+Track (x=5, y=6, direction=Vertical, index=32, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=32)
+
+net 5 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=40)
+Track (x=5, y=9, direction=Vertical, index=4, step=1)
+Track (x=5, y=9, direction=Horizontal, index=52, step=2)
+Track (x=5, y=8, direction=Horizontal, index=52, step=3)
+Track (x=5, y=7, direction=Horizontal, index=52, step=4)
+Track (x=5, y=6, direction=Vertical, index=44, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=40)
+
+net 6 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=48)
+Track (x=5, y=9, direction=Vertical, index=5, step=1)
+Track (x=5, y=9, direction=Horizontal, index=53, step=2)
+Track (x=5, y=8, direction=Horizontal, index=53, step=3)
+Track (x=5, y=7, direction=Horizontal, index=53, step=4)
+Track (x=5, y=6, direction=Vertical, index=45, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=48)
+
+net 7 has 7 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=56)
+Track (x=5, y=9, direction=Vertical, index=7, step=1)
+Track (x=5, y=9, direction=Horizontal, index=55, step=2)
+Track (x=5, y=8, direction=Horizontal, index=55, step=3)
+Track (x=5, y=7, direction=Horizontal, index=55, step=4)
+Track (x=5, y=6, direction=Vertical, index=47, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=56)
+
+net 8 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=0)
+Track (x=3, y=9, direction=Vertical, index=0, step=1)
+Track (x=3, y=9, direction=Horizontal, index=48, step=2)
+Track (x=3, y=8, direction=Horizontal, index=48, step=3)
+Track (x=3, y=7, direction=Horizontal, index=48, step=4)
+Track (x=3, y=6, direction=Vertical, index=40, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=0)
+
+net 9 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=8)
+Track (x=3, y=9, direction=Vertical, index=1, step=1)
+Track (x=3, y=9, direction=Horizontal, index=49, step=2)
+Track (x=3, y=8, direction=Horizontal, index=49, step=3)
+Track (x=3, y=7, direction=Horizontal, index=49, step=4)
+Track (x=3, y=6, direction=Vertical, index=41, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=8)
+
+net 10 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=16)
+Track (x=3, y=9, direction=Vertical, index=2, step=1)
+Track (x=3, y=9, direction=Horizontal, index=50, step=2)
+Track (x=3, y=8, direction=Horizontal, index=50, step=3)
+Track (x=3, y=7, direction=Horizontal, index=50, step=4)
+Track (x=3, y=6, direction=Vertical, index=42, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=16)
+
+net 11 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=24)
+Track (x=3, y=9, direction=Vertical, index=3, step=1)
+Track (x=3, y=9, direction=Horizontal, index=51, step=2)
+Track (x=3, y=8, direction=Horizontal, index=51, step=3)
+Track (x=3, y=7, direction=Horizontal, index=51, step=4)
+Track (x=3, y=6, direction=Vertical, index=43, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=24)
+
+net 12 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=32)
+Track (x=3, y=9, direction=Vertical, index=8, step=1)
+Track (x=3, y=9, direction=Horizontal, index=40, step=2)
+Track (x=3, y=8, direction=Horizontal, index=40, step=3)
+Track (x=3, y=7, direction=Horizontal, index=40, step=4)
+Track (x=3, y=6, direction=Vertical, index=32, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=32)
+
+net 13 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=40)
+Track (x=3, y=9, direction=Vertical, index=4, step=1)
+Track (x=3, y=9, direction=Horizontal, index=52, step=2)
+Track (x=3, y=8, direction=Horizontal, index=52, step=3)
+Track (x=3, y=7, direction=Horizontal, index=52, step=4)
+Track (x=3, y=6, direction=Vertical, index=44, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=40)
+
+net 14 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=48)
+Track (x=3, y=9, direction=Vertical, index=5, step=1)
+Track (x=3, y=9, direction=Horizontal, index=53, step=2)
+Track (x=3, y=8, direction=Horizontal, index=53, step=3)
+Track (x=3, y=7, direction=Horizontal, index=53, step=4)
+Track (x=3, y=6, direction=Vertical, index=45, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=48)
+
+net 15 has 7 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=56)
+Track (x=3, y=9, direction=Vertical, index=7, step=1)
+Track (x=3, y=9, direction=Horizontal, index=55, step=2)
+Track (x=3, y=8, direction=Horizontal, index=55, step=3)
+Track (x=3, y=7, direction=Horizontal, index=55, step=4)
+Track (x=3, y=6, direction=Vertical, index=47, step=5)
+Bump (x=3, y=6, direction=Horizontal, step=6, index=56)
+
+net 16 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=0)
+Track (x=3, y=0, direction=Vertical, index=64, step=1)
+Track (x=3, y=1, direction=Horizontal, index=72, step=2)
+Track (x=3, y=2, direction=Horizontal, index=72, step=3)
+Track (x=3, y=3, direction=Horizontal, index=72, step=4)
+Track (x=3, y=3, direction=Vertical, index=104, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=0)
+
+net 17 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=8)
+Track (x=3, y=0, direction=Vertical, index=1, step=1)
+Track (x=3, y=1, direction=Horizontal, index=9, step=2)
+Track (x=3, y=2, direction=Horizontal, index=9, step=3)
+Track (x=3, y=3, direction=Horizontal, index=9, step=4)
+Track (x=3, y=3, direction=Vertical, index=41, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=8)
+
+net 18 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=16)
+Track (x=3, y=0, direction=Vertical, index=2, step=1)
+Track (x=3, y=1, direction=Horizontal, index=10, step=2)
+Track (x=3, y=2, direction=Horizontal, index=10, step=3)
+Track (x=3, y=3, direction=Horizontal, index=10, step=4)
+Track (x=3, y=3, direction=Vertical, index=42, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=16)
+
+net 19 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=24)
+Track (x=3, y=0, direction=Vertical, index=3, step=1)
+Track (x=3, y=1, direction=Horizontal, index=11, step=2)
+Track (x=3, y=2, direction=Horizontal, index=11, step=3)
+Track (x=3, y=3, direction=Horizontal, index=11, step=4)
+Track (x=3, y=3, direction=Vertical, index=43, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=24)
+
+net 20 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=32)
+Track (x=3, y=0, direction=Vertical, index=8, step=1)
+Track (x=3, y=1, direction=Horizontal, index=16, step=2)
+Track (x=3, y=2, direction=Horizontal, index=16, step=3)
+Track (x=3, y=3, direction=Horizontal, index=16, step=4)
+Track (x=3, y=3, direction=Vertical, index=32, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=32)
+
+net 21 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=40)
+Track (x=3, y=0, direction=Vertical, index=4, step=1)
+Track (x=3, y=1, direction=Horizontal, index=12, step=2)
+Track (x=3, y=2, direction=Horizontal, index=12, step=3)
+Track (x=3, y=3, direction=Horizontal, index=12, step=4)
+Track (x=3, y=3, direction=Vertical, index=44, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=40)
+
+net 22 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=48)
+Track (x=3, y=0, direction=Vertical, index=5, step=1)
+Track (x=3, y=1, direction=Horizontal, index=13, step=2)
+Track (x=3, y=2, direction=Horizontal, index=13, step=3)
+Track (x=3, y=3, direction=Horizontal, index=13, step=4)
+Track (x=3, y=3, direction=Vertical, index=45, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=48)
+
+net 23 has 7 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=56)
+Track (x=3, y=0, direction=Vertical, index=7, step=1)
+Track (x=3, y=1, direction=Horizontal, index=15, step=2)
+Track (x=3, y=2, direction=Horizontal, index=15, step=3)
+Track (x=3, y=3, direction=Horizontal, index=15, step=4)
+Track (x=3, y=3, direction=Vertical, index=47, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=56)
+
+net 24 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=0)
+Track (x=5, y=0, direction=Vertical, index=64, step=1)
+Track (x=5, y=1, direction=Horizontal, index=72, step=2)
+Track (x=5, y=2, direction=Horizontal, index=72, step=3)
+Track (x=5, y=3, direction=Horizontal, index=72, step=4)
+Track (x=5, y=3, direction=Vertical, index=104, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=0)
+
+net 25 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=8)
+Track (x=5, y=0, direction=Vertical, index=1, step=1)
+Track (x=5, y=1, direction=Horizontal, index=9, step=2)
+Track (x=5, y=2, direction=Horizontal, index=9, step=3)
+Track (x=5, y=3, direction=Horizontal, index=9, step=4)
+Track (x=5, y=3, direction=Vertical, index=41, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=8)
+
+net 26 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=16)
+Track (x=5, y=0, direction=Vertical, index=2, step=1)
+Track (x=5, y=1, direction=Horizontal, index=10, step=2)
+Track (x=5, y=2, direction=Horizontal, index=10, step=3)
+Track (x=5, y=3, direction=Horizontal, index=10, step=4)
+Track (x=5, y=3, direction=Vertical, index=42, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=16)
+
+net 27 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=24)
+Track (x=5, y=0, direction=Vertical, index=3, step=1)
+Track (x=5, y=1, direction=Horizontal, index=11, step=2)
+Track (x=5, y=2, direction=Horizontal, index=11, step=3)
+Track (x=5, y=3, direction=Horizontal, index=11, step=4)
+Track (x=5, y=3, direction=Vertical, index=43, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=24)
+
+net 28 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=32)
+Track (x=5, y=0, direction=Vertical, index=8, step=1)
+Track (x=5, y=1, direction=Horizontal, index=16, step=2)
+Track (x=5, y=2, direction=Horizontal, index=16, step=3)
+Track (x=5, y=3, direction=Horizontal, index=16, step=4)
+Track (x=5, y=3, direction=Vertical, index=32, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=32)
+
+net 29 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=40)
+Track (x=5, y=0, direction=Vertical, index=4, step=1)
+Track (x=5, y=1, direction=Horizontal, index=12, step=2)
+Track (x=5, y=2, direction=Horizontal, index=12, step=3)
+Track (x=5, y=3, direction=Horizontal, index=12, step=4)
+Track (x=5, y=3, direction=Vertical, index=44, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=40)
+
+net 30 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=48)
+Track (x=5, y=0, direction=Vertical, index=5, step=1)
+Track (x=5, y=1, direction=Horizontal, index=13, step=2)
+Track (x=5, y=2, direction=Horizontal, index=13, step=3)
+Track (x=5, y=3, direction=Horizontal, index=13, step=4)
+Track (x=5, y=3, direction=Vertical, index=45, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=48)
+
+net 31 has 7 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=56)
+Track (x=5, y=0, direction=Vertical, index=7, step=1)
+Track (x=5, y=1, direction=Horizontal, index=15, step=2)
+Track (x=5, y=2, direction=Horizontal, index=15, step=3)
+Track (x=5, y=3, direction=Horizontal, index=15, step=4)
+Track (x=5, y=3, direction=Vertical, index=47, step=5)
+Bump (x=5, y=3, direction=Horizontal, step=6, index=56)
+
+net 32 has 5 sinks
+Bump (x=5, y=6, direction=Horizontal, step=0, index=64)
+Track (x=5, y=6, direction=Vertical, index=68, step=1)
+Track (x=4, y=6, direction=Vertical, index=68, step=2)
+Track (x=3, y=6, direction=Vertical, index=68, step=3)
+Bump (x=3, y=6, direction=Horizontal, step=4, index=64)
+
+net 33 has 5 sinks
+Bump (x=5, y=6, direction=Horizontal, step=0, index=72)
+Track (x=5, y=6, direction=Vertical, index=69, step=1)
+Track (x=4, y=6, direction=Vertical, index=69, step=2)
+Track (x=3, y=6, direction=Vertical, index=69, step=3)
+Bump (x=3, y=6, direction=Horizontal, step=4, index=72)
+
+net 34 has 5 sinks
+Bump (x=5, y=6, direction=Horizontal, step=0, index=80)
+Track (x=5, y=6, direction=Vertical, index=70, step=1)
+Track (x=4, y=6, direction=Vertical, index=70, step=2)
+Track (x=3, y=6, direction=Vertical, index=70, step=3)
+Bump (x=3, y=6, direction=Horizontal, step=4, index=80)
+
+net 35 has 5 sinks
+Bump (x=5, y=6, direction=Horizontal, step=0, index=88)
+Track (x=5, y=6, direction=Vertical, index=71, step=1)
+Track (x=4, y=6, direction=Vertical, index=71, step=2)
+Track (x=3, y=6, direction=Vertical, index=71, step=3)
+Bump (x=3, y=6, direction=Horizontal, step=4, index=88)
+
+net 36 has 7 sinks
+Bump (x=3, y=6, direction=Horizontal, step=0, index=96)
+Track (x=3, y=6, direction=Vertical, index=64, step=1)
+Track (x=4, y=6, direction=Horizontal, index=120, step=2)
+Track (x=4, y=5, direction=Horizontal, index=120, step=3)
+Track (x=4, y=4, direction=Horizontal, index=120, step=4)
+Track (x=3, y=3, direction=Vertical, index=120, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=64)
+
+net 37 has 7 sinks
+Bump (x=3, y=6, direction=Horizontal, step=0, index=104)
+Track (x=3, y=6, direction=Vertical, index=65, step=1)
+Track (x=3, y=6, direction=Horizontal, index=113, step=2)
+Track (x=3, y=5, direction=Horizontal, index=113, step=3)
+Track (x=3, y=4, direction=Horizontal, index=113, step=4)
+Track (x=3, y=3, direction=Vertical, index=105, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=72)
+
+net 38 has 7 sinks
+Bump (x=3, y=6, direction=Horizontal, step=0, index=112)
+Track (x=3, y=6, direction=Vertical, index=66, step=1)
+Track (x=3, y=6, direction=Horizontal, index=114, step=2)
+Track (x=3, y=5, direction=Horizontal, index=114, step=3)
+Track (x=3, y=4, direction=Horizontal, index=114, step=4)
+Track (x=3, y=3, direction=Vertical, index=106, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=80)
+
+net 39 has 7 sinks
+Bump (x=3, y=6, direction=Horizontal, step=0, index=120)
+Track (x=3, y=6, direction=Vertical, index=67, step=1)
+Track (x=3, y=6, direction=Horizontal, index=115, step=2)
+Track (x=3, y=5, direction=Horizontal, index=115, step=3)
+Track (x=3, y=4, direction=Horizontal, index=115, step=4)
+Track (x=3, y=3, direction=Vertical, index=107, step=5)
+Bump (x=3, y=3, direction=Horizontal, step=6, index=88)
+
+net 40 has 5 sinks
+Bump (x=3, y=3, direction=Horizontal, step=0, index=96)
+Track (x=3, y=3, direction=Vertical, index=68, step=1)
+Track (x=4, y=3, direction=Vertical, index=68, step=2)
+Track (x=5, y=3, direction=Vertical, index=68, step=3)
+Bump (x=5, y=3, direction=Horizontal, step=4, index=64)
+
+net 41 has 5 sinks
+Bump (x=3, y=3, direction=Horizontal, step=0, index=104)
+Track (x=3, y=3, direction=Vertical, index=69, step=1)
+Track (x=4, y=3, direction=Vertical, index=69, step=2)
+Track (x=5, y=3, direction=Vertical, index=69, step=3)
+Bump (x=5, y=3, direction=Horizontal, step=4, index=72)
+
+net 42 has 5 sinks
+Bump (x=3, y=3, direction=Horizontal, step=0, index=112)
+Track (x=3, y=3, direction=Vertical, index=70, step=1)
+Track (x=4, y=3, direction=Vertical, index=70, step=2)
+Track (x=5, y=3, direction=Vertical, index=70, step=3)
+Bump (x=5, y=3, direction=Horizontal, step=4, index=80)
+
+net 43 has 5 sinks
+Bump (x=3, y=3, direction=Horizontal, step=0, index=120)
+Track (x=3, y=3, direction=Vertical, index=71, step=1)
+Track (x=4, y=3, direction=Vertical, index=71, step=2)
+Track (x=5, y=3, direction=Vertical, index=71, step=3)
+Bump (x=5, y=3, direction=Horizontal, step=4, index=88)
+
+net 44 has 7 sinks
+Bump (x=5, y=3, direction=Horizontal, step=0, index=96)
+Track (x=5, y=3, direction=Vertical, index=64, step=1)
+Track (x=5, y=4, direction=Horizontal, index=72, step=2)
+Track (x=5, y=5, direction=Horizontal, index=72, step=3)
+Track (x=5, y=6, direction=Horizontal, index=72, step=4)
+Track (x=5, y=6, direction=Vertical, index=104, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=96)
+
+net 45 has 7 sinks
+Bump (x=5, y=3, direction=Horizontal, step=0, index=104)
+Track (x=5, y=3, direction=Vertical, index=65, step=1)
+Track (x=5, y=4, direction=Horizontal, index=73, step=2)
+Track (x=5, y=5, direction=Horizontal, index=73, step=3)
+Track (x=5, y=6, direction=Horizontal, index=73, step=4)
+Track (x=5, y=6, direction=Vertical, index=105, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=104)
+
+net 46 has 7 sinks
+Bump (x=5, y=3, direction=Horizontal, step=0, index=112)
+Track (x=5, y=3, direction=Vertical, index=66, step=1)
+Track (x=6, y=4, direction=Horizontal, index=114, step=2)
+Track (x=6, y=5, direction=Horizontal, index=114, step=3)
+Track (x=6, y=6, direction=Horizontal, index=114, step=4)
+Track (x=5, y=6, direction=Vertical, index=122, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=112)
+
+net 47 has 7 sinks
+Bump (x=5, y=3, direction=Horizontal, step=0, index=120)
+Track (x=5, y=3, direction=Vertical, index=67, step=1)
+Track (x=5, y=4, direction=Horizontal, index=75, step=2)
+Track (x=5, y=5, direction=Horizontal, index=75, step=3)
+Track (x=5, y=6, direction=Horizontal, index=75, step=4)
+Track (x=5, y=6, direction=Vertical, index=107, step=5)
+Bump (x=5, y=6, direction=Horizontal, step=6, index=120)
+
+net 48 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=64)
+Track (x=5, y=9, direction=Vertical, index=64, step=1)
+Track (x=6, y=9, direction=Vertical, index=64, step=2)
+Track (x=7, y=9, direction=Horizontal, index=120, step=3)
+Track (x=7, y=8, direction=Horizontal, index=120, step=4)
+Track (x=7, y=7, direction=Horizontal, index=120, step=5)
+Track (x=7, y=6, direction=Vertical, index=112, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=0)
+
+net 49 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=72)
+Track (x=5, y=9, direction=Vertical, index=65, step=1)
+Track (x=6, y=9, direction=Vertical, index=65, step=2)
+Track (x=7, y=9, direction=Horizontal, index=121, step=3)
+Track (x=7, y=8, direction=Horizontal, index=121, step=4)
+Track (x=7, y=7, direction=Horizontal, index=121, step=5)
+Track (x=7, y=6, direction=Vertical, index=113, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=8)
+
+net 50 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=80)
+Track (x=5, y=9, direction=Vertical, index=66, step=1)
+Track (x=6, y=9, direction=Vertical, index=66, step=2)
+Track (x=7, y=9, direction=Horizontal, index=122, step=3)
+Track (x=7, y=8, direction=Horizontal, index=122, step=4)
+Track (x=7, y=7, direction=Horizontal, index=122, step=5)
+Track (x=7, y=6, direction=Vertical, index=114, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=16)
+
+net 51 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=88)
+Track (x=5, y=9, direction=Vertical, index=67, step=1)
+Track (x=6, y=9, direction=Vertical, index=67, step=2)
+Track (x=7, y=9, direction=Horizontal, index=123, step=3)
+Track (x=7, y=8, direction=Horizontal, index=123, step=4)
+Track (x=7, y=7, direction=Horizontal, index=123, step=5)
+Track (x=7, y=6, direction=Vertical, index=115, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=24)
+
+net 52 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=96)
+Track (x=5, y=9, direction=Vertical, index=68, step=1)
+Track (x=6, y=9, direction=Vertical, index=68, step=2)
+Track (x=7, y=9, direction=Horizontal, index=124, step=3)
+Track (x=7, y=8, direction=Horizontal, index=124, step=4)
+Track (x=7, y=7, direction=Horizontal, index=124, step=5)
+Track (x=7, y=6, direction=Vertical, index=116, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=32)
+
+net 53 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=104)
+Track (x=5, y=9, direction=Vertical, index=69, step=1)
+Track (x=6, y=9, direction=Vertical, index=69, step=2)
+Track (x=7, y=9, direction=Horizontal, index=125, step=3)
+Track (x=7, y=8, direction=Horizontal, index=125, step=4)
+Track (x=7, y=7, direction=Horizontal, index=125, step=5)
+Track (x=7, y=6, direction=Vertical, index=117, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=40)
+
+net 54 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=112)
+Track (x=5, y=9, direction=Vertical, index=70, step=1)
+Track (x=6, y=9, direction=Vertical, index=70, step=2)
+Track (x=7, y=9, direction=Horizontal, index=126, step=3)
+Track (x=7, y=8, direction=Horizontal, index=126, step=4)
+Track (x=7, y=7, direction=Horizontal, index=126, step=5)
+Track (x=7, y=6, direction=Vertical, index=118, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=48)
+
+net 55 has 8 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=120)
+Track (x=5, y=9, direction=Vertical, index=71, step=1)
+Track (x=6, y=9, direction=Vertical, index=71, step=2)
+Track (x=7, y=9, direction=Horizontal, index=127, step=3)
+Track (x=7, y=8, direction=Horizontal, index=127, step=4)
+Track (x=7, y=7, direction=Horizontal, index=127, step=5)
+Track (x=7, y=6, direction=Vertical, index=119, step=6)
+Bump (x=7, y=6, direction=Horizontal, step=7, index=56)
+
+net 56 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=1)
+Track (x=5, y=9, direction=Vertical, index=73, step=1)
+Track (x=6, y=9, direction=Vertical, index=73, step=2)
+Track (x=7, y=9, direction=Vertical, index=73, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=0)
+
+net 57 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=9)
+Track (x=5, y=9, direction=Vertical, index=10, step=1)
+Track (x=6, y=9, direction=Vertical, index=10, step=2)
+Track (x=7, y=9, direction=Vertical, index=10, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=8)
+
+net 58 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=17)
+Track (x=5, y=9, direction=Vertical, index=80, step=1)
+Track (x=6, y=9, direction=Vertical, index=80, step=2)
+Track (x=7, y=9, direction=Vertical, index=80, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=16)
+
+net 59 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=25)
+Track (x=5, y=9, direction=Vertical, index=11, step=1)
+Track (x=6, y=9, direction=Vertical, index=11, step=2)
+Track (x=7, y=9, direction=Vertical, index=11, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=24)
+
+net 60 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=33)
+Track (x=5, y=9, direction=Vertical, index=81, step=1)
+Track (x=6, y=9, direction=Vertical, index=81, step=2)
+Track (x=7, y=9, direction=Vertical, index=81, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=32)
+
+net 61 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=41)
+Track (x=5, y=9, direction=Vertical, index=12, step=1)
+Track (x=6, y=9, direction=Vertical, index=12, step=2)
+Track (x=7, y=9, direction=Vertical, index=12, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=40)
+
+net 62 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=49)
+Track (x=5, y=9, direction=Vertical, index=14, step=1)
+Track (x=6, y=9, direction=Vertical, index=14, step=2)
+Track (x=7, y=9, direction=Vertical, index=14, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=48)
+
+net 63 has 5 sinks
+Bump (x=5, y=9, direction=Horizontal, step=0, index=57)
+Track (x=5, y=9, direction=Vertical, index=15, step=1)
+Track (x=6, y=9, direction=Vertical, index=15, step=2)
+Track (x=7, y=9, direction=Vertical, index=15, step=3)
+Bump (x=7, y=9, direction=Horizontal, step=4, index=56)
+
+net 64 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=64)
+Track (x=3, y=9, direction=Vertical, index=64, step=1)
+Track (x=2, y=9, direction=Vertical, index=64, step=2)
+Track (x=1, y=9, direction=Vertical, index=64, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=0)
+
+net 65 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=72)
+Track (x=3, y=9, direction=Vertical, index=65, step=1)
+Track (x=2, y=9, direction=Vertical, index=65, step=2)
+Track (x=1, y=9, direction=Vertical, index=65, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=8)
+
+net 66 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=80)
+Track (x=3, y=9, direction=Vertical, index=66, step=1)
+Track (x=2, y=9, direction=Vertical, index=66, step=2)
+Track (x=1, y=9, direction=Vertical, index=66, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=16)
+
+net 67 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=88)
+Track (x=3, y=9, direction=Vertical, index=67, step=1)
+Track (x=2, y=9, direction=Vertical, index=67, step=2)
+Track (x=1, y=9, direction=Vertical, index=67, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=24)
+
+net 68 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=96)
+Track (x=3, y=9, direction=Vertical, index=74, step=1)
+Track (x=2, y=9, direction=Vertical, index=74, step=2)
+Track (x=1, y=9, direction=Vertical, index=74, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=32)
+
+net 69 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=104)
+Track (x=3, y=9, direction=Vertical, index=75, step=1)
+Track (x=2, y=9, direction=Vertical, index=75, step=2)
+Track (x=1, y=9, direction=Vertical, index=75, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=40)
+
+net 70 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=112)
+Track (x=3, y=9, direction=Vertical, index=76, step=1)
+Track (x=2, y=9, direction=Vertical, index=76, step=2)
+Track (x=1, y=9, direction=Vertical, index=76, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=48)
+
+net 71 has 5 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=120)
+Track (x=3, y=9, direction=Vertical, index=77, step=1)
+Track (x=2, y=9, direction=Vertical, index=77, step=2)
+Track (x=1, y=9, direction=Vertical, index=77, step=3)
+Bump (x=1, y=9, direction=Horizontal, step=4, index=56)
+
+net 72 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=1)
+Track (x=3, y=9, direction=Vertical, index=73, step=1)
+Track (x=2, y=9, direction=Vertical, index=73, step=2)
+Track (x=2, y=9, direction=Horizontal, index=105, step=3)
+Track (x=2, y=8, direction=Horizontal, index=105, step=4)
+Track (x=2, y=7, direction=Horizontal, index=105, step=5)
+Track (x=1, y=6, direction=Vertical, index=73, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=0)
+
+net 73 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=9)
+Track (x=3, y=9, direction=Vertical, index=10, step=1)
+Track (x=2, y=9, direction=Vertical, index=10, step=2)
+Track (x=2, y=9, direction=Horizontal, index=42, step=3)
+Track (x=2, y=8, direction=Horizontal, index=42, step=4)
+Track (x=2, y=7, direction=Horizontal, index=42, step=5)
+Track (x=1, y=6, direction=Vertical, index=10, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=8)
+
+net 74 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=17)
+Track (x=3, y=9, direction=Vertical, index=80, step=1)
+Track (x=2, y=9, direction=Vertical, index=80, step=2)
+Track (x=2, y=9, direction=Horizontal, index=96, step=3)
+Track (x=2, y=8, direction=Horizontal, index=96, step=4)
+Track (x=2, y=7, direction=Horizontal, index=96, step=5)
+Track (x=1, y=6, direction=Vertical, index=80, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=16)
+
+net 75 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=25)
+Track (x=3, y=9, direction=Vertical, index=11, step=1)
+Track (x=2, y=9, direction=Vertical, index=11, step=2)
+Track (x=2, y=9, direction=Horizontal, index=43, step=3)
+Track (x=2, y=8, direction=Horizontal, index=43, step=4)
+Track (x=2, y=7, direction=Horizontal, index=43, step=5)
+Track (x=1, y=6, direction=Vertical, index=11, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=24)
+
+net 76 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=33)
+Track (x=3, y=9, direction=Vertical, index=81, step=1)
+Track (x=2, y=9, direction=Vertical, index=81, step=2)
+Track (x=2, y=9, direction=Horizontal, index=97, step=3)
+Track (x=2, y=8, direction=Horizontal, index=97, step=4)
+Track (x=2, y=7, direction=Horizontal, index=97, step=5)
+Track (x=1, y=6, direction=Vertical, index=81, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=32)
+
+net 77 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=41)
+Track (x=3, y=9, direction=Vertical, index=12, step=1)
+Track (x=2, y=9, direction=Vertical, index=12, step=2)
+Track (x=2, y=9, direction=Horizontal, index=44, step=3)
+Track (x=2, y=8, direction=Horizontal, index=44, step=4)
+Track (x=2, y=7, direction=Horizontal, index=44, step=5)
+Track (x=1, y=6, direction=Vertical, index=12, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=40)
+
+net 78 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=49)
+Track (x=3, y=9, direction=Vertical, index=14, step=1)
+Track (x=2, y=9, direction=Vertical, index=14, step=2)
+Track (x=2, y=9, direction=Horizontal, index=46, step=3)
+Track (x=2, y=8, direction=Horizontal, index=46, step=4)
+Track (x=2, y=7, direction=Horizontal, index=46, step=5)
+Track (x=1, y=6, direction=Vertical, index=14, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=48)
+
+net 79 has 8 sinks
+Bump (x=3, y=9, direction=Horizontal, step=0, index=57)
+Track (x=3, y=9, direction=Vertical, index=15, step=1)
+Track (x=2, y=9, direction=Vertical, index=15, step=2)
+Track (x=2, y=9, direction=Horizontal, index=47, step=3)
+Track (x=2, y=8, direction=Horizontal, index=47, step=4)
+Track (x=2, y=7, direction=Horizontal, index=47, step=5)
+Track (x=1, y=6, direction=Vertical, index=15, step=6)
+Bump (x=1, y=6, direction=Horizontal, step=7, index=56)
+
+net 80 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=64)
+Track (x=3, y=0, direction=Vertical, index=72, step=1)
+Track (x=2, y=0, direction=Vertical, index=72, step=2)
+Track (x=2, y=1, direction=Horizontal, index=80, step=3)
+Track (x=2, y=2, direction=Horizontal, index=80, step=4)
+Track (x=2, y=3, direction=Horizontal, index=80, step=5)
+Track (x=1, y=3, direction=Vertical, index=88, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=0)
+
+net 81 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=72)
+Track (x=3, y=0, direction=Vertical, index=65, step=1)
+Track (x=2, y=0, direction=Vertical, index=65, step=2)
+Track (x=2, y=1, direction=Horizontal, index=73, step=3)
+Track (x=2, y=2, direction=Horizontal, index=73, step=4)
+Track (x=2, y=3, direction=Horizontal, index=73, step=5)
+Track (x=1, y=3, direction=Vertical, index=81, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=8)
+
+net 82 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=80)
+Track (x=3, y=0, direction=Vertical, index=66, step=1)
+Track (x=2, y=0, direction=Vertical, index=66, step=2)
+Track (x=2, y=1, direction=Horizontal, index=74, step=3)
+Track (x=2, y=2, direction=Horizontal, index=74, step=4)
+Track (x=2, y=3, direction=Horizontal, index=74, step=5)
+Track (x=1, y=3, direction=Vertical, index=82, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=16)
+
+net 83 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=88)
+Track (x=3, y=0, direction=Vertical, index=67, step=1)
+Track (x=2, y=0, direction=Vertical, index=67, step=2)
+Track (x=2, y=1, direction=Horizontal, index=75, step=3)
+Track (x=2, y=2, direction=Horizontal, index=75, step=4)
+Track (x=2, y=3, direction=Horizontal, index=75, step=5)
+Track (x=1, y=3, direction=Vertical, index=83, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=24)
+
+net 84 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=96)
+Track (x=3, y=0, direction=Vertical, index=68, step=1)
+Track (x=2, y=0, direction=Vertical, index=68, step=2)
+Track (x=2, y=1, direction=Horizontal, index=76, step=3)
+Track (x=2, y=2, direction=Horizontal, index=76, step=4)
+Track (x=2, y=3, direction=Horizontal, index=76, step=5)
+Track (x=1, y=3, direction=Vertical, index=84, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=32)
+
+net 85 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=104)
+Track (x=3, y=0, direction=Vertical, index=69, step=1)
+Track (x=2, y=0, direction=Vertical, index=69, step=2)
+Track (x=2, y=1, direction=Horizontal, index=77, step=3)
+Track (x=2, y=2, direction=Horizontal, index=77, step=4)
+Track (x=2, y=3, direction=Horizontal, index=77, step=5)
+Track (x=1, y=3, direction=Vertical, index=85, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=40)
+
+net 86 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=112)
+Track (x=3, y=0, direction=Vertical, index=70, step=1)
+Track (x=2, y=0, direction=Vertical, index=70, step=2)
+Track (x=2, y=1, direction=Horizontal, index=78, step=3)
+Track (x=2, y=2, direction=Horizontal, index=78, step=4)
+Track (x=2, y=3, direction=Horizontal, index=78, step=5)
+Track (x=1, y=3, direction=Vertical, index=86, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=48)
+
+net 87 has 8 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=120)
+Track (x=3, y=0, direction=Vertical, index=71, step=1)
+Track (x=2, y=0, direction=Vertical, index=71, step=2)
+Track (x=2, y=1, direction=Horizontal, index=79, step=3)
+Track (x=2, y=2, direction=Horizontal, index=79, step=4)
+Track (x=2, y=3, direction=Horizontal, index=79, step=5)
+Track (x=1, y=3, direction=Vertical, index=87, step=6)
+Bump (x=1, y=3, direction=Horizontal, step=7, index=56)
+
+net 88 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=1)
+Track (x=3, y=0, direction=Vertical, index=73, step=1)
+Track (x=2, y=0, direction=Vertical, index=73, step=2)
+Track (x=1, y=0, direction=Vertical, index=73, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=0)
+
+net 89 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=9)
+Track (x=3, y=0, direction=Vertical, index=10, step=1)
+Track (x=2, y=0, direction=Vertical, index=10, step=2)
+Track (x=1, y=0, direction=Vertical, index=10, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=8)
+
+net 90 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=17)
+Track (x=3, y=0, direction=Vertical, index=16, step=1)
+Track (x=2, y=0, direction=Vertical, index=16, step=2)
+Track (x=1, y=0, direction=Vertical, index=16, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=16)
+
+net 91 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=25)
+Track (x=3, y=0, direction=Vertical, index=75, step=1)
+Track (x=2, y=0, direction=Vertical, index=75, step=2)
+Track (x=1, y=0, direction=Vertical, index=75, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=24)
+
+net 92 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=33)
+Track (x=3, y=0, direction=Vertical, index=81, step=1)
+Track (x=2, y=0, direction=Vertical, index=81, step=2)
+Track (x=1, y=0, direction=Vertical, index=81, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=32)
+
+net 93 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=41)
+Track (x=3, y=0, direction=Vertical, index=76, step=1)
+Track (x=2, y=0, direction=Vertical, index=76, step=2)
+Track (x=1, y=0, direction=Vertical, index=76, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=40)
+
+net 94 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=49)
+Track (x=3, y=0, direction=Vertical, index=14, step=1)
+Track (x=2, y=0, direction=Vertical, index=14, step=2)
+Track (x=1, y=0, direction=Vertical, index=14, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=48)
+
+net 95 has 5 sinks
+Bump (x=3, y=0, direction=Horizontal, step=0, index=57)
+Track (x=3, y=0, direction=Vertical, index=79, step=1)
+Track (x=2, y=0, direction=Vertical, index=79, step=2)
+Track (x=1, y=0, direction=Vertical, index=79, step=3)
+Bump (x=1, y=0, direction=Horizontal, step=4, index=56)
+
+net 96 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=64)
+Track (x=5, y=0, direction=Vertical, index=72, step=1)
+Track (x=6, y=0, direction=Vertical, index=72, step=2)
+Track (x=7, y=0, direction=Vertical, index=72, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=0)
+
+net 97 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=72)
+Track (x=5, y=0, direction=Vertical, index=65, step=1)
+Track (x=6, y=0, direction=Vertical, index=65, step=2)
+Track (x=7, y=0, direction=Vertical, index=65, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=8)
+
+net 98 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=80)
+Track (x=5, y=0, direction=Vertical, index=66, step=1)
+Track (x=6, y=0, direction=Vertical, index=66, step=2)
+Track (x=7, y=0, direction=Vertical, index=66, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=16)
+
+net 99 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=88)
+Track (x=5, y=0, direction=Vertical, index=67, step=1)
+Track (x=6, y=0, direction=Vertical, index=67, step=2)
+Track (x=7, y=0, direction=Vertical, index=67, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=24)
+
+net 100 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=96)
+Track (x=5, y=0, direction=Vertical, index=68, step=1)
+Track (x=6, y=0, direction=Vertical, index=68, step=2)
+Track (x=7, y=0, direction=Vertical, index=68, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=32)
+
+net 101 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=104)
+Track (x=5, y=0, direction=Vertical, index=69, step=1)
+Track (x=6, y=0, direction=Vertical, index=69, step=2)
+Track (x=7, y=0, direction=Vertical, index=69, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=40)
+
+net 102 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=112)
+Track (x=5, y=0, direction=Vertical, index=70, step=1)
+Track (x=6, y=0, direction=Vertical, index=70, step=2)
+Track (x=7, y=0, direction=Vertical, index=70, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=48)
+
+net 103 has 5 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=120)
+Track (x=5, y=0, direction=Vertical, index=71, step=1)
+Track (x=6, y=0, direction=Vertical, index=71, step=2)
+Track (x=7, y=0, direction=Vertical, index=71, step=3)
+Bump (x=7, y=0, direction=Horizontal, step=4, index=56)
+
+net 104 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=1)
+Track (x=5, y=0, direction=Vertical, index=73, step=1)
+Track (x=6, y=0, direction=Vertical, index=73, step=2)
+Track (x=7, y=1, direction=Horizontal, index=105, step=3)
+Track (x=7, y=2, direction=Horizontal, index=105, step=4)
+Track (x=7, y=3, direction=Horizontal, index=105, step=5)
+Track (x=7, y=3, direction=Vertical, index=73, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=0)
+
+net 105 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=9)
+Track (x=5, y=0, direction=Vertical, index=10, step=1)
+Track (x=6, y=0, direction=Vertical, index=10, step=2)
+Track (x=7, y=1, direction=Horizontal, index=42, step=3)
+Track (x=7, y=2, direction=Horizontal, index=42, step=4)
+Track (x=7, y=3, direction=Horizontal, index=42, step=5)
+Track (x=7, y=3, direction=Vertical, index=10, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=8)
+
+net 106 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=17)
+Track (x=5, y=0, direction=Vertical, index=16, step=1)
+Track (x=6, y=0, direction=Vertical, index=16, step=2)
+Track (x=7, y=1, direction=Horizontal, index=32, step=3)
+Track (x=7, y=2, direction=Horizontal, index=32, step=4)
+Track (x=7, y=3, direction=Horizontal, index=32, step=5)
+Track (x=7, y=3, direction=Vertical, index=16, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=16)
+
+net 107 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=25)
+Track (x=5, y=0, direction=Vertical, index=75, step=1)
+Track (x=6, y=0, direction=Vertical, index=75, step=2)
+Track (x=7, y=1, direction=Horizontal, index=107, step=3)
+Track (x=7, y=2, direction=Horizontal, index=107, step=4)
+Track (x=7, y=3, direction=Horizontal, index=107, step=5)
+Track (x=7, y=3, direction=Vertical, index=75, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=24)
+
+net 108 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=33)
+Track (x=5, y=0, direction=Vertical, index=17, step=1)
+Track (x=6, y=0, direction=Vertical, index=17, step=2)
+Track (x=7, y=1, direction=Horizontal, index=33, step=3)
+Track (x=7, y=2, direction=Horizontal, index=33, step=4)
+Track (x=7, y=3, direction=Horizontal, index=33, step=5)
+Track (x=7, y=3, direction=Vertical, index=17, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=32)
+
+net 109 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=41)
+Track (x=5, y=0, direction=Vertical, index=12, step=1)
+Track (x=6, y=0, direction=Vertical, index=12, step=2)
+Track (x=7, y=1, direction=Horizontal, index=44, step=3)
+Track (x=7, y=2, direction=Horizontal, index=44, step=4)
+Track (x=7, y=3, direction=Horizontal, index=44, step=5)
+Track (x=7, y=3, direction=Vertical, index=12, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=40)
+
+net 110 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=49)
+Track (x=5, y=0, direction=Vertical, index=14, step=1)
+Track (x=6, y=0, direction=Vertical, index=14, step=2)
+Track (x=7, y=1, direction=Horizontal, index=46, step=3)
+Track (x=7, y=2, direction=Horizontal, index=46, step=4)
+Track (x=7, y=3, direction=Horizontal, index=46, step=5)
+Track (x=7, y=3, direction=Vertical, index=14, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=48)
+
+net 111 has 8 sinks
+Bump (x=5, y=0, direction=Horizontal, step=0, index=57)
+Track (x=5, y=0, direction=Vertical, index=15, step=1)
+Track (x=6, y=0, direction=Vertical, index=15, step=2)
+Track (x=7, y=1, direction=Horizontal, index=47, step=3)
+Track (x=7, y=2, direction=Horizontal, index=47, step=4)
+Track (x=7, y=3, direction=Horizontal, index=47, step=5)
+Track (x=7, y=3, direction=Vertical, index=15, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=56)
+
+net 112 has 32 sinks
+Bump (x=9, y=0, direction=Horizontal, step=0, index=18446744073709551613)
+Track (x=9, y=0, direction=Vertical, index=0, step=1)
+Track (x=8, y=0, direction=Vertical, index=0, step=2)
+Track (x=7, y=0, direction=Vertical, index=0, step=3)
+Track (x=6, y=0, direction=Vertical, index=0, step=4)
+Track (x=6, y=1, direction=Horizontal, index=8, step=5)
+Track (x=6, y=2, direction=Horizontal, index=8, step=6)
+Track (x=6, y=3, direction=Horizontal, index=8, step=7)
+Track (x=6, y=4, direction=Horizontal, index=8, step=8)
+Track (x=6, y=5, direction=Horizontal, index=8, step=9)
+Track (x=6, y=6, direction=Horizontal, index=8, step=10)
+Track (x=6, y=7, direction=Horizontal, index=8, step=11)
+Track (x=6, y=8, direction=Horizontal, index=8, step=12)
+Track (x=6, y=9, direction=Horizontal, index=8, step=13)
+Track (x=5, y=9, direction=Vertical, index=16, step=14)
+Bump (x=5, y=9, direction=Horizontal, step=15, index=65)
+Track (x=5, y=0, direction=Vertical, index=0, step=5)
+Track (x=4, y=0, direction=Vertical, index=0, step=6)
+Track (x=4, y=1, direction=Horizontal, index=8, step=7)
+Track (x=4, y=2, direction=Horizontal, index=8, step=8)
+Track (x=4, y=3, direction=Horizontal, index=8, step=9)
+Track (x=4, y=4, direction=Horizontal, index=8, step=10)
+Track (x=4, y=5, direction=Horizontal, index=8, step=11)
+Track (x=4, y=6, direction=Horizontal, index=8, step=12)
+Track (x=4, y=7, direction=Horizontal, index=8, step=13)
+Track (x=4, y=8, direction=Horizontal, index=8, step=14)
+Track (x=4, y=9, direction=Horizontal, index=8, step=15)
+Track (x=3, y=9, direction=Vertical, index=16, step=16)
+Bump (x=3, y=9, direction=Horizontal, step=17, index=65)
+Track (x=3, y=0, direction=Vertical, index=0, step=7)
+Bump (x=3, y=0, direction=Horizontal, step=8, index=65)
+Bump (x=5, y=0, direction=Horizontal, step=6, index=65)
+
+net 113 has 32 sinks
+Bump (x=9, y=0, direction=Horizontal, step=0, index=61)
+Track (x=9, y=0, direction=Vertical, index=120, step=1)
+Track (x=8, y=0, direction=Vertical, index=120, step=2)
+Track (x=7, y=0, direction=Vertical, index=120, step=3)
+Track (x=6, y=0, direction=Vertical, index=120, step=4)
+Track (x=6, y=1, direction=Horizontal, index=64, step=5)
+Track (x=6, y=2, direction=Horizontal, index=64, step=6)
+Track (x=6, y=3, direction=Horizontal, index=64, step=7)
+Track (x=6, y=4, direction=Horizontal, index=64, step=8)
+Track (x=6, y=5, direction=Horizontal, index=64, step=9)
+Track (x=6, y=6, direction=Horizontal, index=64, step=10)
+Track (x=6, y=7, direction=Horizontal, index=64, step=11)
+Track (x=6, y=8, direction=Horizontal, index=64, step=12)
+Track (x=6, y=9, direction=Horizontal, index=64, step=13)
+Track (x=5, y=9, direction=Vertical, index=72, step=14)
+Bump (x=5, y=9, direction=Horizontal, step=15, index=73)
+Track (x=5, y=0, direction=Vertical, index=120, step=5)
+Track (x=4, y=0, direction=Vertical, index=120, step=6)
+Track (x=4, y=1, direction=Horizontal, index=64, step=7)
+Track (x=4, y=2, direction=Horizontal, index=64, step=8)
+Track (x=4, y=3, direction=Horizontal, index=64, step=9)
+Track (x=4, y=4, direction=Horizontal, index=64, step=10)
+Track (x=4, y=5, direction=Horizontal, index=64, step=11)
+Track (x=4, y=6, direction=Horizontal, index=64, step=12)
+Track (x=4, y=7, direction=Horizontal, index=64, step=13)
+Track (x=4, y=8, direction=Horizontal, index=64, step=14)
+Track (x=4, y=9, direction=Horizontal, index=64, step=15)
+Track (x=3, y=9, direction=Vertical, index=72, step=16)
+Bump (x=3, y=9, direction=Horizontal, step=17, index=73)
+Track (x=3, y=0, direction=Vertical, index=120, step=7)
+Bump (x=3, y=0, direction=Horizontal, step=8, index=73)
+Bump (x=5, y=0, direction=Horizontal, step=6, index=73)
+
+net 114 has 32 sinks
+Bump (x=9, y=9, direction=Horizontal, step=0, index=5)
+Track (x=9, y=9, direction=Vertical, index=9, step=1)
+Track (x=8, y=9, direction=Vertical, index=9, step=2)
+Track (x=7, y=9, direction=Vertical, index=9, step=3)
+Track (x=6, y=9, direction=Vertical, index=9, step=4)
+Track (x=5, y=9, direction=Vertical, index=9, step=5)
+Bump (x=5, y=9, direction=Horizontal, step=6, index=81)
+Track (x=4, y=9, direction=Vertical, index=9, step=6)
+Track (x=3, y=9, direction=Vertical, index=9, step=7)
+Bump (x=3, y=9, direction=Horizontal, step=8, index=81)
+Track (x=4, y=9, direction=Horizontal, index=41, step=7)
+Track (x=4, y=8, direction=Horizontal, index=41, step=8)
+Track (x=4, y=7, direction=Horizontal, index=41, step=9)
+Track (x=4, y=6, direction=Horizontal, index=41, step=10)
+Track (x=4, y=5, direction=Horizontal, index=41, step=11)
+Track (x=4, y=4, direction=Horizontal, index=41, step=12)
+Track (x=4, y=3, direction=Horizontal, index=41, step=13)
+Track (x=4, y=2, direction=Horizontal, index=41, step=14)
+Track (x=4, y=1, direction=Horizontal, index=41, step=15)
+Track (x=3, y=0, direction=Vertical, index=9, step=16)
+Bump (x=3, y=0, direction=Horizontal, step=17, index=81)
+Track (x=6, y=9, direction=Horizontal, index=41, step=5)
+Track (x=6, y=8, direction=Horizontal, index=41, step=6)
+Track (x=6, y=7, direction=Horizontal, index=41, step=7)
+Track (x=6, y=6, direction=Horizontal, index=41, step=8)
+Track (x=6, y=5, direction=Horizontal, index=41, step=9)
+Track (x=6, y=4, direction=Horizontal, index=41, step=10)
+Track (x=6, y=3, direction=Horizontal, index=41, step=11)
+Track (x=6, y=2, direction=Horizontal, index=41, step=12)
+Track (x=6, y=1, direction=Horizontal, index=41, step=13)
+Track (x=5, y=0, direction=Vertical, index=9, step=14)
+Bump (x=5, y=0, direction=Horizontal, step=15, index=81)
+
+net 115 has 32 sinks
+Bump (x=9, y=9, direction=Horizontal, step=0, index=69)
+Track (x=9, y=9, direction=Vertical, index=113, step=1)
+Track (x=8, y=9, direction=Vertical, index=113, step=2)
+Track (x=7, y=9, direction=Vertical, index=113, step=3)
+Track (x=6, y=9, direction=Vertical, index=113, step=4)
+Track (x=5, y=9, direction=Vertical, index=113, step=5)
+Bump (x=5, y=9, direction=Horizontal, step=6, index=89)
+Track (x=4, y=9, direction=Vertical, index=113, step=6)
+Track (x=3, y=9, direction=Vertical, index=113, step=7)
+Bump (x=3, y=9, direction=Horizontal, step=8, index=89)
+Track (x=4, y=9, direction=Horizontal, index=65, step=7)
+Track (x=4, y=8, direction=Horizontal, index=65, step=8)
+Track (x=4, y=7, direction=Horizontal, index=65, step=9)
+Track (x=4, y=6, direction=Horizontal, index=65, step=10)
+Track (x=4, y=5, direction=Horizontal, index=65, step=11)
+Track (x=4, y=4, direction=Horizontal, index=65, step=12)
+Track (x=4, y=3, direction=Horizontal, index=65, step=13)
+Track (x=4, y=2, direction=Horizontal, index=65, step=14)
+Track (x=4, y=1, direction=Horizontal, index=65, step=15)
+Track (x=3, y=0, direction=Vertical, index=113, step=16)
+Bump (x=3, y=0, direction=Horizontal, step=17, index=89)
+Track (x=6, y=9, direction=Horizontal, index=65, step=5)
+Track (x=6, y=8, direction=Horizontal, index=65, step=6)
+Track (x=6, y=7, direction=Horizontal, index=65, step=7)
+Track (x=6, y=6, direction=Horizontal, index=65, step=8)
+Track (x=6, y=5, direction=Horizontal, index=65, step=9)
+Track (x=6, y=4, direction=Horizontal, index=65, step=10)
+Track (x=6, y=3, direction=Horizontal, index=65, step=11)
+Track (x=6, y=2, direction=Horizontal, index=65, step=12)
+Track (x=6, y=1, direction=Horizontal, index=65, step=13)
+Track (x=5, y=0, direction=Vertical, index=113, step=14)
+Bump (x=5, y=0, direction=Horizontal, step=15, index=89)
+
+net 116 has 31 sinks
+Bump (x=0, y=0, direction=Horizontal, step=0, index=13)
+Track (x=0, y=0, direction=Vertical, index=18, step=1)
+Track (x=1, y=0, direction=Vertical, index=18, step=2)
+Track (x=2, y=0, direction=Vertical, index=18, step=3)
+Track (x=3, y=0, direction=Vertical, index=18, step=4)
+Track (x=4, y=0, direction=Vertical, index=18, step=5)
+Track (x=5, y=1, direction=Horizontal, index=34, step=6)
+Track (x=5, y=2, direction=Horizontal, index=34, step=7)
+Track (x=5, y=3, direction=Horizontal, index=34, step=8)
+Track (x=5, y=4, direction=Horizontal, index=34, step=9)
+Track (x=5, y=5, direction=Horizontal, index=34, step=10)
+Track (x=5, y=6, direction=Horizontal, index=34, step=11)
+Track (x=5, y=7, direction=Horizontal, index=34, step=12)
+Track (x=5, y=8, direction=Horizontal, index=34, step=13)
+Track (x=5, y=9, direction=Horizontal, index=34, step=14)
+Track (x=5, y=9, direction=Vertical, index=18, step=15)
+Bump (x=5, y=9, direction=Horizontal, step=16, index=97)
+Track (x=3, y=1, direction=Horizontal, index=34, step=4)
+Track (x=3, y=2, direction=Horizontal, index=34, step=5)
+Track (x=3, y=3, direction=Horizontal, index=34, step=6)
+Track (x=3, y=4, direction=Horizontal, index=34, step=7)
+Track (x=3, y=5, direction=Horizontal, index=34, step=8)
+Track (x=3, y=6, direction=Horizontal, index=34, step=9)
+Track (x=3, y=7, direction=Horizontal, index=34, step=10)
+Track (x=3, y=8, direction=Horizontal, index=34, step=11)
+Track (x=3, y=9, direction=Horizontal, index=34, step=12)
+Track (x=3, y=9, direction=Vertical, index=18, step=13)
+Bump (x=3, y=9, direction=Horizontal, step=14, index=97)
+Bump (x=3, y=0, direction=Horizontal, step=5, index=97)
+Track (x=5, y=0, direction=Vertical, index=18, step=6)
+Bump (x=5, y=0, direction=Horizontal, step=7, index=97)
+
+net 117 has 31 sinks
+Bump (x=0, y=0, direction=Horizontal, step=0, index=77)
+Track (x=0, y=0, direction=Vertical, index=106, step=1)
+Track (x=1, y=0, direction=Vertical, index=106, step=2)
+Track (x=2, y=0, direction=Vertical, index=106, step=3)
+Track (x=3, y=0, direction=Vertical, index=106, step=4)
+Track (x=4, y=0, direction=Vertical, index=106, step=5)
+Track (x=5, y=1, direction=Horizontal, index=74, step=6)
+Track (x=5, y=2, direction=Horizontal, index=74, step=7)
+Track (x=5, y=3, direction=Horizontal, index=74, step=8)
+Track (x=5, y=4, direction=Horizontal, index=74, step=9)
+Track (x=5, y=5, direction=Horizontal, index=74, step=10)
+Track (x=5, y=6, direction=Horizontal, index=74, step=11)
+Track (x=5, y=7, direction=Horizontal, index=74, step=12)
+Track (x=5, y=8, direction=Horizontal, index=74, step=13)
+Track (x=5, y=9, direction=Horizontal, index=74, step=14)
+Track (x=5, y=9, direction=Vertical, index=106, step=15)
+Bump (x=5, y=9, direction=Horizontal, step=16, index=105)
+Track (x=3, y=1, direction=Horizontal, index=74, step=4)
+Track (x=3, y=2, direction=Horizontal, index=74, step=5)
+Track (x=3, y=3, direction=Horizontal, index=74, step=6)
+Track (x=3, y=4, direction=Horizontal, index=74, step=7)
+Track (x=3, y=5, direction=Horizontal, index=74, step=8)
+Track (x=3, y=6, direction=Horizontal, index=74, step=9)
+Track (x=3, y=7, direction=Horizontal, index=74, step=10)
+Track (x=3, y=8, direction=Horizontal, index=74, step=11)
+Track (x=3, y=9, direction=Horizontal, index=74, step=12)
+Track (x=3, y=9, direction=Vertical, index=106, step=13)
+Bump (x=3, y=9, direction=Horizontal, step=14, index=105)
+Bump (x=3, y=0, direction=Horizontal, step=5, index=105)
+Track (x=5, y=0, direction=Vertical, index=106, step=6)
+Bump (x=5, y=0, direction=Horizontal, step=7, index=105)
+
+net 118 has 31 sinks
+Bump (x=0, y=9, direction=Horizontal, step=0, index=21)
+Track (x=0, y=9, direction=Vertical, index=27, step=1)
+Track (x=1, y=9, direction=Vertical, index=27, step=2)
+Track (x=2, y=9, direction=Vertical, index=27, step=3)
+Track (x=3, y=9, direction=Vertical, index=27, step=4)
+Track (x=4, y=9, direction=Vertical, index=27, step=5)
+Track (x=5, y=9, direction=Vertical, index=27, step=6)
+Bump (x=5, y=9, direction=Horizontal, step=7, index=113)
+Bump (x=3, y=9, direction=Horizontal, step=5, index=113)
+Track (x=3, y=9, direction=Horizontal, index=19, step=4)
+Track (x=3, y=8, direction=Horizontal, index=19, step=5)
+Track (x=3, y=7, direction=Horizontal, index=19, step=6)
+Track (x=3, y=6, direction=Horizontal, index=19, step=7)
+Track (x=3, y=5, direction=Horizontal, index=19, step=8)
+Track (x=3, y=4, direction=Horizontal, index=19, step=9)
+Track (x=3, y=3, direction=Horizontal, index=19, step=10)
+Track (x=3, y=2, direction=Horizontal, index=19, step=11)
+Track (x=3, y=1, direction=Horizontal, index=19, step=12)
+Track (x=3, y=0, direction=Vertical, index=11, step=13)
+Bump (x=3, y=0, direction=Horizontal, step=14, index=113)
+Track (x=5, y=9, direction=Horizontal, index=19, step=6)
+Track (x=5, y=8, direction=Horizontal, index=19, step=7)
+Track (x=5, y=7, direction=Horizontal, index=19, step=8)
+Track (x=5, y=6, direction=Horizontal, index=19, step=9)
+Track (x=5, y=5, direction=Horizontal, index=19, step=10)
+Track (x=5, y=4, direction=Horizontal, index=19, step=11)
+Track (x=5, y=3, direction=Horizontal, index=19, step=12)
+Track (x=5, y=2, direction=Horizontal, index=19, step=13)
+Track (x=5, y=1, direction=Horizontal, index=19, step=14)
+Track (x=5, y=0, direction=Vertical, index=11, step=15)
+Bump (x=5, y=0, direction=Horizontal, step=16, index=113)
+
+net 119 has 31 sinks
+Bump (x=0, y=9, direction=Horizontal, step=0, index=85)
+Track (x=0, y=9, direction=Vertical, index=99, step=1)
+Track (x=1, y=9, direction=Vertical, index=99, step=2)
+Track (x=2, y=9, direction=Vertical, index=99, step=3)
+Track (x=3, y=9, direction=Vertical, index=99, step=4)
+Track (x=4, y=9, direction=Vertical, index=99, step=5)
+Track (x=5, y=9, direction=Vertical, index=99, step=6)
+Bump (x=5, y=9, direction=Horizontal, step=7, index=121)
+Bump (x=3, y=9, direction=Horizontal, step=5, index=121)
+Track (x=3, y=9, direction=Horizontal, index=91, step=4)
+Track (x=3, y=8, direction=Horizontal, index=91, step=5)
+Track (x=3, y=7, direction=Horizontal, index=91, step=6)
+Track (x=3, y=6, direction=Horizontal, index=91, step=7)
+Track (x=3, y=5, direction=Horizontal, index=91, step=8)
+Track (x=3, y=4, direction=Horizontal, index=91, step=9)
+Track (x=3, y=3, direction=Horizontal, index=91, step=10)
+Track (x=3, y=2, direction=Horizontal, index=91, step=11)
+Track (x=3, y=1, direction=Horizontal, index=91, step=12)
+Track (x=3, y=0, direction=Vertical, index=83, step=13)
+Bump (x=3, y=0, direction=Horizontal, step=14, index=121)
+Track (x=5, y=9, direction=Horizontal, index=91, step=6)
+Track (x=5, y=8, direction=Horizontal, index=91, step=7)
+Track (x=5, y=7, direction=Horizontal, index=91, step=8)
+Track (x=5, y=6, direction=Horizontal, index=91, step=9)
+Track (x=5, y=5, direction=Horizontal, index=91, step=10)
+Track (x=5, y=4, direction=Horizontal, index=91, step=11)
+Track (x=5, y=3, direction=Horizontal, index=91, step=12)
+Track (x=5, y=2, direction=Horizontal, index=91, step=13)
+Track (x=5, y=1, direction=Horizontal, index=91, step=14)
+Track (x=5, y=0, direction=Vertical, index=83, step=15)
+Bump (x=5, y=0, direction=Horizontal, step=16, index=121)
+
+net 120 has 23 sinks
+Bump (x=7, y=0, direction=Vertical, step=0, index=29)
+Track (x=7, y=0, direction=Horizontal, index=36, step=1)
+Track (x=7, y=1, direction=Horizontal, index=36, step=2)
+Track (x=7, y=2, direction=Horizontal, index=36, step=3)
+Track (x=7, y=3, direction=Horizontal, index=36, step=4)
+Track (x=7, y=4, direction=Horizontal, index=36, step=5)
+Track (x=7, y=5, direction=Horizontal, index=36, step=6)
+Track (x=7, y=6, direction=Horizontal, index=36, step=7)
+Track (x=7, y=7, direction=Horizontal, index=36, step=8)
+Track (x=7, y=8, direction=Horizontal, index=36, step=9)
+Track (x=7, y=9, direction=Horizontal, index=36, step=10)
+Track (x=6, y=9, direction=Vertical, index=44, step=11)
+Track (x=5, y=9, direction=Vertical, index=44, step=12)
+Bump (x=5, y=9, direction=Horizontal, step=13, index=2)
+Track (x=4, y=9, direction=Vertical, index=44, step=13)
+Track (x=3, y=9, direction=Vertical, index=44, step=14)
+Bump (x=3, y=9, direction=Horizontal, step=15, index=2)
+Track (x=6, y=0, direction=Vertical, index=44, step=2)
+Track (x=5, y=0, direction=Vertical, index=44, step=3)
+Track (x=4, y=0, direction=Vertical, index=44, step=4)
+Track (x=3, y=0, direction=Vertical, index=44, step=5)
+Bump (x=3, y=0, direction=Horizontal, step=6, index=2)
+Bump (x=5, y=0, direction=Horizontal, step=4, index=2)
+
+net 121 has 23 sinks
+Bump (x=7, y=0, direction=Vertical, step=0, index=93)
+Track (x=7, y=0, direction=Horizontal, index=92, step=1)
+Track (x=7, y=1, direction=Horizontal, index=92, step=2)
+Track (x=7, y=2, direction=Horizontal, index=92, step=3)
+Track (x=7, y=3, direction=Horizontal, index=92, step=4)
+Track (x=7, y=4, direction=Horizontal, index=92, step=5)
+Track (x=7, y=5, direction=Horizontal, index=92, step=6)
+Track (x=7, y=6, direction=Horizontal, index=92, step=7)
+Track (x=7, y=7, direction=Horizontal, index=92, step=8)
+Track (x=7, y=8, direction=Horizontal, index=92, step=9)
+Track (x=7, y=9, direction=Horizontal, index=92, step=10)
+Track (x=6, y=9, direction=Vertical, index=100, step=11)
+Track (x=5, y=9, direction=Vertical, index=100, step=12)
+Bump (x=5, y=9, direction=Horizontal, step=13, index=10)
+Track (x=4, y=9, direction=Vertical, index=100, step=13)
+Track (x=3, y=9, direction=Vertical, index=100, step=14)
+Bump (x=3, y=9, direction=Horizontal, step=15, index=10)
+Track (x=6, y=0, direction=Vertical, index=100, step=2)
+Track (x=5, y=0, direction=Vertical, index=100, step=3)
+Track (x=4, y=0, direction=Vertical, index=100, step=4)
+Track (x=3, y=0, direction=Vertical, index=100, step=5)
+Bump (x=3, y=0, direction=Horizontal, step=6, index=10)
+Bump (x=5, y=0, direction=Horizontal, step=4, index=10)
+
+net 122 has 26 sinks
+Bump (x=7, y=13, direction=Vertical, step=0, index=37)
+Track (x=7, y=13, direction=Horizontal, index=45, step=1)
+Track (x=7, y=12, direction=Horizontal, index=45, step=2)
+Track (x=7, y=11, direction=Horizontal, index=45, step=3)
+Track (x=7, y=10, direction=Horizontal, index=45, step=4)
+Track (x=6, y=9, direction=Vertical, index=13, step=5)
+Track (x=5, y=9, direction=Vertical, index=13, step=6)
+Bump (x=5, y=9, direction=Horizontal, step=7, index=18)
+Track (x=4, y=9, direction=Vertical, index=13, step=7)
+Track (x=3, y=9, direction=Vertical, index=13, step=8)
+Bump (x=3, y=9, direction=Horizontal, step=9, index=18)
+Track (x=7, y=9, direction=Horizontal, index=45, step=5)
+Track (x=7, y=8, direction=Horizontal, index=45, step=6)
+Track (x=7, y=7, direction=Horizontal, index=45, step=7)
+Track (x=7, y=6, direction=Horizontal, index=45, step=8)
+Track (x=7, y=5, direction=Horizontal, index=45, step=9)
+Track (x=7, y=4, direction=Horizontal, index=45, step=10)
+Track (x=7, y=3, direction=Horizontal, index=45, step=11)
+Track (x=7, y=2, direction=Horizontal, index=45, step=12)
+Track (x=7, y=1, direction=Horizontal, index=45, step=13)
+Track (x=6, y=0, direction=Vertical, index=13, step=14)
+Track (x=5, y=0, direction=Vertical, index=13, step=15)
+Track (x=4, y=0, direction=Vertical, index=13, step=16)
+Track (x=3, y=0, direction=Vertical, index=13, step=17)
+Bump (x=3, y=0, direction=Horizontal, step=18, index=18)
+Bump (x=5, y=0, direction=Horizontal, step=16, index=18)
+
+net 123 has 26 sinks
+Bump (x=7, y=13, direction=Vertical, step=0, index=101)
+Track (x=7, y=13, direction=Horizontal, index=85, step=1)
+Track (x=7, y=12, direction=Horizontal, index=85, step=2)
+Track (x=7, y=11, direction=Horizontal, index=85, step=3)
+Track (x=7, y=10, direction=Horizontal, index=85, step=4)
+Track (x=6, y=9, direction=Vertical, index=101, step=5)
+Track (x=5, y=9, direction=Vertical, index=101, step=6)
+Bump (x=5, y=9, direction=Horizontal, step=7, index=26)
+Track (x=4, y=9, direction=Vertical, index=101, step=7)
+Track (x=3, y=9, direction=Vertical, index=101, step=8)
+Bump (x=3, y=9, direction=Horizontal, step=9, index=26)
+Track (x=7, y=9, direction=Horizontal, index=85, step=5)
+Track (x=7, y=8, direction=Horizontal, index=85, step=6)
+Track (x=7, y=7, direction=Horizontal, index=85, step=7)
+Track (x=7, y=6, direction=Horizontal, index=85, step=8)
+Track (x=7, y=5, direction=Horizontal, index=85, step=9)
+Track (x=7, y=4, direction=Horizontal, index=85, step=10)
+Track (x=7, y=3, direction=Horizontal, index=85, step=11)
+Track (x=7, y=2, direction=Horizontal, index=85, step=12)
+Track (x=7, y=1, direction=Horizontal, index=85, step=13)
+Track (x=6, y=0, direction=Vertical, index=101, step=14)
+Track (x=5, y=0, direction=Vertical, index=101, step=15)
+Track (x=4, y=0, direction=Vertical, index=101, step=16)
+Track (x=3, y=0, direction=Vertical, index=101, step=17)
+Bump (x=3, y=0, direction=Horizontal, step=18, index=26)
+Bump (x=5, y=0, direction=Horizontal, step=16, index=26)
+
+net 124 has 25 sinks
+Bump (x=1, y=0, direction=Vertical, step=0, index=45)
+Track (x=1, y=0, direction=Horizontal, index=54, step=1)
+Track (x=1, y=1, direction=Horizontal, index=54, step=2)
+Track (x=1, y=2, direction=Horizontal, index=54, step=3)
+Track (x=1, y=3, direction=Horizontal, index=54, step=4)
+Track (x=1, y=4, direction=Horizontal, index=54, step=5)
+Track (x=1, y=5, direction=Horizontal, index=54, step=6)
+Track (x=1, y=6, direction=Horizontal, index=54, step=7)
+Track (x=1, y=7, direction=Horizontal, index=54, step=8)
+Track (x=1, y=8, direction=Horizontal, index=54, step=9)
+Track (x=1, y=9, direction=Horizontal, index=54, step=10)
+Track (x=1, y=9, direction=Vertical, index=6, step=11)
+Track (x=2, y=9, direction=Vertical, index=6, step=12)
+Track (x=3, y=9, direction=Vertical, index=6, step=13)
+Track (x=4, y=9, direction=Vertical, index=6, step=14)
+Track (x=5, y=9, direction=Vertical, index=6, step=15)
+Bump (x=5, y=9, direction=Horizontal, step=16, index=34)
+Bump (x=3, y=9, direction=Horizontal, step=14, index=34)
+Track (x=1, y=0, direction=Vertical, index=6, step=2)
+Track (x=2, y=0, direction=Vertical, index=6, step=3)
+Track (x=3, y=0, direction=Vertical, index=6, step=4)
+Bump (x=3, y=0, direction=Horizontal, step=5, index=34)
+Track (x=4, y=0, direction=Vertical, index=6, step=5)
+Track (x=5, y=0, direction=Vertical, index=6, step=6)
+Bump (x=5, y=0, direction=Horizontal, step=7, index=34)
+
+net 125 has 25 sinks
+Bump (x=1, y=0, direction=Vertical, step=0, index=109)
+Track (x=1, y=0, direction=Horizontal, index=78, step=1)
+Track (x=1, y=1, direction=Horizontal, index=78, step=2)
+Track (x=1, y=2, direction=Horizontal, index=78, step=3)
+Track (x=1, y=3, direction=Horizontal, index=78, step=4)
+Track (x=1, y=4, direction=Horizontal, index=78, step=5)
+Track (x=1, y=5, direction=Horizontal, index=78, step=6)
+Track (x=1, y=6, direction=Horizontal, index=78, step=7)
+Track (x=1, y=7, direction=Horizontal, index=78, step=8)
+Track (x=1, y=8, direction=Horizontal, index=78, step=9)
+Track (x=1, y=9, direction=Horizontal, index=78, step=10)
+Track (x=1, y=9, direction=Vertical, index=110, step=11)
+Track (x=2, y=9, direction=Vertical, index=110, step=12)
+Track (x=3, y=9, direction=Vertical, index=110, step=13)
+Track (x=4, y=9, direction=Vertical, index=110, step=14)
+Track (x=5, y=9, direction=Vertical, index=110, step=15)
+Bump (x=5, y=9, direction=Horizontal, step=16, index=42)
+Bump (x=3, y=9, direction=Horizontal, step=14, index=42)
+Track (x=1, y=0, direction=Vertical, index=110, step=2)
+Track (x=2, y=0, direction=Vertical, index=110, step=3)
+Track (x=3, y=0, direction=Vertical, index=110, step=4)
+Bump (x=3, y=0, direction=Horizontal, step=5, index=42)
+Track (x=4, y=0, direction=Vertical, index=110, step=5)
+Track (x=5, y=0, direction=Vertical, index=110, step=6)
+Bump (x=5, y=0, direction=Horizontal, step=7, index=42)
+
+net 126 has 28 sinks
+Bump (x=1, y=13, direction=Vertical, step=0, index=53)
+Track (x=1, y=13, direction=Horizontal, index=63, step=1)
+Track (x=1, y=12, direction=Horizontal, index=63, step=2)
+Track (x=1, y=11, direction=Horizontal, index=63, step=3)
+Track (x=1, y=10, direction=Horizontal, index=63, step=4)
+Track (x=1, y=9, direction=Vertical, index=55, step=5)
+Track (x=2, y=9, direction=Vertical, index=55, step=6)
+Track (x=3, y=9, direction=Vertical, index=55, step=7)
+Track (x=4, y=9, direction=Vertical, index=55, step=8)
+Track (x=5, y=9, direction=Vertical, index=55, step=9)
+Bump (x=5, y=9, direction=Horizontal, step=10, index=50)
+Bump (x=3, y=9, direction=Horizontal, step=8, index=50)
+Track (x=1, y=9, direction=Horizontal, index=63, step=5)
+Track (x=1, y=8, direction=Horizontal, index=63, step=6)
+Track (x=1, y=7, direction=Horizontal, index=63, step=7)
+Track (x=1, y=6, direction=Horizontal, index=63, step=8)
+Track (x=1, y=5, direction=Horizontal, index=63, step=9)
+Track (x=1, y=4, direction=Horizontal, index=63, step=10)
+Track (x=1, y=3, direction=Horizontal, index=63, step=11)
+Track (x=1, y=2, direction=Horizontal, index=63, step=12)
+Track (x=1, y=1, direction=Horizontal, index=63, step=13)
+Track (x=1, y=0, direction=Vertical, index=55, step=14)
+Track (x=2, y=0, direction=Vertical, index=55, step=15)
+Track (x=3, y=0, direction=Vertical, index=55, step=16)
+Bump (x=3, y=0, direction=Horizontal, step=17, index=50)
+Track (x=4, y=0, direction=Vertical, index=55, step=17)
+Track (x=5, y=0, direction=Vertical, index=55, step=18)
+Bump (x=5, y=0, direction=Horizontal, step=19, index=50)
+
+net 127 has 28 sinks
+Bump (x=1, y=13, direction=Vertical, step=0, index=117)
+Track (x=1, y=13, direction=Horizontal, index=71, step=1)
+Track (x=1, y=12, direction=Horizontal, index=71, step=2)
+Track (x=1, y=11, direction=Horizontal, index=71, step=3)
+Track (x=1, y=10, direction=Horizontal, index=71, step=4)
+Track (x=1, y=9, direction=Vertical, index=127, step=5)
+Track (x=2, y=9, direction=Vertical, index=127, step=6)
+Track (x=3, y=9, direction=Vertical, index=127, step=7)
+Track (x=4, y=9, direction=Vertical, index=127, step=8)
+Track (x=5, y=9, direction=Vertical, index=127, step=9)
+Bump (x=5, y=9, direction=Horizontal, step=10, index=58)
+Bump (x=3, y=9, direction=Horizontal, step=8, index=58)
+Track (x=1, y=9, direction=Horizontal, index=71, step=5)
+Track (x=1, y=8, direction=Horizontal, index=71, step=6)
+Track (x=1, y=7, direction=Horizontal, index=71, step=7)
+Track (x=1, y=6, direction=Horizontal, index=71, step=8)
+Track (x=1, y=5, direction=Horizontal, index=71, step=9)
+Track (x=1, y=4, direction=Horizontal, index=71, step=10)
+Track (x=1, y=3, direction=Horizontal, index=71, step=11)
+Track (x=1, y=2, direction=Horizontal, index=71, step=12)
+Track (x=1, y=1, direction=Horizontal, index=71, step=13)
+Track (x=1, y=0, direction=Vertical, index=127, step=14)
+Track (x=2, y=0, direction=Vertical, index=127, step=15)
+Track (x=3, y=0, direction=Vertical, index=127, step=16)
+Bump (x=3, y=0, direction=Horizontal, step=17, index=58)
+Track (x=4, y=0, direction=Vertical, index=127, step=17)
+Track (x=5, y=0, direction=Vertical, index=127, step=18)
+Bump (x=5, y=0, direction=Horizontal, step=19, index=58)
+
+net 128 has 226 sinks
+Bump (x=10, y=18446744073709551615, direction=Vertical, step=0, index=18446744073709551607)
+Track (x=9, y=6, direction=Vertical, index=0, step=1)
+Track (x=8, y=6, direction=Vertical, index=0, step=2)
+Track (x=7, y=6, direction=Vertical, index=0, step=3)
+Track (x=7, y=7, direction=Horizontal, index=8, step=4)
+Track (x=7, y=8, direction=Horizontal, index=8, step=5)
+Track (x=6, y=8, direction=Vertical, index=16, step=6)
+Track (x=6, y=9, direction=Horizontal, index=24, step=7)
+Track (x=5, y=9, direction=Vertical, index=32, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=66)
+Track (x=8, y=7, direction=Horizontal, index=8, step=3)
+Track (x=7, y=7, direction=Vertical, index=16, step=4)
+Track (x=7, y=8, direction=Horizontal, index=24, step=5)
+Track (x=6, y=8, direction=Vertical, index=32, step=6)
+Track (x=6, y=9, direction=Horizontal, index=40, step=7)
+Track (x=5, y=9, direction=Vertical, index=48, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=82)
+Track (x=9, y=6, direction=Vertical, index=2, step=1)
+Track (x=8, y=6, direction=Vertical, index=2, step=2)
+Track (x=7, y=6, direction=Vertical, index=2, step=3)
+Track (x=7, y=7, direction=Horizontal, index=10, step=4)
+Track (x=7, y=8, direction=Horizontal, index=10, step=5)
+Track (x=6, y=8, direction=Vertical, index=18, step=6)
+Track (x=6, y=9, direction=Horizontal, index=26, step=7)
+Track (x=5, y=9, direction=Vertical, index=34, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=98)
+Track (x=8, y=7, direction=Horizontal, index=10, step=3)
+Track (x=7, y=7, direction=Vertical, index=18, step=4)
+Track (x=7, y=8, direction=Horizontal, index=26, step=5)
+Track (x=6, y=8, direction=Vertical, index=34, step=6)
+Track (x=6, y=9, direction=Horizontal, index=42, step=7)
+Track (x=5, y=9, direction=Vertical, index=50, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=114)
+Track (x=6, y=6, direction=Vertical, index=0, step=4)
+Track (x=5, y=6, direction=Vertical, index=0, step=5)
+Track (x=5, y=7, direction=Horizontal, index=8, step=6)
+Track (x=5, y=8, direction=Horizontal, index=8, step=7)
+Track (x=4, y=8, direction=Vertical, index=16, step=8)
+Track (x=4, y=9, direction=Horizontal, index=24, step=9)
+Track (x=3, y=9, direction=Vertical, index=32, step=10)
+Bump (x=3, y=9, direction=Horizontal, step=11, index=66)
+Track (x=6, y=7, direction=Vertical, index=16, step=5)
+Track (x=5, y=7, direction=Vertical, index=16, step=6)
+Track (x=5, y=8, direction=Horizontal, index=24, step=7)
+Track (x=4, y=8, direction=Vertical, index=32, step=8)
+Track (x=4, y=9, direction=Horizontal, index=40, step=9)
+Track (x=3, y=9, direction=Vertical, index=48, step=10)
+Bump (x=3, y=9, direction=Horizontal, step=11, index=82)
+Track (x=0, y=4, direction=Vertical, index=68, step=1)
+Track (x=1, y=4, direction=Vertical, index=68, step=2)
+Track (x=2, y=4, direction=Vertical, index=68, step=3)
+Track (x=3, y=5, direction=Horizontal, index=116, step=4)
+Track (x=3, y=6, direction=Horizontal, index=116, step=5)
+Track (x=3, y=7, direction=Horizontal, index=116, step=6)
+Track (x=3, y=8, direction=Horizontal, index=116, step=7)
+Track (x=3, y=9, direction=Horizontal, index=116, step=8)
+Track (x=3, y=9, direction=Vertical, index=68, step=9)
+Bump (x=3, y=9, direction=Horizontal, step=10, index=98)
+Track (x=0, y=4, direction=Vertical, index=70, step=1)
+Track (x=1, y=4, direction=Vertical, index=70, step=2)
+Track (x=2, y=4, direction=Vertical, index=70, step=3)
+Track (x=3, y=5, direction=Horizontal, index=118, step=4)
+Track (x=3, y=6, direction=Horizontal, index=118, step=5)
+Track (x=3, y=7, direction=Horizontal, index=118, step=6)
+Track (x=3, y=8, direction=Horizontal, index=118, step=7)
+Track (x=3, y=9, direction=Horizontal, index=118, step=8)
+Track (x=3, y=9, direction=Vertical, index=70, step=9)
+Bump (x=3, y=9, direction=Horizontal, step=10, index=114)
+Track (x=5, y=0, direction=Horizontal, index=9, step=1)
+Track (x=4, y=0, direction=Vertical, index=17, step=2)
+Track (x=3, y=0, direction=Vertical, index=17, step=3)
+Bump (x=3, y=0, direction=Horizontal, step=4, index=66)
+Track (x=5, y=0, direction=Horizontal, index=13, step=1)
+Track (x=4, y=0, direction=Vertical, index=21, step=2)
+Track (x=3, y=0, direction=Vertical, index=21, step=3)
+Bump (x=3, y=0, direction=Horizontal, step=4, index=82)
+Track (x=5, y=0, direction=Horizontal, index=15, step=1)
+Track (x=4, y=0, direction=Vertical, index=23, step=2)
+Track (x=4, y=1, direction=Horizontal, index=31, step=3)
+Track (x=3, y=1, direction=Vertical, index=39, step=4)
+Track (x=3, y=1, direction=Horizontal, index=23, step=5)
+Track (x=3, y=0, direction=Vertical, index=15, step=6)
+Bump (x=3, y=0, direction=Horizontal, step=7, index=98)
+Track (x=3, y=0, direction=Vertical, index=23, step=3)
+Bump (x=3, y=0, direction=Horizontal, step=4, index=114)
+Track (x=5, y=0, direction=Vertical, index=41, step=2)
+Bump (x=5, y=0, direction=Horizontal, step=3, index=66)
+Track (x=5, y=0, direction=Horizontal, index=11, step=1)
+Track (x=5, y=0, direction=Vertical, index=43, step=2)
+Bump (x=5, y=0, direction=Horizontal, step=3, index=82)
+Track (x=5, y=0, direction=Vertical, index=45, step=2)
+Bump (x=5, y=0, direction=Horizontal, step=3, index=98)
+Track (x=5, y=0, direction=Vertical, index=47, step=2)
+Bump (x=5, y=0, direction=Horizontal, step=3, index=114)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=64)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=80)
+Track (x=9, y=6, direction=Vertical, index=4, step=1)
+Track (x=8, y=6, direction=Vertical, index=4, step=2)
+Track (x=7, y=6, direction=Vertical, index=4, step=3)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=96)
+Track (x=9, y=6, direction=Vertical, index=6, step=1)
+Track (x=8, y=6, direction=Vertical, index=6, step=2)
+Track (x=7, y=6, direction=Vertical, index=6, step=3)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=112)
+Track (x=8, y=8, direction=Horizontal, index=8, step=4)
+Track (x=8, y=9, direction=Horizontal, index=8, step=5)
+Track (x=7, y=9, direction=Vertical, index=16, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=64)
+Track (x=9, y=7, direction=Horizontal, index=8, step=2)
+Track (x=9, y=8, direction=Horizontal, index=8, step=3)
+Track (x=8, y=8, direction=Vertical, index=16, step=4)
+Track (x=8, y=9, direction=Horizontal, index=24, step=5)
+Track (x=7, y=9, direction=Vertical, index=32, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=80)
+Track (x=8, y=8, direction=Horizontal, index=10, step=4)
+Track (x=8, y=9, direction=Horizontal, index=10, step=5)
+Track (x=7, y=9, direction=Vertical, index=18, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=96)
+Track (x=9, y=7, direction=Horizontal, index=10, step=2)
+Track (x=9, y=8, direction=Horizontal, index=10, step=3)
+Track (x=8, y=8, direction=Vertical, index=18, step=4)
+Track (x=8, y=9, direction=Horizontal, index=26, step=5)
+Track (x=7, y=9, direction=Vertical, index=34, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=112)
+Track (x=1, y=5, direction=Horizontal, index=116, step=2)
+Track (x=1, y=6, direction=Horizontal, index=116, step=3)
+Track (x=1, y=7, direction=Horizontal, index=116, step=4)
+Track (x=1, y=8, direction=Horizontal, index=116, step=5)
+Track (x=1, y=9, direction=Horizontal, index=116, step=6)
+Track (x=1, y=9, direction=Vertical, index=68, step=7)
+Bump (x=1, y=9, direction=Horizontal, step=8, index=64)
+Track (x=1, y=5, direction=Horizontal, index=118, step=2)
+Track (x=1, y=6, direction=Horizontal, index=118, step=3)
+Track (x=1, y=7, direction=Horizontal, index=118, step=4)
+Track (x=1, y=8, direction=Horizontal, index=118, step=5)
+Track (x=1, y=9, direction=Horizontal, index=118, step=6)
+Track (x=1, y=9, direction=Vertical, index=70, step=7)
+Bump (x=1, y=9, direction=Horizontal, step=8, index=80)
+Track (x=0, y=4, direction=Vertical, index=65, step=1)
+Track (x=1, y=4, direction=Vertical, index=65, step=2)
+Track (x=2, y=5, direction=Horizontal, index=113, step=3)
+Track (x=2, y=6, direction=Horizontal, index=113, step=4)
+Track (x=2, y=7, direction=Horizontal, index=113, step=5)
+Track (x=2, y=8, direction=Horizontal, index=113, step=6)
+Track (x=2, y=9, direction=Horizontal, index=113, step=7)
+Track (x=1, y=9, direction=Vertical, index=121, step=8)
+Bump (x=1, y=9, direction=Horizontal, step=9, index=96)
+Track (x=0, y=4, direction=Vertical, index=67, step=1)
+Track (x=1, y=4, direction=Vertical, index=67, step=2)
+Track (x=2, y=5, direction=Horizontal, index=115, step=3)
+Track (x=2, y=6, direction=Horizontal, index=115, step=4)
+Track (x=2, y=7, direction=Horizontal, index=115, step=5)
+Track (x=2, y=8, direction=Horizontal, index=115, step=6)
+Track (x=2, y=9, direction=Horizontal, index=115, step=7)
+Track (x=1, y=9, direction=Vertical, index=123, step=8)
+Bump (x=1, y=9, direction=Horizontal, step=9, index=112)
+Track (x=1, y=5, direction=Horizontal, index=113, step=2)
+Track (x=1, y=6, direction=Horizontal, index=113, step=3)
+Track (x=1, y=6, direction=Vertical, index=65, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=64)
+Track (x=1, y=5, direction=Horizontal, index=115, step=2)
+Track (x=1, y=6, direction=Horizontal, index=115, step=3)
+Track (x=1, y=6, direction=Vertical, index=67, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=80)
+Track (x=1, y=6, direction=Vertical, index=68, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=96)
+Track (x=1, y=6, direction=Vertical, index=70, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=112)
+Track (x=1, y=4, direction=Horizontal, index=121, step=2)
+Track (x=1, y=3, direction=Vertical, index=113, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=64)
+Track (x=1, y=4, direction=Horizontal, index=123, step=2)
+Track (x=1, y=3, direction=Vertical, index=115, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=80)
+Track (x=1, y=4, direction=Horizontal, index=124, step=2)
+Track (x=1, y=3, direction=Vertical, index=116, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=96)
+Track (x=1, y=4, direction=Horizontal, index=126, step=2)
+Track (x=1, y=3, direction=Vertical, index=118, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=112)
+Track (x=2, y=0, direction=Vertical, index=17, step=4)
+Track (x=1, y=0, direction=Vertical, index=17, step=5)
+Bump (x=1, y=0, direction=Horizontal, step=6, index=64)
+Track (x=4, y=0, direction=Vertical, index=19, step=2)
+Track (x=3, y=0, direction=Vertical, index=19, step=3)
+Track (x=2, y=0, direction=Vertical, index=19, step=4)
+Track (x=1, y=0, direction=Vertical, index=19, step=5)
+Bump (x=1, y=0, direction=Horizontal, step=6, index=80)
+Track (x=2, y=0, direction=Vertical, index=21, step=4)
+Track (x=1, y=0, direction=Vertical, index=21, step=5)
+Bump (x=1, y=0, direction=Horizontal, step=6, index=96)
+Track (x=2, y=0, direction=Vertical, index=23, step=4)
+Track (x=1, y=0, direction=Vertical, index=23, step=5)
+Bump (x=1, y=0, direction=Horizontal, step=6, index=112)
+Track (x=6, y=0, direction=Vertical, index=41, step=3)
+Track (x=7, y=0, direction=Vertical, index=41, step=4)
+Bump (x=7, y=0, direction=Horizontal, step=5, index=64)
+Track (x=6, y=0, direction=Vertical, index=43, step=3)
+Track (x=7, y=0, direction=Vertical, index=43, step=4)
+Bump (x=7, y=0, direction=Horizontal, step=5, index=80)
+Track (x=6, y=0, direction=Vertical, index=45, step=3)
+Track (x=7, y=0, direction=Vertical, index=45, step=4)
+Bump (x=7, y=0, direction=Horizontal, step=5, index=96)
+Track (x=6, y=0, direction=Vertical, index=47, step=3)
+Track (x=7, y=0, direction=Vertical, index=47, step=4)
+Bump (x=7, y=0, direction=Horizontal, step=5, index=112)
+Track (x=8, y=6, direction=Horizontal, index=48, step=3)
+Track (x=8, y=5, direction=Horizontal, index=48, step=4)
+Track (x=8, y=4, direction=Horizontal, index=48, step=5)
+Track (x=7, y=3, direction=Vertical, index=0, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=64)
+Track (x=8, y=6, direction=Horizontal, index=50, step=3)
+Track (x=8, y=5, direction=Horizontal, index=50, step=4)
+Track (x=8, y=4, direction=Horizontal, index=50, step=5)
+Track (x=7, y=3, direction=Vertical, index=2, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=80)
+Track (x=8, y=6, direction=Horizontal, index=52, step=3)
+Track (x=8, y=5, direction=Horizontal, index=52, step=4)
+Track (x=8, y=4, direction=Horizontal, index=52, step=5)
+Track (x=7, y=3, direction=Vertical, index=4, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=96)
+Track (x=8, y=6, direction=Horizontal, index=54, step=3)
+Track (x=8, y=5, direction=Horizontal, index=54, step=4)
+Track (x=8, y=4, direction=Horizontal, index=54, step=5)
+Track (x=7, y=3, direction=Vertical, index=6, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=112)
+
+net 129 has 237 sinks
+Bump (x=10, y=18446744073709551615, direction=Vertical, step=0, index=18446744073709551607)
+Track (x=9, y=6, direction=Vertical, index=1, step=1)
+Track (x=8, y=6, direction=Vertical, index=1, step=2)
+Track (x=7, y=6, direction=Vertical, index=1, step=3)
+Track (x=6, y=6, direction=Vertical, index=1, step=4)
+Track (x=6, y=7, direction=Horizontal, index=9, step=5)
+Track (x=6, y=8, direction=Horizontal, index=9, step=6)
+Track (x=6, y=9, direction=Horizontal, index=9, step=7)
+Track (x=5, y=9, direction=Vertical, index=17, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=74)
+Track (x=7, y=7, direction=Horizontal, index=9, step=4)
+Track (x=7, y=8, direction=Horizontal, index=9, step=5)
+Track (x=6, y=8, direction=Vertical, index=17, step=6)
+Track (x=6, y=9, direction=Horizontal, index=25, step=7)
+Track (x=5, y=9, direction=Vertical, index=33, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=90)
+Track (x=9, y=6, direction=Vertical, index=3, step=1)
+Track (x=8, y=6, direction=Vertical, index=3, step=2)
+Track (x=7, y=6, direction=Vertical, index=3, step=3)
+Track (x=6, y=6, direction=Vertical, index=3, step=4)
+Track (x=6, y=7, direction=Horizontal, index=11, step=5)
+Track (x=6, y=8, direction=Horizontal, index=11, step=6)
+Track (x=6, y=9, direction=Horizontal, index=11, step=7)
+Track (x=5, y=9, direction=Vertical, index=19, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=106)
+Track (x=8, y=7, direction=Horizontal, index=11, step=3)
+Track (x=7, y=7, direction=Vertical, index=19, step=4)
+Track (x=7, y=8, direction=Horizontal, index=27, step=5)
+Track (x=6, y=8, direction=Vertical, index=35, step=6)
+Track (x=6, y=9, direction=Horizontal, index=43, step=7)
+Track (x=5, y=9, direction=Vertical, index=51, step=8)
+Bump (x=5, y=9, direction=Horizontal, step=9, index=122)
+Track (x=5, y=6, direction=Vertical, index=1, step=5)
+Track (x=4, y=6, direction=Vertical, index=1, step=6)
+Track (x=4, y=7, direction=Horizontal, index=9, step=7)
+Track (x=4, y=8, direction=Horizontal, index=9, step=8)
+Track (x=4, y=9, direction=Horizontal, index=9, step=9)
+Track (x=3, y=9, direction=Vertical, index=17, step=10)
+Bump (x=3, y=9, direction=Horizontal, step=11, index=74)
+Track (x=5, y=7, direction=Horizontal, index=9, step=6)
+Track (x=5, y=8, direction=Horizontal, index=9, step=7)
+Track (x=4, y=8, direction=Vertical, index=17, step=8)
+Track (x=4, y=9, direction=Horizontal, index=25, step=9)
+Track (x=3, y=9, direction=Vertical, index=33, step=10)
+Bump (x=3, y=9, direction=Horizontal, step=11, index=90)
+Track (x=0, y=4, direction=Vertical, index=69, step=1)
+Track (x=1, y=4, direction=Vertical, index=69, step=2)
+Track (x=2, y=4, direction=Vertical, index=69, step=3)
+Track (x=3, y=5, direction=Horizontal, index=117, step=4)
+Track (x=3, y=6, direction=Horizontal, index=117, step=5)
+Track (x=3, y=7, direction=Horizontal, index=117, step=6)
+Track (x=3, y=8, direction=Horizontal, index=117, step=7)
+Track (x=3, y=9, direction=Horizontal, index=117, step=8)
+Track (x=3, y=9, direction=Vertical, index=69, step=9)
+Bump (x=3, y=9, direction=Horizontal, step=10, index=106)
+Track (x=0, y=4, direction=Vertical, index=71, step=1)
+Track (x=1, y=4, direction=Vertical, index=71, step=2)
+Track (x=2, y=4, direction=Vertical, index=71, step=3)
+Track (x=3, y=5, direction=Horizontal, index=119, step=4)
+Track (x=3, y=6, direction=Horizontal, index=119, step=5)
+Track (x=3, y=7, direction=Horizontal, index=119, step=6)
+Track (x=3, y=8, direction=Horizontal, index=119, step=7)
+Track (x=3, y=9, direction=Horizontal, index=119, step=8)
+Track (x=3, y=9, direction=Vertical, index=71, step=9)
+Bump (x=3, y=9, direction=Horizontal, step=10, index=122)
+Track (x=5, y=0, direction=Horizontal, index=12, step=1)
+Track (x=4, y=0, direction=Vertical, index=20, step=2)
+Track (x=3, y=0, direction=Vertical, index=20, step=3)
+Bump (x=3, y=0, direction=Horizontal, step=4, index=74)
+Track (x=5, y=0, direction=Horizontal, index=14, step=1)
+Track (x=4, y=0, direction=Vertical, index=22, step=2)
+Track (x=3, y=0, direction=Vertical, index=22, step=3)
+Bump (x=3, y=0, direction=Horizontal, step=4, index=90)
+Track (x=5, y=0, direction=Horizontal, index=8, step=1)
+Track (x=5, y=1, direction=Horizontal, index=8, step=2)
+Track (x=4, y=1, direction=Vertical, index=16, step=3)
+Track (x=3, y=1, direction=Vertical, index=16, step=4)
+Track (x=3, y=1, direction=Horizontal, index=32, step=5)
+Track (x=3, y=0, direction=Vertical, index=24, step=6)
+Bump (x=3, y=0, direction=Horizontal, step=7, index=106)
+Track (x=4, y=1, direction=Horizontal, index=28, step=3)
+Track (x=3, y=1, direction=Vertical, index=36, step=4)
+Track (x=3, y=1, direction=Horizontal, index=20, step=5)
+Track (x=3, y=0, direction=Vertical, index=12, step=6)
+Bump (x=3, y=0, direction=Horizontal, step=7, index=122)
+Track (x=5, y=0, direction=Vertical, index=40, step=2)
+Bump (x=5, y=0, direction=Horizontal, step=3, index=74)
+Track (x=5, y=0, direction=Vertical, index=46, step=2)
+Bump (x=5, y=0, direction=Horizontal, step=3, index=90)
+Track (x=5, y=1, direction=Horizontal, index=14, step=2)
+Track (x=5, y=1, direction=Vertical, index=46, step=3)
+Track (x=6, y=1, direction=Horizontal, index=38, step=4)
+Track (x=5, y=0, direction=Vertical, index=22, step=5)
+Bump (x=5, y=0, direction=Horizontal, step=6, index=106)
+Track (x=4, y=1, direction=Horizontal, index=32, step=4)
+Track (x=4, y=0, direction=Vertical, index=24, step=5)
+Track (x=5, y=0, direction=Vertical, index=24, step=6)
+Bump (x=5, y=0, direction=Horizontal, step=7, index=122)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=72)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=88)
+Track (x=9, y=6, direction=Vertical, index=5, step=1)
+Track (x=8, y=6, direction=Vertical, index=5, step=2)
+Track (x=7, y=6, direction=Vertical, index=5, step=3)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=104)
+Track (x=9, y=6, direction=Vertical, index=7, step=1)
+Track (x=8, y=6, direction=Vertical, index=7, step=2)
+Track (x=7, y=6, direction=Vertical, index=7, step=3)
+Bump (x=7, y=6, direction=Horizontal, step=4, index=120)
+Track (x=8, y=7, direction=Horizontal, index=9, step=3)
+Track (x=8, y=8, direction=Horizontal, index=9, step=4)
+Track (x=8, y=9, direction=Horizontal, index=9, step=5)
+Track (x=7, y=9, direction=Vertical, index=17, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=72)
+Track (x=9, y=7, direction=Horizontal, index=9, step=2)
+Track (x=9, y=8, direction=Horizontal, index=9, step=3)
+Track (x=8, y=8, direction=Vertical, index=17, step=4)
+Track (x=8, y=9, direction=Horizontal, index=25, step=5)
+Track (x=7, y=9, direction=Vertical, index=33, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=88)
+Track (x=8, y=8, direction=Horizontal, index=11, step=4)
+Track (x=8, y=9, direction=Horizontal, index=11, step=5)
+Track (x=7, y=9, direction=Vertical, index=19, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=104)
+Track (x=9, y=7, direction=Horizontal, index=11, step=2)
+Track (x=9, y=8, direction=Horizontal, index=11, step=3)
+Track (x=8, y=8, direction=Vertical, index=19, step=4)
+Track (x=8, y=9, direction=Horizontal, index=27, step=5)
+Track (x=7, y=9, direction=Vertical, index=35, step=6)
+Bump (x=7, y=9, direction=Horizontal, step=7, index=120)
+Track (x=1, y=5, direction=Horizontal, index=117, step=2)
+Track (x=1, y=6, direction=Horizontal, index=117, step=3)
+Track (x=1, y=7, direction=Horizontal, index=117, step=4)
+Track (x=1, y=8, direction=Horizontal, index=117, step=5)
+Track (x=1, y=9, direction=Horizontal, index=117, step=6)
+Track (x=1, y=9, direction=Vertical, index=69, step=7)
+Bump (x=1, y=9, direction=Horizontal, step=8, index=72)
+Track (x=1, y=5, direction=Horizontal, index=119, step=2)
+Track (x=1, y=6, direction=Horizontal, index=119, step=3)
+Track (x=1, y=7, direction=Horizontal, index=119, step=4)
+Track (x=1, y=8, direction=Horizontal, index=119, step=5)
+Track (x=1, y=9, direction=Horizontal, index=119, step=6)
+Track (x=1, y=9, direction=Vertical, index=71, step=7)
+Bump (x=1, y=9, direction=Horizontal, step=8, index=88)
+Track (x=0, y=4, direction=Vertical, index=64, step=1)
+Track (x=1, y=4, direction=Vertical, index=64, step=2)
+Track (x=2, y=5, direction=Horizontal, index=112, step=3)
+Track (x=2, y=6, direction=Horizontal, index=112, step=4)
+Track (x=2, y=7, direction=Horizontal, index=112, step=5)
+Track (x=2, y=8, direction=Horizontal, index=112, step=6)
+Track (x=2, y=9, direction=Horizontal, index=112, step=7)
+Track (x=1, y=9, direction=Vertical, index=120, step=8)
+Bump (x=1, y=9, direction=Horizontal, step=9, index=104)
+Track (x=0, y=4, direction=Vertical, index=66, step=1)
+Track (x=1, y=4, direction=Vertical, index=66, step=2)
+Track (x=2, y=5, direction=Horizontal, index=114, step=3)
+Track (x=2, y=6, direction=Horizontal, index=114, step=4)
+Track (x=2, y=7, direction=Horizontal, index=114, step=5)
+Track (x=2, y=8, direction=Horizontal, index=114, step=6)
+Track (x=2, y=9, direction=Horizontal, index=114, step=7)
+Track (x=1, y=9, direction=Vertical, index=122, step=8)
+Bump (x=1, y=9, direction=Horizontal, step=9, index=120)
+Track (x=1, y=5, direction=Horizontal, index=112, step=2)
+Track (x=1, y=6, direction=Horizontal, index=112, step=3)
+Track (x=1, y=6, direction=Vertical, index=64, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=72)
+Track (x=1, y=5, direction=Horizontal, index=114, step=2)
+Track (x=1, y=6, direction=Horizontal, index=114, step=3)
+Track (x=1, y=6, direction=Vertical, index=66, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=88)
+Track (x=1, y=6, direction=Vertical, index=69, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=104)
+Track (x=1, y=6, direction=Vertical, index=71, step=4)
+Bump (x=1, y=6, direction=Horizontal, step=5, index=120)
+Track (x=1, y=4, direction=Horizontal, index=120, step=2)
+Track (x=1, y=3, direction=Vertical, index=112, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=72)
+Track (x=1, y=4, direction=Horizontal, index=122, step=2)
+Track (x=1, y=3, direction=Vertical, index=114, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=88)
+Track (x=1, y=4, direction=Horizontal, index=125, step=2)
+Track (x=1, y=3, direction=Vertical, index=117, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=104)
+Track (x=1, y=4, direction=Horizontal, index=127, step=2)
+Track (x=1, y=3, direction=Vertical, index=119, step=3)
+Bump (x=1, y=3, direction=Horizontal, step=4, index=120)
+Track (x=2, y=0, direction=Vertical, index=20, step=4)
+Track (x=1, y=0, direction=Vertical, index=20, step=5)
+Bump (x=1, y=0, direction=Horizontal, step=6, index=72)
+Track (x=2, y=0, direction=Vertical, index=22, step=4)
+Track (x=1, y=0, direction=Vertical, index=22, step=5)
+Bump (x=1, y=0, direction=Horizontal, step=6, index=88)
+Track (x=1, y=3, direction=Horizontal, index=120, step=3)
+Track (x=1, y=2, direction=Horizontal, index=120, step=4)
+Track (x=1, y=1, direction=Horizontal, index=120, step=5)
+Track (x=1, y=0, direction=Vertical, index=112, step=6)
+Bump (x=1, y=0, direction=Horizontal, step=7, index=104)
+Track (x=1, y=3, direction=Horizontal, index=122, step=3)
+Track (x=1, y=2, direction=Horizontal, index=122, step=4)
+Track (x=1, y=1, direction=Horizontal, index=122, step=5)
+Track (x=1, y=0, direction=Vertical, index=114, step=6)
+Bump (x=1, y=0, direction=Horizontal, step=7, index=120)
+Track (x=6, y=0, direction=Vertical, index=40, step=3)
+Track (x=7, y=0, direction=Vertical, index=40, step=4)
+Bump (x=7, y=0, direction=Horizontal, step=5, index=72)
+Track (x=5, y=0, direction=Horizontal, index=10, step=1)
+Track (x=5, y=0, direction=Vertical, index=42, step=2)
+Track (x=6, y=0, direction=Vertical, index=42, step=3)
+Track (x=7, y=0, direction=Vertical, index=42, step=4)
+Bump (x=7, y=0, direction=Horizontal, step=5, index=88)
+Track (x=6, y=0, direction=Vertical, index=46, step=3)
+Track (x=7, y=0, direction=Vertical, index=46, step=4)
+Bump (x=7, y=0, direction=Horizontal, step=5, index=104)
+Track (x=5, y=1, direction=Vertical, index=40, step=3)
+Track (x=6, y=1, direction=Horizontal, index=32, step=4)
+Track (x=6, y=0, direction=Vertical, index=24, step=5)
+Track (x=7, y=0, direction=Vertical, index=24, step=6)
+Bump (x=7, y=0, direction=Horizontal, step=7, index=120)
+Track (x=8, y=6, direction=Horizontal, index=49, step=3)
+Track (x=8, y=5, direction=Horizontal, index=49, step=4)
+Track (x=8, y=4, direction=Horizontal, index=49, step=5)
+Track (x=7, y=3, direction=Vertical, index=1, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=72)
+Track (x=8, y=6, direction=Horizontal, index=51, step=3)
+Track (x=8, y=5, direction=Horizontal, index=51, step=4)
+Track (x=8, y=4, direction=Horizontal, index=51, step=5)
+Track (x=7, y=3, direction=Vertical, index=3, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=88)
+Track (x=8, y=6, direction=Horizontal, index=53, step=3)
+Track (x=8, y=5, direction=Horizontal, index=53, step=4)
+Track (x=8, y=4, direction=Horizontal, index=53, step=5)
+Track (x=7, y=3, direction=Vertical, index=5, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=104)
+Track (x=8, y=6, direction=Horizontal, index=55, step=3)
+Track (x=8, y=5, direction=Horizontal, index=55, step=4)
+Track (x=8, y=4, direction=Horizontal, index=55, step=5)
+Track (x=7, y=3, direction=Vertical, index=7, step=6)
+Bump (x=7, y=3, direction=Horizontal, step=7, index=120)
+
+************************INFO*****************************
+Total length: 1637
+*********************************************************
+0x5b97d193d3e0
+0x5b97d193d428
+0x5b97d193d470
+0x5b97d193d4b8
+0x5b97d193d1a0
+0x5b97d193d500
+0x5b97d193d548
+0x5b97d193d5d8
+0x5b97d197c860
+0x5b97d197c8a8
+0x5b97d197c8f0
+0x5b97d197c938
+0x5b97d197c620
+0x5b97d197c980
+0x5b97d197c9c8
+0x5b97d197ca58
+0x5b97d1976e30
+0x5b97d1975c78
+0x5b97d1975cc0
+0x5b97d1975d08
+0x5b97d19759f0
+0x5b97d1975d50
+0x5b97d1975d98
+0x5b97d1975e28
+0x5b97d19379b0
+0x5b97d19367f8
+0x5b97d1936840
+0x5b97d1936888
+0x5b97d1936570
+0x5b97d19368d0
+0x5b97d1936918
+0x5b97d19369a8
+0x5b97d197d040
+0x5b97d197d088
+0x5b97d197d0d0
+0x5b97d197d118
+0x5b97d19772b0
+0x5b97d1976e78
+0x5b97d1976ec0
+0x5b97d1976f08
+0x5b97d1936f90
+0x5b97d1936fd8
+0x5b97d1937020
+0x5b97d1937068
+0x5b97d193e5e0
+0x5b97d193e628
+0x5b97d193eaf0
+0x5b97d193e6b8
+0x5b97d18ff3a0
+0x5b97d18ff3e8
+0x5b97d18ff430
+0x5b97d18ff478
+0x5b97d18ff4c0
+0x5b97d18ff508
+0x5b97d18ff550
+0x5b97d18ff598
+0x5b97d19054d8
+0x5b97d1904320
+0x5b97d19056d0
+0x5b97d1904368
+0x5b97d1905718
+0x5b97d19043b0
+0x5b97d1904440
+0x5b97d1904488
+0x5b97d19c2fd0
+0x5b97d19c3018
+0x5b97d19c3060
+0x5b97d19c30a8
+0x5b97d19c32a0
+0x5b97d19c32e8
+0x5b97d19c3330
+0x5b97d19c3378
+0x5b97d19bc628
+0x5b97d19bb470
+0x5b97d19bc820
+0x5b97d19bb4b8
+0x5b97d19bc868
+0x5b97d19bb500
+0x5b97d19bb590
+0x5b97d19bb5d8
+0x5b97d19b5e30
+0x5b97d19b5c38
+0x5b97d19b5c80
+0x5b97d19b5cc8
+0x5b97d19b5d10
+0x5b97d19b5d58
+0x5b97d19b5da0
+0x5b97d19b5de8
+0x5b97d19aedc8
+0x5b97d19adc10
+0x5b97d19addc0
+0x5b97d19aee58
+0x5b97d19af008
+0x5b97d19aeea0
+0x5b97d19add30
+0x5b97d19aef78
+0x5b97d18f1000
+0x5b97d18f0e08
+0x5b97d18f0e50
+0x5b97d18f0e98
+0x5b97d18f0ee0
+0x5b97d18f0f28
+0x5b97d18f0f70
+0x5b97d18f0fb8
+0x5b97d18f7c78
+0x5b97d18f6ac0
+0x5b97d18f6c70
+0x5b97d18f7d08
+0x5b97d18f6cb8
+0x5b97d18f6b50
+0x5b97d18f6be0
+0x5b97d18f6c28
+0x5b97d1943950
+0x5b97d1982dd0
+0x5b97d196e4c0
+0x5b97d192f040
+0x5b97d1944910
+0x5b97d1983d90
+0x5b97d1970680
+0x5b97d1931200
+0x5b97d1943758
+0x5b97d1982bd8
+0x5b97d196e748
+0x5b97d192f2c8
+0x5b97d1945498
+0x5b97d1984918
+0x5b97d1970488
+0x5b97d1931008
+0x5b97d19439e0
+0x5b97d1982e60
+0x5b97d196e9d0
+0x5b97d192f550
+0x5b97d19452a0
+0x5b97d1984720
+0x5b97d1970290
+0x5b97d1930e10
+0x5b97d1943c68
+0x5b97d19830e8
+0x5b97d196e7d8
+0x5b97d192f358
+0x5b97d19450a8
+0x5b97d1984528
+0x5b97d196fc18
+0x5b97d1930798
+0x5b97d1944130
+0x5b97d19835b0
+0x5b97d196f120
+0x5b97d192fca0
+0x5b97d19450f0
+0x5b97d1984570
+0x5b97d19700e0
+0x5b97d1930c60
+0x5b97d1943878
+0x5b97d1982cf8
+0x5b97d196e868
+0x5b97d192f3e8
+0x5b97d1945138
+0x5b97d19845b8
+0x5b97d1970128
+0x5b97d1930ca8
+0x5b97d1943680
+0x5b97d1982b00
+0x5b97d196e670
+0x5b97d192f1f0
+0x5b97d19453c0
+0x5b97d1984840
+0x5b97d19703b0
+0x5b97d1930f30
+0x5b97d1944448
+0x5b97d19838c8
+0x5b97d196f438
+0x5b97d192ffb8
+0x5b97d1945888
+0x5b97d1984d08
+0x5b97d1970878
+0x5b97d19313f8
+0x5b97d1943dd0
+0x5b97d1944250
+0x5b97d1943e60
+0x5b97d19442e0
+0x5b97d1983250
+0x5b97d19836d0
+0x5b97d1983c70
+0x5b97d1983d00
+0x5b97d196e988
+0x5b97d196eaa8
+0x5b97d196e8f8
+0x5b97d196eb38
+0x5b97d192fbc8
+0x5b97d192fc58
+0x5b97d192fce8
+0x5b97d192fd78
+0x5b97d18fd420
+0x5b97d18fd4b0
+0x5b97d18fd540
+0x5b97d18fd5d0
+0x5b97d19044d0
+0x5b97d1904950
+0x5b97d1904560
+0x5b97d19049e0
+0x5b97d19c30f0
+0x5b97d19c3180
+0x5b97d19c3fd8
+0x5b97d19c4068
+0x5b97d19bc3e8
+0x5b97d19bc478
+0x5b97d19bc4c0
+0x5b97d19bc550
+0x5b97d19b6538
+0x5b97d19b65c8
+0x5b97d19b6610
+0x5b97d19b66a0
+0x5b97d19ade08
+0x5b97d19ade98
+0x5b97d19adf28
+0x5b97d19adfb8
+0x5b97d18f0748
+0x5b97d18f07d8
+0x5b97d18f0868
+0x5b97d18f08f8
+0x5b97d18f67f0
+0x5b97d18f6880
+0x5b97d18f6910
+0x5b97d18f69a0
+0x5b97d1943998
+0x5b97d1943e18
+0x5b97d1943a28
+0x5b97d1944328
+0x5b97d1982e18
+0x5b97d1983298
+0x5b97d1983cb8
+0x5b97d1983d48
+0x5b97d196ea60
+0x5b97d196eaf0
+0x5b97d196eb80
+0x5b97d196e820
+0x5b97d192fb80
+0x5b97d192fd30
+0x5b97d192f670
+0x5b97d192f700
+0x5b97d18fd468
+0x5b97d18fd4f8
+0x5b97d18fd588
+0x5b97d18fd618
+0x5b97d1904518
+0x5b97d1904998
+0x5b97d19045a8
+0x5b97d1904a28
+0x5b97d19c3138
+0x5b97d19c31c8
+0x5b97d19c3f90
+0x5b97d19c4020
+0x5b97d19bc3a0
+0x5b97d19bc430
+0x5b97d19bc508
+0x5b97d19bc598
+0x5b97d19b64f0
+0x5b97d19b6580
+0x5b97d19b6658
+0x5b97d19b66e8
+0x5b97d19adee0
+0x5b97d19adf70
+0x5b97d19af8c0
+0x5b97d19af950
+0x5b97d18f0700
+0x5b97d18f0790
+0x5b97d18f08b0
+0x5b97d18f0280
+0x5b97d18f6838
+0x5b97d18f68c8
+0x5b97d18f6958
+0x5b97d18f69e8
+2  0  0  0  0  0  12  4  4  2  0  0  0  
+2  0  0  8  8  8  20  7  8  10  0  0  0  
+32  12  12  12  4  4  18  19  18  24  2  2  2  
+35  6  4  5  5  5  9  7  12  34  0  0  0  
+40  15  12  19  7  7  22  15  15  24  0  0  0  
+25  8  4  9  5  5  10  5  8  20  0  0  0  
+43  15  12  15  11  11  19  16  16  38  0  0  0  
+28  8  8  8  8  4  12  12  12  26  0  0  0  
+10  6  6  14  28  12  16  8  8  12  2  2  2  
+max cob utilization is 43, rate is 0.167969
+avg cob utilization rate is 0.036759

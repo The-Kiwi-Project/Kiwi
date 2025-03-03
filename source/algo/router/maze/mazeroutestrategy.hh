@@ -48,7 +48,7 @@ namespace kiwi::algo {
     
     // simple routing functions
     private:
-        auto search_path(
+        auto maze_search(
             hardware::Interposer* interposer, 
             const std::Vector<hardware::Track*>& begin_tracks,
             const std::HashSet<hardware::Track*>& end_tracks,
