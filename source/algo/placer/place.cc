@@ -4,7 +4,6 @@
 #include <circuit/basedie.hh>
 
 namespace kiwi::algo {
-
     auto place(
         hardware::Interposer* interposer,
         std::Vector<circuit::TopDieInstance>& topdies,
@@ -25,18 +24,15 @@ namespace kiwi::algo {
             debug::error("Interposer pointer is empty");
             return;
         }
-        
         if (topdies.empty()) {
             debug::warning("No top-level chip instance needs to be laid out.");
             return;
         }
-        
         if (!basedie) {
             debug::warning("BaseDie pointer is empty, limited functionality");
         }
-        
-        strategy.place(interposer, topdies);
 
+        strategy.place(interposer, topdies);
         auto cost = evaluate_placement(interposer, topdies, basedie, strategy);
         debug::info_fmt("Layout completed, total cost: {}", cost);
     }
@@ -49,5 +45,4 @@ namespace kiwi::algo {
     ) -> std::i64 {
         return strategy.evaluate_placement(interposer, topdies, basedie);
     }
-
 }

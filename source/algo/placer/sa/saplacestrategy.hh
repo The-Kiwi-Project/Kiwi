@@ -22,13 +22,11 @@ namespace kiwi::hardware {
 }
 
 namespace kiwi::algo {
-
     class RouteStrategy;
-
     class SAPlaceStrategy : public PlaceStrategy {
     public:
         SAPlaceStrategy() = default;
-        
+
         SAPlaceStrategy(
             double init_temp = 100.0, 
             double freeze_temp = 0.5, 
@@ -74,8 +72,7 @@ namespace kiwi::algo {
         
         auto calculate_next_temperature(double current_temp, std::size_t iteration) const -> double;
         
-        auto save_current_placement(const std::Vector<circuit::TopDieInstance>& topdies) const 
-            -> std::HashMap<circuit::TopDieInstance*, hardware::TOB*>;
+        auto save_current_placement(const std::Vector<circuit::TopDieInstance>& topdies) const -> std::HashMap<circuit::TopDieInstance*, hardware::TOB*>;
         auto restore_placement(
             std::Vector<circuit::TopDieInstance>& topdies,
             const std::HashMap<circuit::TopDieInstance*, hardware::TOB*>& placement
@@ -95,7 +92,6 @@ namespace kiwi::algo {
         ) const -> bool;
         
         auto get_topdie_power(const circuit::TopDieInstance& topdie) const -> double;
-
         auto get_topdie_color(const circuit::TopDieInstance& topdie) const -> QColor;
 
     private:

@@ -14,7 +14,6 @@ namespace kiwi::circuit {
 }
 
 namespace kiwi::algo {
-
     struct PlaceStrategy {
         virtual auto place(
             hardware::Interposer* interposer,

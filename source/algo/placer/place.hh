@@ -14,9 +14,7 @@ namespace kiwi::circuit {
 }
 
 namespace kiwi::algo {
-
     struct PlaceStrategy;
-
     auto place(
         hardware::Interposer* interposer,
         std::Vector<circuit::TopDieInstance>& topdies,
@@ -28,9 +26,9 @@ namespace kiwi::algo {
         hardware::Interposer* interposer,
         std::Vector<circuit::TopDieInstance>& topdies,
         circuit::BaseDie* basedie,
-
         const PlaceStrategy& strategy
-    ) -> void;    
+    ) -> void;   
+
     auto evaluate_placement(
         hardware::Interposer* interposer,
         const std::Vector<circuit::TopDieInstance>& topdies,
