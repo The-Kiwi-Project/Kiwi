@@ -27,6 +27,7 @@ namespace kiwi::circuit {
         virtual auto check_accessable_cobunit() -> void override; 
         virtual auto to_string() const -> std::String override;
         virtual auto port_number() const -> std::usize override;
+        virtual auto has_tob_in_ports(hardware::TOB* tob) const -> bool override;
 
     public:
         auto begin_track() const -> hardware::Track* { return this->_begin_track; }

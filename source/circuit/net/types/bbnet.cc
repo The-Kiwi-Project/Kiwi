@@ -51,4 +51,8 @@ namespace kiwi::circuit {
         return std::format("Begin bump: '{}' to End bump '{}'", this->_begin_bump->coord(), this->_end_bump->coord());
     }
 
+    auto BumpToBumpNet::has_tob_in_ports(hardware::TOB* tob) const -> bool {
+        return (this->_begin_bump->tob()->coord() == tob->coord() || this->_end_bump->tob()->coord() == tob->coord());
+    }
+    
 }

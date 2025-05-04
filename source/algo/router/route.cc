@@ -38,7 +38,9 @@ namespace kiwi::algo {
         std::usize total_length {0};
         for (auto& net : nets) {
             try {
-                total_length += net->route(interposer, strateg);
+                auto length = net->route(interposer, strateg);
+                net->set_length(length);
+                total_length += length;
             } 
             catch (const RetryExpt& err) {
                 // TODO: 改一下异常处理
@@ -54,5 +56,26 @@ namespace kiwi::algo {
         return total_length;
     }
     THROW_UP_WITH("algo::router")
+
+    auto show_route_result(std::Vector<std::Box<circuit::Net>>& nets, std::usize total_length) -> std::Tuple<std::usize, std::usize, float> {
+        std::usize max_l{0};
+        for (auto& n: nets) {
+            max_l = max_l > n->length() ? max_l : n->length();
+        }
+
+        float sync_l{0.0}, sync_num{0.0};
+        for (auto& n: nets) {
+            if (n->sync_length() != 0) {
+                sync_l += n->sync_length();
+                sync_num += n->net_size();
+            }
+        }
+        debug::info_fmt(
+            "Length: {}, Max Length: {}, SyncNet Average Length: {}",\
+            total_length, max_l, sync_l / sync_num
+        );
+
+        return std::Tuple<std::usize, std::usize, float>{total_length, max_l, sync_l / sync_num};
+    }
 
 }

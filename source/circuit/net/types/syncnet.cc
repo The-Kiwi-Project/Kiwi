@@ -117,6 +117,44 @@ namespace kiwi::circuit
         }
         return port_number;
     }
+
+    auto SyncNet::net_size() const -> std::usize {
+        std::usize num{0};
+        for (auto& n: this->_btbnets) {
+            num += n->net_size();
+        }
+        for (auto& n: this->_bttnets) {
+            num += n->net_size();
+        }
+        for (auto& n: this->_ttbnets) {
+            num += n->net_size();
+        }
+        return num;
+    }
+
+    auto SyncNet::length() -> std::usize {
+        return this->_l / this->net_size();
+    }
+
+    auto SyncNet::has_tob_in_ports(hardware::TOB* tob) const -> bool {
+        for (auto& net: _btbnets) {
+            if (net->has_tob_in_ports(tob)) {
+                return true;
+            }
+        }
+        for (auto& net: _bttnets) {
+            if (net->has_tob_in_ports(tob)) {
+                return true;
+            }
+        }
+        for (auto& net: _ttbnets) {
+            if (net->has_tob_in_ports(tob)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 

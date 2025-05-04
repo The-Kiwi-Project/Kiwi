@@ -69,4 +69,13 @@ namespace kiwi::circuit {
         return (this->_end_bumps.size() + 1);
     }
 
+    auto TrackToBumpsNet::has_tob_in_ports(hardware::TOB* tob) const -> bool {
+        for (auto& b: this->_end_bumps) {
+            if (b->tob()->coord() == tob->coord()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

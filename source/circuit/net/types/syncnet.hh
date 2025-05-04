@@ -47,6 +47,10 @@ namespace kiwi::circuit {
         virtual auto check_accessable_cobunit() -> void override;
         virtual auto to_string() const -> std::String override;
         virtual auto port_number() const -> std::usize override;
+        virtual auto net_size() const -> std::usize override;
+        virtual auto length() -> std::usize override;
+        virtual auto sync_length() const -> std::usize override {return this->_l;}
+        virtual auto has_tob_in_ports(hardware::TOB* tob) const -> bool override;
     
     public:
         auto btbnets() -> std::Vector<std::Box<BumpToBumpNet>>& {return this->_btbnets;}

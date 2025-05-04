@@ -24,4 +24,5 @@ namespace kiwi::algo {
         const RouteStrategy& strategy
     ) -> std::usize;
 
+    auto show_route_result(std::Vector<std::Box<circuit::Net>>& nets, std::usize total_length) -> std::Tuple<std::usize, std::usize, float>;
 }

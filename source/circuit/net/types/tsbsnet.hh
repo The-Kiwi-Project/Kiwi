@@ -28,6 +28,7 @@ namespace kiwi::circuit {
         virtual auto check_accessable_cobunit() -> void override;
          virtual auto to_string() const -> std::String override;
         virtual auto port_number() const -> std::usize override;
+        virtual auto has_tob_in_ports(hardware::TOB* tob) const -> bool override;
 
         auto begin_tracks() const -> const std::Vector<hardware::Track*>& { return this->_begin_tracks; }
         auto end_bumps() const -> const std::Vector<hardware::Bump*>& { return this->_end_bumps; }

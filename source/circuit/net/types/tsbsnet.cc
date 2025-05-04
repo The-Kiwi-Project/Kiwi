@@ -75,4 +75,14 @@ namespace kiwi::circuit {
     auto TracksToBumpsNet::port_number() const -> std::usize {
         return this->_begin_tracks.size() + this->_end_bumps.size();
     }
+
+    auto TracksToBumpsNet::has_tob_in_ports(hardware::TOB* tob) const -> bool {
+        for (auto& b: this->_end_bumps) {
+            if (b->tob()->coord() == tob->coord()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

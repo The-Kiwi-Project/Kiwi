@@ -15,16 +15,22 @@
 #include <std/string.hh>
 #include <debug/debug.hh>
 #include <std/algorithm.hh>
+#include <chrono>
 
 namespace kiwi {
 
     auto cli_main(std::StringView config_path, std::Option<std::StringView> output_path) -> int {
         debug::initial_log("./debug.log");
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto [interposer, basedie] = kiwi::parse::read_config(config_path);
 
         algo::build_nets(basedie.get(), interposer.get());
         auto l = algo::route_nets(interposer.get(), basedie.get(), algo::MazeRouteStrategy{});
-        debug::info_fmt("Length: '{}'", l);
+        auto end_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = end_time - start_time;
+
+        algo::show_route_result(basedie->nets(), l);
+        debug::debug_fmt("Elapsed time: {} seconds", elapsed.count());
 
         interposer->randomly_map_remain_indexes();
 
